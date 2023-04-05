@@ -12,7 +12,13 @@ SPDX-License-Identifier: MIT
 
 [![Build and Test](https://github.com/StanfordBDHG/CardinalKitOnboarding/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/StanfordBDHG/CardinalKitOnboarding/actions/workflows/build-and-test.yml)
 
-The CardinalKit Contact module provides user interface components to onboard a user to an application including the possibility to retrieve consent for a study participation.
+The CardinalKit Onboarding module provides user interface components to onboard a user to an application including the possibility to retrieve consent for a study participation.
+
+<p float="left">
+ <img width="250" alt="A screen displaying welcome view." src="Sources/CardinalKitOnboarding/Onboarding.docc/Resources/OnboardingView.png">
+ <img width="250" alt="A screen showing an sequencial onboarding view." src="Sources/CardinalKitOnboarding/Onboarding.docc/Resources/SequentialOnboardingView.png">
+ <img width="250" alt="A screen displaying the consent view." src="Sources/CardinalKitOnboarding/Onboarding.docc/Resources/ConsentView.png">
+</p>
 
 For more information, please refer to the [API documentation](https://swiftpackageindex.com/StanfordBDHG/CardinalKitOnboarding/documentation).
 
