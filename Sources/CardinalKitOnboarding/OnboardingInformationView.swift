@@ -7,7 +7,7 @@
 //
 
 import SwiftUI
-import Views
+import CardinalKitViews
 
 
 /// The ``OnboardingInformationView`` allows developers to present a unified style the display informational content as defined

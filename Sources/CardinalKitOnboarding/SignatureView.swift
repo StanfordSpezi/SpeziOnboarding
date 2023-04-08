@@ -8,7 +8,7 @@
 
 import PencilKit
 import SwiftUI
-import Views
+import CardinalKitViews
 
 
 /// A ``SignatureView`` enables the collection of signatures using a view that allows freeform signatures using a finger and the Apple Pencil.

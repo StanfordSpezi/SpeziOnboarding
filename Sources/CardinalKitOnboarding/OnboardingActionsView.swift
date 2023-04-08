@@ -7,7 +7,7 @@
 //
 
 import SwiftUI
-import Views
+import CardinalKitViews
 
 
 /// The ``OnboardingActionsView`` allows developers to present a unified style for action buttons in an onboarding flow.

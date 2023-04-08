@@ -8,7 +8,7 @@
 
 import PencilKit
 import SwiftUI
-import Views
+import CardinalKitViews
 
 
 /// The ``ConsentView`` allows the display of markdown-based documents that can be signed using a family and given name and a hand drawn signature.
