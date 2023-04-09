@@ -6,8 +6,8 @@
 // SPDX-License-Identifier: MIT
 //
 
+import CardinalKitViews
 import SwiftUI
-import Views
 
 
 /// The ``OnboardingInformationView`` allows developers to present a unified style the display informational content as defined

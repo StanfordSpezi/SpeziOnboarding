@@ -7,8 +7,8 @@
 //
 
 import CardinalKitOnboarding
+import CardinalKitViews
 import SwiftUI
-import Views
 
 
 struct OnboardingTestsView: View {

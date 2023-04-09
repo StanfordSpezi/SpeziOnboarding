@@ -1,4 +1,4 @@
-// swift-tools-version:5.7
+// swift-tools-version:5.8
 
 //
 // This source file is part of the CardinalKit open-source project
@@ -21,13 +21,13 @@ let package = Package(
         .library(name: "CardinalKitOnboarding", targets: ["CardinalKitOnboarding"])
     ],
     dependencies: [
-        .package(url: "https://github.com/StanfordBDHG/CardinalKit", .upToNextMinor(from: "0.3.5"))
+        .package(url: "https://github.com/StanfordBDHG/CardinalKitViews", .upToNextMinor(from: "0.2.0"))
     ],
     targets: [
         .target(
             name: "CardinalKitOnboarding",
             dependencies: [
-                .product(name: "Views", package: "CardinalKit")
+                .product(name: "CardinalKitViews", package: "CardinalKitViews")
             ]
         ),
         .testTarget(

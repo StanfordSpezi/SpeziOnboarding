@@ -6,9 +6,9 @@
 // SPDX-License-Identifier: MIT
 //
 
+import CardinalKitViews
 import PencilKit
 import SwiftUI
-import Views
 
 
 /// A ``SignatureView`` enables the collection of signatures using a view that allows freeform signatures using a finger and the Apple Pencil.

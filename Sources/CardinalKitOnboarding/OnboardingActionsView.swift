@@ -6,8 +6,8 @@
 // SPDX-License-Identifier: MIT
 //
 
+import CardinalKitViews
 import SwiftUI
-import Views
 
 
 /// The ``OnboardingActionsView`` allows developers to present a unified style for action buttons in an onboarding flow.
