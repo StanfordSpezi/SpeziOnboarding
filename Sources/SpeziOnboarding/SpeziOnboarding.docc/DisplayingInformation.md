@@ -2,7 +2,7 @@
 
 <!--
                   
-This source file is part of the CardinalKit open-source project
+This source file is part of the Stanford Spezi open-source project
 
 SPDX-FileCopyrightText: 2022 Stanford University and the project authors (see CONTRIBUTORS.md)
 
@@ -23,7 +23,7 @@ The following example demonstrates how the above view is constructed:
 ```swift
 OnboardingView(
     title: "Welcome",
-    subtitle: "CardinalKit UI Tests",
+    subtitle: "Spezi UI Tests",
     areas: [
         .init(
             icon: Image(systemName: "tortoise.fill"), 

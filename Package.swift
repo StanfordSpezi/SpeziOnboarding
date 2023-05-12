@@ -1,7 +1,7 @@
 // swift-tools-version:5.7
 
 //
-// This source file is part of the CardinalKit open-source project
+// This source file is part of the Stanford Spezi open-source project
 // 
 // SPDX-FileCopyrightText: 2022 Stanford University and the project authors (see CONTRIBUTORS.md)
 // 
@@ -12,28 +12,28 @@ import PackageDescription
 
 
 let package = Package(
-    name: "CardinalKitOnboarding",
+    name: "SpeziOnboarding",
     defaultLocalization: "en",
     platforms: [
         .iOS(.v16)
     ],
     products: [
-        .library(name: "CardinalKitOnboarding", targets: ["CardinalKitOnboarding"])
+        .library(name: "SpeziOnboarding", targets: ["SpeziOnboarding"])
     ],
     dependencies: [
-        .package(url: "https://github.com/StanfordBDHG/CardinalKitViews", .upToNextMinor(from: "0.2.1"))
+        .package(url: "https://github.com/StanfordSpezi/SpeziViews", .upToNextMinor(from: "0.2.1"))
     ],
     targets: [
         .target(
-            name: "CardinalKitOnboarding",
+            name: "SpeziOnboarding",
             dependencies: [
-                .product(name: "CardinalKitViews", package: "CardinalKitViews")
+                .product(name: "SpeziViews", package: "SpeziViews")
             ]
         ),
         .testTarget(
-            name: "CardinalKitOnboardingTests",
+            name: "SpeziOnboardingTests",
             dependencies: [
-                .target(name: "CardinalKitOnboarding")
+                .target(name: "SpeziOnboarding")
             ]
         )
     ]

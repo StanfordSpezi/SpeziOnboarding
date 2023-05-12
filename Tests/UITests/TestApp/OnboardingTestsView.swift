@@ -1,13 +1,13 @@
 //
-// This source file is part of the CardinalKit open-source project
+// This source file is part of the Stanford Spezi open-source project
 //
 // SPDX-FileCopyrightText: 2022 Stanford University and the project authors (see CONTRIBUTORS.md)
 //
 // SPDX-License-Identifier: MIT
 //
 
-import CardinalKitOnboarding
-import CardinalKitViews
+import SpeziOnboarding
+import SpeziViews
 import SwiftUI
 
 
@@ -90,7 +90,7 @@ struct OnboardingTestsView: View {
     private var onboardingView: some View {
         OnboardingView(
             title: "Welcome",
-            subtitle: "CardinalKit UI Tests",
+            subtitle: "Spezi UI Tests",
             areas: [
                 .init(icon: Image(systemName: "tortoise.fill"), title: "Tortoise", description: "A Tortoise!"),
                 .init(icon: Image(systemName: "lizard.fill"), title: "Lizard", description: "A Lizard!"),

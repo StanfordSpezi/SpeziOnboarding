@@ -7,10 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2F61BDC329DD02D600D71D33 /* CardinalKitOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = 2F61BDC229DD02D600D71D33 /* CardinalKitOnboarding */; };
+		2F61BDC329DD02D600D71D33 /* SpeziOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = 2F61BDC229DD02D600D71D33 /* SpeziOnboarding */; };
 		2F61BDC929DD3CC000D71D33 /* OnboardingTestsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F61BDC829DD3CC000D71D33 /* OnboardingTestsView.swift */; };
-		2F61BDCB29DDE76D00D71D33 /* CardinalKitOnboardingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F61BDCA29DDE76D00D71D33 /* CardinalKitOnboardingTests.swift */; };
-		2F61BDCE29DDE7B300D71D33 /* CardinalKit in Frameworks */ = {isa = PBXBuildFile; productRef = 2F61BDCD29DDE7B300D71D33 /* CardinalKit */; };
+		2F61BDCB29DDE76D00D71D33 /* SpeziOnboardingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F61BDCA29DDE76D00D71D33 /* SpeziOnboardingTests.swift */; };
+		2F61BDCE29DDE7B300D71D33 /* Spezi in Frameworks */ = {isa = PBXBuildFile; productRef = 2F61BDCD29DDE7B300D71D33 /* Spezi */; };
 		2F61BDD029DDE7B300D71D33 /* Views in Frameworks */ = {isa = PBXBuildFile; productRef = 2F61BDCF29DDE7B300D71D33 /* Views */; };
 		2F61BDD329DDE98C00D71D33 /* XCTestExtensions in Frameworks */ = {isa = PBXBuildFile; productRef = 2F61BDD229DDE98C00D71D33 /* XCTestExtensions */; };
 		2F6D139A28F5F386007C25D6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2F6D139928F5F386007C25D6 /* Assets.xcassets */; };
@@ -28,9 +28,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		2F61BDC129DD023E00D71D33 /* CardinalKitOnboarding */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = CardinalKitOnboarding; path = ../..; sourceTree = "<group>"; };
+		2F61BDC129DD023E00D71D33 /* SpeziOnboarding */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = SpeziOnboarding; path = ../..; sourceTree = "<group>"; };
 		2F61BDC829DD3CC000D71D33 /* OnboardingTestsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingTestsView.swift; sourceTree = "<group>"; };
-		2F61BDCA29DDE76D00D71D33 /* CardinalKitOnboardingTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CardinalKitOnboardingTests.swift; sourceTree = "<group>"; };
+		2F61BDCA29DDE76D00D71D33 /* SpeziOnboardingTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpeziOnboardingTests.swift; sourceTree = "<group>"; };
 		2F6D139228F5F384007C25D6 /* TestApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2F6D139928F5F386007C25D6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2F6D13AC28F5F386007C25D6 /* TestAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TestAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -44,8 +44,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				2F61BDD029DDE7B300D71D33 /* Views in Frameworks */,
-				2F61BDC329DD02D600D71D33 /* CardinalKitOnboarding in Frameworks */,
-				2F61BDCE29DDE7B300D71D33 /* CardinalKit in Frameworks */,
+				2F61BDC329DD02D600D71D33 /* SpeziOnboarding in Frameworks */,
+				2F61BDCE29DDE7B300D71D33 /* Spezi in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -64,7 +64,7 @@
 			isa = PBXGroup;
 			children = (
 				2FB0758A299DDB9000C0B37F /* TestApp.xctestplan */,
-				2F61BDC129DD023E00D71D33 /* CardinalKitOnboarding */,
+				2F61BDC129DD023E00D71D33 /* SpeziOnboarding */,
 				2F6D139428F5F384007C25D6 /* TestApp */,
 				2F6D13AF28F5F386007C25D6 /* TestAppUITests */,
 				2F6D139328F5F384007C25D6 /* Products */,
@@ -94,7 +94,7 @@
 		2F6D13AF28F5F386007C25D6 /* TestAppUITests */ = {
 			isa = PBXGroup;
 			children = (
-				2F61BDCA29DDE76D00D71D33 /* CardinalKitOnboardingTests.swift */,
+				2F61BDCA29DDE76D00D71D33 /* SpeziOnboardingTests.swift */,
 			);
 			path = TestAppUITests;
 			sourceTree = "<group>";
@@ -123,8 +123,8 @@
 			);
 			name = TestApp;
 			packageProductDependencies = (
-				2F61BDC229DD02D600D71D33 /* CardinalKitOnboarding */,
-				2F61BDCD29DDE7B300D71D33 /* CardinalKit */,
+				2F61BDC229DD02D600D71D33 /* SpeziOnboarding */,
+				2F61BDCD29DDE7B300D71D33 /* Spezi */,
 				2F61BDCF29DDE7B300D71D33 /* Views */,
 			);
 			productName = Example;
@@ -182,7 +182,7 @@
 			);
 			mainGroup = 2F6D138928F5F384007C25D6;
 			packageReferences = (
-				2F61BDCC29DDE7B300D71D33 /* XCRemoteSwiftPackageReference "CardinalKit" */,
+				2F61BDCC29DDE7B300D71D33 /* XCRemoteSwiftPackageReference "Spezi" */,
 				2F61BDD129DDE98C00D71D33 /* XCRemoteSwiftPackageReference "XCTestExtensions" */,
 			);
 			productRefGroup = 2F6D139328F5F384007C25D6 /* Products */;
@@ -227,7 +227,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2F61BDCB29DDE76D00D71D33 /* CardinalKitOnboardingTests.swift in Sources */,
+				2F61BDCB29DDE76D00D71D33 /* SpeziOnboardingTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -378,7 +378,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = edu.stanford.cardinalkit.onboarding.testapp;
+				PRODUCT_BUNDLE_IDENTIFIER = edu.stanford.spezi.onboarding.testapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_STRICT_CONCURRENCY = complete;
@@ -409,7 +409,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = edu.stanford.cardinalkit.onboarding.testapp;
+				PRODUCT_BUNDLE_IDENTIFIER = edu.stanford.spezi.onboarding.testapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_STRICT_CONCURRENCY = complete;
@@ -428,7 +428,7 @@
 				DEVELOPMENT_TEAM = 637867499T;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = edu.stanford.cardinalkit.onboarding.testappuitests;
+				PRODUCT_BUNDLE_IDENTIFIER = edu.stanford.spezi.onboarding.testappuitests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SWIFT_EMIT_LOC_STRINGS = NO;
@@ -449,7 +449,7 @@
 				DEVELOPMENT_TEAM = 637867499T;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = edu.stanford.cardinalkit.onboarding.testappuitests;
+				PRODUCT_BUNDLE_IDENTIFIER = edu.stanford.spezi.onboarding.testappuitests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SWIFT_EMIT_LOC_STRINGS = NO;
@@ -541,7 +541,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = edu.stanford.cardinalkit.onboarding.testapp;
+				PRODUCT_BUNDLE_IDENTIFIER = edu.stanford.spezi.onboarding.testapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_STRICT_CONCURRENCY = complete;
@@ -560,7 +560,7 @@
 				DEVELOPMENT_TEAM = 637867499T;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = edu.stanford.cardinalkit.onboarding.testappuitests;
+				PRODUCT_BUNDLE_IDENTIFIER = edu.stanford.spezi.onboarding.testappuitests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SWIFT_EMIT_LOC_STRINGS = NO;
@@ -607,9 +607,9 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		2F61BDCC29DDE7B300D71D33 /* XCRemoteSwiftPackageReference "CardinalKit" */ = {
+		2F61BDCC29DDE7B300D71D33 /* XCRemoteSwiftPackageReference "Spezi" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/StanfordBDHG/CardinalKit.git";
+			repositoryURL = "https://github.com/StanfordSpezi/Spezi.git";
 			requirement = {
 				kind = upToNextMinorVersion;
 				minimumVersion = 0.3.5;
@@ -617,7 +617,7 @@
 		};
 		2F61BDD129DDE98C00D71D33 /* XCRemoteSwiftPackageReference "XCTestExtensions" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/StanfordBDHG/XCTestExtensions";
+			repositoryURL = "https://github.com/StanfordSpezi/XCTestExtensions";
 			requirement = {
 				kind = upToNextMinorVersion;
 				minimumVersion = 0.3.0;
@@ -626,18 +626,18 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		2F61BDC229DD02D600D71D33 /* CardinalKitOnboarding */ = {
+		2F61BDC229DD02D600D71D33 /* SpeziOnboarding */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = CardinalKitOnboarding;
+			productName = SpeziOnboarding;
 		};
-		2F61BDCD29DDE7B300D71D33 /* CardinalKit */ = {
+		2F61BDCD29DDE7B300D71D33 /* Spezi */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 2F61BDCC29DDE7B300D71D33 /* XCRemoteSwiftPackageReference "CardinalKit" */;
-			productName = CardinalKit;
+			package = 2F61BDCC29DDE7B300D71D33 /* XCRemoteSwiftPackageReference "Spezi" */;
+			productName = Spezi;
 		};
 		2F61BDCF29DDE7B300D71D33 /* Views */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 2F61BDCC29DDE7B300D71D33 /* XCRemoteSwiftPackageReference "CardinalKit" */;
+			package = 2F61BDCC29DDE7B300D71D33 /* XCRemoteSwiftPackageReference "Spezi" */;
 			productName = Views;
 		};
 		2F61BDD229DDE98C00D71D33 /* XCTestExtensions */ = {

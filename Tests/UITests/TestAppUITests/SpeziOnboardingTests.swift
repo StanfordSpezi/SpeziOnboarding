@@ -1,5 +1,5 @@
 //
-// This source file is part of the CardinalKit open-source project
+// This source file is part of the Stanford Spezi open-source project
 //
 // SPDX-FileCopyrightText: 2022 Stanford University and the project authors (see CONTRIBUTORS.md)
 //
@@ -56,7 +56,7 @@ final class OnboardingTests: XCTestCase {
         hitConsentButton(app)
         
         XCTAssert(app.staticTexts["Welcome"].exists)
-        XCTAssert(app.staticTexts["CardinalKit UI Tests"].exists)
+        XCTAssert(app.staticTexts["Spezi UI Tests"].exists)
     }
     
     private func hitConsentButton(_ app: XCUIApplication) {
@@ -75,7 +75,7 @@ final class OnboardingTests: XCTestCase {
         app.collectionViews.buttons["Onboarding View"].tap()
         
         XCTAssert(app.staticTexts["Welcome"].exists)
-        XCTAssert(app.staticTexts["CardinalKit UI Tests"].exists)
+        XCTAssert(app.staticTexts["Spezi UI Tests"].exists)
         
         XCTAssert(app.images["Decrease Speed"].exists)
         XCTAssert(app.staticTexts["Tortoise"].exists)
