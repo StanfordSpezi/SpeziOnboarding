@@ -11,7 +11,6 @@
 		2F61BDC929DD3CC000D71D33 /* OnboardingTestsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F61BDC829DD3CC000D71D33 /* OnboardingTestsView.swift */; };
 		2F61BDCB29DDE76D00D71D33 /* SpeziOnboardingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F61BDCA29DDE76D00D71D33 /* SpeziOnboardingTests.swift */; };
 		2F61BDCE29DDE7B300D71D33 /* Spezi in Frameworks */ = {isa = PBXBuildFile; productRef = 2F61BDCD29DDE7B300D71D33 /* Spezi */; };
-		2F61BDD029DDE7B300D71D33 /* Views in Frameworks */ = {isa = PBXBuildFile; productRef = 2F61BDCF29DDE7B300D71D33 /* Views */; };
 		2F61BDD329DDE98C00D71D33 /* XCTestExtensions in Frameworks */ = {isa = PBXBuildFile; productRef = 2F61BDD229DDE98C00D71D33 /* XCTestExtensions */; };
 		2F6D139A28F5F386007C25D6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2F6D139928F5F386007C25D6 /* Assets.xcassets */; };
 		2FA7382C290ADFAA007ACEB9 /* TestApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FA7382B290ADFAA007ACEB9 /* TestApp.swift */; };
@@ -43,7 +42,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2F61BDD029DDE7B300D71D33 /* Views in Frameworks */,
 				2F61BDC329DD02D600D71D33 /* SpeziOnboarding in Frameworks */,
 				2F61BDCE29DDE7B300D71D33 /* Spezi in Frameworks */,
 			);
@@ -125,7 +123,6 @@
 			packageProductDependencies = (
 				2F61BDC229DD02D600D71D33 /* SpeziOnboarding */,
 				2F61BDCD29DDE7B300D71D33 /* Spezi */,
-				2F61BDCF29DDE7B300D71D33 /* Views */,
 			);
 			productName = Example;
 			productReference = 2F6D139228F5F384007C25D6 /* TestApp.app */;
@@ -612,7 +609,7 @@
 			repositoryURL = "https://github.com/StanfordSpezi/Spezi.git";
 			requirement = {
 				kind = upToNextMinorVersion;
-				minimumVersion = 0.3.5;
+				minimumVersion = 0.5.0;
 			};
 		};
 		2F61BDD129DDE98C00D71D33 /* XCRemoteSwiftPackageReference "XCTestExtensions" */ = {
@@ -620,7 +617,7 @@
 			repositoryURL = "https://github.com/StanfordSpezi/XCTestExtensions";
 			requirement = {
 				kind = upToNextMinorVersion;
-				minimumVersion = 0.3.0;
+				minimumVersion = 0.4.1;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -634,11 +631,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 2F61BDCC29DDE7B300D71D33 /* XCRemoteSwiftPackageReference "Spezi" */;
 			productName = Spezi;
-		};
-		2F61BDCF29DDE7B300D71D33 /* Views */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 2F61BDCC29DDE7B300D71D33 /* XCRemoteSwiftPackageReference "Spezi" */;
-			productName = Views;
 		};
 		2F61BDD229DDE98C00D71D33 /* XCTestExtensions */ = {
 			isa = XCSwiftPackageProductDependency;
