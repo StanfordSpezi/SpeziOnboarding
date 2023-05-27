@@ -125,6 +125,7 @@ final class OnboardingTests: XCTestCase {
         XCTAssert(app.staticTexts["Second thing to know"].exists)
         XCTAssert(app.staticTexts["3"].exists)
         XCTAssert(app.staticTexts["Third thing to know"].exists)
+        XCTAssert(app.staticTexts["Now you should know all the things!"].exists)
         app.buttons["Continue"].tap()
         
         XCTAssert(app.staticTexts["Consent"].exists)
