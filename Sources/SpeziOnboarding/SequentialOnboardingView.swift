@@ -41,7 +41,7 @@ public struct SequentialOnboardingView: View {
     /// A ``Content`` defines the way that information is displayed in an ``SequentialOnboardingView``.
     public struct Content {
         /// The title of the area in the ``SequentialOnboardingView``.
-        public let title: String
+        public let title: String?
         /// The description of the area in the ``SequentialOnboardingView``.
         public let description: String
         
@@ -51,10 +51,10 @@ public struct SequentialOnboardingView: View {
         ///   - title: The title of the area in the ``SequentialOnboardingView``.
         ///   - description: The description of the area in the ``SequentialOnboardingView``.
         public init<Title: StringProtocol, Description: StringProtocol>(
-            title: Title,
+            title: Title?,
             description: Description
         ) {
-            self.title = title.localized
+            self.title = title?.localized
             self.description = description.localized
         }
     }
@@ -166,8 +166,10 @@ public struct SequentialOnboardingView: View {
                             .fill(Color.accentColor)
                     }
                 VStack(alignment: .leading, spacing: 8) {
-                    Text(content.title)
-                        .bold()
+                    if let title = content.title {
+                        Text(title)
+                            .bold()
+                    }
                     Text(content.description)
                 }
                 Spacer()
