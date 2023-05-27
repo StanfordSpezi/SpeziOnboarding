@@ -51,10 +51,20 @@ public struct SequentialOnboardingView: View {
         ///   - title: The title of the area in the ``SequentialOnboardingView``.
         ///   - description: The description of the area in the ``SequentialOnboardingView``.
         public init<Title: StringProtocol, Description: StringProtocol>(
-            title: Title?,
+            title: Title,
             description: Description
         ) {
-            self.title = title?.localized
+            self.title = title.localized
+            self.description = description.localized
+        }
+
+        /// Creates a new content for an area in the ``SequentialOnboardingView``.
+        /// - Parameters:
+        ///   - description: The description of the area in the ``SequentialOnboardingView``.
+        public init<Description: StringProtocol>(
+            description: Description
+        ) {
+            self.title = nil
             self.description = description.localized
         }
     }
