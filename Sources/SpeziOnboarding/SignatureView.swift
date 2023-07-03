@@ -26,7 +26,7 @@ import SwiftUI
 /// )
 /// ```
 public struct SignatureView: View {
-    @Environment(\.undoManager) private var undoManager
+    @Environment(\.undoManager) private var undoManager // swiftlint:disable:this attributes
     @Binding private var signature: PKDrawing
     @Binding private var isSigning: Bool
     @State private var canUndo = false
