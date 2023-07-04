@@ -112,7 +112,7 @@ public struct ConsentView<ContentView: View, Action: View>: View {
         @ViewBuilder header: () -> (some View) = { EmptyView() },
         asyncMarkdown: @escaping () async -> Data,
         @ViewBuilder footer: () -> (some View) = { EmptyView() },
-        action: @escaping () -> Void,
+        action: @escaping () async -> Void,
         givenNameField: FieldLocalization = LocalizationDefaults.givenName,
         familyNameField: FieldLocalization = LocalizationDefaults.familyName
     ) where ContentView == AnyView, Action == OnboardingActionsView {
@@ -131,7 +131,7 @@ public struct ConsentView<ContentView: View, Action: View>: View {
             },
             actionView: {
                 OnboardingActionsView(String(localized: "CONSENT_ACTION", bundle: .module)) {
-                    action()
+                    await action()
                 }
             },
             givenNameField: givenNameField,
@@ -149,7 +149,7 @@ public struct ConsentView<ContentView: View, Action: View>: View {
         @ViewBuilder header: () -> (some View) = { EmptyView() },
         asyncHTML: @escaping () async -> Data,
         @ViewBuilder footer: () -> (some View) = { EmptyView() },
-        action: @escaping () -> Void,
+        action: @escaping () async -> Void,
         givenNameField: FieldLocalization = LocalizationDefaults.givenName,
         familyNameField: FieldLocalization = LocalizationDefaults.familyName
     ) where ContentView == AnyView, Action == OnboardingActionsView {
@@ -168,7 +168,7 @@ public struct ConsentView<ContentView: View, Action: View>: View {
             },
             actionView: {
                 OnboardingActionsView(String(localized: "CONSENT_ACTION", bundle: .module)) {
-                    action()
+                    await action()
                 }
             },
             givenNameField: givenNameField,
