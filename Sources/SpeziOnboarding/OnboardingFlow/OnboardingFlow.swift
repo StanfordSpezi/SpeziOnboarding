@@ -18,22 +18,8 @@ public struct OnboardingFlow: View {
     }
     
     public init(onboardingFlowComplete: Binding<Bool>, @OnboardingViewBuilder _ content: @escaping () -> OnboardingFlowViewCollection) {
-        
-        // Hacky
-        /*
-        let semaphore = DispatchSemaphore(value: 0)
-        let box = Box<OnboardingFlowViewCollection>()
-        Task {
-            let result = await content()
-            box.result = .success(result)
-            semaphore.signal()
-        }
-        semaphore.wait()
-         */
-
-        
+        // Sadly, we cannot use async stuff here as otherwise the entire `OnboardingFlow` is async (the result builder itself could be async) -> cannot be used in a View body
         let onboardingFlowViewCollection = content()
-        //let onboardingFlowViewCollection = try! box.result!.get()
         
         self._onboardingViewController = StateObject(
             wrappedValue: OnboardingViewController(
@@ -42,8 +28,4 @@ public struct OnboardingFlow: View {
             )
         )
     }
-}
-
-private final class Box<T> {
-    var result: Result<T, Error>?
 }
