@@ -51,6 +51,6 @@ public enum OnboardingViewBuilder {
     
     /// If declared, this will be called on the partial result from the outermost block statement to produce the final returned result.
     public static func buildFinalResult(_ component: [any View]) -> OnboardingFlowViewCollection {
-        OnboardingFlowViewCollection(views: component.reversed())   // Reverse the collection to act as a Stack
+        OnboardingFlowViewCollection(views: component)
     }
 }
