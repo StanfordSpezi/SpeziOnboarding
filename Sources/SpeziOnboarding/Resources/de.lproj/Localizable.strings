@@ -16,3 +16,14 @@
 
 // MARK: Signature View
 "SIGNATURE_VIEW_UNDO" = "Rückgängig Machen";
+
+
+// MARK: Name Fields
+"NAME_FIELD_GIVEN_NAME_TITLE" = "Vorname";
+"NAME_FIELD_GIVEN_NAME_PLACEHOLDER" = "Gib deinen Vornamen ein ...";
+"NAME_FIELD_FAMILY_NAME_TITLE" = "Nachname";
+"NAME_FIELD_FAMILY_NAME_PLACEHOLDER" = "Gib deinen Nachnamen ein ...";
+
+
+// MARK: OnboardingStack Back button
+"BACK_BUTTON_CONTENT" = "Zurück";

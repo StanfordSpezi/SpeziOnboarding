@@ -8,8 +8,8 @@
 import Foundation
 import SwiftUI
 
-public struct OnboardingFlowViewCollection {
-    let views: [any View]
+public class OnboardingFlowViewCollection: ObservableObject {
+    @Published var views: [any View]
     
     init(views: [any View]) {
         self.views = views
