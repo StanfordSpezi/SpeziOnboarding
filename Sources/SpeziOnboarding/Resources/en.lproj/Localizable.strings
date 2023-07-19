@@ -25,5 +25,5 @@
 "NAME_FIELD_FAMILY_NAME_PLACEHOLDER" = "Enter your last name ...";
 
 
-// MARK: OnboardingStack Back button
-"BACK_BUTTON_CONTENT" = "Back";
+// MARK: Illegal Onboarding Step
+"ILLEGAL_ONBOARDING_STEP" = "SpeziOnboarding: Illegal Onboarding Step";

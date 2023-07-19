@@ -9,49 +9,62 @@
 import Foundation
 import SwiftUI
 
+
+/// The ``OnboardingStack`` represents one of the main components of the ``SpeziOnboarding`` package. It wraps the SwiftUI `NavigationStack` and provides an easy to use API to declare the onboarding steps of health applications, eliminating the need for developers to manually determine the next to be shown step within each onboarding view (e.g. skipped steps as permissions are already granted). All of the (conditional) onboarding views are stated within the ``OnboardingStack`` from which the order of the onboarding flow is determined.
+///
+/// Navigation within the ``OnboardingStack`` is possible via the ``OnboardingNavigationPath`` which works quite similar to the SwiftUI `NavigationPath`. It automatically navigates to the next to-be-shown onboarding step via ``OnboardingNavigationPath/nextStep()`` or manually via  ``OnboardingNavigationPath/append(_:)``. Furthermore, one can append custom onboarding steps that are not decleared within the  ``OnboardingStack`` (e.g. as the structure of these steps isn't linear) via ``OnboardingNavigationPath/append(customView:)`` or ``OnboardingNavigationPath/append(customViewInit:)``. See the ``OnboardingNavigationPath`` for more details.
+/// 
+/// The ``OnboardingNavigationPath`` is injeceted as a SwiftUI `EnvironmentObject` into the ``OnboardingStack`` view hierachy. Resulting from that, all views declared within the ``OnboardingStack`` are able to access a single instance of the ``OnboardingNavigationPath``.
+///
+/// ```swift
+/// struct Onboarding: View {
+///     @AppStorage(StorageKeys.onboardingFlowComplete) var completedOnboardingFlow = false
+///     @State private var localNotificationAuthorization = false
+///
+///     var body: some View {
+///         OnboardingStack(onboardingFlowComplete: $completedOnboardingFlow) {
+///             Welcome()
+///             InterestingModules()
+///
+///             if HKHealthStore.isHealthDataAvailable() {
+///                 HealthKitPermissions()
+///             }
+///
+///             if !localNotificationAuthorization {
+///                 NotificationPermissions()
+///             }
+///         }
+///         .task {
+///             localNotificationAuthorization = await ...
+///         }
+///     }
+/// }
+/// ```
 public struct OnboardingStack: View {
     @StateObject var onboardingNavigationPath: OnboardingNavigationPath
     @ObservedObject var onboardingFlowViewCollection: OnboardingFlowViewCollection
     
     
+    /// The ``OnboardingStack/body`` contains a SwiftUI `NavigationStack` that is responsible for the navigation between the different onboarding views via a ``OnboardingNavigationPath``
     public var body: some View {
         NavigationStack(path: $onboardingNavigationPath.path) {
             onboardingNavigationPath.firstOnboardingView
-                .navigationDestination(for: OnboardingStepIdentifier.self) { onboardingStep in
+                .navigationDestination(for: OnboardingStep.Identifier.self) { onboardingStep in
                     onboardingNavigationPath.navigate(to: onboardingStep)
-                        .navigationBarBackButtonHidden()
-                        .toolbar {
-                            ToolbarItem(placement: .navigationBarLeading) {
-                                backButton
-                            }
-                        }
                 }
         }
         .environmentObject(onboardingNavigationPath)
-        .onReceive(onboardingFlowViewCollection.$views, perform: { newViews in
-            self.onboardingNavigationPath.updateViews(with: newViews)
+        /// Inject onboarding views resulting from a retriggered evaluation of the onboarding result builder into the `OnboardingNavigationPath`
+        .onReceive(onboardingFlowViewCollection.$views, perform: { updatedOnboardingViews in
+            self.onboardingNavigationPath.updateViews(with: updatedOnboardingViews)
         })
     }
     
-    @ViewBuilder
-    private var backButton: some View {
-        // TODO: Environment object / Environment path that is passed to all views in the onboarding view stack enabelling the "disabelling" of the back button for a short amount of time
-        Button(action: {
-            onboardingNavigationPath.removeLast()
-        }) {
-            HStack(spacing: 5) {
-                Image(systemName: "chevron.left")
-                    .foregroundColor(.blue)
-                    .font(.system(size: 17, weight: .semibold))
-                // TODO: Why isn't this text displayed in "leading" placement? Some kind of toolbar limitation?
-                // With .navigationBarItems(leading: backButton) is somehow works but the placement is off
-                Text(String(localized: "BACK_BUTTON_CONTENT", bundle: .module))
-                    .foregroundColor(.blue)
-                    .font(.system(size: 17))
-            }
-        }
-    }
     
+    /// A ``OnboardingStack`` is defined by the ``OnboardingFlowViewCollection`` resulting from the evaluation of the ``OnboardingViewBuilder`` result builder as well as an boolean `Binding` that is set to true when the onboarding flow is completed.
+    /// - Parameters:
+    ///   - onboardingFlowComplete: A SwiftUI `Binding` that is set to true once the onboarding flow is complete.
+    ///   - content: The SwiftUI (Onboarding)``View``s that are part of the onboarding flow. You can define the ``View``s using the ``OnboardingViewBuilder`` result builder.
     public init(onboardingFlowComplete: Binding<Bool>? = nil, @OnboardingViewBuilder _ content: @escaping () -> OnboardingFlowViewCollection) {
         let onboardingFlowViewCollection = content()
         self.onboardingFlowViewCollection = onboardingFlowViewCollection

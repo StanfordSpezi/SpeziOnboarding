@@ -10,6 +10,7 @@ import Foundation
 import SwiftUI
 
 
+/// A result builder used to aggregate multiple SwiftUI `View`s within the ``OnboardingStack``
 @resultBuilder
 public enum OnboardingViewBuilder {
     /// If declared, provides contextual type information for statement expressions to translate them into partial results.

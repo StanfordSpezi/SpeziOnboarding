@@ -25,5 +25,5 @@
 "NAME_FIELD_FAMILY_NAME_PLACEHOLDER" = "Gib deinen Nachnamen ein ...";
 
 
-// MARK: OnboardingStack Back button
-"BACK_BUTTON_CONTENT" = "Zurück";
+// MARK: Illegal Onboarding Step
+"ILLEGAL_ONBOARDING_STEP" = "SpeziOnboarding: Unerlaubter Schritt während des Onboardings";
