@@ -51,9 +51,9 @@ public class OnboardingNavigationPath: ObservableObject {
     /// In case there isn't a single onboarding view stored within `OnboardingNavigationPath.onboardingSteps` (meaning the ``NavigationStack`` contains no views after its evaluation), the property serves an `EmptyView` which is then dismissed immediatly as the `OnboardingNavigationPath.complete` property is automatically set to true.
     var firstOnboardingView: AnyView {
         if !onboardingSteps.isEmpty {
-            .init(onboardingSteps[0].view)
+            return .init(onboardingSteps[0].view)
         } else {
-            .init(EmptyView())
+            return .init(EmptyView())
         }
     }
     
