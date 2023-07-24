@@ -16,6 +16,10 @@ struct IllegalOnboardingStepView: View {
     }
 }
 
-#Preview {
-    IllegalOnboardingStepView()
+#if DEBUG
+struct IllegalOnboardingStepView_Previews: PreviewProvider {
+    static var previews: some View {
+        IllegalOnboardingStepView()
+    }
 }
+#endif
