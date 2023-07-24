@@ -44,7 +44,7 @@ public class OnboardingNavigationPath: ObservableObject {
     /// Stores all `OnboardingStep`s in-order as declared by the onboarding views within the ``OnboardingStack``.
     private var onboardingSteps: [OnboardingStep]
     /// Holds a custom onboarding step that is appended to the ``OnboardingNavigationPath`` via the ``append(customView:)`` or ``append(customViewInit:)`` instance methods
-    private var customOnboardingStep: OnboardingStep? = nil
+    private var customOnboardingStep: OnboardingStep?
     
     /// The first onboarding view of the `OnboardingNavigationPath.onboardingSteps`. Serves as a starting point for the SwiftUI `NavigationStack`.
     ///
@@ -64,7 +64,7 @@ public class OnboardingNavigationPath: ObservableObject {
     /// In case there isn't a suitable element within the `OnboardingNavigationPath.path`, return the `OnboardingStep.Identifier` of the first onboarding view.
     private var currentOnboardingStep: OnboardingStep.Identifier? {
         var copyPath = path
-        while(!copyPath.isEmpty) {
+        while !copyPath.isEmpty {
             guard let lastElement = copyPath.lastElement else {
                 return nil
             }
@@ -119,7 +119,9 @@ public class OnboardingNavigationPath: ObservableObject {
     public func append(_ onboardingStepType: any View.Type) {
         let onboardingStep = OnboardingStep.Identifier(fromType: onboardingStepType)
         guard onboardingSteps.contains(where: { $0.step == onboardingStep }) else {
-            print("Warning: Parameter passed to OnboardingNavigationPath.append(_:) doesn't correspond to an Onboarding step outlined in the OnboardingStack! Please make sure that the passed type reflects an Onboarding view decleared in the OnboardingStack!")
+            print("""
+            Warning: Parameter passed to OnboardingNavigationPath.append(_:) doesn't correspond to an Onboarding step outlined in the OnboardingStack!
+            """)
             return
         }
         

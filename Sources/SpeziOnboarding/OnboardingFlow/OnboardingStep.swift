@@ -12,9 +12,6 @@ import SwiftUI
 /// An `OnboardingStep` serves as an abstraction of a step in the onboarding flow as outlined within the ``OnboardingStack``.
 /// It contains both the associated SwiftUI `View` with an onboarding step as well as a lightweight `OnboardingStep.Identifier`
 struct OnboardingStep {
-    let view: any View
-    let step: Identifier
-    
     struct Identifier: Hashable, Codable {
         let wrappedStep: String
         let custom: Bool
@@ -29,4 +26,7 @@ struct OnboardingStep {
             self.custom = custom
         }
     }
+    
+    let view: any View
+    let step: Identifier
 }
