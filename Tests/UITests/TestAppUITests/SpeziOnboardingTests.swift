@@ -11,22 +11,12 @@ import XCTestExtensions
 
 
 final class OnboardingTests: XCTestCase {
-    func testOnboardingConsent() throws {
+    func testOnboardingConsentMarkdown() throws {
         let app = XCUIApplication()
         app.launch()
-
-        // First test that the consent can render HTML
-        app.collectionViews.buttons["Consent View (HTML)"].tap()
-        _ = XCTWaiter.wait(for: [expectation(description: "Wait for HTML to load.")], timeout: 10.0)
-
-        XCTAssert(app.staticTexts["Consent"].exists)
-        XCTAssert(app.staticTexts["Version 1.0"].exists)
-        XCTAssert(app.webViews.staticTexts["This is an example of a study consent written in HTML."].exists)
         
-        app.navigationBars.buttons.element(boundBy: 0).tap()
-
         // Now test that the consent view can render markdown
-        app.collectionViews.buttons["Consent View (Markdown)"].tap()
+        app.buttons["Consent View (Markdown)"].tap()
         
         XCTAssert(app.staticTexts["Consent"].exists)
         XCTAssert(app.staticTexts["Version 1.0"].exists)
@@ -55,24 +45,31 @@ final class OnboardingTests: XCTestCase {
         
         hitConsentButton(app)
         
-        XCTAssert(app.staticTexts["Welcome"].exists)
-        XCTAssert(app.staticTexts["Spezi UI Tests"].exists)
+        _ = XCTWaiter.wait(for: [expectation(description: "Wait for HTML to load.")], timeout: 10.0)
+        
+        XCTAssert(app.staticTexts["Consent"].exists)
+        XCTAssert(app.staticTexts["Version 1.0"].exists)
+        XCTAssert(app.webViews.staticTexts["This is an example of a study consent written in HTML."].exists)
     }
     
-    private func hitConsentButton(_ app: XCUIApplication) {
-        if app.staticTexts["This is a markdown example"].isHittable {
-            app.staticTexts["This is a markdown example"].swipeUp()
-        } else {
-            print("Can not scroll down.")
-        }
-        app.buttons["I Consent"].tap()
+    func testOnboardingConsentHTML() throws {
+        let app = XCUIApplication()
+        app.launch()
+
+        // First test that the consent can render HTML
+        app.buttons["Consent View (HTML)"].tap()
+        _ = XCTWaiter.wait(for: [expectation(description: "Wait for HTML to load.")], timeout: 10.0)
+
+        XCTAssert(app.staticTexts["Consent"].exists)
+        XCTAssert(app.staticTexts["Version 1.0"].exists)
+        XCTAssert(app.webViews.staticTexts["This is an example of a study consent written in HTML."].exists)
     }
     
     func testOnboardingView() throws {
         let app = XCUIApplication()
         app.launch()
         
-        app.collectionViews.buttons["Onboarding View"].tap()
+        app.buttons["Welcome View"].tap()
         
         XCTAssert(app.staticTexts["Welcome"].exists)
         XCTAssert(app.staticTexts["Spezi UI Tests"].exists)
@@ -99,7 +96,7 @@ final class OnboardingTests: XCTestCase {
         let app = XCUIApplication()
         app.launch()
         
-        app.collectionViews.buttons["Sequential Onboarding"].tap()
+        app.buttons["Sequential Onboarding"].tap()
         
         XCTAssert(app.staticTexts["Things to know"].exists)
         XCTAssert(app.staticTexts["And you should pay close attention ..."].exists)
@@ -132,5 +129,113 @@ final class OnboardingTests: XCTestCase {
         
         XCTAssert(app.staticTexts["Consent"].exists)
         XCTAssert(app.staticTexts["Version 1.0"].exists)
+    }
+    
+    func testOverallOnboardingFlow() throws {
+        let app = XCUIApplication()
+        app.launch()
+        
+        app.buttons["Welcome View"].tap()
+        
+        // Check if on welcome page
+        XCTAssert(app.staticTexts["Welcome"].exists)
+        XCTAssert(app.staticTexts["Spezi UI Tests"].exists)
+        
+        app.buttons["Learn More"].tap()
+        
+        // Check if on sequential onboarding view
+        XCTAssert(app.staticTexts["Things to know"].exists)
+        XCTAssert(app.staticTexts["And you should pay close attention ..."].exists)
+        
+        app.buttons["Next"].tap()
+        app.buttons["Next"].tap()
+        app.buttons["Next"].tap()
+        app.buttons["Continue"].tap()
+        
+        // Check if on conset (markdown) view
+        XCTAssert(app.staticTexts["Consent"].exists)
+        XCTAssert(app.staticTexts["Version 1.0"].exists)
+        XCTAssert(app.staticTexts["This is a markdown example"].exists)
+        
+        #if targetEnvironment(simulator) && (arch(i386) || arch(x86_64))
+            throw XCTSkip("PKCanvas view-related tests are currently skipped on Intel-based iOS simulators due to a metal bug on the simulator.")
+        #endif
+        
+        try app.textFields["Enter your first name ..."].enter(value: "Leland")
+        try app.textFields["Enter your surname ..."].enter(value: "Stanford")
+        
+        app.staticTexts["Leland Stanford"].swipeRight()
+        
+        app.buttons["I Consent"].tap()
+        
+        // Check if on conset (HTML) view
+        _ = XCTWaiter.wait(for: [expectation(description: "Wait for HTML to load.")], timeout: 10.0)
+
+        XCTAssert(app.staticTexts["Consent"].exists)
+        XCTAssert(app.staticTexts["Version 1.0"].exists)
+        XCTAssert(app.webViews.staticTexts["This is an example of a study consent written in HTML."].exists)
+
+        try app.textFields["Enter your first name ..."].enter(value: "Leland")
+        try app.textFields["Enter your last name ..."].enter(value: "Stanford")
+
+        app.staticTexts["Leland Stanford"].swipeRight()
+        
+        app.buttons["I Consent"].tap()
+        
+        // Check if on final page
+        XCTAssert(app.staticTexts["Onboarding complete"].exists)
+    }
+    
+    func testDynamicOnboardingFlow1() throws {
+        let app = XCUIApplication()
+        app.launch()
+        
+        try dynamicOnboardingFlow(app: app, showConditionalView: false)
+    }
+    
+    func testDynamicOnboardingFlow2() throws {
+        let app = XCUIApplication()
+        app.launch()
+        
+        try dynamicOnboardingFlow(app: app, showConditionalView: true)
+    }
+    
+    private func hitConsentButton(_ app: XCUIApplication) {
+        if app.staticTexts["This is a markdown example"].isHittable {
+            app.staticTexts["This is a markdown example"].swipeUp()
+        } else {
+            print("Can not scroll down.")
+        }
+        app.buttons["I Consent"].tap()
+    }
+    
+    private func dynamicOnboardingFlow(app: XCUIApplication, showConditionalView: Bool) throws {
+        // Dynamically show onboarding views
+        app.switches["Show Conditional Onboarding View"].doubleTap()
+        
+        if showConditionalView {
+            app.switches["Show Conditional Onboarding View"].tap()
+        }
+        
+        app.buttons["Consent View (HTML)"].tap()
+        
+        // Check if on conset (HTML) view
+        XCTAssert(app.staticTexts["Consent"].exists)
+
+        try app.textFields["Enter your first name ..."].enter(value: "Leland")
+        try app.textFields["Enter your last name ..."].enter(value: "Stanford")
+
+        app.staticTexts["Leland Stanford"].swipeRight()
+        
+        app.buttons["I Consent"].tap()
+        
+        if showConditionalView {
+            // Check if on conditional test view
+            XCTAssert(app.staticTexts["Conditional Test View"].exists)
+            app.buttons["Next"].tap()
+        }
+        
+        // Check if on final page
+        XCTAssert(app.staticTexts["Onboarding complete"].exists)
     }
 }
