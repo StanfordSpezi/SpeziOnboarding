@@ -164,6 +164,8 @@ final class OnboardingTests: XCTestCase {
         try app.textFields["Enter your first name ..."].enter(value: "Leland")
         try app.textFields["Enter your surname ..."].enter(value: "Stanford")
         
+        app.staticTexts["This is a markdown example"].swipeUp()
+        
         app.staticTexts["Leland Stanford"].swipeRight()
         
         app.buttons["I Consent"].tap()
