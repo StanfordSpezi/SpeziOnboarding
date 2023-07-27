@@ -40,10 +40,21 @@ struct OnboardingStartTestView: View {
                 Text("Consent View (HTML)")
             }
             
-            Toggle(isOn: $showConditionalView, label: {
-                Text("Show Conditional Onboarding View")
-            })
-            .padding()
+            Spacer()
+                .frame(height: 8)
+            
+            // Sadly we need to use a button as UI tests are very flakey when clicking on SwiftUIs Toggles
+            HStack {
+                Button {
+                    showConditionalView.toggle()
+                } label: {
+                    Text("Show Conditional View")
+                }
+                
+                Rectangle()
+                    .fill(showConditionalView ? Color.green : Color.red)
+                    .frame(width: 20, height: 20)
+            }
         }
     }
 }

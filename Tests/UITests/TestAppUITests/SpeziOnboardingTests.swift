@@ -152,7 +152,7 @@ final class OnboardingTests: XCTestCase {
         app.buttons["Next"].tap()
         app.buttons["Continue"].tap()
         
-        // Check if on conset (markdown) view
+        // Check if on consent (markdown) view
         XCTAssert(app.staticTexts["Consent"].exists)
         XCTAssert(app.staticTexts["Version 1.0"].exists)
         XCTAssert(app.staticTexts["This is a markdown example"].exists)
@@ -168,7 +168,7 @@ final class OnboardingTests: XCTestCase {
         
         app.buttons["I Consent"].tap()
         
-        // Check if on conset (HTML) view
+        // Check if on consent (HTML) view
         _ = XCTWaiter.wait(for: [expectation(description: "Wait for HTML to load.")], timeout: 10.0)
 
         XCTAssert(app.staticTexts["Consent"].exists)
@@ -211,15 +211,13 @@ final class OnboardingTests: XCTestCase {
     
     private func dynamicOnboardingFlow(app: XCUIApplication, showConditionalView: Bool) throws {
         // Dynamically show onboarding views
-        app.switches["Show Conditional Onboarding View"].doubleTap()
-        
         if showConditionalView {
-            app.switches["Show Conditional Onboarding View"].tap()
+            app.buttons["Show Conditional View"].tap()
         }
         
         app.buttons["Consent View (HTML)"].tap()
         
-        // Check if on conset (HTML) view
+        // Check if on consent (HTML) view
         XCTAssert(app.staticTexts["Consent"].exists)
 
         try app.textFields["Enter your first name ..."].enter(value: "Leland")
