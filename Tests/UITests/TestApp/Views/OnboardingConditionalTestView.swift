@@ -16,7 +16,7 @@ struct OnboardingConditionalTestView: View {
     
     
     var body: some View {
-        VStack {
+        VStack(spacing: 12) {
             Text("Conditional Test View")
             
             Button {
