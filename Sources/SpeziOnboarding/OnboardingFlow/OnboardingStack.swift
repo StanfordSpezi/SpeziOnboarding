@@ -64,7 +64,7 @@ public struct OnboardingStack: View {
     /// A ``OnboardingStack`` is defined by the ``OnboardingFlowViewCollection`` resulting from the evaluation of the ``OnboardingViewBuilder`` result builder as well as an boolean `Binding` that is set to true when the onboarding flow is completed.
     /// - Parameters:
     ///   - onboardingFlowComplete: A SwiftUI `Binding` that is set to true once the onboarding flow is complete.
-    ///   - content: The SwiftUI (Onboarding)``View``s that are part of the onboarding flow. You can define the ``View``s using the ``OnboardingViewBuilder`` result builder.
+    ///   - content: The SwiftUI (Onboarding)`View`s that are part of the onboarding flow. You can define the `View`s using the ``OnboardingViewBuilder`` result builder.
     public init(onboardingFlowComplete: Binding<Bool>? = nil, @OnboardingViewBuilder _ content: @escaping () -> OnboardingFlowViewCollection) {
         let onboardingFlowViewCollection = content()
         self.onboardingFlowViewCollection = onboardingFlowViewCollection
@@ -77,3 +77,14 @@ public struct OnboardingStack: View {
         )
     }
 }
+
+
+#if DEBUG
+struct OnboardingStack_Previews: PreviewProvider {
+    static var previews: some View {
+        OnboardingStack(onboardingFlowComplete: .constant(false)) {
+            Text("Hello Spezi!")
+        }
+    }
+}
+#endif

@@ -26,8 +26,11 @@ import SwiftUI
 ///                 // Automatically navigates to the next `OnboardingStep`, as outlined by the order of views within the `OnboardingStack`
 ///                 onboardingNavigationPath.nextStep()
 ///
-///                 // Manually navigates to an onboarding view identified by it's static type which is declared within the `OnboardingStack`. After this manual navigation step, the `OnboardingNavigationPath` will continue in the declared onboarding order from the `OnboardingStack`.
+///                 // Manually navigates to an onboarding view identified by its static type which is declared within the `OnboardingStack`. After this manual navigation step, the `OnboardingNavigationPath` will continue from the current step in the declared onboarding order within the `OnboardingStack`.
 ///                 onboardingNavigationPath.append(InterestingModules.self)
+///
+///                 // Manually navigates to a custom onboarding view which is not declared within the `OnboardingStack`. The internal onboarding state of the `OnboardingNavigationPath` won't be moved and stay at the old position.
+///                 onboardingNavigationPath.append(customView: SomeCustomView())
 ///             }
 ///         )
 ///     }
@@ -117,15 +120,15 @@ public class OnboardingNavigationPath: ObservableObject {
     /// - Parameters:
     ///   - onboardingStepType: The type of the onboarding `View` which should be displayed next. Must be declared within the ``OnboardingStack``.
     public func append(_ onboardingStepType: any View.Type) {
-        let onboardingStep = OnboardingStep.Identifier(fromType: onboardingStepType)
-        guard onboardingSteps.contains(where: { $0.step == onboardingStep }) else {
+        let onboardingStepIdentifier = OnboardingStep.Identifier(fromType: onboardingStepType)
+        guard onboardingSteps.contains(where: { $0.step == onboardingStepIdentifier }) else {
             print("""
             Warning: Parameter passed to OnboardingNavigationPath.append(_:) doesn't correspond to an Onboarding step outlined in the OnboardingStack!
             """)
             return
         }
         
-        appendToInternalNavigationPath(of: onboardingStep)
+        appendToInternalNavigationPath(of: onboardingStepIdentifier)
     }
     
     
