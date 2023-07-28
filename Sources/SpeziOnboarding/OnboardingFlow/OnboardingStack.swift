@@ -49,7 +49,7 @@ public struct OnboardingStack: View {
     public var body: some View {
         NavigationStack(path: $onboardingNavigationPath.path) {
             onboardingNavigationPath.firstOnboardingView
-                .navigationDestination(for: OnboardingStep.Identifier.self) { onboardingStep in
+                .navigationDestination(for: OnboardingStepIdentifier.self) { onboardingStep in
                     onboardingNavigationPath.navigate(to: onboardingStep)
                 }
         }

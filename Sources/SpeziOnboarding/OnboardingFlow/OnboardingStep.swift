@@ -10,23 +10,18 @@ import Foundation
 import SwiftUI
 
 /// An `OnboardingStep` serves as an abstraction of a step in the onboarding flow as outlined within the ``OnboardingStack``.
-/// It contains both the associated SwiftUI `View` with an onboarding step as well as a lightweight `OnboardingStep.Identifier`
-struct OnboardingStep {
-    struct Identifier: Hashable, Codable {
-        let wrappedStep: String
-        let custom: Bool
-        
-        init(fromType type: any View.Type, custom: Bool = false) {
-            self.wrappedStep = String(describing: type)
-            self.custom = custom
-        }
-        
-        init(fromView view: any View, custom: Bool = false) {
-            self.wrappedStep = String(describing: type(of: view))
-            self.custom = custom
-        }
+/// It contains both the identifier for an onboarding step as well as a flag that indicates if it's a custom onboarding step.
+struct OnboardingStepIdentifier: Hashable, Codable {
+    let onboardingStepType: String
+    let custom: Bool
+    
+    init(fromType type: any View.Type, custom: Bool = false) {
+        self.onboardingStepType = String(describing: type)
+        self.custom = custom
     }
     
-    let view: any View
-    let step: Identifier
+    init(fromView view: any View, custom: Bool = false) {
+        self.onboardingStepType = String(describing: type(of: view))
+        self.custom = custom
+    }
 }
