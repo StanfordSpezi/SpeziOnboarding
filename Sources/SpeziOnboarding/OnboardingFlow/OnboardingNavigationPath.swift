@@ -39,15 +39,15 @@ import SwiftUI
 public class OnboardingNavigationPath: ObservableObject {
     /// Internal SwiftUI `NavigationPath` that serves as the source of truth for the navigation state.
     /// Holds elements of type `OnboardingStep.Identifier` which identify the individual onboarding steps.
-    @Published var path: NavigationPath
+    @Published var path = NavigationPath()
     /// Boolean binding that is injected via the ``OnboardingStack``.
     /// Indicates if the onboarding flow is completed, meaning the last view declared within the ``OnboardingStack`` is completed.
     private var complete: Binding<Bool>?
     
     /// Stores all `OnboardingStep`s in-order as declared by the onboarding views within the ``OnboardingStack``.
     private var onboardingSteps: [OnboardingStep]
-    /// Holds a custom onboarding step that is appended to the ``OnboardingNavigationPath`` via the ``append(customView:)`` or ``append(customViewInit:)`` instance methods
-    private var customOnboardingStep: OnboardingStep?
+    /// Stores all custom onboarding steps that are appended to the ``OnboardingNavigationPath`` via the ``append(customView:)`` or ``append(customViewInit:)`` instance methods
+    private var customOnboardingSteps: [OnboardingStep] = []
     
     /// The first onboarding view of the `OnboardingNavigationPath.onboardingSteps`. Serves as a starting point for the SwiftUI `NavigationStack`.
     ///
@@ -93,8 +93,6 @@ public class OnboardingNavigationPath: ObservableObject {
             )
         }
         self.complete = complete
-        
-        self.path = NavigationPath()
     }
     
     
@@ -139,9 +137,11 @@ public class OnboardingNavigationPath: ObservableObject {
     ///   - customView: A custom onboarding `View` instance that should be shown next in the onboarding flow. It isn't required to declare this view within the ``OnboardingStack``.
     public func append(customView: any View) {
         let customOnboardingStepIdentifier = OnboardingStep.Identifier(fromView: customView, custom: true)
-        customOnboardingStep = .init(
-            view: customView,
-            step: customOnboardingStepIdentifier
+        customOnboardingSteps.append(
+            OnboardingStep(
+                view: customView,
+                step: customOnboardingStepIdentifier
+            )
         )
         
         appendToInternalNavigationPath(of: customOnboardingStepIdentifier)
@@ -153,13 +153,15 @@ public class OnboardingNavigationPath: ObservableObject {
     ///
     /// - Parameters:
     ///   - customViewInit: A custom onboarding `View` initializer that creates a `View` shown next in the onboarding flow. It isn't required to declare this view within the ``OnboardingStack``.
-    public func append(customViewInit: () -> any View) {
-        let view = customViewInit()
-        let customOnboardingStepIdentifier = OnboardingStep.Identifier(fromView: view, custom: true)
+    @MainActor public func append(customViewInit: @MainActor () -> any View) {
+        let customView = customViewInit()
+        let customOnboardingStepIdentifier = OnboardingStep.Identifier(fromView: customView, custom: true)
         
-        customOnboardingStep = .init(
-            view: view,
-            step: customOnboardingStepIdentifier
+        customOnboardingSteps.append(
+            OnboardingStep(
+                view: customView,
+                step: customOnboardingStepIdentifier
+            )
         )
 
         appendToInternalNavigationPath(of: customOnboardingStepIdentifier)
@@ -201,7 +203,7 @@ public class OnboardingNavigationPath: ObservableObject {
     /// - Returns: `View` corresponding to the passed `OnboardingStep.Identifier`
     func navigate(to onboardingStep: OnboardingStep.Identifier) -> AnyView {
         if onboardingStep.custom {
-            guard let view = customOnboardingStep?.view else {
+            guard let view = customOnboardingSteps.first(where: { $0.step == onboardingStep })?.view else {
                 return AnyView(IllegalOnboardingStepView())
             }
             return AnyView(view)

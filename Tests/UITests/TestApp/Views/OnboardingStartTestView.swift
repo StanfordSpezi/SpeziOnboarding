@@ -40,21 +40,28 @@ struct OnboardingStartTestView: View {
                 Text("Consent View (HTML)")
             }
             
+            Button {
+                path.append(
+                    customView: OnboardingCustomTestView1(exampleArgument: "Hello Spezi!")
+                )
+            } label: {
+                Text("Custom Onboarding View 1")
+            }
+            
+            Button {
+                path.append(customViewInit: OnboardingCustomTestView2.init)
+            } label: {
+                Text("Custom Onboarding View 2")
+            }
+            
             Spacer()
                 .frame(height: 8)
             
-            // Sadly we need to use a button as UI tests are very flakey when clicking on SwiftUIs Toggles
-            HStack {
-                Button {
-                    showConditionalView.toggle()
-                } label: {
-                    Text("Show Conditional View")
-                }
-                
-                Rectangle()
-                    .fill(showConditionalView ? Color.green : Color.red)
-                    .frame(width: 20, height: 20)
-            }
+            // Sadly we need to use a custom view as UI tests are very flakey when clicking on SwiftUIs Toggles
+            CustomToggleView(
+                text: "Show Conditional View",
+                condition: $showConditionalView
+            )
         }
     }
 }
@@ -68,3 +75,22 @@ struct OnboardingStartTestView_Previews: PreviewProvider {
     }
 }
 #endif
+
+private struct CustomToggleView: View {
+    var text: String
+    @Binding var condition: Bool
+    
+    var body: some View {
+        HStack {
+            Button {
+                condition.toggle()
+            } label: {
+                Text(text)
+            }
+            
+            Rectangle()
+                .fill(condition ? Color.green : Color.red)
+                .frame(width: 20, height: 20)
+        }
+    }
+}
