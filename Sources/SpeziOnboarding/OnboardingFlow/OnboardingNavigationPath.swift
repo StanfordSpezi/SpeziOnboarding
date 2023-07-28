@@ -47,9 +47,9 @@ public class OnboardingNavigationPath: ObservableObject {
     /// Stores all `OnboardingStepIdentifier`s in-order as declared by the onboarding views within the ``OnboardingStack``.
     private var onboardingStepsOrder: [OnboardingStepIdentifier] = []
     /// Stores all onboarding views as declared within the ``OnboardingStack``.
-    private var onboardingSteps: [OnboardingStepIdentifier : any View] = [:]
+    private var onboardingSteps: [OnboardingStepIdentifier: any View] = [:]
     /// Stores all custom onboarding views that are appended to the ``OnboardingNavigationPath`` via the ``append(customView:)`` or ``append(customViewInit:)`` instance methods
-    private var customOnboardingSteps: [OnboardingStepIdentifier : any View] = [:]
+    private var customOnboardingSteps: [OnboardingStepIdentifier: any View] = [:]
     
     /// The first onboarding view of the `OnboardingNavigationPath.onboardingSteps`. Serves as a starting point for the SwiftUI `NavigationStack`.
     ///
