@@ -20,6 +20,9 @@
 		970D44512A6F04ED00756FE2 /* SequentialOnboardingTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 970D44502A6F04ED00756FE2 /* SequentialOnboardingTestView.swift */; };
 		970D44532A6F0B1900756FE2 /* OnboardingStartTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 970D44522A6F0B1900756FE2 /* OnboardingStartTestView.swift */; };
 		970D44552A6F119600756FE2 /* OnboardingConditionalTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 970D44542A6F119600756FE2 /* OnboardingConditionalTestView.swift */; };
+		97A8FF2C2A74449F008CD91A /* OnboardingCustomTestView1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97A8FF2B2A74449F008CD91A /* OnboardingCustomTestView1.swift */; };
+		97A8FF2E2A7444FC008CD91A /* OnboardingCustomTestView2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97A8FF2D2A7444FC008CD91A /* OnboardingCustomTestView2.swift */; };
+		97A8FF312A74607F008CD91A /* CustomToggleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97A8FF302A74607F008CD91A /* CustomToggleView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,6 +50,9 @@
 		970D44502A6F04ED00756FE2 /* SequentialOnboardingTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SequentialOnboardingTestView.swift; sourceTree = "<group>"; };
 		970D44522A6F0B1900756FE2 /* OnboardingStartTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingStartTestView.swift; sourceTree = "<group>"; };
 		970D44542A6F119600756FE2 /* OnboardingConditionalTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingConditionalTestView.swift; sourceTree = "<group>"; };
+		97A8FF2B2A74449F008CD91A /* OnboardingCustomTestView1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingCustomTestView1.swift; sourceTree = "<group>"; };
+		97A8FF2D2A7444FC008CD91A /* OnboardingCustomTestView2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingCustomTestView2.swift; sourceTree = "<group>"; };
+		97A8FF302A74607F008CD91A /* CustomToggleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomToggleView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -120,14 +126,25 @@
 		970D44472A6F02E800756FE2 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				97A8FF2F2A74606A008CD91A /* HelperViews */,
 				970D44522A6F0B1900756FE2 /* OnboardingStartTestView.swift */,
 				970D444E2A6F048A00756FE2 /* OnboardingWelcomeTestView.swift */,
 				970D44502A6F04ED00756FE2 /* SequentialOnboardingTestView.swift */,
 				970D444A2A6F031200756FE2 /* ConsentMarkdownTestView.swift */,
 				970D444C2A6F040900756FE2 /* ConsentHTMLTestView.swift */,
+				97A8FF2B2A74449F008CD91A /* OnboardingCustomTestView1.swift */,
+				97A8FF2D2A7444FC008CD91A /* OnboardingCustomTestView2.swift */,
 				970D44542A6F119600756FE2 /* OnboardingConditionalTestView.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		97A8FF2F2A74606A008CD91A /* HelperViews */ = {
+			isa = PBXGroup;
+			children = (
+				97A8FF302A74607F008CD91A /* CustomToggleView.swift */,
+			);
+			path = HelperViews;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -244,10 +261,13 @@
 				970D44552A6F119600756FE2 /* OnboardingConditionalTestView.swift in Sources */,
 				970D44532A6F0B1900756FE2 /* OnboardingStartTestView.swift in Sources */,
 				970D44512A6F04ED00756FE2 /* SequentialOnboardingTestView.swift in Sources */,
+				97A8FF2C2A74449F008CD91A /* OnboardingCustomTestView1.swift in Sources */,
 				2FA7382C290ADFAA007ACEB9 /* TestApp.swift in Sources */,
+				97A8FF2E2A7444FC008CD91A /* OnboardingCustomTestView2.swift in Sources */,
 				2F61BDC929DD3CC000D71D33 /* OnboardingTestsView.swift in Sources */,
 				970D444D2A6F040900756FE2 /* ConsentHTMLTestView.swift in Sources */,
 				970D444F2A6F048A00756FE2 /* OnboardingWelcomeTestView.swift in Sources */,
+				97A8FF312A74607F008CD91A /* CustomToggleView.swift in Sources */,
 				970D444B2A6F031200756FE2 /* ConsentMarkdownTestView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
