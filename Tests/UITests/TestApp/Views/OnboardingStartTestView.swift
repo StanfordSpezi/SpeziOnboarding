@@ -15,7 +15,7 @@ struct OnboardingStartTestView: View {
     @Binding var showConditionalView: Bool
     
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 8) {  // swiftlint:disable:this closure_body_length
             Button {
                 path.append(OnboardingWelcomeTestView.self)
             } label: {
@@ -57,7 +57,7 @@ struct OnboardingStartTestView: View {
             Spacer()
                 .frame(height: 8)
             
-            // Sadly we need to use a custom view as UI tests are very flakey when clicking on SwiftUIs Toggles
+            // Sadly we need to use a custom-built toggle as UI tests are very flakey when clicking on SwiftUI Toggles
             CustomToggleView(
                 text: "Show Conditional View",
                 condition: $showConditionalView
@@ -75,22 +75,3 @@ struct OnboardingStartTestView_Previews: PreviewProvider {
     }
 }
 #endif
-
-private struct CustomToggleView: View {
-    var text: String
-    @Binding var condition: Bool
-    
-    var body: some View {
-        HStack {
-            Button {
-                condition.toggle()
-            } label: {
-                Text(text)
-            }
-            
-            Rectangle()
-                .fill(condition ? Color.green : Color.red)
-                .frame(width: 20, height: 20)
-        }
-    }
-}
