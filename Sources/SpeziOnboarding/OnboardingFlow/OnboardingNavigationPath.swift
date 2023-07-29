@@ -36,6 +36,7 @@ import SwiftUI
 ///     }
 /// }
 /// ```
+@MainActor
 public class OnboardingNavigationPath: ObservableObject {
     /// Internal SwiftUI `NavigationPath` that serves as the source of truth for the navigation state.
     /// Holds elements of type `OnboardingStepIdentifier` which identify the individual onboarding steps.
@@ -44,12 +45,12 @@ public class OnboardingNavigationPath: ObservableObject {
     /// Indicates if the onboarding flow is completed, meaning the last view declared within the ``OnboardingStack`` is completed.
     private var complete: Binding<Bool>?
     
-    /// Stores all `OnboardingStepIdentifier`s in-order as declared by the onboarding views within the ``OnboardingStack``.
-    private var onboardingStepsOrder: [OnboardingStepIdentifier] = []
     /// Stores all onboarding views as declared within the ``OnboardingStack``.
     private var onboardingSteps: [OnboardingStepIdentifier: any View] = [:]
     /// Stores all custom onboarding views that are appended to the ``OnboardingNavigationPath`` via the ``append(customView:)`` or ``append(customViewInit:)`` instance methods
     private var customOnboardingSteps: [OnboardingStepIdentifier: any View] = [:]
+    /// Stores all `OnboardingStepIdentifier`s in-order as declared by the onboarding views within the ``OnboardingStack``.
+    private var onboardingStepsOrder: [OnboardingStepIdentifier] = []
     
     /// The first onboarding view of the `OnboardingNavigationPath.onboardingSteps`. Serves as a starting point for the SwiftUI `NavigationStack`.
     ///
@@ -152,7 +153,7 @@ public class OnboardingNavigationPath: ObservableObject {
     ///
     /// - Parameters:
     ///   - customViewInit: A custom onboarding `View` initializer that creates a `View` shown next in the onboarding flow. It isn't required to declare this view within the ``OnboardingStack``.
-    @MainActor public func append(customViewInit: @MainActor () -> any View) {
+    public func append(customViewInit: @MainActor () -> any View) {
         let customView = customViewInit()
         let customOnboardingStepIdentifier = OnboardingStepIdentifier(fromView: customView, custom: true)
         customOnboardingSteps[customOnboardingStepIdentifier] = customView
@@ -219,7 +220,7 @@ public class OnboardingNavigationPath: ObservableObject {
     
     
     private func onboardingComplete() {
-        Task {
+        Task { @MainActor in
             if self.onboardingSteps.isEmpty && !(self.complete?.wrappedValue ?? false) {
                 self.complete?.wrappedValue = true
             }
