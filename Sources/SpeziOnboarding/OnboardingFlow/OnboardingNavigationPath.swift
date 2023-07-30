@@ -127,7 +127,8 @@ public class OnboardingNavigationPath: ObservableObject {
         let onboardingStepIdentifier = OnboardingStepIdentifier(fromType: onboardingStepType)
         guard onboardingSteps.keys.contains(onboardingStepIdentifier) else {
             print("""
-            Warning: Parameter passed to `OnboardingNavigationPath.append(_:)` doesn't correspond to an Onboarding step outlined in the `OnboardingStack`! No navigation action will occure.
+            "Warning: Invocation of `OnboardingNavigationPath.append(_:)` with an Onboarding view
+            that is not delineated in the `OnboardingStack`. Navigation action is void."
             """)
             return
         }
@@ -187,7 +188,8 @@ public class OnboardingNavigationPath: ObservableObject {
                 
                 guard self.onboardingSteps[onboardingStepIdentifier] == nil else {
                     preconditionFailure("""
-                    Duplicate Onboarding step of type `\(onboardingStepIdentifier.onboardingStepType)` identified. Ensure unique Onboarding view instances per `OnboardingStack`!
+                    Duplicate Onboarding step of type `\(onboardingStepIdentifier.onboardingStepType)` identified.
+                    Ensure unique Onboarding view instances within the `OnboardingStack`!
                     """)
                 }
                 self.onboardingStepsOrder.append(onboardingStepIdentifier)
