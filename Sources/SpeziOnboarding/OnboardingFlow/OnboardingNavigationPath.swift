@@ -91,12 +91,7 @@ public class OnboardingNavigationPath: ObservableObject {
     ///   - complete: An optional SwiftUI `Binding` that is injected by the ``OnboardingStack``. Is managed by the ``OnboardingNavigationPath`` to indicate wheather the onboarding flow is complete.
     ///   - startAtStep: An optional SwiftUI (Onboarding) `View` type indicating the first to-be-shown step of the onboarding flow.
     init(views: [any View], complete: Binding<Bool>?, startAtStep: (any View.Type)?) {
-        for view in views {
-            let onboardingStepIdentifier = OnboardingStepIdentifier(fromView: view)
-            
-            self.onboardingStepsOrder.append(onboardingStepIdentifier)
-            self.onboardingSteps[onboardingStepIdentifier] = view
-        }
+        updateViews(with: views)
         
         self.complete = complete
         
@@ -132,7 +127,7 @@ public class OnboardingNavigationPath: ObservableObject {
         let onboardingStepIdentifier = OnboardingStepIdentifier(fromType: onboardingStepType)
         guard onboardingSteps.keys.contains(onboardingStepIdentifier) else {
             print("""
-            Warning: Parameter passed to OnboardingNavigationPath.append(_:) doesn't correspond to an Onboarding step outlined in the OnboardingStack!
+            Warning: Parameter passed to `OnboardingNavigationPath.append(_:)` doesn't correspond to an Onboarding step outlined in the `OnboardingStack`! No navigation action will occure.
             """)
             return
         }
@@ -182,13 +177,19 @@ public class OnboardingNavigationPath: ObservableObject {
     ///   - with: The updated `View`s from the ``OnboardingStack``.
     func updateViews(with views: [any View]) {
         /// Only allow view updates as long as the first onboarding view is shown.
-        /// Without this condition, the stored onboarding steps would continue to be updated when conditionals declared within the ``OnboardingStack`` change their outcome during the onboarding flow (e.g. when HealthKit permissions are granted during the onboarding), making it hard to keep track of the internal state of the navigation.
+        /// Without this condition, the stored onboarding steps would continue to be updated when conditionals declared within the ``OnboardingStack`` change their outcome during the onboarding flow (e.g. when HealthKit permissions are granted during the onboarding), making it complex to keep track of the internal state of the navigation.
         if currentOnboardingStep == onboardingStepsOrder.first {
+            self.onboardingSteps.removeAll(keepingCapacity: true)
             self.onboardingStepsOrder.removeAll(keepingCapacity: true)
             
             for view in views {
                 let onboardingStepIdentifier = OnboardingStepIdentifier(fromView: view)
                 
+                guard self.onboardingSteps[onboardingStepIdentifier] == nil else {
+                    preconditionFailure("""
+                    Duplicate Onboarding step of type `\(onboardingStepIdentifier.onboardingStepType)` identified. Ensure unique Onboarding view instances per `OnboardingStack`!
+                    """)
+                }
                 self.onboardingStepsOrder.append(onboardingStepIdentifier)
                 self.onboardingSteps[onboardingStepIdentifier] = view
             }
