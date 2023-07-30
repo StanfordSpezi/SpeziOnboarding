@@ -88,8 +88,9 @@ public class OnboardingNavigationPath: ObservableObject {
     /// A ``OnboardingNavigationPath`` represents the current navigation path within the ``OnboardingStack``.
     /// - Parameters:
     ///   - views: SwiftUI `View`s that are declaredxx within the ``OnboardingStack``.
-    ///   - complete: A SwiftUI `Binding` that is injected to the ``OnboardingStack``. Is managed by the ``OnboardingNavigationPath`` to indicate wheather the onboarding flow is complete.
-    init(views: [any View], complete: Binding<Bool>?) {
+    ///   - complete: An optional SwiftUI `Binding` that is injected by the ``OnboardingStack``. Is managed by the ``OnboardingNavigationPath`` to indicate wheather the onboarding flow is complete.
+    ///   - startAtStep: An optional SwiftUI (Onboarding) `View` type indicating the first to-be-shown step of the onboarding flow.
+    init(views: [any View], complete: Binding<Bool>?, startAtStep: (any View.Type)?) {
         for view in views {
             let onboardingStepIdentifier = OnboardingStepIdentifier(fromView: view)
             
@@ -98,6 +99,11 @@ public class OnboardingNavigationPath: ObservableObject {
         }
         
         self.complete = complete
+        
+        // If specified, navigate to the first to-be-shown onboarding step
+        if let startAtStep {
+            append(startAtStep)
+        }
     }
     
     

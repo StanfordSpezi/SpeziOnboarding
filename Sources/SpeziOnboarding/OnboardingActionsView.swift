@@ -137,7 +137,7 @@ struct OnboardingActionsView_Previews: PreviewProvider {
                 },
                 secondaryText: "SECONDARY",
                 secondaryAction: {
-                    print("Seconary")
+                    print("Secondary")
                 }
             )
         }
