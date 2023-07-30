@@ -55,7 +55,6 @@ final class OnboardingTests: XCTestCase {
         
         XCTAssert(app.staticTexts["Surname"].waitForExistence(timeout: 2))
         try app.textFields["Enter your surname ..."].enter(value: "Stanford")
-        // app.textFields["Enter your surname ..."].typeText("\n")
         
         XCTAssert(app.staticTexts["Leland Stanford"].waitForExistence(timeout: 2))
         app.staticTexts["Leland Stanford"].firstMatch.swipeUp()
@@ -75,7 +74,6 @@ final class OnboardingTests: XCTestCase {
         
         XCTAssert(app.staticTexts["Last Name"].waitForExistence(timeout: 2))
         try app.textFields["Enter your last name ..."].enter(value: "Stanford")
-        // app.textFields["Enter your last name ..."].typeText("\n")
         
         XCTAssert(app.staticTexts["Leland Stanford"].waitForExistence(timeout: 2))
         app.staticTexts["Leland Stanford"].firstMatch.swipeUp()
@@ -287,7 +285,6 @@ final class OnboardingTests: XCTestCase {
         
         XCTAssert(app.staticTexts["Last Name"].waitForExistence(timeout: 2))
         try app.textFields["Enter your last name ..."].enter(value: "Stanford")
-        // app.textFields["Enter your last name ..."].typeText("\n")
         
         XCTAssert(app.staticTexts["Leland Stanford"].waitForExistence(timeout: 2))
         app.staticTexts["Leland Stanford"].firstMatch.swipeUp()
