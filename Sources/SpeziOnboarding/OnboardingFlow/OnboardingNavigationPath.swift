@@ -64,6 +64,7 @@ public class OnboardingNavigationPath: ObservableObject {
         return .init(view)
     }
     
+    
     /// Identifier of the current onboarding step that is shown to the user via its associated view
     /// Inspects the `OnboardingNavigationPath.path` to determine the current on-top navigation element of the internal SwiftUI `NavigationPath`.
     /// Utilizes the extenstion of the `NavigationPath` declared within the ``SpeziOnboarding`` package for this functionality.
@@ -84,6 +85,7 @@ public class OnboardingNavigationPath: ObservableObject {
         
         return onboardingStepsOrder.first
     }
+    
     
     /// A ``OnboardingNavigationPath`` represents the current navigation path within the ``OnboardingStack``.
     /// - Parameters:
