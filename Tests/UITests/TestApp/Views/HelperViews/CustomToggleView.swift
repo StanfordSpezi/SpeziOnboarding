@@ -8,9 +8,11 @@
 
 import SwiftUI
 
+
 struct CustomToggleView: View {
     var text: String
     @Binding var condition: Bool
+    
     
     var body: some View {
         HStack {
@@ -26,6 +28,7 @@ struct CustomToggleView: View {
         }
     }
 }
+
 
 #if DEBUG
 struct CustomToggleView_Previews: PreviewProvider {
