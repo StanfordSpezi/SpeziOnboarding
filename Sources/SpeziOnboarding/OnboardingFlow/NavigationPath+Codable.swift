@@ -40,7 +40,7 @@ extension NavigationPath {
     
     /// Computed property that provides access to the last element within the `NavigationPath` as an `OnboardingStepIdentifier`.
     /// If the `NavigationPath` is empty or the elements within aren't `Codable`, it returns `nil`.
-    var lastElement: OnboardingStepIdentifier? {
+    var last: OnboardingStepIdentifier? {
         guard !isEmpty,
               let codable else {
             return nil
@@ -63,7 +63,7 @@ extension NavigationPath {
         var copyPath = self
         
         while !copyPath.isEmpty {
-            guard let lastElement = copyPath.lastElement else {
+            guard let lastElement = copyPath.last else {
                 return nil
             }
             
