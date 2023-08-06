@@ -10,6 +10,7 @@ import SpeziOnboarding
 import SpeziViews
 import SwiftUI
 
+
 struct ConsentMarkdownTestView: View {
     @EnvironmentObject private var path: OnboardingNavigationPath
     

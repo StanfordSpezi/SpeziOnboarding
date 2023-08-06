@@ -13,6 +13,7 @@ import SwiftUI
 struct UITestsApp: App {
     @State var onboardingFlowComplete = false
     
+    
     var body: some Scene {
         WindowGroup {
             if !onboardingFlowComplete {

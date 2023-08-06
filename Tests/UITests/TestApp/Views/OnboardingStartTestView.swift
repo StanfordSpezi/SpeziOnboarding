@@ -10,9 +10,11 @@ import SpeziOnboarding
 import SpeziViews
 import SwiftUI
 
+
 struct OnboardingStartTestView: View {
     @EnvironmentObject private var path: OnboardingNavigationPath
     @Binding var showConditionalView: Bool
+    
     
     var body: some View {
         VStack(spacing: 8) {  // swiftlint:disable:this closure_body_length
@@ -65,6 +67,7 @@ struct OnboardingStartTestView: View {
         }
     }
 }
+
 
 #if DEBUG
 struct OnboardingStartTestView_Previews: PreviewProvider {

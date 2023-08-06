@@ -9,9 +9,11 @@
 import SpeziOnboarding
 import SwiftUI
 
+
 struct OnboardingCustomTestView1: View {
     @EnvironmentObject private var path: OnboardingNavigationPath
     var exampleArgument: String
+    
     
     var body: some View {
         VStack(spacing: 12) {
@@ -25,6 +27,7 @@ struct OnboardingCustomTestView1: View {
         }
     }
 }
+
 
 #if DEBUG
 struct OnboardingCustomTestView1_Previews: PreviewProvider {

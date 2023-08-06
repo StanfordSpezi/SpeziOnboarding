@@ -9,6 +9,7 @@
 import Foundation
 import SwiftUI
 
+
 /// This extension enhances SwiftUI's `NavigationPath` by introducing a property that gives access to the last element in the `NavigationPath`.
 /// SwiftUI does not provide this functionality out-of-the-box. However, it can be engineered using the `Codable` nature of the `NavigationPath`.
 /// This is particularly useful for the ``OnboardingNavigationPath`` to identify the topmost element on SwiftUI's `NavigationPath` which is of type `OnboardingStepIdentifier`.
@@ -17,6 +18,7 @@ extension NavigationPath {
     /// This struct makes use of the `Codable` nature of the `NavigationPath` to perform the decoding operation.
     private struct _LastOnboardingStepDecoder: Decodable {
         var value: OnboardingStepIdentifier
+        
         
         /// Decodes the given `Decoder` instance into an `OnboardingStepIdentifier`.
         /// This involves decoding an unkeyed container, skipping the initial string, and then decoding the actual `OnboardingStepIdentifier`.
@@ -31,8 +33,10 @@ extension NavigationPath {
         }
     }
     
+    
     private static let encoder = JSONEncoder()
     private static let decoder = JSONDecoder()
+    
     
     /// Computed property that provides access to the last element within the `NavigationPath` as an `OnboardingStepIdentifier`.
     /// If the `NavigationPath` is empty or the elements within aren't `Codable`, it returns `nil`.
@@ -46,5 +50,30 @@ extension NavigationPath {
             _LastOnboardingStepDecoder.self,
             from: Self.encoder.encode(codable)
         ).value
+    }
+    
+    
+    /// Function that provides access to the last element on top of the `NavigationPath` that satisfies a certain predicate
+    ///
+    /// - Parameters:
+    ///   - where: The predicate determining if the element of the `NavigationPath` is considered
+    /// - Returns: The topmost element of the `NavigationPath` (of type `OnboardingStepIdentifier`) that satisfies the passed predicate. `nil` otherwise.
+    func last(where predicate: (OnboardingStepIdentifier) -> Bool) -> OnboardingStepIdentifier? {
+        /// Required to copy the `NavigationPath` instance as only access to the last element on top of the path is given
+        var copyPath = self
+        
+        while !copyPath.isEmpty {
+            guard let lastElement = copyPath.lastElement else {
+                return nil
+            }
+            
+            if predicate(lastElement) {
+                return lastElement
+            }
+            
+            copyPath.removeLast()
+        }
+        
+        return nil
     }
 }

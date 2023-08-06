@@ -9,6 +9,7 @@
 import Foundation
 import SwiftUI
 
+
 /// An `OnboardingStepIdentifier` serves as an abstraction of a step in the onboarding flow as outlined within the ``OnboardingStack``.
 /// It contains both the identifier for an onboarding step (the view's type) as well as a flag that indicates if it's a custom onboarding step.
 struct OnboardingStepIdentifier: Hashable, Codable {
@@ -20,6 +21,7 @@ struct OnboardingStepIdentifier: Hashable, Codable {
         self.onboardingStepType = String(describing: type)
         self.custom = custom
     }
+    
     
     init(fromView view: any View, custom: Bool = false) {
         self.onboardingStepType = String(describing: type(of: view))

@@ -10,6 +10,7 @@ import SpeziOnboarding
 import SpeziViews
 import SwiftUI
 
+
 struct SequentialOnboardingTestView: View {
     @EnvironmentObject private var path: OnboardingNavigationPath
     

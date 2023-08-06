@@ -9,6 +9,7 @@
 import Foundation
 import SwiftUI
 
+
 /// The ``OnboardingNavigationPath`` represents one of the main components of the ``SpeziOnboarding`` package. It wraps SwiftUI's `NavigationPath` and tailors it for the use within the ``OnboardingStack`` which provides an easy-to-use interface for creating Onboarding Flows within health applications.
 ///
 /// At the core of the ``OnboardingNavigationPath`` stands a wrapped `NavigationPath` from SwiftUI which holds path elements of type `OnboardingStepIdentifier`. Based on the onboarding views and conditions defined within the ``OnboardingStack``, the ``OnboardingNavigationPath`` enables developers to easily navigate through the onboarding procedure without repeated condition checking in every single onboarding view.
@@ -40,10 +41,10 @@ import SwiftUI
 public class OnboardingNavigationPath: ObservableObject {
     /// Internal SwiftUI `NavigationPath` that serves as the source of truth for the navigation state.
     /// Holds elements of type `OnboardingStepIdentifier` which identify the individual onboarding steps.
-    @Published var path = NavigationPath()
+    @MainActor @Published var path = NavigationPath()
     /// Boolean binding that is injected via the ``OnboardingStack``.
     /// Indicates if the onboarding flow is completed, meaning the last view declared within the ``OnboardingStack`` is completed.
-    private var complete: Binding<Bool>?
+    @MainActor private var complete: Binding<Bool>?
     
     /// Stores all onboarding views as declared within the ``OnboardingStack``.
     private var onboardingSteps: [OnboardingStepIdentifier: any View] = [:]
@@ -51,6 +52,7 @@ public class OnboardingNavigationPath: ObservableObject {
     private var customOnboardingSteps: [OnboardingStepIdentifier: any View] = [:]
     /// Stores all `OnboardingStepIdentifier`s in-order as declared by the onboarding views within the ``OnboardingStack``.
     private var onboardingStepsOrder: [OnboardingStepIdentifier] = []
+    
     
     /// The first onboarding view of the `OnboardingNavigationPath.onboardingSteps`. Serves as a starting point for the SwiftUI `NavigationStack`.
     ///
@@ -64,26 +66,17 @@ public class OnboardingNavigationPath: ObservableObject {
         return .init(view)
     }
     
-    
     /// Identifier of the current onboarding step that is shown to the user via its associated view
     /// Inspects the `OnboardingNavigationPath.path` to determine the current on-top navigation element of the internal SwiftUI `NavigationPath`.
     /// Utilizes the extenstion of the `NavigationPath` declared within the ``SpeziOnboarding`` package for this functionality.
     ///
     /// In case there isn't a suitable element within the `OnboardingNavigationPath.path`, return the `OnboardingStepIdentifier` of the first onboarding view.
     private var currentOnboardingStep: OnboardingStepIdentifier? {
-        var copyPath = path
-        while !copyPath.isEmpty {
-            guard let lastElement = copyPath.lastElement else {
-                return nil
-            }
-            
-            if !lastElement.custom {
-                return lastElement
-            }
-            copyPath.removeLast()
+        guard let lastElement = path.last(where: { !$0.custom }) else {
+            return onboardingStepsOrder.first
         }
         
-        return onboardingStepsOrder.first
+        return lastElement
     }
     
     
@@ -118,7 +111,6 @@ public class OnboardingNavigationPath: ObservableObject {
         )
     }
     
-    
     /// Moves the internal `NavigationPath` of the ``OnboardingNavigationPath`` to the onboarding step described by the passed parameter.
     /// This action integrates seamlessly with the ``nextStep()`` function, meaning one can switch between the ``append(_:)`` and ``nextStep()`` function.
     /// It is important to note that the passed parameter type must correspond to a `View` declared within the ``OnboardingStack``. If not, no movement of the internal `NavigationPath` will be done and a warning will be printed.
@@ -138,7 +130,6 @@ public class OnboardingNavigationPath: ObservableObject {
         appendToInternalNavigationPath(of: onboardingStepIdentifier)
     }
     
-    
     /// An invocation of this function moves the internal `NavigationPath` of the ``OnboardingNavigationPath`` to the passed custom onboarding `View` instance. Keep in mind that this custom `View` does not have to be declared within the ``OnboardingStack``. Resulting from that, the internal state of the ``OnboardingNavigationPath`` is still referencing to the last regular `OnboardingStep`.
     /// This function is closly related to ``append(customViewInit:)``.
     ///
@@ -150,7 +141,6 @@ public class OnboardingNavigationPath: ObservableObject {
         
         appendToInternalNavigationPath(of: customOnboardingStepIdentifier)
     }
-    
     
     /// An invocation of this function moves the internal `NavigationPath` of the ``OnboardingNavigationPath`` to the passed custom onboarding `View` initializer. Keep in mind that this custom `View` does not have to be declared within the ``OnboardingStack``. Resulting from that, the internal state of the ``OnboardingNavigationPath`` is still referencing to the last regular `OnboardingStep`.
     /// This function is closly related to ``append(customView:)``.
@@ -165,14 +155,12 @@ public class OnboardingNavigationPath: ObservableObject {
         appendToInternalNavigationPath(of: customOnboardingStepIdentifier)
     }
     
-    
     /// Removes the last element on top of the internal `NavigationPath` of the ``OnboardingNavigationPath``, meaning one is able to manually move backwards within the onboarding navigation flow.
     public func removeLast() {
-        Task { @MainActor in
+        Task {
             path.removeLast()
         }
     }
-    
     
     /// Internal function used to update the onboarding steps within the ``OnboardingNavigationPath`` if the result builder associated with the ``OnboardingStack`` is reevaluated. This may be the case with `async` properties that are stored as a SwiftUI `State` in the respective view.
     ///
@@ -202,7 +190,6 @@ public class OnboardingNavigationPath: ObservableObject {
         }
     }
     
-    
     /// Internal function used to navigate to the respective onboarding `View` via the `NavigationStack.navigationDestination(for:)`, either regularly declared within the ``OnboardingStack`` or custom steps passed via ``append(customView:)`` /``append(customViewInit:)``. identified by the `OnboardingStepIdentifier`.
     ///
     /// - Parameters:
@@ -222,16 +209,14 @@ public class OnboardingNavigationPath: ObservableObject {
         return AnyView(view)
     }
     
-    
     private func appendToInternalNavigationPath(of onboardingStepIdentifier: OnboardingStepIdentifier) {
-        Task { @MainActor in
+        Task {
             path.append(onboardingStepIdentifier)
         }
     }
     
-    
     private func onboardingComplete() {
-        Task { @MainActor in
+        Task {
             if self.onboardingSteps.isEmpty && !(self.complete?.wrappedValue ?? false) {
                 self.complete?.wrappedValue = true
             }
