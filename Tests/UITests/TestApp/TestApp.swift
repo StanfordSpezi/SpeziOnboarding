@@ -10,7 +10,7 @@ import SwiftUI
 
 
 @main
-struct UITestsApp: App {
+rstruct UITestsApp: App {
     @State private var path = NavigationPath()
     
     

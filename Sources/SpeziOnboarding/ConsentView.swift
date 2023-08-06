@@ -26,6 +26,7 @@ import SwiftUI
 ///     }
 /// )
 /// ```
+@MainActor
 public struct ConsentView<ContentView: View, Action: View>: View {
     public enum LocalizationDefaults {
         public static var givenName: FieldLocalization {
@@ -51,6 +52,8 @@ public struct ConsentView<ContentView: View, Action: View>: View {
     @State private var isSigning = false
     @State private var signature = PKDrawing()
     
+    private var asyncMarkdown: (() async -> Data)?
+    @State private var signatureSize: CGSize?
     
     public var body: some View {
         ScrollViewReader { proxy in
@@ -70,15 +73,33 @@ public struct ConsentView<ContentView: View, Action: View>: View {
                             Divider()
                             SignatureView(signature: $signature, isSigning: $isSigning, name: name)
                                 .padding(.vertical, 4)
+                                .onPreferenceChange(CanvasView.CanvasSizePreferenceKey.self, perform: { value in
+                                    signatureSize = value
+                                })
                         }
+                        
                         Divider()
-                        action
-                            .disabled(buttonDisabled)
-                            .animation(.easeInOut, value: buttonDisabled)
-                            .id("ActionButton")
-                            .onChange(of: showSignatureView) { _ in
-                                proxy.scrollTo("ActionButton")
+                        
+                        HStack {
+                            action
+                            
+                            Button {
+                                Task {
+                                    await renderConsentPage()
+                                }
+                            } label: {
+                                Image(systemName: "square.and.arrow.up")
+                                    .imageScale(.large)
+                                    .frame(minHeight: 38)   // TODO: Ugly hardcode to match style from OnboardingActionsView
                             }
+                            .buttonStyle(.borderedProminent)    // TODO: Again, hardcode
+                        }
+                        .disabled(buttonDisabled)
+                        .animation(.easeInOut, value: buttonDisabled)
+                        .id("ActionButtons")
+                        .onChange(of: showSignatureView) { _ in
+                            proxy.scrollTo("ActionButtons")
+                        }
                     }
                     .transition(.opacity)
                     .animation(.easeInOut, value: showSignatureView)
@@ -86,6 +107,30 @@ public struct ConsentView<ContentView: View, Action: View>: View {
             )
             .scrollDisabled(isSigning)
         }
+    }
+    
+    private func renderConsentPage() async {
+        /*
+        let markdown = Data("This is a *markdown* **example**".utf8)
+        let markdownString = try! AttributedString(
+          markdown: markdown,
+          options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace)
+        )
+        let html = Data("This is an <strong>HTML example</strong> taking 5 seconds to load.".utf8)
+        let htmlString = String(decoding: html, as: UTF8.self)
+        let view = HTMLView(html: html)
+        */
+        
+        let markdownData = await asyncMarkdown!()
+        
+        let exportView = Self.ExportView(
+            name: name,
+            signature: signature,
+            signatureSize: signatureSize,
+            markdownData: markdownData
+        )
+        
+        exportView.testRender()
     }
     
     var buttonDisabled: Bool {
@@ -98,7 +143,6 @@ public struct ConsentView<ContentView: View, Action: View>: View {
         
         return signature.strokes.isEmpty || (name.givenName?.isEmpty ?? true) || (name.familyName?.isEmpty ?? true)
     }
-    
     
     /// Creates a ``ConsentView`` with a provided action view using  an``OnboardingActionsView`` and renders a markdown view.
     /// - Parameters:
@@ -137,6 +181,8 @@ public struct ConsentView<ContentView: View, Action: View>: View {
             givenNameField: givenNameField,
             familyNameField: familyNameField
         )
+        
+        self.asyncMarkdown = asyncMarkdown
     }
 
     /// Creates a ``ConsentView`` with a provided action view using  an``OnboardingActionsView`` and renders HTML in a web view.

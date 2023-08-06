@@ -43,6 +43,7 @@ struct OnboardingTestsView: View {
             }
     }
 
+    @MainActor
     private var consentMarkdownView: some View {
         ConsentView(
             header: {
@@ -60,6 +61,7 @@ struct OnboardingTestsView: View {
             .navigationBarTitleDisplayMode(.inline)
     }
 
+    @MainActor
     private var consentHTMLView: some View {
         ConsentView(
             header: {
