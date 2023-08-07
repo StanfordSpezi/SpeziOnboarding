@@ -10,14 +10,16 @@ import SwiftUI
 
 
 @main
-rstruct UITestsApp: App {
-    @State private var path = NavigationPath()
+struct UITestsApp: App {
+    @State var onboardingFlowComplete = false
     
     
     var body: some Scene {
         WindowGroup {
-            NavigationStack(path: $path) {
-                OnboardingTestsView(navigationPath: $path)
+            if !onboardingFlowComplete {
+                OnboardingTestsView(onboardingFlowComplete: $onboardingFlowComplete)
+            } else {
+                Text("Onboarding complete")
             }
         }
     }
