@@ -23,3 +23,7 @@
 "NAME_FIELD_GIVEN_NAME_PLACEHOLDER" = "Enter your first name ...";
 "NAME_FIELD_FAMILY_NAME_TITLE" = "Last Name";
 "NAME_FIELD_FAMILY_NAME_PLACEHOLDER" = "Enter your last name ...";
+
+
+// MARK: Illegal Onboarding Step
+"ILLEGAL_ONBOARDING_STEP" = "SpeziOnboarding: Illegal Onboarding Step";
