@@ -36,9 +36,9 @@ public struct OnboardingInformationView: View {
         /// The icon of the area in the ``OnboardingInformationView``.
         public let icon: Image
         /// The title of the area in the ``OnboardingInformationView``.
-        public let title: String
+        public let title: LocalizedStringResource
         /// The description of the area in the ``OnboardingInformationView``.
-        public let description: String
+        public let description: LocalizedStringResource
         
         
         /// Creates a new content for an area in the ``OnboardingInformationView``.
@@ -52,8 +52,8 @@ public struct OnboardingInformationView: View {
             description: Description
         ) {
             self.icon = icon
-            self.title = title.localized
-            self.description = description.localized
+            self.title = title.localized()
+            self.description = description.localized()
         }
     }
     

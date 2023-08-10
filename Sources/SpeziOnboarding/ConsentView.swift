@@ -28,14 +28,14 @@ import SwiftUI
 /// ```
 public struct ConsentView<ContentView: View, Action: View>: View {
     public enum LocalizationDefaults {
-        public static var givenName: FieldLocalization {
-            FieldLocalization(
+        public static var givenName: FieldLocalizationResource {
+            FieldLocalizationResource(
                 title: String(localized: "NAME_FIELD_GIVEN_NAME_TITLE", bundle: .module),
                 placeholder: String(localized: "NAME_FIELD_GIVEN_NAME_PLACEHOLDER", bundle: .module)
             )
         }
-        public static var familyName: FieldLocalization {
-            FieldLocalization(
+        public static var familyName: FieldLocalizationResource {
+            FieldLocalizationResource(
                 title: String(localized: "NAME_FIELD_FAMILY_NAME_TITLE", bundle: .module),
                 placeholder: String(localized: "NAME_FIELD_FAMILY_NAME_PLACEHOLDER", bundle: .module)
             )
@@ -44,8 +44,8 @@ public struct ConsentView<ContentView: View, Action: View>: View {
 
     private let contentView: ContentView
     private let action: Action
-    private let givenNameField: FieldLocalization
-    private let familyNameField: FieldLocalization
+    private let givenNameField: FieldLocalizationResource
+    private let familyNameField: FieldLocalizationResource
     @State private var name = PersonNameComponents()
     @State private var showSignatureView = false
     @State private var isSigning = false
@@ -113,8 +113,8 @@ public struct ConsentView<ContentView: View, Action: View>: View {
         asyncMarkdown: @escaping () async -> Data,
         @ViewBuilder footer: () -> (some View) = { EmptyView() },
         action: @escaping () async -> Void,
-        givenNameField: FieldLocalization = LocalizationDefaults.givenName,
-        familyNameField: FieldLocalization = LocalizationDefaults.familyName
+        givenNameField: FieldLocalizationResource = LocalizationDefaults.givenName,
+        familyNameField: FieldLocalizationResource = LocalizationDefaults.familyName
     ) where ContentView == AnyView, Action == OnboardingActionsView {
         self.init(
             contentView: {
@@ -150,8 +150,8 @@ public struct ConsentView<ContentView: View, Action: View>: View {
         asyncHTML: @escaping () async -> Data,
         @ViewBuilder footer: () -> (some View) = { EmptyView() },
         action: @escaping () async -> Void,
-        givenNameField: FieldLocalization = LocalizationDefaults.givenName,
-        familyNameField: FieldLocalization = LocalizationDefaults.familyName
+        givenNameField: FieldLocalizationResource = LocalizationDefaults.givenName,
+        familyNameField: FieldLocalizationResource = LocalizationDefaults.familyName
     ) where ContentView == AnyView, Action == OnboardingActionsView {
         self.init(
             contentView: {
@@ -185,8 +185,8 @@ public struct ConsentView<ContentView: View, Action: View>: View {
     public init(
         @ViewBuilder contentView: () -> (ContentView),
         @ViewBuilder actionView: () -> (Action),
-        givenNameField: FieldLocalization = LocalizationDefaults.givenName,
-        familyNameField: FieldLocalization = LocalizationDefaults.familyName
+        givenNameField: FieldLocalizationResource = LocalizationDefaults.givenName,
+        familyNameField: FieldLocalizationResource = LocalizationDefaults.familyName
     ) {
         self.contentView = contentView()
         self.action = actionView()

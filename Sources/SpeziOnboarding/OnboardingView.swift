@@ -97,7 +97,7 @@ public struct OnboardingView<TitleView: View, ContentView: View, ActionView: Vie
         subtitle: String?,
         areas: [OnboardingInformationView.Content],
         actionText: String,
-        action: @escaping () -> Void
+        action: @escaping () async throws -> Void
     ) where TitleView == OnboardingTitleView, ContentView == OnboardingInformationView, ActionView == OnboardingActionsView {
         self.init(
             titleView: {
@@ -107,7 +107,7 @@ public struct OnboardingView<TitleView: View, ContentView: View, ActionView: Vie
                 OnboardingInformationView(areas: areas)
             }, actionView: {
                 OnboardingActionsView(actionText) {
-                    action()
+                    try await action()
                 }
             }
         )

@@ -26,8 +26,8 @@ struct ConsentMarkdownTestView: View {
             action: {
                 path.nextStep()
             },
-            givenNameField: FieldLocalization(title: "First Name", placeholder: "Enter your first name ..."),
-            familyNameField: FieldLocalization(title: "Surname", placeholder: "Enter your surname ...")
+            givenNameField: FieldLocalizationResource(title: "First Name", placeholder: "Enter your first name ..."),
+            familyNameField: FieldLocalizationResource(title: "Surname", placeholder: "Enter your surname ...")
         )
         .navigationBarTitleDisplayMode(.inline)
     }

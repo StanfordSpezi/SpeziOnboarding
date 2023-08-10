@@ -16,8 +16,8 @@ import SwiftUI
 /// OnboardingTitleView(title: "Title", subtitle: "Subtitle")
 /// ```
 public struct OnboardingTitleView: View {
-    private let title: String
-    private let subtitle: String?
+    private let title: LocalizedStringResource
+    private let subtitle: LocalizedStringResource?
     
     
     public var body: some View {
@@ -40,7 +40,7 @@ public struct OnboardingTitleView: View {
     /// Creates an ``OnboardingActionsView`` instance that only contains a title.
     /// - Parameter title: The title of the ``OnboardingActionsView``.
     public init<S: StringProtocol>(title: S) {
-        self.title = title.localized
+        self.title = title.localized()
         self.subtitle = nil
     }
     
@@ -49,8 +49,8 @@ public struct OnboardingTitleView: View {
     ///   - title: The title of the ``OnboardingActionsView``.
     ///   - subtitle: The subtitle of the ``OnboardingActionsView``.
     public init<S1: StringProtocol, S2: StringProtocol>(title: S1, subtitle: S2?) {
-        self.title = title.localized
-        self.subtitle = subtitle?.localized
+        self.title = title.localized()
+        self.subtitle = subtitle?.localized()
     }
 }
 

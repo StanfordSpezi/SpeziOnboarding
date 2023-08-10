@@ -41,9 +41,9 @@ public struct SequentialOnboardingView: View {
     /// A ``Content`` defines the way that information is displayed in an ``SequentialOnboardingView``.
     public struct Content {
         /// The title of the area in the ``SequentialOnboardingView``.
-        public let title: String?
+        public let title: LocalizedStringResource?
         /// The description of the area in the ``SequentialOnboardingView``.
-        public let description: String
+        public let description: LocalizedStringResource
         
         
         /// Creates a new content for an area in the ``SequentialOnboardingView``.
@@ -54,8 +54,8 @@ public struct SequentialOnboardingView: View {
             title: Title,
             description: Description
         ) {
-            self.title = title.localized
-            self.description = description.localized
+            self.title = title.localized()
+            self.description = description.localized()
         }
 
         /// Creates a new content for an area in the ``SequentialOnboardingView``.
@@ -65,7 +65,7 @@ public struct SequentialOnboardingView: View {
             description: Description
         ) {
             self.title = nil
-            self.description = description.localized
+            self.description = description.localized()
         }
     }
     
@@ -73,8 +73,8 @@ public struct SequentialOnboardingView: View {
     private let titleView: AnyView
     private let content: [Content]
     @State private var currentContentIndex: Int = 0
-    private let actionText: String
-    private let action: () -> Void
+    private let actionText: LocalizedStringResource
+    private let action: () async throws -> Void
     
     
     public var body: some View {
@@ -101,7 +101,7 @@ public struct SequentialOnboardingView: View {
                                 proxy.scrollTo(currentContentIndex - 1, anchor: .top)
                             }
                         } else {
-                            action()
+                            try await action()
                         }
                     }
                 }
@@ -113,7 +113,7 @@ public struct SequentialOnboardingView: View {
         if currentContentIndex < content.count - 1 {
             return String(localized: "SEQUENTIAL_ONBOARDING_NEXT", bundle: .module)
         } else {
-            return actionText
+            return String(localized: actionText)
         }
     }
     
@@ -132,7 +132,7 @@ public struct SequentialOnboardingView: View {
         subtitle: Subtitle?,
         content: [Content],
         actionText: ActionText,
-        action: @escaping () -> Void
+        action: @escaping () async throws -> Void
     ) {
         self.init(
             titleView: OnboardingTitleView(title: title, subtitle: subtitle),
@@ -154,11 +154,11 @@ public struct SequentialOnboardingView: View {
         titleView: TitleView,
         content: [Content],
         actionText: ActionText,
-        action: @escaping () -> Void
+        action: @escaping () async throws -> Void
     ) {
         self.titleView = AnyView(titleView)
         self.content = content
-        self.actionText = actionText.localized
+        self.actionText = actionText.localized()
         self.action = action
     }
     
