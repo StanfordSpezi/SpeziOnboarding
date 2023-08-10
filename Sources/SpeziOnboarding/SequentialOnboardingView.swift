@@ -74,7 +74,7 @@ public struct SequentialOnboardingView: View {
     private let content: [Content]
     @State private var currentContentIndex: Int = 0
     private let actionText: LocalizedStringResource
-    private let action: () -> Void
+    private let action: () async throws -> Void
     
     
     public var body: some View {
@@ -101,7 +101,7 @@ public struct SequentialOnboardingView: View {
                                 proxy.scrollTo(currentContentIndex - 1, anchor: .top)
                             }
                         } else {
-                            action()
+                            try await action()
                         }
                     }
                 }
@@ -132,7 +132,7 @@ public struct SequentialOnboardingView: View {
         subtitle: Subtitle?,
         content: [Content],
         actionText: ActionText,
-        action: @escaping () -> Void
+        action: @escaping () async throws -> Void
     ) {
         self.init(
             titleView: OnboardingTitleView(title: title, subtitle: subtitle),
@@ -154,7 +154,7 @@ public struct SequentialOnboardingView: View {
         titleView: TitleView,
         content: [Content],
         actionText: ActionText,
-        action: @escaping () -> Void
+        action: @escaping () async throws -> Void
     ) {
         self.titleView = AnyView(titleView)
         self.content = content
