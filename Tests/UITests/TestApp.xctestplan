@@ -12,7 +12,7 @@
     "codeCoverage" : {
       "targets" : [
         {
-          "containerPath" : "container:",
+          "containerPath" : "container:..\/..",
           "identifier" : "SpeziOnboarding",
           "name" : "SpeziOnboarding"
         }
