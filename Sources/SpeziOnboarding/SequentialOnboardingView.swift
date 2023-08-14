@@ -41,9 +41,9 @@ public struct SequentialOnboardingView: View {
     /// A ``Content`` defines the way that information is displayed in an ``SequentialOnboardingView``.
     public struct Content {
         /// The title of the area in the ``SequentialOnboardingView``.
-        public let title: LocalizedStringResource?
+        public let title: String?
         /// The description of the area in the ``SequentialOnboardingView``.
-        public let description: LocalizedStringResource
+        public let description: String
         
         
         /// Creates a new content for an area in the ``SequentialOnboardingView``.
@@ -52,8 +52,7 @@ public struct SequentialOnboardingView: View {
         ///   - description: The localized description of the area in the ``SequentialOnboardingView``.
         @_disfavoredOverload
         public init(title: LocalizedStringResource, description: LocalizedStringResource) {
-            self.title = title.localizedString()
-            self.description = description.localizedString()
+            self.init(title: title.localizedString(), description: description.localizedString())
         }
         
         /// Creates a new content for an area in the ``SequentialOnboardingView``.
@@ -121,11 +120,11 @@ public struct SequentialOnboardingView: View {
         }
     }
     
-    private var actionButtonTitle: String {
+    private var actionButtonTitle: LocalizedStringResource {
         if currentContentIndex < content.count - 1 {
-            return String(localized: "SEQUENTIAL_ONBOARDING_NEXT", bundle: .module)
+            return LocalizedStringResource("SEQUENTIAL_ONBOARDING_NEXT", bundle: .atURL(from: .module))
         } else {
-            return String(localized: actionText)
+            return actionText
         }
     }
     

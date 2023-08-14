@@ -30,14 +30,14 @@ public struct ConsentView<ContentView: View, Action: View>: View {
     public enum LocalizationDefaults {
         public static var givenName: FieldLocalizationResource {
             FieldLocalizationResource(
-                title: String(localized: "NAME_FIELD_GIVEN_NAME_TITLE", bundle: .module),
-                placeholder: String(localized: "NAME_FIELD_GIVEN_NAME_PLACEHOLDER", bundle: .module)
+                title: LocalizedStringResource("NAME_FIELD_GIVEN_NAME_TITLE", bundle: .atURL(from: .module)),
+                placeholder: LocalizedStringResource("NAME_FIELD_GIVEN_NAME_PLACEHOLDER", bundle: .atURL(from: .module))
             )
         }
         public static var familyName: FieldLocalizationResource {
             FieldLocalizationResource(
-                title: String(localized: "NAME_FIELD_FAMILY_NAME_TITLE", bundle: .module),
-                placeholder: String(localized: "NAME_FIELD_FAMILY_NAME_PLACEHOLDER", bundle: .module)
+                title: LocalizedStringResource("NAME_FIELD_FAMILY_NAME_TITLE", bundle: .atURL(from: .module)),
+                placeholder: LocalizedStringResource("NAME_FIELD_FAMILY_NAME_PLACEHOLDER", bundle: .atURL(from: .module))
             )
         }
     }
@@ -130,7 +130,7 @@ public struct ConsentView<ContentView: View, Action: View>: View {
                 )
             },
             actionView: {
-                OnboardingActionsView(String(localized: "CONSENT_ACTION", bundle: .module)) {
+                OnboardingActionsView(LocalizedStringResource("CONSENT_ACTION", bundle: .atURL(from: .module))) {
                     await action()
                 }
             },
@@ -167,7 +167,7 @@ public struct ConsentView<ContentView: View, Action: View>: View {
                 )
             },
             actionView: {
-                OnboardingActionsView(String(localized: "CONSENT_ACTION", bundle: .module)) {
+                OnboardingActionsView(LocalizedStringResource("CONSENT_ACTION", bundle: .atURL(from: .module))) {
                     await action()
                 }
             },

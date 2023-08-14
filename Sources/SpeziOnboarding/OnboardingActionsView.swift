@@ -68,6 +68,17 @@ public struct OnboardingActionsView: View {
         self.secondaryAction = nil
     }
     
+    /// Creates an ``OnboardingActionsView`` instance that only contains a primary button.
+    /// - Parameters:
+    ///   - text: The localized title ot the primary button.
+    ///   - action: The action that should be performed when pressing the primary button
+    public init(
+        _ text: LocalizedStringResource,
+        action: @escaping () async throws -> Void
+    ) {
+        self.init(text.localizedString(), action: action)
+    }
+    
     /// Creates an ``OnboardingActionsView`` instance that contains a primary button and a secondary button.
     /// - Parameters:
     ///   - primaryText: The localized title ot the primary button.
@@ -77,13 +88,15 @@ public struct OnboardingActionsView: View {
     public init(
         primaryText: LocalizedStringResource,
         primaryAction: @escaping () async throws -> Void,
-        secondaryText: LocalizedStringResource? = nil,
-        secondaryAction: (() async throws -> Void)? = nil
+        secondaryText: LocalizedStringResource,
+        secondaryAction: @escaping () async throws -> Void
     ) {
-        self.primaryText = primaryText.localizedString()
-        self.primaryAction = primaryAction
-        self.secondaryText = secondaryText.flatMap({ $0.localizedString() })
-        self.secondaryAction = secondaryAction
+        self.init(
+            primaryText: primaryText.localizedString(),
+            primaryAction: primaryAction,
+            secondaryText: secondaryText.localizedString(),
+            secondaryAction: secondaryAction
+        )
     }
     
     /// Creates an ``OnboardingActionsView`` instance that contains a primary button and a secondary button.
