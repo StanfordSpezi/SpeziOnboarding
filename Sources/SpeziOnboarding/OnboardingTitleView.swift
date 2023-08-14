@@ -67,7 +67,7 @@ public struct OnboardingTitleView: View {
     @_disfavoredOverload
     public init<Title: StringProtocol, Subtitle: StringProtocol>(title: Title, subtitle: Subtitle?) {
         self.title = String(title)
-        self.subtitle = subtitle.flatMap({ String($0) })
+        self.subtitle = subtitle.flatMap { String($0) }
     }
 }
 

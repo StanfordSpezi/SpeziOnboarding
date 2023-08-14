@@ -92,7 +92,7 @@ public struct OnboardingView<TitleView: View, ContentView: View, ActionView: Vie
     ///   - areas: The areas of the ``OnboardingView`` defined using ``OnboardingInformationView/Content`` instances..
     ///   - actionText: The text that should appear on the ``OnboardingView``'s primary button.
     ///   - action: The close that is called then the primary button is pressed.
-    public init(
+    public init( // swiftlint:disable:this function_default_parameter_at_end
         title: LocalizedStringResource,
         subtitle: LocalizedStringResource? = nil,
         areas: [OnboardingInformationView.Content],
