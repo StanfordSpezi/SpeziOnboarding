@@ -41,9 +41,9 @@ public struct SequentialOnboardingView: View {
     /// A ``Content`` defines the way that information is displayed in an ``SequentialOnboardingView``.
     public struct Content {
         /// The title of the area in the ``SequentialOnboardingView``.
-        public let title: String?
+        public let title: LocalizedStringResource?
         /// The description of the area in the ``SequentialOnboardingView``.
-        public let description: String
+        public let description: LocalizedStringResource
         
         
         /// Creates a new content for an area in the ``SequentialOnboardingView``.

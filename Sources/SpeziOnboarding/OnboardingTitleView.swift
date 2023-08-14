@@ -16,8 +16,8 @@ import SwiftUI
 /// OnboardingTitleView(title: "Title", subtitle: "Subtitle")
 /// ```
 public struct OnboardingTitleView: View {
-    private let title: String
-    private let subtitle: String?
+    private let title: LocalizedStringResource
+    private let subtitle: LocalizedStringResource?
     
     
     public var body: some View {
