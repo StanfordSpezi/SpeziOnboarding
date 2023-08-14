@@ -85,16 +85,16 @@ public struct OnboardingView<TitleView: View, ContentView: View, ActionView: Vie
     
     /// Creates the default style of the ``OnboardingView`` uses a combination of an ``OnboardingTitleView``, ``OnboardingInformationView``,
     /// and ``OnboardingActionsView``.
-    /// 
+    ///
     /// - Parameters:
-    ///   - title: The title of the ``OnboardingView``.
-    ///   - subtitle: The subtitle of the ``OnboardingView``.
+    ///   - title: The localized title of the ``OnboardingView``.
+    ///   - subtitle: The localized subtitle of the ``OnboardingView``.
     ///   - areas: The areas of the ``OnboardingView`` defined using ``OnboardingInformationView/Content`` instances..
     ///   - actionText: The text that should appear on the ``OnboardingView``'s primary button.
     ///   - action: The close that is called then the primary button is pressed.
     public init(
-        title: String,
-        subtitle: String?,
+        title: LocalizedStringResource,
+        subtitle: LocalizedStringResource? = nil,
         areas: [OnboardingInformationView.Content],
         actionText: String,
         action: @escaping () async throws -> Void
@@ -102,6 +102,66 @@ public struct OnboardingView<TitleView: View, ContentView: View, ActionView: Vie
         self.init(
             titleView: {
                 OnboardingTitleView(title: title, subtitle: subtitle)
+            },
+            contentView: {
+                OnboardingInformationView(areas: areas)
+            }, actionView: {
+                OnboardingActionsView(actionText) {
+                    try await action()
+                }
+            }
+        )
+    }
+    
+    /// Creates the default style of the ``OnboardingView`` uses a combination of an ``OnboardingTitleView``, ``OnboardingInformationView``,
+    /// and ``OnboardingActionsView``.
+    /// 
+    /// - Parameters:
+    ///   - title: The title of the ``OnboardingView`` without localization.
+    ///   - subtitle: The subtitle of the ``OnboardingView`` without localization.
+    ///   - areas: The areas of the ``OnboardingView`` defined using ``OnboardingInformationView/Content`` instances..
+    ///   - actionText: The text that should appear on the ``OnboardingView``'s primary button.
+    ///   - action: The close that is called then the primary button is pressed.
+    @_disfavoredOverload
+    public init<Title: StringProtocol, Subtitle: StringProtocol>(
+        title: Title,
+        subtitle: Subtitle,
+        areas: [OnboardingInformationView.Content],
+        actionText: String,
+        action: @escaping () async throws -> Void
+    ) where TitleView == OnboardingTitleView, ContentView == OnboardingInformationView, ActionView == OnboardingActionsView {
+        self.init(
+            titleView: {
+                OnboardingTitleView(title: title, subtitle: subtitle)
+            },
+            contentView: {
+                OnboardingInformationView(areas: areas)
+            }, actionView: {
+                OnboardingActionsView(actionText) {
+                    try await action()
+                }
+            }
+        )
+    }
+    
+    /// Creates the default style of the ``OnboardingView`` uses a combination of an ``OnboardingTitleView``, ``OnboardingInformationView``,
+    /// and ``OnboardingActionsView``.
+    ///
+    /// - Parameters:
+    ///   - title: The title of the ``OnboardingView`` without localization.
+    ///   - areas: The areas of the ``OnboardingView`` defined using ``OnboardingInformationView/Content`` instances..
+    ///   - actionText: The text that should appear on the ``OnboardingView``'s primary button.
+    ///   - action: The close that is called then the primary button is pressed.
+    @_disfavoredOverload
+    public init<Title: StringProtocol>(
+        title: Title,
+        areas: [OnboardingInformationView.Content],
+        actionText: String,
+        action: @escaping () async throws -> Void
+    ) where TitleView == OnboardingTitleView, ContentView == OnboardingInformationView, ActionView == OnboardingActionsView {
+        self.init(
+            titleView: {
+                OnboardingTitleView(title: title)
             },
             contentView: {
                 OnboardingInformationView(areas: areas)

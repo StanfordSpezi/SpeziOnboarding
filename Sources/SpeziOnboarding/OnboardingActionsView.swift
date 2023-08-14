@@ -26,9 +26,9 @@ import SwiftUI
 /// )
 /// ```
 public struct OnboardingActionsView: View {
-    private let primaryText: LocalizedStringResource
+    private let primaryText: String
     private let primaryAction: () async throws -> Void
-    private let secondaryText: LocalizedStringResource?
+    private let secondaryText: String?
     private let secondaryAction: (() async throws -> Void)?
     
     @State private var primaryActionState: ViewState = .idle
@@ -55,13 +55,14 @@ public struct OnboardingActionsView: View {
     
     /// Creates an ``OnboardingActionsView`` instance that only contains a primary button.
     /// - Parameters:
-    ///   - text: The title ot the primary button.
+    ///   - text: The title ot the primary button without localization.
     ///   - action: The action that should be performed when pressing the primary button
+    @_disfavoredOverload
     public init<Text: StringProtocol>(
         _ text: Text,
         action: @escaping () async throws -> Void
     ) {
-        self.primaryText = text.localized()
+        self.primaryText = String(text)
         self.primaryAction = action
         self.secondaryText = nil
         self.secondaryAction = nil
@@ -69,19 +70,38 @@ public struct OnboardingActionsView: View {
     
     /// Creates an ``OnboardingActionsView`` instance that contains a primary button and a secondary button.
     /// - Parameters:
-    ///   - primaryText: The title ot the primary button.
+    ///   - primaryText: The localized title ot the primary button.
     ///   - primaryAction: The action that should be performed when pressing the primary button
-    ///   - secondaryText: The title ot the secondary button.
+    ///   - secondaryText: The localized title ot the secondary button.
     ///   - secondaryAction: The action that should be performed when pressing the secondary button
+    public init(
+        primaryText: LocalizedStringResource,
+        primaryAction: @escaping () async throws -> Void,
+        secondaryText: LocalizedStringResource? = nil,
+        secondaryAction: (() async throws -> Void)? = nil
+    ) {
+        self.primaryText = primaryText.localizedString()
+        self.primaryAction = primaryAction
+        self.secondaryText = secondaryText.flatMap({ $0.localizedString() })
+        self.secondaryAction = secondaryAction
+    }
+    
+    /// Creates an ``OnboardingActionsView`` instance that contains a primary button and a secondary button.
+    /// - Parameters:
+    ///   - primaryText: The title ot the primary button without localization.
+    ///   - primaryAction: The action that should be performed when pressing the primary button
+    ///   - secondaryText: The title ot the secondary button without localization.
+    ///   - secondaryAction: The action that should be performed when pressing the secondary button
+    @_disfavoredOverload
     public init<PrimaryText: StringProtocol, SecondaryText: StringProtocol>(
         primaryText: PrimaryText,
         primaryAction: @escaping () async throws -> Void,
         secondaryText: SecondaryText,
         secondaryAction: (@escaping () async throws -> Void)
     ) {
-        self.primaryText = primaryText.localized()
+        self.primaryText = String(primaryText)
         self.primaryAction = primaryAction
-        self.secondaryText = secondaryText.localized()
+        self.secondaryText = String(secondaryText)
         self.secondaryAction = secondaryAction
     }
 }

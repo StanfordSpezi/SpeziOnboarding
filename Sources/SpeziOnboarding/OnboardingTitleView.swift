@@ -16,8 +16,8 @@ import SwiftUI
 /// OnboardingTitleView(title: "Title", subtitle: "Subtitle")
 /// ```
 public struct OnboardingTitleView: View {
-    private let title: LocalizedStringResource
-    private let subtitle: LocalizedStringResource?
+    private let title: String
+    private let subtitle: String?
     
     
     public var body: some View {
@@ -38,19 +38,37 @@ public struct OnboardingTitleView: View {
     
     
     /// Creates an ``OnboardingActionsView`` instance that only contains a title.
-    /// - Parameter title: The title of the ``OnboardingActionsView``.
-    public init<S: StringProtocol>(title: S) {
-        self.title = title.localized()
+    /// - Parameter title: The localized title of the ``OnboardingActionsView``.
+    public init(title: LocalizedStringResource) {
+        self.title = title.localizedString()
+        self.subtitle = nil
+    }
+    
+    /// Creates an ``OnboardingActionsView`` instance that only contains a title.
+    /// - Parameter title: The title of the ``OnboardingActionsView`` without localization.
+    @_disfavoredOverload
+    public init<Title: StringProtocol>(title: Title) {
+        self.title = String(title)
         self.subtitle = nil
     }
     
     /// Creates an ``OnboardingActionsView`` instance that contains a title and a subtitle.
     /// - Parameters:
-    ///   - title: The title of the ``OnboardingActionsView``.
-    ///   - subtitle: The subtitle of the ``OnboardingActionsView``.
-    public init<S1: StringProtocol, S2: StringProtocol>(title: S1, subtitle: S2?) {
-        self.title = title.localized()
-        self.subtitle = subtitle?.localized()
+    ///   - title: The localized title of the ``OnboardingActionsView``.
+    ///   - subtitle: The localized subtitle of the ``OnboardingActionsView``.
+    public init(title: LocalizedStringResource, subtitle: LocalizedStringResource?) {
+        self.title = title.localizedString()
+        self.subtitle = subtitle?.localizedString()
+    }
+    
+    /// Creates an ``OnboardingActionsView`` instance that contains a title and a subtitle.
+    /// - Parameters:
+    ///   - title: The title of the ``OnboardingActionsView`` without localization.
+    ///   - subtitle: The subtitle of the ``OnboardingActionsView`` without localization.
+    @_disfavoredOverload
+    public init<Title: StringProtocol, Subtitle: StringProtocol>(title: Title, subtitle: Subtitle?) {
+        self.title = String(title)
+        self.subtitle = subtitle.flatMap({ String($0) })
     }
 }
 
