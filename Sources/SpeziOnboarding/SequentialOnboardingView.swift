@@ -41,31 +41,42 @@ public struct SequentialOnboardingView: View {
     /// A ``Content`` defines the way that information is displayed in an ``SequentialOnboardingView``.
     public struct Content {
         /// The title of the area in the ``SequentialOnboardingView``.
-        public let title: LocalizedStringResource?
+        public let title: String?
         /// The description of the area in the ``SequentialOnboardingView``.
-        public let description: LocalizedStringResource
+        public let description: String
         
         
         /// Creates a new content for an area in the ``SequentialOnboardingView``.
         /// - Parameters:
-        ///   - title: The title of the area in the ``SequentialOnboardingView``.
-        ///   - description: The description of the area in the ``SequentialOnboardingView``.
+        ///   - title: The localized title of the area in the ``SequentialOnboardingView``.
+        ///   - description: The localized description of the area in the ``SequentialOnboardingView``.
+        @_disfavoredOverload
+        public init(title: LocalizedStringResource, description: LocalizedStringResource) {
+            self.init(title: title.localizedString(), description: description.localizedString())
+        }
+        
+        /// Creates a new content for an area in the ``SequentialOnboardingView``.
+        /// - Parameters:
+        ///   - title: The title of the area in the ``SequentialOnboardingView`` without localization.
+        ///   - description: The description of the area in the ``SequentialOnboardingView`` without localization.
+        @_disfavoredOverload
         public init<Title: StringProtocol, Description: StringProtocol>(
             title: Title,
             description: Description
         ) {
-            self.title = title.localized()
-            self.description = description.localized()
+            self.title = String(title)
+            self.description = String(description)
         }
 
         /// Creates a new content for an area in the ``SequentialOnboardingView``.
         /// - Parameters:
-        ///   - description: The description of the area in the ``SequentialOnboardingView``.
+        ///   - description: The description of the area in the ``SequentialOnboardingView`` without localization.
+        @_disfavoredOverload
         public init<Description: StringProtocol>(
             description: Description
         ) {
             self.title = nil
-            self.description = description.localized()
+            self.description = String(description)
         }
     }
     
@@ -109,11 +120,11 @@ public struct SequentialOnboardingView: View {
         }
     }
     
-    private var actionButtonTitle: String {
+    private var actionButtonTitle: LocalizedStringResource {
         if currentContentIndex < content.count - 1 {
-            return String(localized: "SEQUENTIAL_ONBOARDING_NEXT", bundle: .module)
+            return LocalizedStringResource("SEQUENTIAL_ONBOARDING_NEXT", bundle: .atURL(from: .module))
         } else {
-            return String(localized: actionText)
+            return actionText
         }
     }
     
@@ -122,8 +133,8 @@ public struct SequentialOnboardingView: View {
     /// and ``OnboardingActionsView``.
     ///
     /// - Parameters:
-    ///   - title: The title of the ``SequentialOnboardingView``.
-    ///   - subtitle: The subtitle of the ``SequentialOnboardingView``.
+    ///   - title: The title of the ``SequentialOnboardingView`` without localization.
+    ///   - subtitle: The subtitle of the ``SequentialOnboardingView`` without localization.
     ///   - content: The areas of the ``SequentialOnboardingView`` defined using ``SequentialOnboardingView/Content`` instances..
     ///   - actionText: The text that should appear on the ``SequentialOnboardingView``'s primary button.
     ///   - action: The close that is called then the primary button is pressed.
