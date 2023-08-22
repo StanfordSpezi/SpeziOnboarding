@@ -50,9 +50,12 @@ public struct SequentialOnboardingView: View {
         /// - Parameters:
         ///   - title: The localized title of the area in the ``SequentialOnboardingView``.
         ///   - description: The localized description of the area in the ``SequentialOnboardingView``.
-        @_disfavoredOverload
-        public init(title: LocalizedStringResource, description: LocalizedStringResource) {
-            self.init(title: title.localizedString(), description: description.localizedString())
+        public init(title: LocalizedStringResource? = nil, description: LocalizedStringResource) {
+            if let title {
+                self.init(title: title.localizedString(), description: description.localizedString())
+            } else {
+                self.init(description: description.localizedString())
+            }
         }
         
         /// Creates a new content for an area in the ``SequentialOnboardingView``.
@@ -84,7 +87,7 @@ public struct SequentialOnboardingView: View {
     private let titleView: AnyView
     private let content: [Content]
     @State private var currentContentIndex: Int = 0
-    private let actionText: LocalizedStringResource
+    private let actionText: String
     private let action: () async throws -> Void
     
     
@@ -120,9 +123,9 @@ public struct SequentialOnboardingView: View {
         }
     }
     
-    private var actionButtonTitle: LocalizedStringResource {
+    private var actionButtonTitle: String {
         if currentContentIndex < content.count - 1 {
-            return LocalizedStringResource("SEQUENTIAL_ONBOARDING_NEXT", bundle: .atURL(from: .module))
+            return String(localized: "SEQUENTIAL_ONBOARDING_NEXT", bundle: .module)
         } else {
             return actionText
         }
@@ -133,11 +136,59 @@ public struct SequentialOnboardingView: View {
     /// and ``OnboardingActionsView``.
     ///
     /// - Parameters:
+    ///   - title: The localized title of the ``SequentialOnboardingView``.
+    ///   - subtitle: The localized subtitle of the ``SequentialOnboardingView``.
+    ///   - content: The areas of the ``SequentialOnboardingView`` defined using ``SequentialOnboardingView/Content`` instances..
+    ///   - actionText: The localized text that should appear on the ``SequentialOnboardingView``'s primary button.
+    ///   - action: The close that is called then the primary button is pressed.
+    public init(
+        title: LocalizedStringResource,
+        subtitle: LocalizedStringResource? = nil,
+        content: [Content],
+        actionText: LocalizedStringResource,
+        action: @escaping () async throws -> Void
+    ) {
+        self.init(
+            titleView: OnboardingTitleView(title: title, subtitle: subtitle),
+            content: content,
+            actionText: actionText.localizedString(),
+            action: action
+        )
+    }
+    
+    /// Creates the default style of the ``SequentialOnboardingView`` that uses a combination of an ``OnboardingTitleView``
+    /// and ``OnboardingActionsView``.
+    ///
+    /// - Parameters:
+    ///   - title: The title of the ``SequentialOnboardingView`` without localization.
+    ///   - content: The areas of the ``SequentialOnboardingView`` defined using ``SequentialOnboardingView/Content`` instances..
+    ///   - actionText: The text that should appear on the ``SequentialOnboardingView``'s primary button.
+    ///   - action: The close that is called then the primary button is pressed.
+    @_disfavoredOverload
+    public init<Title: StringProtocol, ActionText: StringProtocol>(
+        title: Title,
+        content: [Content],
+        actionText: ActionText,
+        action: @escaping () async throws -> Void
+    ) {
+        self.init(
+            titleView: OnboardingTitleView(title: title),
+            content: content,
+            actionText: String(actionText),
+            action: action
+        )
+    }
+    
+    /// Creates the default style of the ``SequentialOnboardingView`` that uses a combination of an ``OnboardingTitleView``
+    /// and ``OnboardingActionsView``.
+    ///
+    /// - Parameters:
     ///   - title: The title of the ``SequentialOnboardingView`` without localization.
     ///   - subtitle: The subtitle of the ``SequentialOnboardingView`` without localization.
     ///   - content: The areas of the ``SequentialOnboardingView`` defined using ``SequentialOnboardingView/Content`` instances..
     ///   - actionText: The text that should appear on the ``SequentialOnboardingView``'s primary button.
     ///   - action: The close that is called then the primary button is pressed.
+    @_disfavoredOverload
     public init<Title: StringProtocol, Subtitle: StringProtocol, ActionText: StringProtocol>(
         title: Title,
         subtitle: Subtitle?,
@@ -148,7 +199,7 @@ public struct SequentialOnboardingView: View {
         self.init(
             titleView: OnboardingTitleView(title: title, subtitle: subtitle),
             content: content,
-            actionText: actionText,
+            actionText: String(actionText),
             action: action
         )
     }
@@ -159,8 +210,9 @@ public struct SequentialOnboardingView: View {
     /// - Parameters:
     ///   - titleView: The title view displayed at the top.
     ///   - content: The areas of the ``SequentialOnboardingView`` defined using ``SequentialOnboardingView/Content`` instances..
-    ///   - actionText: The text that should appear on the ``SequentialOnboardingView``'s primary button.
+    ///   - actionText: The text that should appear on the ``SequentialOnboardingView``'s primary button without localization.
     ///   - action: The close that is called then the primary button is pressed.
+    @_disfavoredOverload
     public init<TitleView: View, ActionText: StringProtocol>(
         titleView: TitleView,
         content: [Content],
@@ -169,7 +221,26 @@ public struct SequentialOnboardingView: View {
     ) {
         self.titleView = AnyView(titleView)
         self.content = content
-        self.actionText = actionText.localized()
+        self.actionText = String(actionText)
+        self.action = action
+    }
+    
+    /// Creates a customized ``SequentialOnboardingView`` allowing a complete customization of the  ``SequentialOnboardingView``'s title view.
+    ///
+    /// - Parameters:
+    ///   - titleView: The title view displayed at the top.
+    ///   - content: The areas of the ``SequentialOnboardingView`` defined using ``SequentialOnboardingView/Content`` instances..
+    ///   - actionText: The localized text that should appear on the ``SequentialOnboardingView``'s primary button.
+    ///   - action: The close that is called then the primary button is pressed.
+    public init<TitleView: View>(
+        titleView: TitleView,
+        content: [Content],
+        actionText: LocalizedStringResource,
+        action: @escaping () async throws -> Void
+    ) {
+        self.titleView = AnyView(titleView)
+        self.content = content
+        self.actionText = actionText.localizedString()
         self.action = action
     }
     
