@@ -50,7 +50,10 @@ public struct SequentialOnboardingView: View {
         /// - Parameters:
         ///   - title: The localized title of the area in the ``SequentialOnboardingView``.
         ///   - description: The localized description of the area in the ``SequentialOnboardingView``.
-        public init(title: LocalizedStringResource? = nil, description: LocalizedStringResource) {
+        public init( // swiftlint:disable:this function_default_parameter_at_end
+            title: LocalizedStringResource? = nil,
+            description: LocalizedStringResource
+        ) {
             if let title {
                 self.init(title: title.localizedString(), description: description.localizedString())
             } else {
@@ -141,7 +144,7 @@ public struct SequentialOnboardingView: View {
     ///   - content: The areas of the ``SequentialOnboardingView`` defined using ``SequentialOnboardingView/Content`` instances..
     ///   - actionText: The localized text that should appear on the ``SequentialOnboardingView``'s primary button.
     ///   - action: The close that is called then the primary button is pressed.
-    public init(
+    public init( // swiftlint:disable:this function_default_parameter_at_end
         title: LocalizedStringResource,
         subtitle: LocalizedStringResource? = nil,
         content: [Content],
