@@ -157,9 +157,7 @@ public class OnboardingNavigationPath: ObservableObject {
     
     /// Removes the last element on top of the internal `NavigationPath` of the ``OnboardingNavigationPath``, meaning one is able to manually move backwards within the onboarding navigation flow.
     public func removeLast() {
-        Task {
-            path.removeLast()
-        }
+        path.removeLast()
     }
     
     /// Internal function used to update the onboarding steps within the ``OnboardingNavigationPath`` if the result builder associated with the ``OnboardingStack`` is reevaluated. This may be the case with `async` properties that are stored as a SwiftUI `State` in the respective view.
@@ -210,16 +208,12 @@ public class OnboardingNavigationPath: ObservableObject {
     }
     
     private func appendToInternalNavigationPath(of onboardingStepIdentifier: OnboardingStepIdentifier) {
-        Task {
-            path.append(onboardingStepIdentifier)
-        }
+        path.append(onboardingStepIdentifier)
     }
     
     private func onboardingComplete() {
-        Task {
-            if self.onboardingSteps.isEmpty && !(self.complete?.wrappedValue ?? false) {
-                self.complete?.wrappedValue = true
-            }
+        if self.onboardingSteps.isEmpty && !(self.complete?.wrappedValue ?? false) {
+            self.complete?.wrappedValue = true
         }
     }
 }
