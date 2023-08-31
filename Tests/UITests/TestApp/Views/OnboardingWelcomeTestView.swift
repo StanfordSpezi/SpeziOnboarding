@@ -11,6 +11,7 @@ import SpeziViews
 import SwiftUI
 
 
+// swiftlint:disable accessibility_label_for_image
 struct OnboardingWelcomeTestView: View {
     @EnvironmentObject private var path: OnboardingNavigationPath
     
