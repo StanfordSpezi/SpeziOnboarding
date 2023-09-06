@@ -80,26 +80,13 @@ public struct ConsentView<ContentView: View, Action: View>: View {
                         
                         Divider()
                         
-                        HStack {
-                            action
-                            
-                            Button {
-                                Task {
-                                    await renderConsentPage()
-                                }
-                            } label: {
-                                Image(systemName: "square.and.arrow.up")
-                                    .imageScale(.large)
-                                    .frame(minHeight: 38)   // TODO: Ugly hardcode to match style from OnboardingActionsView
+                        action
+                            .disabled(buttonDisabled)
+                            .animation(.easeInOut, value: buttonDisabled)
+                            .id("ActionButtons")
+                            .onChange(of: showSignatureView) { _ in
+                                proxy.scrollTo("ActionButtons")
                             }
-                            .buttonStyle(.borderedProminent)    // TODO: Again, hardcode
-                        }
-                        .disabled(buttonDisabled)
-                        .animation(.easeInOut, value: buttonDisabled)
-                        .id("ActionButtons")
-                        .onChange(of: showSignatureView) { _ in
-                            proxy.scrollTo("ActionButtons")
-                        }
                     }
                     .transition(.opacity)
                     .animation(.easeInOut, value: showSignatureView)
@@ -174,9 +161,20 @@ public struct ConsentView<ContentView: View, Action: View>: View {
                 )
             },
             actionView: {
+                /*
+                OnboardingActionsView(
+                    primaryView: Text(String(localized: "CONSENT_ACTION", bundle: .module)),
+                    primaryAction: { await action() },
+                    secondaryView: Image(systemName: "square.and.arrow.up").imageScale(.large),
+                    secondaryAction: { await action() },    // TODO
+                    orientation: .horizontal(proportions: 0.75))
+                 */
+                 
+                
                 OnboardingActionsView(String(localized: "CONSENT_ACTION", bundle: .module)) {
                     await action()
                 }
+                 
             },
             givenNameField: givenNameField,
             familyNameField: familyNameField
