@@ -85,6 +85,8 @@ public struct SequentialOnboardingView: View {
             self.description = String(description)
         }
     }
+
+    @Environment(\.locale) private var locale
     
     
     private let titleView: AnyView
@@ -128,7 +130,7 @@ public struct SequentialOnboardingView: View {
     
     private var actionButtonTitle: String {
         if currentContentIndex < content.count - 1 {
-            return String(localized: "SEQUENTIAL_ONBOARDING_NEXT", bundle: .module)
+            return String(localized: "SEQUENTIAL_ONBOARDING_NEXT", bundle: .module, locale: locale)
         } else {
             return actionText
         }
@@ -252,7 +254,7 @@ public struct SequentialOnboardingView: View {
         let content = content[index]
         return HStack {
             HStack(alignment: .firstTextBaseline, spacing: 8) {
-                Text("\(index + 1)")
+                Text(verbatim: "\(index + 1)")
                     .bold()
                     .foregroundColor(.white)
                     .padding(12)
@@ -260,10 +262,14 @@ public struct SequentialOnboardingView: View {
                         Circle()
                             .fill(Color.accentColor)
                     }
+                    .accessibilityLabel("\(index + 1).")
+                    .accessibilityHidden(content.title != nil)
                 VStack(alignment: .leading, spacing: 8) {
                     if let title = content.title {
                         Text(title)
                             .bold()
+                            .accessibilityLabel(Text(verbatim: "\(index + 1). ") + Text(title))
+                            .accessibilityAddTraits(.isHeader)
                     }
                     Text(content.description)
                 }
@@ -285,9 +291,9 @@ public struct SequentialOnboardingView: View {
 struct SequentialOnboardingView_Previews: PreviewProvider {
     static var mock: [SequentialOnboardingView.Content] {
         [
-            .init(title: "A thing to know", description: "This is a first thing that you should know, read carfully!"),
-            .init(title: "Second thing to know", description: "This is a second thing that you should know, read carfully!"),
-            .init(title: "Third thing to know", description: "This is a third thing that you should know, read carfully!")
+            .init(title: "A thing to know", description: "This is a first thing that you should know, read carefully!"),
+            .init(title: "Second thing to know", description: "This is a second thing that you should know, read carefully!"),
+            .init(title: "Third thing to know", description: "This is a third thing that you should know, read carefully!")
         ]
     }
     

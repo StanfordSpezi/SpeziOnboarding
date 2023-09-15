@@ -55,7 +55,7 @@ public struct OnboardingActionsView: View {
     
     /// Creates an ``OnboardingActionsView`` instance that only contains a primary button.
     /// - Parameters:
-    ///   - text: The title ot the primary button without localization.
+    ///   - text: The title of the primary button without localization.
     ///   - action: The action that should be performed when pressing the primary button
     @_disfavoredOverload
     public init<Text: StringProtocol>(
@@ -110,7 +110,7 @@ public struct OnboardingActionsView: View {
         primaryText: PrimaryText,
         primaryAction: @escaping () async throws -> Void,
         secondaryText: SecondaryText,
-        secondaryAction: (@escaping () async throws -> Void)
+        secondaryAction: @escaping () async throws -> Void
     ) {
         self.primaryText = String(primaryText)
         self.primaryAction = primaryAction

@@ -98,10 +98,12 @@ public struct OnboardingInformationView: View {
                 .frame(width: 40)
                 .foregroundColor(.accentColor)
                 .padding()
+                .accessibilityHidden(true)
             
             VStack(alignment: .leading) {
                 Text(area.title)
                     .bold()
+                    .accessibilityAddTraits(.isHeader)
                 Text(area.description)
                     .foregroundColor(.secondary)
                     .fixedSize(horizontal: false, vertical: true)

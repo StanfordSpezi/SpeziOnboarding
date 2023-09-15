@@ -15,7 +15,9 @@
 
 
 // MARK: Signature View
+"SIGNATURE_FIELD" = "Unterschrift Feld";
 "SIGNATURE_VIEW_UNDO" = "Rückgängig Machen";
+"SIGNATURE_NAME %@" = "Name: %@";
 
 
 // MARK: Name Fields

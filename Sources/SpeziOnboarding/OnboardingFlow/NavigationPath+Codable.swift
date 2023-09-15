@@ -56,7 +56,7 @@ extension NavigationPath {
     /// Function that provides access to the last element on top of the `NavigationPath` that satisfies a certain predicate
     ///
     /// - Parameters:
-    ///   - where: The predicate determining if the element of the `NavigationPath` is considered
+    ///   - predicate: The predicate determining if the element of the `NavigationPath` is considered
     /// - Returns: The topmost element of the `NavigationPath` (of type `OnboardingStepIdentifier`) that satisfies the passed predicate. `nil` otherwise.
     func last(where predicate: (OnboardingStepIdentifier) -> Bool) -> OnboardingStepIdentifier? {
         /// Required to copy the `NavigationPath` instance as only access to the last element on top of the path is given

@@ -28,6 +28,7 @@ public struct OnboardingTitleView: View {
                 .multilineTextAlignment(.center)
                 .padding(.bottom)
                 .padding(.top, 30)
+                .accessibilityAddTraits(.isHeader)
             if let subtitle = subtitle {
                 Text(subtitle)
                     .multilineTextAlignment(.center)
