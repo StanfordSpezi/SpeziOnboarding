@@ -43,22 +43,32 @@ public struct SignatureView: View {
                     .frame(maxWidth: .infinity, maxHeight: 1)
                     .padding(.horizontal, 20)
                     .padding(.bottom, lineOffset)
-                Text("X")
+                Text(verbatim: "X")
                     .font(.title2)
                     .foregroundColor(.secondary)
                     .padding(.horizontal, 20)
                     .padding(.bottom, lineOffset + 2)
-                Text(name.formatted(.name(style: .long)))
+                    .accessibilityHidden(true)
+
+                let name = name.formatted(.name(style: .long))
+                Text(name)
                     .font(.subheadline)
                     .foregroundColor(.secondary)
                     .padding(.horizontal, 20)
                     .padding(.bottom, lineOffset - 18)
+                    .accessibilityLabel(Text("SIGNATURE_NAME \(name)", bundle: .module))
+                    .accessibilityHidden(name.isEmpty)
+
                 CanvasView(drawing: $signature, isDrawing: $isSigning, showToolPicker: .constant(false))
+                    .accessibilityLabel(Text("SIGNATURE_FIELD", bundle: .module))
+                    .accessibilityAddTraits(.allowsDirectInteraction)
             }
                 .frame(height: 120)
-            Button(String(localized: "SIGNATURE_VIEW_UNDO", bundle: .module)) {
+            Button(action: {
                 undoManager?.undo()
                 canUndo = undoManager?.canUndo ?? false
+            }) {
+                Text("SIGNATURE_VIEW_UNDO", bundle: .module)
             }
                 .disabled(!canUndo)
         }
@@ -76,7 +86,7 @@ public struct SignatureView: View {
     /// - Parameters:
     ///   - signature: A `Binding` containing the current signature as an `PKDrawing`.
     ///   - isSigning: A `Binding` indicating if the user is currently signing.
-    ///   - name: The name that is deplayed under the signature line.
+    ///   - name: The name that is displayed under the signature line.
     ///   - lineOffset: Defines the distance of the signature line from the bottom of the view. The default value is 30.
     init(
         signature: Binding<PKDrawing> = .constant(PKDrawing()),
@@ -96,6 +106,8 @@ public struct SignatureView: View {
 struct SignatureView_Previews: PreviewProvider {
     static var previews: some View {
         SignatureView()
+
+        SignatureView(name: PersonNameComponents(givenName: "Leland", familyName: "Stanford"))
     }
 }
 #endif

@@ -14,7 +14,7 @@ import SwiftUI
 ///
 /// At the core of the ``OnboardingNavigationPath`` stands a wrapped `NavigationPath` from SwiftUI which holds path elements of type `OnboardingStepIdentifier`. Based on the onboarding views and conditions defined within the ``OnboardingStack``, the ``OnboardingNavigationPath`` enables developers to easily navigate through the onboarding procedure without repeated condition checking in every single onboarding view.
 ///
-/// The ``OnboardingNavigationPath`` is injeceted as a SwiftUI `EnvironmentObject` into the ``OnboardingStack`` view hierachy. Resulting from that, all views declared within the ``OnboardingStack`` are able to access a single instance of the ``OnboardingNavigationPath``.
+/// The ``OnboardingNavigationPath`` is injected as a SwiftUI `EnvironmentObject` into the ``OnboardingStack`` view hierarchy. Resulting from that, all views declared within the ``OnboardingStack`` are able to access a single instance of the ``OnboardingNavigationPath``.
 ///
 /// ```swift
 /// struct Welcome: View {
@@ -56,7 +56,7 @@ public class OnboardingNavigationPath: ObservableObject {
     
     /// The first onboarding view of the `OnboardingNavigationPath.onboardingSteps`. Serves as a starting point for the SwiftUI `NavigationStack`.
     ///
-    /// In case there isn't a single onboarding view stored within `OnboardingNavigationPath.onboardingSteps` (meaning the ``NavigationStack`` contains no views after its evaluation), the property serves an `EmptyView` which is then dismissed immediatly as the `OnboardingNavigationPath.complete` property is automatically set to true.
+    /// In case there isn't a single onboarding view stored within `OnboardingNavigationPath.onboardingSteps` (meaning the ``NavigationStack`` contains no views after its evaluation), the property serves an `EmptyView` which is then dismissed immediately as the `OnboardingNavigationPath.complete` property is automatically set to true.
     var firstOnboardingView: AnyView {
         guard let firstOnboardingStepIdentifier = onboardingStepsOrder.first,
               let view = onboardingSteps[firstOnboardingStepIdentifier] else {
@@ -68,7 +68,7 @@ public class OnboardingNavigationPath: ObservableObject {
     
     /// Identifier of the current onboarding step that is shown to the user via its associated view
     /// Inspects the `OnboardingNavigationPath.path` to determine the current on-top navigation element of the internal SwiftUI `NavigationPath`.
-    /// Utilizes the extenstion of the `NavigationPath` declared within the ``SpeziOnboarding`` package for this functionality.
+    /// Utilizes the extension of the `NavigationPath` declared within the ``SpeziOnboarding`` package for this functionality.
     ///
     /// In case there isn't a suitable element within the `OnboardingNavigationPath.path`, return the `OnboardingStepIdentifier` of the first onboarding view.
     private var currentOnboardingStep: OnboardingStepIdentifier? {
@@ -82,8 +82,8 @@ public class OnboardingNavigationPath: ObservableObject {
     
     /// A ``OnboardingNavigationPath`` represents the current navigation path within the ``OnboardingStack``.
     /// - Parameters:
-    ///   - views: SwiftUI `View`s that are declaredxx within the ``OnboardingStack``.
-    ///   - complete: An optional SwiftUI `Binding` that is injected by the ``OnboardingStack``. Is managed by the ``OnboardingNavigationPath`` to indicate wheather the onboarding flow is complete.
+    ///   - views: SwiftUI `View`s that are declared within the ``OnboardingStack``.
+    ///   - complete: An optional SwiftUI `Binding` that is injected by the ``OnboardingStack``. Is managed by the ``OnboardingNavigationPath`` to indicate whether the onboarding flow is complete.
     ///   - startAtStep: An optional SwiftUI (Onboarding) `View` type indicating the first to-be-shown step of the onboarding flow.
     init(views: [any View], complete: Binding<Bool>?, startAtStep: (any View.Type)?) {
         updateViews(with: views)
@@ -131,7 +131,7 @@ public class OnboardingNavigationPath: ObservableObject {
     }
     
     /// An invocation of this function moves the internal `NavigationPath` of the ``OnboardingNavigationPath`` to the passed custom onboarding `View` instance. Keep in mind that this custom `View` does not have to be declared within the ``OnboardingStack``. Resulting from that, the internal state of the ``OnboardingNavigationPath`` is still referencing to the last regular `OnboardingStep`.
-    /// This function is closly related to ``append(customViewInit:)``.
+    /// This function is closely related to ``append(customViewInit:)``.
     ///
     /// - Parameters:
     ///   - customView: A custom onboarding `View` instance that should be shown next in the onboarding flow. It isn't required to declare this view within the ``OnboardingStack``.
@@ -143,7 +143,7 @@ public class OnboardingNavigationPath: ObservableObject {
     }
     
     /// An invocation of this function moves the internal `NavigationPath` of the ``OnboardingNavigationPath`` to the passed custom onboarding `View` initializer. Keep in mind that this custom `View` does not have to be declared within the ``OnboardingStack``. Resulting from that, the internal state of the ``OnboardingNavigationPath`` is still referencing to the last regular `OnboardingStep`.
-    /// This function is closly related to ``append(customView:)``.
+    /// This function is closely related to ``append(customView:)``.
     ///
     /// - Parameters:
     ///   - customViewInit: A custom onboarding `View` initializer that creates a `View` shown next in the onboarding flow. It isn't required to declare this view within the ``OnboardingStack``.
@@ -163,7 +163,7 @@ public class OnboardingNavigationPath: ObservableObject {
     /// Internal function used to update the onboarding steps within the ``OnboardingNavigationPath`` if the result builder associated with the ``OnboardingStack`` is reevaluated. This may be the case with `async` properties that are stored as a SwiftUI `State` in the respective view.
     ///
     /// - Parameters:
-    ///   - with: The updated `View`s from the ``OnboardingStack``.
+    ///   - views: The updated `View`s from the ``OnboardingStack``.
     func updateViews(with views: [any View]) {
         /// Only allow view updates as long as the first onboarding view is shown.
         /// Without this condition, the stored onboarding steps would continue to be updated when conditionals declared within the ``OnboardingStack`` change their outcome during the onboarding flow (e.g. when HealthKit permissions are granted during the onboarding), making it complex to keep track of the internal state of the navigation.
@@ -191,7 +191,7 @@ public class OnboardingNavigationPath: ObservableObject {
     /// Internal function used to navigate to the respective onboarding `View` via the `NavigationStack.navigationDestination(for:)`, either regularly declared within the ``OnboardingStack`` or custom steps passed via ``append(customView:)`` /``append(customViewInit:)``. identified by the `OnboardingStepIdentifier`.
     ///
     /// - Parameters:
-    ///   - to: The onboarding step identified via `OnboardingStepIdentifier`
+    ///   - onboardingStep: The onboarding step identified via `OnboardingStepIdentifier`
     /// - Returns: `View` corresponding to the passed `OnboardingStepIdentifier`
     func navigate(to onboardingStep: OnboardingStepIdentifier) -> AnyView {
         if onboardingStep.custom {

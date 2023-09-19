@@ -41,7 +41,7 @@ import SwiftUI
 public struct OnboardingView<TitleView: View, ContentView: View, ActionView: View>: View {
     private let titleView: TitleView
     private let contentView: ContentView
-    private let actionView: ActionView?
+    private let actionView: ActionView
     
     
     public var body: some View {
@@ -53,7 +53,7 @@ public struct OnboardingView<TitleView: View, ContentView: View, ActionView: Vie
                             titleView
                             contentView
                         }
-                        if let actionView {
+                        if !(actionView is EmptyView) {
                             Spacer()
                             actionView
                         }

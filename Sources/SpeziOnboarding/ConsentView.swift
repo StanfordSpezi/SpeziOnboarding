@@ -109,9 +109,9 @@ public struct ConsentView<ContentView: View, Action: View>: View {
     ///   - givenNameField: The localization to use for the given (first) name field
     ///   - familyNameField: The localization to use for the family (last) name field
     public init(
-        @ViewBuilder header: () -> (some View) = { EmptyView() },
+        @ViewBuilder header: () -> some View = { EmptyView() },
         asyncMarkdown: @escaping () async -> Data,
-        @ViewBuilder footer: () -> (some View) = { EmptyView() },
+        @ViewBuilder footer: () -> some View = { EmptyView() },
         action: @escaping () async -> Void,
         givenNameField: FieldLocalizationResource = LocalizationDefaults.givenName,
         familyNameField: FieldLocalizationResource = LocalizationDefaults.familyName
@@ -145,10 +145,12 @@ public struct ConsentView<ContentView: View, Action: View>: View {
     ///   - asyncHTML: The html content provided as an UTF8 encoded `Data` instance that can be provided asynchronously.
     ///   - footer: The footer view will be displayed above the html content.
     ///   - action: The action that should be performed once the consent has been given.
+    ///   - givenNameField: The localization for the given name field.#
+    ///   - familyNameField: The localization for the family name field.
     public init(
-        @ViewBuilder header: () -> (some View) = { EmptyView() },
+        @ViewBuilder header: () -> some View = { EmptyView() },
         asyncHTML: @escaping () async -> Data,
-        @ViewBuilder footer: () -> (some View) = { EmptyView() },
+        @ViewBuilder footer: () -> some View = { EmptyView() },
         action: @escaping () async -> Void,
         givenNameField: FieldLocalizationResource = LocalizationDefaults.givenName,
         familyNameField: FieldLocalizationResource = LocalizationDefaults.familyName
@@ -183,8 +185,8 @@ public struct ConsentView<ContentView: View, Action: View>: View {
     ///   - givenNameField: The localization to use for the given (first) name field
     ///   - familyNameField: The localization to use for the family (last) name field
     public init(
-        @ViewBuilder contentView: () -> (ContentView),
-        @ViewBuilder actionView: () -> (Action),
+        @ViewBuilder contentView: () -> ContentView,
+        @ViewBuilder actionView: () -> Action,
         givenNameField: FieldLocalizationResource = LocalizationDefaults.givenName,
         familyNameField: FieldLocalizationResource = LocalizationDefaults.familyName
     ) {

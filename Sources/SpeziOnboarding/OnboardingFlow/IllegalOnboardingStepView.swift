@@ -10,7 +10,7 @@ import SwiftUI
 
 
 /// The `IllegalOnboardingStepView` is shown when the application navigates to an illegal ``OnboardingStep``.
-/// This behavior shouldn't occure at all as there are lots of checks performed within the ``OnboardingNavigationPath`` that prevent such illegal steps.
+/// This behavior shouldn't occur at all as there are lots of checks performed within the ``OnboardingNavigationPath`` that prevent such illegal steps.
 struct IllegalOnboardingStepView: View {
     var body: some View {
         Text("ILLEGAL_ONBOARDING_STEP")
