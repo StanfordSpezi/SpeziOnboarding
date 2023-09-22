@@ -22,7 +22,7 @@ UI components for onboarding and consent.
 
 The Spezi Onboarding module provides user interface components to onboard a user to an application including the possibility to retrieve consent for a study participation.
 
-|![A screen displaying an onboarding view.](Sources/SpeziOnboarding/SpeziOnboarding.docc/Resources/OnboardingView.png)|![A screen showing a sequential onboarding view.](Sources/SpeziOnboarding/SpeziOnboarding.docc/Resources/SequentialOnboardingView.png)|![A screen displaying the consent view.](Sources/SpeziOnboarding/SpeziOnboarding.docc/Resources/ConsentView.png)
+|![Screenshot displaying the onboarding view.](Sources/SpeziOnboarding/SpeziOnboarding.docc/Resources/OnboardingView.png)|![Screenshot displaying the sequential onboarding view.](Sources/SpeziOnboarding/SpeziOnboarding.docc/Resources/SequentialOnboardingView.png)|![Screenshot displaying the consent view.](Sources/SpeziOnboarding/SpeziOnboarding.docc/Resources/ConsentView.png)
 |:--:|:--:|:--:|
 |Onboarding View|Sequential Onboarding View|Consent View|
 
