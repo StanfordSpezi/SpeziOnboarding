@@ -16,7 +16,7 @@ SPDX-License-Identifier: MIT
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2FStanfordSpezi%2FSpeziOnboarding%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/StanfordSpezi/SpeziOnboarding)
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2FStanfordSpezi%2FSpeziOnboarding%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/StanfordSpezi/SpeziOnboarding)
 
-UI components for onboarding and consent.
+Provides UI components for onboarding and consent.
 
 ## Overview
 
@@ -43,6 +43,7 @@ The [`OnboardingView`](https://swiftpackageindex.com/stanfordspezi/spezionboardi
 ```swift
 import SpeziOnboarding
 import SwiftUI
+
 
 struct OnboardingViewExample: View {
     var body: some View {
@@ -117,7 +118,7 @@ struct SequentialOnboardingViewExample: View {
 
 The [`ConsentView`](https://swiftpackageindex.com/stanfordspezi/spezionboarding/documentation/spezionboarding/consentview) can be used to allow your users to read and agree to a document, e.g. a consent document for a research study or a terms and conditions document for an app. The document can be signed using a family and given name, and a hand drawn signature. 
 
-The following example demonstrates how the [`ConsentView`](https://swiftpackageindex.com/stanfordspezi/spezionboarding/documentation/spezionboarding/consentview) shown above is constructed by providing a header, markdown content encoded as a UTF8 `Data` instance (which may be provided asynchronously), and an action that should be performed once the consent has been given.
+The following example demonstrates how the [`ConsentView`](https://swiftpackageindex.com/stanfordspezi/spezionboarding/documentation/spezionboarding/consentview) shown above is constructed by providing a header, markdown content encoded as a [UTF8](https://www.swift.org/blog/utf8-string/) [`Data`](https://developer.apple.com/documentation/foundation/data) instance (which may be provided asynchronously), and an action that should be performed once the consent has been given.
 
 ```swift
 import SpeziOnboarding
