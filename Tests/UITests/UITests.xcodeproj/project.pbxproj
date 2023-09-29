@@ -14,10 +14,10 @@
 		2F61BDD329DDE98C00D71D33 /* XCTestExtensions in Frameworks */ = {isa = PBXBuildFile; productRef = 2F61BDD229DDE98C00D71D33 /* XCTestExtensions */; };
 		2F6D139A28F5F386007C25D6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2F6D139928F5F386007C25D6 /* Assets.xcassets */; };
 		2FA7382C290ADFAA007ACEB9 /* TestApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FA7382B290ADFAA007ACEB9 /* TestApp.swift */; };
-		970D444B2A6F031200756FE2 /* ConsentMarkdownTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 970D444A2A6F031200756FE2 /* ConsentMarkdownTestView.swift */; };
-		970D444D2A6F040900756FE2 /* ConsentHTMLTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 970D444C2A6F040900756FE2 /* ConsentHTMLTestView.swift */; };
+		970D444B2A6F031200756FE2 /* OnboardingConsentMarkdownTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 970D444A2A6F031200756FE2 /* OnboardingConsentMarkdownTestView.swift */; };
+		970D444D2A6F040900756FE2 /* OnboardingConsentHTMLTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 970D444C2A6F040900756FE2 /* OnboardingConsentHTMLTestView.swift */; };
 		970D444F2A6F048A00756FE2 /* OnboardingWelcomeTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 970D444E2A6F048A00756FE2 /* OnboardingWelcomeTestView.swift */; };
-		970D44512A6F04ED00756FE2 /* SequentialOnboardingTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 970D44502A6F04ED00756FE2 /* SequentialOnboardingTestView.swift */; };
+		970D44512A6F04ED00756FE2 /* OnboardingSequentialTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 970D44502A6F04ED00756FE2 /* OnboardingSequentialTestView.swift */; };
 		970D44532A6F0B1900756FE2 /* OnboardingStartTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 970D44522A6F0B1900756FE2 /* OnboardingStartTestView.swift */; };
 		970D44552A6F119600756FE2 /* OnboardingConditionalTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 970D44542A6F119600756FE2 /* OnboardingConditionalTestView.swift */; };
 		97A8FF2C2A74449F008CD91A /* OnboardingCustomTestView1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97A8FF2B2A74449F008CD91A /* OnboardingCustomTestView1.swift */; };
@@ -44,10 +44,10 @@
 		2F6D13AC28F5F386007C25D6 /* TestAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TestAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2FA7382B290ADFAA007ACEB9 /* TestApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestApp.swift; sourceTree = "<group>"; };
 		2FB0758A299DDB9000C0B37F /* TestApp.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = TestApp.xctestplan; sourceTree = "<group>"; };
-		970D444A2A6F031200756FE2 /* ConsentMarkdownTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsentMarkdownTestView.swift; sourceTree = "<group>"; };
-		970D444C2A6F040900756FE2 /* ConsentHTMLTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsentHTMLTestView.swift; sourceTree = "<group>"; };
+		970D444A2A6F031200756FE2 /* OnboardingConsentMarkdownTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingConsentMarkdownTestView.swift; sourceTree = "<group>"; };
+		970D444C2A6F040900756FE2 /* OnboardingConsentHTMLTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingConsentHTMLTestView.swift; sourceTree = "<group>"; };
 		970D444E2A6F048A00756FE2 /* OnboardingWelcomeTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingWelcomeTestView.swift; sourceTree = "<group>"; };
-		970D44502A6F04ED00756FE2 /* SequentialOnboardingTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SequentialOnboardingTestView.swift; sourceTree = "<group>"; };
+		970D44502A6F04ED00756FE2 /* OnboardingSequentialTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingSequentialTestView.swift; sourceTree = "<group>"; };
 		970D44522A6F0B1900756FE2 /* OnboardingStartTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingStartTestView.swift; sourceTree = "<group>"; };
 		970D44542A6F119600756FE2 /* OnboardingConditionalTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingConditionalTestView.swift; sourceTree = "<group>"; };
 		97A8FF2B2A74449F008CD91A /* OnboardingCustomTestView1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingCustomTestView1.swift; sourceTree = "<group>"; };
@@ -129,9 +129,9 @@
 				97A8FF2F2A74606A008CD91A /* HelperViews */,
 				970D44522A6F0B1900756FE2 /* OnboardingStartTestView.swift */,
 				970D444E2A6F048A00756FE2 /* OnboardingWelcomeTestView.swift */,
-				970D44502A6F04ED00756FE2 /* SequentialOnboardingTestView.swift */,
-				970D444A2A6F031200756FE2 /* ConsentMarkdownTestView.swift */,
-				970D444C2A6F040900756FE2 /* ConsentHTMLTestView.swift */,
+				970D44502A6F04ED00756FE2 /* OnboardingSequentialTestView.swift */,
+				970D444A2A6F031200756FE2 /* OnboardingConsentMarkdownTestView.swift */,
+				970D444C2A6F040900756FE2 /* OnboardingConsentHTMLTestView.swift */,
 				97A8FF2B2A74449F008CD91A /* OnboardingCustomTestView1.swift */,
 				97A8FF2D2A7444FC008CD91A /* OnboardingCustomTestView2.swift */,
 				970D44542A6F119600756FE2 /* OnboardingConditionalTestView.swift */,
@@ -260,15 +260,15 @@
 			files = (
 				970D44552A6F119600756FE2 /* OnboardingConditionalTestView.swift in Sources */,
 				970D44532A6F0B1900756FE2 /* OnboardingStartTestView.swift in Sources */,
-				970D44512A6F04ED00756FE2 /* SequentialOnboardingTestView.swift in Sources */,
+				970D44512A6F04ED00756FE2 /* OnboardingSequentialTestView.swift in Sources */,
 				97A8FF2C2A74449F008CD91A /* OnboardingCustomTestView1.swift in Sources */,
 				2FA7382C290ADFAA007ACEB9 /* TestApp.swift in Sources */,
 				97A8FF2E2A7444FC008CD91A /* OnboardingCustomTestView2.swift in Sources */,
 				2F61BDC929DD3CC000D71D33 /* OnboardingTestsView.swift in Sources */,
-				970D444D2A6F040900756FE2 /* ConsentHTMLTestView.swift in Sources */,
+				970D444D2A6F040900756FE2 /* OnboardingConsentHTMLTestView.swift in Sources */,
 				970D444F2A6F048A00756FE2 /* OnboardingWelcomeTestView.swift in Sources */,
 				97A8FF312A74607F008CD91A /* CustomToggleView.swift in Sources */,
-				970D444B2A6F031200756FE2 /* ConsentMarkdownTestView.swift in Sources */,
+				970D444B2A6F031200756FE2 /* OnboardingConsentMarkdownTestView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

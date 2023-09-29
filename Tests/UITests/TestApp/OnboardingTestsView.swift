@@ -22,9 +22,9 @@ struct OnboardingTestsView: View {
                 showConditionalView: $showConditionalView
             )
             OnboardingWelcomeTestView()
-            SequentialOnboardingTestView()
-            ConsentMarkdownTestView()
-            ConsentHTMLTestView()
+            OnboardingSequentialTestView()
+            OnboardingConsentMarkdownTestView()
+            OnboardingConsentHTMLTestView()
             
             if showConditionalView {
                 OnboardingConditionalTestView()

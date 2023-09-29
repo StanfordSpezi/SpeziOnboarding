@@ -11,7 +11,7 @@ import SpeziViews
 import SwiftUI
 
 
-struct ConsentMarkdownTestView: View {
+struct OnboardingConsentMarkdownTestView: View {
     @EnvironmentObject private var path: OnboardingNavigationPath
     
     
@@ -37,7 +37,7 @@ struct ConsentMarkdownTestView: View {
 #if DEBUG
 struct ConsentMarkdownTestView_Previews: PreviewProvider {
     static var previews: some View {
-        ConsentMarkdownTestView()
+        OnboardingConsentMarkdownTestView()
     }
 }
 #endif

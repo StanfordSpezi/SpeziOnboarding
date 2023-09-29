@@ -45,7 +45,7 @@ public struct OnboardingStack: View {
     @ObservedObject var onboardingFlowViewCollection: _OnboardingFlowViewCollection
     
     
-    /// The ``OnboardingStack/body`` contains a SwiftUI `NavigationStack` that is responsible for the navigation between the different onboarding views via a ``OnboardingNavigationPath``
+    /// The ``OnboardingStack/body`` contains a SwiftUI `NavigationStack` that is responsible for the navigation between the different onboarding views via an ``OnboardingNavigationPath``
     public var body: some View {
         NavigationStack(path: $onboardingNavigationPath.path) {
             onboardingNavigationPath.firstOnboardingView
@@ -61,7 +61,7 @@ public struct OnboardingStack: View {
     }
     
     
-    /// A ``OnboardingStack`` is defined by the ``_OnboardingFlowViewCollection`` resulting from the evaluation of the ``OnboardingViewBuilder`` result builder as well as an boolean `Binding` that is set to true when the onboarding flow is completed.
+    /// A ``OnboardingStack`` is defined by the `_OnboardingFlowViewCollection` resulting from the evaluation of the ``OnboardingViewBuilder`` result builder as well as an boolean `Binding` that is set to true when the onboarding flow is completed.
     /// - Parameters:
     ///   - onboardingFlowComplete: An optional SwiftUI `Binding` that is automatically set to true by the ``OnboardingNavigationPath`` once the onboarding flow is completed. Can be used to conditionally show/hide the ``OnboardingStack``.
     ///   - startAtStep: An optional SwiftUI (Onboarding) `View` type indicating the first to-be-shown step of the onboarding flow.

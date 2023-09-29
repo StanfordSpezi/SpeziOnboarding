@@ -15,7 +15,7 @@ struct OnboardingStartTestView: View {
     @EnvironmentObject private var path: OnboardingNavigationPath
     @Binding var showConditionalView: Bool
     
-    
+
     var body: some View {
         VStack(spacing: 8) {  // swiftlint:disable:this closure_body_length
             Button {
@@ -25,19 +25,19 @@ struct OnboardingStartTestView: View {
             }
             
             Button {
-                path.append(SequentialOnboardingTestView.self)
+                path.append(OnboardingSequentialTestView.self)
             } label: {
                 Text("Sequential Onboarding")
             }
 
             Button {
-                path.append(ConsentMarkdownTestView.self)
+                path.append(OnboardingConsentMarkdownTestView.self)
             } label: {
                 Text("Consent View (Markdown)")
             }
             
             Button {
-                path.append(ConsentHTMLTestView.self)
+                path.append(OnboardingConsentHTMLTestView.self)
             } label: {
                 Text("Consent View (HTML)")
             }
