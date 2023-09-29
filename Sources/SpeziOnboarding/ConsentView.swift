@@ -29,24 +29,24 @@ import SwiftUI
 @MainActor
 public struct ConsentView<ContentView: View, Action: View>: View {
     public enum LocalizationDefaults {
-        public static var givenName: FieldLocalization {
-            FieldLocalization(
-                title: String(localized: "NAME_FIELD_GIVEN_NAME_TITLE", bundle: .module),
-                placeholder: String(localized: "NAME_FIELD_GIVEN_NAME_PLACEHOLDER", bundle: .module)
+        public static var givenName: FieldLocalizationResource {
+            FieldLocalizationResource(
+                title: LocalizedStringResource("NAME_FIELD_GIVEN_NAME_TITLE", bundle: .atURL(from: .module)),
+                placeholder: LocalizedStringResource("NAME_FIELD_GIVEN_NAME_PLACEHOLDER", bundle: .atURL(from: .module))
             )
         }
-        public static var familyName: FieldLocalization {
-            FieldLocalization(
-                title: String(localized: "NAME_FIELD_FAMILY_NAME_TITLE", bundle: .module),
-                placeholder: String(localized: "NAME_FIELD_FAMILY_NAME_PLACEHOLDER", bundle: .module)
+        public static var familyName: FieldLocalizationResource {
+            FieldLocalizationResource(
+                title: LocalizedStringResource("NAME_FIELD_FAMILY_NAME_TITLE", bundle: .atURL(from: .module)),
+                placeholder: LocalizedStringResource("NAME_FIELD_FAMILY_NAME_PLACEHOLDER", bundle: .atURL(from: .module))
             )
         }
     }
 
     private let contentView: ContentView
     private let action: Action
-    private let givenNameField: FieldLocalization
-    private let familyNameField: FieldLocalization
+    private let givenNameField: FieldLocalizationResource
+    private let familyNameField: FieldLocalizationResource
     @State private var name = PersonNameComponents()
     @State private var showSignatureView = false
     @State private var isSigning = false
@@ -140,12 +140,12 @@ public struct ConsentView<ContentView: View, Action: View>: View {
     ///   - givenNameField: The localization to use for the given (first) name field
     ///   - familyNameField: The localization to use for the family (last) name field
     public init(
-        @ViewBuilder header: () -> (some View) = { EmptyView() },
+        @ViewBuilder header: () -> some View = { EmptyView() },
         asyncMarkdown: @escaping () async -> Data,
-        @ViewBuilder footer: () -> (some View) = { EmptyView() },
+        @ViewBuilder footer: () -> some View = { EmptyView() },
         action: @escaping () async -> Void,
-        givenNameField: FieldLocalization = LocalizationDefaults.givenName,
-        familyNameField: FieldLocalization = LocalizationDefaults.familyName
+        givenNameField: FieldLocalizationResource = LocalizationDefaults.givenName,
+        familyNameField: FieldLocalizationResource = LocalizationDefaults.familyName
     ) where ContentView == AnyView, Action == OnboardingActionsView {
         self.init(
             contentView: {
@@ -161,6 +161,7 @@ public struct ConsentView<ContentView: View, Action: View>: View {
                 )
             },
             actionView: {
+                OnboardingActionsView(LocalizedStringResource("CONSENT_ACTION", bundle: .atURL(from: .module))) {
                 /*
                 OnboardingActionsView(
                     primaryView: Text(String(localized: "CONSENT_ACTION", bundle: .module)),
@@ -171,7 +172,6 @@ public struct ConsentView<ContentView: View, Action: View>: View {
                  */
                  
                 
-                OnboardingActionsView(String(localized: "CONSENT_ACTION", bundle: .module)) {
                     await action()
                 }
                  
@@ -189,13 +189,15 @@ public struct ConsentView<ContentView: View, Action: View>: View {
     ///   - asyncHTML: The html content provided as an UTF8 encoded `Data` instance that can be provided asynchronously.
     ///   - footer: The footer view will be displayed above the html content.
     ///   - action: The action that should be performed once the consent has been given.
+    ///   - givenNameField: The localization for the given name field.#
+    ///   - familyNameField: The localization for the family name field.
     public init(
-        @ViewBuilder header: () -> (some View) = { EmptyView() },
+        @ViewBuilder header: () -> some View = { EmptyView() },
         asyncHTML: @escaping () async -> Data,
-        @ViewBuilder footer: () -> (some View) = { EmptyView() },
+        @ViewBuilder footer: () -> some View = { EmptyView() },
         action: @escaping () async -> Void,
-        givenNameField: FieldLocalization = LocalizationDefaults.givenName,
-        familyNameField: FieldLocalization = LocalizationDefaults.familyName
+        givenNameField: FieldLocalizationResource = LocalizationDefaults.givenName,
+        familyNameField: FieldLocalizationResource = LocalizationDefaults.familyName
     ) where ContentView == AnyView, Action == OnboardingActionsView {
         self.init(
             contentView: {
@@ -211,7 +213,7 @@ public struct ConsentView<ContentView: View, Action: View>: View {
                 )
             },
             actionView: {
-                OnboardingActionsView(String(localized: "CONSENT_ACTION", bundle: .module)) {
+                OnboardingActionsView(LocalizedStringResource("CONSENT_ACTION", bundle: .atURL(from: .module))) {
                     await action()
                 }
             },
@@ -227,10 +229,10 @@ public struct ConsentView<ContentView: View, Action: View>: View {
     ///   - givenNameField: The localization to use for the given (first) name field
     ///   - familyNameField: The localization to use for the family (last) name field
     public init(
-        @ViewBuilder contentView: () -> (ContentView),
-        @ViewBuilder actionView: () -> (Action),
-        givenNameField: FieldLocalization = LocalizationDefaults.givenName,
-        familyNameField: FieldLocalization = LocalizationDefaults.familyName
+        @ViewBuilder contentView: () -> ContentView,
+        @ViewBuilder actionView: () -> Action,
+        givenNameField: FieldLocalizationResource = LocalizationDefaults.givenName,
+        familyNameField: FieldLocalizationResource = LocalizationDefaults.familyName
     ) {
         self.contentView = contentView()
         self.action = actionView()

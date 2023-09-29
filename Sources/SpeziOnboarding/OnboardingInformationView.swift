@@ -44,16 +44,30 @@ public struct OnboardingInformationView: View {
         /// Creates a new content for an area in the ``OnboardingInformationView``.
         /// - Parameters:
         ///   - icon: The icon of the area in the ``OnboardingInformationView``.
-        ///   - title: The title of the area in the ``OnboardingInformationView``.
-        ///   - description: The description of the area in the ``OnboardingInformationView``.
+        ///   - title: The title of the area in the ``OnboardingInformationView`` without localization.
+        ///   - description: The description of the area in the ``OnboardingInformationView`` without localization.
+        @_disfavoredOverload
         public init<Title: StringProtocol, Description: StringProtocol>(
             icon: Image,
             title: Title,
             description: Description
         ) {
             self.icon = icon
-            self.title = title.localized
-            self.description = description.localized
+            self.title = String(title)
+            self.description = String(description)
+        }
+        
+        /// Creates a new content for an area in the ``OnboardingInformationView``.
+        /// - Parameters:
+        ///   - icon: The icon of the area in the ``OnboardingInformationView``.
+        ///   - title: The localized title of the area in the ``OnboardingInformationView``.
+        ///   - description: The localized description of the area in the ``OnboardingInformationView``.
+        public init(
+            icon: Image,
+            title: LocalizedStringResource,
+            description: LocalizedStringResource
+        ) {
+            self.init(icon: icon, title: title.localizedString(), description: description.localizedString())
         }
     }
     
@@ -84,10 +98,12 @@ public struct OnboardingInformationView: View {
                 .frame(width: 40)
                 .foregroundColor(.accentColor)
                 .padding()
+                .accessibilityHidden(true)
             
             VStack(alignment: .leading) {
                 Text(area.title)
                     .bold()
+                    .accessibilityAddTraits(.isHeader)
                 Text(area.description)
                     .foregroundColor(.secondary)
                     .fixedSize(horizontal: false, vertical: true)

@@ -56,8 +56,8 @@ final class OnboardingTests: XCTestCase {
         XCTAssert(app.staticTexts["Surname"].waitForExistence(timeout: 2))
         try app.textFields["Enter your surname ..."].enter(value: "Stanford")
         
-        XCTAssert(app.staticTexts["Leland Stanford"].waitForExistence(timeout: 2))
-        app.staticTexts["Leland Stanford"].firstMatch.swipeUp()
+        XCTAssert(app.staticTexts["Name: Leland Stanford"].waitForExistence(timeout: 2))
+        app.staticTexts["Name: Leland Stanford"].firstMatch.swipeUp()
         
         XCTAssert(app.buttons["I Consent"].waitForExistence(timeout: 2))
         app.buttons["I Consent"].tap()
@@ -75,8 +75,8 @@ final class OnboardingTests: XCTestCase {
         XCTAssert(app.staticTexts["Last Name"].waitForExistence(timeout: 2))
         try app.textFields["Enter your last name ..."].enter(value: "Stanford")
         
-        XCTAssert(app.staticTexts["Leland Stanford"].waitForExistence(timeout: 2))
-        app.staticTexts["Leland Stanford"].firstMatch.swipeUp()
+        XCTAssert(app.staticTexts["Name: Leland Stanford"].waitForExistence(timeout: 2))
+        app.staticTexts["Name: Leland Stanford"].firstMatch.swipeUp()
         
         XCTAssert(app.buttons["I Consent"].waitForExistence(timeout: 2))
         app.buttons["I Consent"].tap()
@@ -94,16 +94,13 @@ final class OnboardingTests: XCTestCase {
         
         XCTAssert(app.staticTexts["Welcome"].waitForExistence(timeout: 2))
         XCTAssert(app.staticTexts["Spezi UI Tests"].waitForExistence(timeout: 2))
-        
-        XCTAssert(app.images["Decrease Speed"].waitForExistence(timeout: 2))
+
         XCTAssert(app.staticTexts["Tortoise"].waitForExistence(timeout: 2))
         XCTAssert(app.staticTexts["A Tortoise!"].waitForExistence(timeout: 2))
-        
-        XCTAssert(app.images["lizard.fill"].waitForExistence(timeout: 2))
+
         XCTAssert(app.staticTexts["Lizard"].waitForExistence(timeout: 2))
         XCTAssert(app.staticTexts["A Lizard!"].waitForExistence(timeout: 2))
-        
-        XCTAssert(app.images["tree.fill"].waitForExistence(timeout: 2))
+
         XCTAssert(app.staticTexts["Tree"].waitForExistence(timeout: 2))
         XCTAssert(app.staticTexts["A Tree!"].waitForExistence(timeout: 2))
         
@@ -123,34 +120,27 @@ final class OnboardingTests: XCTestCase {
         
         XCTAssert(app.staticTexts["Things to know"].waitForExistence(timeout: 2))
         XCTAssert(app.staticTexts["And you should pay close attention ..."].waitForExistence(timeout: 2))
-        
-        XCTAssert(app.staticTexts["1"].waitForExistence(timeout: 2))
-        XCTAssert(app.staticTexts["A thing to know"].waitForExistence(timeout: 2))
-        XCTAssertFalse(app.staticTexts["2"].waitForExistence(timeout: 2))
-        XCTAssertFalse(app.staticTexts["A second thing to know"].waitForExistence(timeout: 2))
-        XCTAssertFalse(app.staticTexts["3"].waitForExistence(timeout: 2))
-        XCTAssertFalse(app.staticTexts["Third thing to know"].waitForExistence(timeout: 2))
+
+        XCTAssert(app.staticTexts["1. A thing to know"].waitForExistence(timeout: 2))
+        XCTAssertFalse(app.staticTexts["2. A second thing to know"].waitForExistence(timeout: 2))
+        XCTAssertFalse(app.staticTexts["3. Third thing to know"].waitForExistence(timeout: 2))
         
         XCTAssert(app.buttons["Next"].waitForExistence(timeout: 2))
         app.buttons["Next"].tap()
-        XCTAssert(app.staticTexts["2"].waitForExistence(timeout: 2))
-        XCTAssert(app.staticTexts["Second thing to know"].waitForExistence(timeout: 2))
+        XCTAssert(app.staticTexts["2. Second thing to know"].waitForExistence(timeout: 2))
         
         XCTAssert(app.buttons["Next"].waitForExistence(timeout: 2))
         app.buttons["Next"].tap()
-        XCTAssert(app.staticTexts["3"].waitForExistence(timeout: 2))
-        XCTAssert(app.staticTexts["Third thing to know"].waitForExistence(timeout: 2))
+        XCTAssert(app.staticTexts["3. Third thing to know"].waitForExistence(timeout: 2))
 
         XCTAssert(app.buttons["Next"].waitForExistence(timeout: 2))
         app.buttons["Next"].tap()
         XCTAssert(app.staticTexts["Now you should know all the things!"].waitForExistence(timeout: 2))
-        
-        XCTAssert(app.staticTexts["1"].waitForExistence(timeout: 2))
-        XCTAssert(app.staticTexts["A thing to know"].waitForExistence(timeout: 2))
-        XCTAssert(app.staticTexts["2"].waitForExistence(timeout: 2))
-        XCTAssert(app.staticTexts["Second thing to know"].waitForExistence(timeout: 2))
-        XCTAssert(app.staticTexts["3"].waitForExistence(timeout: 2))
-        XCTAssert(app.staticTexts["Third thing to know"].waitForExistence(timeout: 2))
+
+        XCTAssert(app.staticTexts["1. A thing to know"].waitForExistence(timeout: 2))
+        XCTAssert(app.staticTexts["2. Second thing to know"].waitForExistence(timeout: 2))
+        XCTAssert(app.staticTexts["3. Third thing to know"].waitForExistence(timeout: 2))
+        XCTAssert(app.staticTexts["4."].waitForExistence(timeout: 2))
         
         XCTAssert(app.buttons["Continue"].waitForExistence(timeout: 2))
         app.buttons["Continue"].tap()
@@ -188,15 +178,15 @@ final class OnboardingTests: XCTestCase {
         
         hitConsentButton(app)
         
-        XCTAssert(app.staticTexts["Leland Stanford"].waitForExistence(timeout: 2))
-        app.staticTexts["Leland Stanford"].swipeRight()
+        XCTAssert(app.staticTexts["Name: Leland Stanford"].waitForExistence(timeout: 2))
+        app.staticTexts["Name: Leland Stanford"].swipeRight()
         XCTAssert(app.buttons["Undo"].waitForExistence(timeout: 2))
         app.buttons["Undo"].tap()
         
         hitConsentButton(app)
-        
-        XCTAssert(app.staticTexts["X"].waitForExistence(timeout: 2))
-        app.staticTexts["X"].swipeRight()
+
+        XCTAssert(app.scrollViews["Signature Field"].waitForExistence(timeout: 2))
+        app.scrollViews["Signature Field"].swipeRight()
         
         hitConsentButton(app)
         
@@ -286,8 +276,8 @@ final class OnboardingTests: XCTestCase {
         XCTAssert(app.staticTexts["Last Name"].waitForExistence(timeout: 2))
         try app.textFields["Enter your last name ..."].enter(value: "Stanford")
         
-        XCTAssert(app.staticTexts["Leland Stanford"].waitForExistence(timeout: 2))
-        app.staticTexts["Leland Stanford"].firstMatch.swipeUp()
+        XCTAssert(app.staticTexts["Name: Leland Stanford"].waitForExistence(timeout: 2))
+        app.staticTexts["Name: Leland Stanford"].firstMatch.swipeUp()
         
         XCTAssert(app.buttons["I Consent"].waitForExistence(timeout: 2))
         app.buttons["I Consent"].tap()
