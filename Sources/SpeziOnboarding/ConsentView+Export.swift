@@ -19,8 +19,8 @@ extension ConsentView {
     ///
     /// - Note: The dimensions are calculated based on the standard DPI (dots per inch) of 72 for print.
     public enum PaperSize {
-        /// Standard A4 paper size.
-        case a4
+        /// Standard DIN A4 paper size.
+        case dinA4
         /// Standard US Letter paper size.
         case usLetter
 
@@ -31,7 +31,7 @@ extension ConsentView {
             let pointsPerInch: CGFloat = 72.0
 
             switch self {
-            case .a4:
+            case .dinA4:
                 let widthInInches: CGFloat = 8.3
                 let heightInInches: CGFloat = 11.7
                 return (widthInInches * pointsPerInch, heightInInches * pointsPerInch)

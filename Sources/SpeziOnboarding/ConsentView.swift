@@ -45,7 +45,7 @@ public struct ConsentView<ContentView: View, Action: View>: View {
     @EnvironmentObject var onboardingDataSource: OnboardingDataSource
 
     private let contentView: ContentView
-    private var action: Action
+    private let action: Action
     private let givenNameField: FieldLocalizationResource
     private let familyNameField: FieldLocalizationResource
     @State var name = PersonNameComponents()
@@ -54,6 +54,7 @@ public struct ConsentView<ContentView: View, Action: View>: View {
     @State var signature = PKDrawing()
     @State var signatureSize: CGSize = .zero
     
+    // TODO: Workaround to store the markdown here as otherwise no access to it for the export function
     var asyncMarkdown: (() async -> Data)?
     
     public var body: some View {
@@ -74,6 +75,7 @@ public struct ConsentView<ContentView: View, Action: View>: View {
                             Divider()
                             SignatureView(signature: $signature, isSigning: $isSigning, name: name)
                                 .padding(.vertical, 4)
+                                /// Capture the canvas size of the signature, important to export the consent form to a PDF
                                 .onPreferenceChange(CanvasView.CanvasSizePreferenceKey.self, perform: { value in
                                     signatureSize = value
                                 })
@@ -106,32 +108,6 @@ public struct ConsentView<ContentView: View, Action: View>: View {
         }
     }
     
-    /*
-    private func renderConsentPage() async {
-        /*
-        let markdown = Data("This is a *markdown* **example**".utf8)
-        let markdownString = try! AttributedString(
-          markdown: markdown,
-          options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace)
-        )
-        let html = Data("This is an <strong>HTML example</strong> taking 5 seconds to load.".utf8)
-        let htmlString = String(decoding: html, as: UTF8.self)
-        let view = HTMLView(html: html)
-        */
-        
-        let markdownData = await asyncMarkdown!()
-        
-        let exportView = Self.ExportView(
-            name: name,
-            signature: signature,
-            signatureSize: signatureSize,
-            markdownData: markdownData
-        )
-        
-        exportView.testRender()
-    }
-     */
-    
     var buttonDisabled: Bool {
         let showSignatureView = !(name.givenName?.isEmpty ?? true) && !(name.familyName?.isEmpty ?? true)
         if !self.showSignatureView && showSignatureView {
@@ -161,6 +137,7 @@ public struct ConsentView<ContentView: View, Action: View>: View {
         familyNameField: FieldLocalizationResource = LocalizationDefaults.familyName,
         export: Bool = true
     ) where ContentView == AnyView, Action == OnboardingActionsView {
+        // TODO
         let contentView = AnyView(
             VStack {
                 header()
@@ -178,11 +155,10 @@ public struct ConsentView<ContentView: View, Action: View>: View {
                 actionView: {
                     OnboardingActionsView(
                         primaryContent: .text(.init("CONSENT_ACTION", bundle: .atURL(from: .module))),
-                        primaryAction: { await action() },
-                        secondaryContent: .image("square.and.arrow.up"),
-                        secondaryAction: { await action() },
-                        orientation: .horizontal(proportions: 0.8)
-                        //orientation: .vertical
+                        primaryAction: { await action() },  // TODO
+                        secondaryContent: .image("square.and.arrow.up"),    // Share button for the export form
+                        secondaryAction: { await action() },    // TODO
+                        layout: .horizontal(proportions: 0.8)
                     )
                 },
                 givenNameField: givenNameField,

@@ -11,7 +11,23 @@ import SwiftUI
 import SpeziViews
 
 
-public struct ConsentViewCapture<ContentView: View, Action: View>: View {
+/// A wrapper view designed to export the given `ConsentView`.
+///
+/// The `Export` view encapsulates a `ConsentView` and contains the logic for exporting it to a PDF.
+///
+/// - Parameters:
+///   - size: Specifies the desired paper size for the export. Defaults to `.usLetter`.
+///   - buildView: A closure returning the `ConsentView` that needs to be wrapped for export.
+///
+/// ```swift
+/// Export(size: .usLetter) {
+///     ConsentView(
+///         ...
+///     )
+/// }
+/// ```
+///
+public struct Export<ContentView: View, Action: View>: View {
     let size: ConsentView<ContentView, Action>.PaperSize
     let wrappedView: ConsentView<ContentView, Action>
     
