@@ -26,16 +26,22 @@ import SwiftUI
 /// )
 /// ```
 public struct OnboardingActionsView: View {
-    public enum Orientation {
+    /// Defines the layout of the buttons used in the ``OnboardingActionsView``.
+    public enum ButtonLayout {
+        /// Top-to-bottom layout of the buttons.
         case vertical
+        /// Left-to-right layout of the buttons with a specified proportion.
         case horizontal(proportions: Double)
     }
-    
-    public enum Content {
+
+    /// Specifies the button's content type and its visual representation.
+    public enum ButtonContent {
+        /// Textual localized content.
         case text(LocalizedStringResource)
+        /// Image content using an SF symbol via system image name.
         case image(String)
         
-        
+        /// Provides the associated view for the button's content.
         var view: any View {
             switch self {
             case .text(let text):
@@ -51,7 +57,7 @@ public struct OnboardingActionsView: View {
     private let primaryAction: () async throws -> Void
     private let secondaryView: (any View)?
     private let secondaryAction: (() async throws -> Void)?
-    private let orientation: Orientation
+    private let layout: ButtonLayout
 
     
     @State private var primaryActionState: ViewState = .idle
@@ -106,7 +112,7 @@ public struct OnboardingActionsView: View {
     }
     
     public var body: some View {
-        switch orientation {
+        switch layout {
         case .vertical:
             verticalBody
         case .horizontal(let proportions):
@@ -128,7 +134,7 @@ public struct OnboardingActionsView: View {
         self.primaryAction = action
         self.secondaryView = nil
         self.secondaryAction = nil
-        self.orientation = .vertical
+        self.layout = .vertical
     }
     
     /// Creates an ``OnboardingActionsView`` instance that only contains a primary button.
@@ -147,37 +153,40 @@ public struct OnboardingActionsView: View {
     ///   - primaryText: The localized title of the primary button.
     ///   - primaryAction: The action that should be performed when pressing the primary button
     ///   - secondaryText: The localized title of the secondary button.
-    ///   - secondaryAction: The action that should be performed when pressing the secondary button
+    ///   - secondaryAction: The action that should be performed when pressing the secondary button.
+    ///   - layout: The layout of the buttons, either ``ButtonLayout/vertical`` or ``ButtonLayout/horizontal(proportions:)``.
     public init(
         primaryText: LocalizedStringResource,
         primaryAction: @escaping () async throws -> Void,
         secondaryText: LocalizedStringResource,
         secondaryAction: @escaping () async throws -> Void,
-        orientation: Orientation = .vertical
+        layout: ButtonLayout = .vertical
     ) {
         self.init(
             primaryText: primaryText.localizedString(),
             primaryAction: primaryAction,
             secondaryText: secondaryText.localizedString(),
             secondaryAction: secondaryAction,
-            orientation: orientation
+            layout: layout
         )
     }
     
-    /// Creates an ``OnboardingActionsView`` instance that contains a primary button and a secondary button with a specific content, either a text or an image.
+    /// Creates an ``OnboardingActionsView`` instance that contains a primary button and a secondary
+    /// button with a specific content, either a text or an SF symbol image.
     /// - Parameters:
     ///   - primaryContent: The localized content of the primary button.
     ///   - primaryAction: The action that should be performed when pressing the primary button
     ///   - secondaryText: The localized content of the secondary button.
-    ///   - secondaryAction: The action that should be performed when pressing the secondary button
+    ///   - secondaryAction: The action that should be performed when pressing the secondary button.
+    ///   - layout: The layout of the buttons, either ``ButtonLayout/vertical`` or ``ButtonLayout/horizontal(proportions:)``.
     public init(
-        primaryContent: Content,
+        primaryContent: ButtonContent,
         primaryAction: @escaping () async throws -> Void,
-        secondaryContent: Content,
+        secondaryContent: ButtonContent,
         secondaryAction: @escaping () async throws -> Void,
-        orientation: Orientation = .vertical
+        layout: ButtonLayout = .vertical
     ) {
-        guard case .horizontal(let proportions) = orientation,
+        guard case .horizontal(let proportions) = layout,
               0.0...1.0 ~= proportions else {
             preconditionFailure("OnboardingActionsView Horizontal proportions must be between 0 and 1.")
         }
@@ -186,7 +195,7 @@ public struct OnboardingActionsView: View {
         self.primaryAction = primaryAction
         self.secondaryView = secondaryContent.view
         self.secondaryAction = secondaryAction
-        self.orientation = orientation
+        self.layout = layout
     }
     
     /// Creates an ``OnboardingActionsView`` instance that contains a primary button and a secondary button.
@@ -194,16 +203,17 @@ public struct OnboardingActionsView: View {
     ///   - primaryText: The title of the primary button without localization.
     ///   - primaryAction: The action that should be performed when pressing the primary button
     ///   - secondaryText: The title of the secondary button without localization.
-    ///   - secondaryAction: The action that should be performed when pressing the secondary button
+    ///   - secondaryAction: The action that should be performed when pressing the secondary button.
+    ///   - layout: The layout of the buttons, either ``ButtonLayout/vertical`` or ``ButtonLayout/horizontal(proportions:)``.
     @_disfavoredOverload
     public init<PrimaryText: StringProtocol, SecondaryText: StringProtocol>(
         primaryText: PrimaryText,
         primaryAction: @escaping () async throws -> Void,
         secondaryText: SecondaryText,
         secondaryAction: @escaping () async throws -> Void,
-        orientation: Orientation = .vertical
+        layout: ButtonLayout = .vertical
     ) {
-        guard case .horizontal(let proportions) = orientation,
+        guard case .horizontal(let proportions) = layout,
               0.0...1.0 ~= proportions else {
             preconditionFailure("OnboardingActionsView Horizontal proportions must be between 0 and 1.")
         }
@@ -212,7 +222,7 @@ public struct OnboardingActionsView: View {
         self.primaryAction = primaryAction
         self.secondaryView = Text(secondaryText)
         self.secondaryAction = secondaryAction
-        self.orientation = orientation
+        self.layout = layout
     }
 }
 

@@ -11,11 +11,22 @@ import Foundation
 import SwiftUI
 import PencilKit
 
+/// Extension of the ``ConsentView`` enabling the export of the signed consent page in the onboarding flow
 extension ConsentView {
+    /// Represents common paper sizes with their dimensions.
+    ///
+    /// You can use the `dimensions` property to get the width and height of each paper size in points.
+    ///
+    /// - Note: The dimensions are calculated based on the standard DPI (dots per inch) of 72 for print.
     public enum PaperSize {
+        /// Standard A4 paper size.
         case a4
+        /// Standard US Letter paper size.
         case usLetter
 
+        /// Provides the dimensions of the paper in points.
+        ///
+        /// - Returns: A tuple containing the width and height of the paper in points.
         var dimensions: (width: CGFloat, height: CGFloat) {
             let pointsPerInch: CGFloat = 72.0
 
@@ -32,7 +43,20 @@ extension ConsentView {
         }
     }
 
-    
+    /// Creates a view representation of the consent content, ready for PDF export via SwiftUIs `ImageRenderer`
+    ///
+    /// This function constructs a view for presenting the markdown consent form. It combines the
+    /// given markdown and the user's signature with details such as the date of export. It can be
+    /// used to create exportable PDF documents of the consent form.
+    ///
+    /// - Parameters:
+    ///   - markdown: The markdown consent content as an `AttributedString`.
+    ///
+    /// - Returns: A SwiftUI `View` representation of the consent content and signature.
+    ///
+    /// - Note: This function avoids the use of asynchronous operations.
+    /// Asynchronous tasks are incompatible with SwiftUI's `ImageRenderer`,
+    /// which expects all rendering processes to be synchronous.
     func exportBody(markdown: AttributedString) -> some View {
         VStack {
             HStack {
@@ -74,7 +98,14 @@ extension ConsentView {
     }
     
     
-    func export() async {
+    /// Exports the consent form as a PDF in the specified paper size.
+    ///
+    /// This function retrieves the markdown content, renders it to an image, and saves it as a PDF
+    /// with the provided paper size. The resulting PDF is stored via the Spezi `Standard`.
+    /// The `Standard` must conform to the ``OnboardingConstraint``.
+    ///
+    /// - Parameter paperSize: The desired size for the exported PDF, defaulting to `.usLetter`.
+    func export(paperSize: PaperSize = .usLetter) async {
         guard let asyncMarkdown else {
             return
         }
@@ -90,17 +121,15 @@ extension ConsentView {
         
         let renderer = ImageRenderer(content: exportBody(markdown: markdownString))
         let paperSize = CGSize(
-            width: PaperSize.usLetter.dimensions.width,
-            height: PaperSize.usLetter.dimensions.height
+            width: paperSize.dimensions.width,
+            height: paperSize.dimensions.height
         )
-        // US Letter Size
         renderer.proposedSize = .init(paperSize)
         
         renderer.render { size, context in
-            //var box = CGRect(x: 0, y: 0, width: size.width, height: size.height)
-            //var box = CGRect(x: 0, y: 0, width: widthInPoints, height: widthInPoints)
             var box = CGRect(origin: .zero, size: paperSize)
             
+            /// Creates the `CGContext` that stores the to-be-rendered PDF in-memory as a Swift `Data` struct.
             guard let mutableData = CFDataCreateMutable(kCFAllocatorDefault, 0),
                   let consumer = CGDataConsumer(data: mutableData),
                   let pdf = CGContext(consumer: consumer, mediaBox: &box, nil) else {
@@ -118,24 +147,8 @@ extension ConsentView {
             pdf.endPDFPage()
             pdf.closePDF()
             
-            let data = mutableData as Data
-            onboardingDataSource.store(data)
+            /// Stores the finished PDF within the Spezi `Standard`.
+            onboardingDataSource.store(mutableData as Data)
         }
     }
-    //}
-    
-/*
-    #if DEBUG
-    struct ExportView_Previews: PreviewProvider {
-        static var previews: some View {
-            ExportView(
-                name: .init(givenName: "Philipp", familyName: "Zagar"),
-                signature: .init(),
-                signatureSize: .zero,
-                markdownData: .init("This is a *markdown* **example**".utf8)
-            )
-        }
-    }
-    #endif
- */
 }

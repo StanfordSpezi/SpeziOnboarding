@@ -26,7 +26,6 @@ import SwiftUI
 ///     }
 /// )
 /// ```
-@MainActor
 public struct ConsentView<ContentView: View, Action: View>: View {
     public enum LocalizationDefaults {
         public static var givenName: FieldLocalizationResource {
@@ -82,7 +81,7 @@ public struct ConsentView<ContentView: View, Action: View>: View {
                         
                         Divider()
                         
-                        
+                        // TODO: Just a placeholder to trigger the export functionality
                         Button {
                             Task {
                                 await export()
@@ -90,7 +89,6 @@ public struct ConsentView<ContentView: View, Action: View>: View {
                         } label: {
                             Text("Render")
                         }
-                         
                         
                         action
                             .disabled(buttonDisabled)
