@@ -11,7 +11,7 @@ import SwiftUI
 
 
 /// The ``OnboardingActionsView`` allows developers to present a unified style for action buttons in an onboarding flow.
-/// The ``OnboardingActionsView`` can contain one primary button and a optional secondary button below the primary button.
+/// The ``OnboardingActionsView`` can contain one primary button and a optional secondary button below or next to the primary button.
 ///
 /// ```swift
 /// OnboardingActionsView(
@@ -31,16 +31,79 @@ public struct OnboardingActionsView: View {
         case horizontal(proportions: Double)
     }
     
+    public enum Content {
+        case text(LocalizedStringResource)
+        case image(String)
+        
+        
+        var view: any View {
+            switch self {
+            case .text(let text):
+                return Text(text.localizedString())
+            case .image(let imageName):
+                return Image(systemName: imageName).imageScale(.large)
+            }
+        }
+    }
+    
     
     private let primaryView: any View
-    private let secondaryView: (any View)?
-    private let orientation: Orientation
     private let primaryAction: () async throws -> Void
+    private let secondaryView: (any View)?
     private let secondaryAction: (() async throws -> Void)?
+    private let orientation: Orientation
+
     
     @State private var primaryActionState: ViewState = .idle
     @State private var secondaryActionState: ViewState = .idle
+
+
+    @MainActor
+    private var verticalBody: some View {
+        VStack {
+            AsyncButton(state: $primaryActionState, action: primaryAction) {
+                AnyView(primaryView)
+                    .frame(maxWidth: .infinity, minHeight: 38)
+            }
+            
+            if let secondaryView, let secondaryAction {
+                AsyncButton(state: $secondaryActionState, action: secondaryAction) {
+                    AnyView(secondaryView)
+                        .frame(maxWidth: .infinity, minHeight: 38)
+                }
+                    .padding(.top, 10)
+            }
+        }
+            .buttonStyle(.borderedProminent)
+            .disabled(primaryActionState != .idle || secondaryActionState != .idle)
+            .viewStateAlert(state: $primaryActionState)
+            .viewStateAlert(state: $secondaryActionState)
+    }
     
+    @MainActor
+    private func horizontalBody(proportions: Double) -> some View {
+        VStack {
+            HStack {
+                AsyncButton(state: $primaryActionState, action: primaryAction) {
+                    AnyView(primaryView)
+                        /// The `UIScreen` width isn't a perfect measure, but using SwiftUI's `GeometryReader` results in too many limitations as the component attempts to fill all available space.
+                        .frame(maxWidth: UIScreen.main.bounds.width * proportions, minHeight: 38)
+                }
+                
+                if let secondaryView, let secondaryAction {
+                    AsyncButton(state: $secondaryActionState, action: secondaryAction) {
+                        AnyView(secondaryView)
+                            /// The `UIScreen` width isn't a perfect measure, but using SwiftUI's `GeometryReader` results in too many limitations as the component attempts to fill all available space.
+                            .frame(maxWidth: UIScreen.main.bounds.width * (1 - proportions), minHeight: 38)
+                    }
+                }
+            }
+                .buttonStyle(.borderedProminent)
+        }
+            .disabled(primaryActionState != .idle || secondaryActionState != .idle)
+            .viewStateAlert(state: $primaryActionState)
+            .viewStateAlert(state: $secondaryActionState)
+    }
     
     public var body: some View {
         switch orientation {
@@ -48,64 +111,9 @@ public struct OnboardingActionsView: View {
             verticalBody
         case .horizontal(let proportions):
             horizontalBody(proportions: proportions)
-    }
-    
-    var verticalBody: some View {
-        VStack {
-            AsyncButton(state: $primaryActionState, action: primaryAction) {
-                Text(primaryText)
-                    .frame(maxWidth: .infinity, minHeight: 38)
-            }
-                .buttonStyle(.borderedProminent)
-            if let secondaryText, let secondaryAction {
-                AsyncButton(secondaryText, state: $secondaryActionState, action: secondaryAction)
-                    .padding(.top, 10)
-            }
-        }
-            .disabled(primaryActionState != .idle || secondaryActionState != .idle)
-            .viewStateAlert(state: $primaryActionState)
-            .viewStateAlert(state: $secondaryActionState)
-    }
-    
-    @ViewBuilder
-    func horizontalBody(proportions: Double) -> some View {
-        VStack {
-            /*
-            Spacer()
-                .frame(maxWidth: .infinity)
-             */
-            
-            GeometryReader { geometry in
-                HStack {
-                    Button(action: primaryAction) {
-                        Group {
-                            if primaryActionLoading {
-                                ProgressView()
-                            } else {
-                                AnyView(primaryView)
-                            }
-                        }
-                            .frame(maxWidth: geometry.size.width * proportions, minHeight: 38)
-                    }
-                    
-                    if let secondaryView, _secondaryAction != nil {
-                        Button(action: secondaryAction) {
-                            Group {
-                                if secondaryActionLoading {
-                                    ProgressView()
-                                } else {
-                                    AnyView(secondaryView)
-                                }
-                            }
-                                .frame(maxWidth: geometry.size.width * (1 - proportions), minHeight: 38)
-                        }
-                    }
-                }
-            }
-            .buttonStyle(.borderedProminent)
-            .disabled(primaryActionLoading || secondaryActionLoading)
         }
     }
+    
     
     /// Creates an ``OnboardingActionsView`` instance that only contains a primary button.
     /// - Parameters:
@@ -116,16 +124,16 @@ public struct OnboardingActionsView: View {
         _ text: Text,
         action: @escaping () async throws -> Void
     ) {
-        self.orientation = .vertical
-        self.primaryView = SwiftUI.Text(text.localized)
+        self.primaryView = SwiftUI.Text(text)
         self.primaryAction = action
-        self.secondaryAction = nil
         self.secondaryView = nil
+        self.secondaryAction = nil
+        self.orientation = .vertical
     }
     
     /// Creates an ``OnboardingActionsView`` instance that only contains a primary button.
     /// - Parameters:
-    ///   - text: The localized title ot the primary button.
+    ///   - text: The localized title of the primary button.
     ///   - action: The action that should be performed when pressing the primary button
     public init(
         _ text: LocalizedStringResource,
@@ -136,42 +144,74 @@ public struct OnboardingActionsView: View {
     
     /// Creates an ``OnboardingActionsView`` instance that contains a primary button and a secondary button.
     /// - Parameters:
-    ///   - primaryText: The localized title ot the primary button.
+    ///   - primaryText: The localized title of the primary button.
     ///   - primaryAction: The action that should be performed when pressing the primary button
-    ///   - secondaryText: The localized title ot the secondary button.
+    ///   - secondaryText: The localized title of the secondary button.
     ///   - secondaryAction: The action that should be performed when pressing the secondary button
     public init(
         primaryText: LocalizedStringResource,
         primaryAction: @escaping () async throws -> Void,
         secondaryText: LocalizedStringResource,
-        secondaryAction: @escaping () async throws -> Void
+        secondaryAction: @escaping () async throws -> Void,
+        orientation: Orientation = .vertical
     ) {
         self.init(
             primaryText: primaryText.localizedString(),
             primaryAction: primaryAction,
             secondaryText: secondaryText.localizedString(),
-            secondaryAction: secondaryAction
+            secondaryAction: secondaryAction,
+            orientation: orientation
         )
+    }
+    
+    /// Creates an ``OnboardingActionsView`` instance that contains a primary button and a secondary button with a specific content, either a text or an image.
+    /// - Parameters:
+    ///   - primaryContent: The localized content of the primary button.
+    ///   - primaryAction: The action that should be performed when pressing the primary button
+    ///   - secondaryText: The localized content of the secondary button.
+    ///   - secondaryAction: The action that should be performed when pressing the secondary button
+    public init(
+        primaryContent: Content,
+        primaryAction: @escaping () async throws -> Void,
+        secondaryContent: Content,
+        secondaryAction: @escaping () async throws -> Void,
+        orientation: Orientation = .vertical
+    ) {
+        guard case .horizontal(let proportions) = orientation,
+              0.0...1.0 ~= proportions else {
+            preconditionFailure("OnboardingActionsView Horizontal proportions must be between 0 and 1.")
+        }
+        
+        self.primaryView = primaryContent.view
+        self.primaryAction = primaryAction
+        self.secondaryView = secondaryContent.view
+        self.secondaryAction = secondaryAction
+        self.orientation = orientation
     }
     
     /// Creates an ``OnboardingActionsView`` instance that contains a primary button and a secondary button.
     /// - Parameters:
-    ///   - primaryText: The title ot the primary button without localization.
+    ///   - primaryText: The title of the primary button without localization.
     ///   - primaryAction: The action that should be performed when pressing the primary button
-    ///   - secondaryText: The title ot the secondary button without localization.
+    ///   - secondaryText: The title of the secondary button without localization.
     ///   - secondaryAction: The action that should be performed when pressing the secondary button
     @_disfavoredOverload
     public init<PrimaryText: StringProtocol, SecondaryText: StringProtocol>(
         primaryText: PrimaryText,
         primaryAction: @escaping () async throws -> Void,
         secondaryText: SecondaryText,
-        secondaryAction: @escaping () async throws -> Void
+        secondaryAction: @escaping () async throws -> Void,
         orientation: Orientation = .vertical
     ) {
-        self.primaryAction = primaryAction
-        self.secondaryAction = secondaryAction
+        guard case .horizontal(let proportions) = orientation,
+              0.0...1.0 ~= proportions else {
+            preconditionFailure("OnboardingActionsView Horizontal proportions must be between 0 and 1.")
+        }
+        
         self.primaryView = Text(primaryText)
+        self.primaryAction = primaryAction
         self.secondaryView = Text(secondaryText)
+        self.secondaryAction = secondaryAction
         self.orientation = orientation
     }
 }

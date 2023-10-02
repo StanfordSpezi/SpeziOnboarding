@@ -42,18 +42,20 @@ public struct ConsentView<ContentView: View, Action: View>: View {
             )
         }
     }
+    
+    @EnvironmentObject var onboardingDataSource: OnboardingDataSource
 
     private let contentView: ContentView
-    private let action: Action
+    private var action: Action
     private let givenNameField: FieldLocalizationResource
     private let familyNameField: FieldLocalizationResource
-    @State private var name = PersonNameComponents()
+    @State var name = PersonNameComponents()
     @State private var showSignatureView = false
     @State private var isSigning = false
-    @State private var signature = PKDrawing()
+    @State var signature = PKDrawing()
+    @State var signatureSize: CGSize = .zero
     
-    private var asyncMarkdown: (() async -> Data)?
-    @State private var signatureSize: CGSize?
+    var asyncMarkdown: (() async -> Data)?
     
     public var body: some View {
         ScrollViewReader { proxy in
@@ -80,6 +82,16 @@ public struct ConsentView<ContentView: View, Action: View>: View {
                         
                         Divider()
                         
+                        
+                        Button {
+                            Task {
+                                await export()
+                            }
+                        } label: {
+                            Text("Render")
+                        }
+                         
+                        
                         action
                             .disabled(buttonDisabled)
                             .animation(.easeInOut, value: buttonDisabled)
@@ -96,6 +108,7 @@ public struct ConsentView<ContentView: View, Action: View>: View {
         }
     }
     
+    /*
     private func renderConsentPage() async {
         /*
         let markdown = Data("This is a *markdown* **example**".utf8)
@@ -119,6 +132,7 @@ public struct ConsentView<ContentView: View, Action: View>: View {
         
         exportView.testRender()
     }
+     */
     
     var buttonDisabled: Bool {
         let showSignatureView = !(name.givenName?.isEmpty ?? true) && !(name.familyName?.isEmpty ?? true)
@@ -130,6 +144,7 @@ public struct ConsentView<ContentView: View, Action: View>: View {
         
         return signature.strokes.isEmpty || (name.givenName?.isEmpty ?? true) || (name.familyName?.isEmpty ?? true)
     }
+    
     
     /// Creates a ``ConsentView`` with a provided action view using  an``OnboardingActionsView`` and renders a markdown view.
     /// - Parameters:
@@ -145,40 +160,48 @@ public struct ConsentView<ContentView: View, Action: View>: View {
         @ViewBuilder footer: () -> some View = { EmptyView() },
         action: @escaping () async -> Void,
         givenNameField: FieldLocalizationResource = LocalizationDefaults.givenName,
-        familyNameField: FieldLocalizationResource = LocalizationDefaults.familyName
+        familyNameField: FieldLocalizationResource = LocalizationDefaults.familyName,
+        export: Bool = true
     ) where ContentView == AnyView, Action == OnboardingActionsView {
-        self.init(
-            contentView: {
-                AnyView(
-                    VStack {
-                        header()
-                        DocumentView(
-                            asyncData: asyncMarkdown,
-                            type: .markdown
-                        )
-                        footer()
-                    }
+        let contentView = AnyView(
+            VStack {
+                header()
+                DocumentView(
+                    asyncData: asyncMarkdown,
+                    type: .markdown
                 )
-            },
-            actionView: {
-                OnboardingActionsView(LocalizedStringResource("CONSENT_ACTION", bundle: .atURL(from: .module))) {
-                /*
-                OnboardingActionsView(
-                    primaryView: Text(String(localized: "CONSENT_ACTION", bundle: .module)),
-                    primaryAction: { await action() },
-                    secondaryView: Image(systemName: "square.and.arrow.up").imageScale(.large),
-                    secondaryAction: { await action() },    // TODO
-                    orientation: .horizontal(proportions: 0.75))
-                 */
-                 
-                
-                    await action()
-                }
-                 
-            },
-            givenNameField: givenNameField,
-            familyNameField: familyNameField
+                footer()
+            }
         )
+        
+        if export {
+            self.init(
+                contentView: { contentView },
+                actionView: {
+                    OnboardingActionsView(
+                        primaryContent: .text(.init("CONSENT_ACTION", bundle: .atURL(from: .module))),
+                        primaryAction: { await action() },
+                        secondaryContent: .image("square.and.arrow.up"),
+                        secondaryAction: { await action() },
+                        orientation: .horizontal(proportions: 0.8)
+                        //orientation: .vertical
+                    )
+                },
+                givenNameField: givenNameField,
+                familyNameField: familyNameField
+            )
+        } else {
+            self.init(
+                contentView: { contentView },
+                actionView: {
+                    OnboardingActionsView(LocalizedStringResource("CONSENT_ACTION", bundle: .atURL(from: .module))) {
+                        await action()
+                    }
+                },
+                givenNameField: givenNameField,
+                familyNameField: familyNameField
+            )
+        }
         
         self.asyncMarkdown = asyncMarkdown
     }
@@ -189,7 +212,7 @@ public struct ConsentView<ContentView: View, Action: View>: View {
     ///   - asyncHTML: The html content provided as an UTF8 encoded `Data` instance that can be provided asynchronously.
     ///   - footer: The footer view will be displayed above the html content.
     ///   - action: The action that should be performed once the consent has been given.
-    ///   - givenNameField: The localization for the given name field.#
+    ///   - givenNameField: The localization for the given name field.
     ///   - familyNameField: The localization for the family name field.
     public init(
         @ViewBuilder header: () -> some View = { EmptyView() },
