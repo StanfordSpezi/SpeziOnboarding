@@ -47,7 +47,9 @@ public struct OnboardingActionsView: View {
             case .text(let text):
                 return Text(text.localizedString())
             case .image(let imageName):
-                return Image(systemName: imageName).imageScale(.large)
+                return Image(systemName: imageName)
+                    .imageScale(.large)
+                    .accessibilityLabel(Text(imageName))
             }
         }
     }
