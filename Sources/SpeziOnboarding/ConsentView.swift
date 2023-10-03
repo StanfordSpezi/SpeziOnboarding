@@ -44,14 +44,15 @@ public struct ConsentView<ContentView: View, Action: View>: View {
     }
     
     
-    @EnvironmentObject private var onboardingDataSource: OnboardingDataSource
-
     private let contentView: ContentView
     private let action: Action
     private let givenNameField: FieldLocalizationResource
     private let familyNameField: FieldLocalizationResource
     private var exportConsentForm: Bool = false
     private var asyncMarkdown: (() async -> Data)?
+    
+    
+    @EnvironmentObject private var onboardingDataSource: OnboardingDataSource
     @State private var name = PersonNameComponents()
     @State private var showSignatureView = false
     @State private var isSigning = false
