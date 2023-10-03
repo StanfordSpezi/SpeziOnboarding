@@ -21,13 +21,14 @@ let package = Package(
         .library(name: "SpeziOnboarding", targets: ["SpeziOnboarding"])
     ],
     dependencies: [
-        .package(url: "https://github.com/StanfordSpezi/Spezi", .upToNextMinor(from: "0.7.2")),
+        .package(url: "https://github.com/StanfordSpezi/Spezi", .upToNextMinor(from: "0.7.0")),
         .package(url: "https://github.com/StanfordSpezi/SpeziViews", .upToNextMinor(from: "0.5.0"))
     ],
     targets: [
         .target(
             name: "SpeziOnboarding",
             dependencies: [
+                .product(name: "Spezi", package: "Spezi"),
                 .product(name: "SpeziViews", package: "SpeziViews")
             ]
         ),
