@@ -24,6 +24,7 @@ struct OnboardingTestsView: View {
             OnboardingWelcomeTestView()
             OnboardingSequentialTestView()
             OnboardingConsentMarkdownTestView()
+            OnboardingConsentMarkdownRenderingView()
             OnboardingConsentHTMLTestView()
             
             if showConditionalView {

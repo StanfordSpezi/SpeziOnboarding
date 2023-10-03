@@ -6,11 +6,13 @@
 // SPDX-License-Identifier: MIT
 //
 
+import Spezi
 import SwiftUI
 
 
 @main
 struct UITestsApp: App {
+    @UIApplicationDelegateAdaptor(TestAppDelegate.self) var appDelegate
     @State var onboardingFlowComplete = false
     
     
@@ -18,6 +20,7 @@ struct UITestsApp: App {
         WindowGroup {
             if !onboardingFlowComplete {
                 OnboardingTestsView(onboardingFlowComplete: $onboardingFlowComplete)
+                    .spezi(appDelegate)
             } else {
                 Text("Onboarding complete")
             }

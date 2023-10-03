@@ -11,7 +11,6 @@
 		2F61BDC929DD3CC000D71D33 /* OnboardingTestsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F61BDC829DD3CC000D71D33 /* OnboardingTestsView.swift */; };
 		2F61BDCB29DDE76D00D71D33 /* SpeziOnboardingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F61BDCA29DDE76D00D71D33 /* SpeziOnboardingTests.swift */; };
 		2F61BDCE29DDE7B300D71D33 /* Spezi in Frameworks */ = {isa = PBXBuildFile; productRef = 2F61BDCD29DDE7B300D71D33 /* Spezi */; };
-		2F61BDD329DDE98C00D71D33 /* XCTestExtensions in Frameworks */ = {isa = PBXBuildFile; productRef = 2F61BDD229DDE98C00D71D33 /* XCTestExtensions */; };
 		2F6D139A28F5F386007C25D6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2F6D139928F5F386007C25D6 /* Assets.xcassets */; };
 		2FA7382C290ADFAA007ACEB9 /* TestApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FA7382B290ADFAA007ACEB9 /* TestApp.swift */; };
 		970D444B2A6F031200756FE2 /* OnboardingConsentMarkdownTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 970D444A2A6F031200756FE2 /* OnboardingConsentMarkdownTestView.swift */; };
@@ -23,6 +22,11 @@
 		97A8FF2C2A74449F008CD91A /* OnboardingCustomTestView1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97A8FF2B2A74449F008CD91A /* OnboardingCustomTestView1.swift */; };
 		97A8FF2E2A7444FC008CD91A /* OnboardingCustomTestView2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97A8FF2D2A7444FC008CD91A /* OnboardingCustomTestView2.swift */; };
 		97A8FF312A74607F008CD91A /* CustomToggleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97A8FF302A74607F008CD91A /* CustomToggleView.swift */; };
+		97C6AF772ACC86B70060155B /* ExampleStandard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97C6AF762ACC86B70060155B /* ExampleStandard.swift */; };
+		97C6AF792ACC88270060155B /* TestAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97C6AF782ACC88270060155B /* TestAppDelegate.swift */; };
+		97C6AF7B2ACC89000060155B /* XCTestExtensions in Frameworks */ = {isa = PBXBuildFile; productRef = 97C6AF7A2ACC89000060155B /* XCTestExtensions */; };
+		97C6AF7D2ACC92CB0060155B /* OnboardingConsentMarkdownRenderingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97C6AF7C2ACC92CB0060155B /* OnboardingConsentMarkdownRenderingView.swift */; };
+		97C6AF7F2ACC94450060155B /* OnboardingFlow+PreviewSimulator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97C6AF7E2ACC94450060155B /* OnboardingFlow+PreviewSimulator.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,6 +57,10 @@
 		97A8FF2B2A74449F008CD91A /* OnboardingCustomTestView1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingCustomTestView1.swift; sourceTree = "<group>"; };
 		97A8FF2D2A7444FC008CD91A /* OnboardingCustomTestView2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingCustomTestView2.swift; sourceTree = "<group>"; };
 		97A8FF302A74607F008CD91A /* CustomToggleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomToggleView.swift; sourceTree = "<group>"; };
+		97C6AF762ACC86B70060155B /* ExampleStandard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleStandard.swift; sourceTree = "<group>"; };
+		97C6AF782ACC88270060155B /* TestAppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestAppDelegate.swift; sourceTree = "<group>"; };
+		97C6AF7C2ACC92CB0060155B /* OnboardingConsentMarkdownRenderingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingConsentMarkdownRenderingView.swift; sourceTree = "<group>"; };
+		97C6AF7E2ACC94450060155B /* OnboardingFlow+PreviewSimulator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OnboardingFlow+PreviewSimulator.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,7 +77,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2F61BDD329DDE98C00D71D33 /* XCTestExtensions in Frameworks */,
+				97C6AF7B2ACC89000060155B /* XCTestExtensions in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -102,6 +110,8 @@
 			children = (
 				970D44472A6F02E800756FE2 /* Views */,
 				2FA7382B290ADFAA007ACEB9 /* TestApp.swift */,
+				97C6AF782ACC88270060155B /* TestAppDelegate.swift */,
+				97C6AF762ACC86B70060155B /* ExampleStandard.swift */,
 				2F61BDC829DD3CC000D71D33 /* OnboardingTestsView.swift */,
 				2F6D139928F5F386007C25D6 /* Assets.xcassets */,
 			);
@@ -131,10 +141,12 @@
 				970D444E2A6F048A00756FE2 /* OnboardingWelcomeTestView.swift */,
 				970D44502A6F04ED00756FE2 /* OnboardingSequentialTestView.swift */,
 				970D444A2A6F031200756FE2 /* OnboardingConsentMarkdownTestView.swift */,
+				97C6AF7C2ACC92CB0060155B /* OnboardingConsentMarkdownRenderingView.swift */,
 				970D444C2A6F040900756FE2 /* OnboardingConsentHTMLTestView.swift */,
 				97A8FF2B2A74449F008CD91A /* OnboardingCustomTestView1.swift */,
 				97A8FF2D2A7444FC008CD91A /* OnboardingCustomTestView2.swift */,
 				970D44542A6F119600756FE2 /* OnboardingConditionalTestView.swift */,
+				97C6AF7E2ACC94450060155B /* OnboardingFlow+PreviewSimulator.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -187,7 +199,7 @@
 			);
 			name = TestAppUITests;
 			packageProductDependencies = (
-				2F61BDD229DDE98C00D71D33 /* XCTestExtensions */,
+				97C6AF7A2ACC89000060155B /* XCTestExtensions */,
 			);
 			productName = ExampleUITests;
 			productReference = 2F6D13AC28F5F386007C25D6 /* TestAppUITests.xctest */;
@@ -224,7 +236,7 @@
 			mainGroup = 2F6D138928F5F384007C25D6;
 			packageReferences = (
 				2F61BDCC29DDE7B300D71D33 /* XCRemoteSwiftPackageReference "Spezi" */,
-				2F61BDD129DDE98C00D71D33 /* XCRemoteSwiftPackageReference "XCTestExtensions" */,
+				97C6AF752ACC74080060155B /* XCRemoteSwiftPackageReference "XCTestExtensions" */,
 			);
 			productRefGroup = 2F6D139328F5F384007C25D6 /* Products */;
 			projectDirPath = "";
@@ -280,7 +292,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				97C6AF792ACC88270060155B /* TestAppDelegate.swift in Sources */,
 				970D44552A6F119600756FE2 /* OnboardingConditionalTestView.swift in Sources */,
+				97C6AF772ACC86B70060155B /* ExampleStandard.swift in Sources */,
 				970D44532A6F0B1900756FE2 /* OnboardingStartTestView.swift in Sources */,
 				970D44512A6F04ED00756FE2 /* OnboardingSequentialTestView.swift in Sources */,
 				97A8FF2C2A74449F008CD91A /* OnboardingCustomTestView1.swift in Sources */,
@@ -288,6 +302,8 @@
 				97A8FF2E2A7444FC008CD91A /* OnboardingCustomTestView2.swift in Sources */,
 				2F61BDC929DD3CC000D71D33 /* OnboardingTestsView.swift in Sources */,
 				970D444D2A6F040900756FE2 /* OnboardingConsentHTMLTestView.swift in Sources */,
+				97C6AF7F2ACC94450060155B /* OnboardingFlow+PreviewSimulator.swift in Sources */,
+				97C6AF7D2ACC92CB0060155B /* OnboardingConsentMarkdownRenderingView.swift in Sources */,
 				970D444F2A6F048A00756FE2 /* OnboardingWelcomeTestView.swift in Sources */,
 				97A8FF312A74607F008CD91A /* CustomToggleView.swift in Sources */,
 				970D444B2A6F031200756FE2 /* OnboardingConsentMarkdownTestView.swift in Sources */,
@@ -683,15 +699,15 @@
 			repositoryURL = "https://github.com/StanfordSpezi/Spezi.git";
 			requirement = {
 				kind = upToNextMinorVersion;
-				minimumVersion = 0.5.0;
+				minimumVersion = 0.7.0;
 			};
 		};
-		2F61BDD129DDE98C00D71D33 /* XCRemoteSwiftPackageReference "XCTestExtensions" */ = {
+		97C6AF752ACC74080060155B /* XCRemoteSwiftPackageReference "XCTestExtensions" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/StanfordSpezi/XCTestExtensions";
+			repositoryURL = "https://github.com/StanfordBDHG/XCTestExtensions";
 			requirement = {
 				kind = upToNextMinorVersion;
-				minimumVersion = 0.4.6;
+				minimumVersion = 0.4.7;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -706,9 +722,9 @@
 			package = 2F61BDCC29DDE7B300D71D33 /* XCRemoteSwiftPackageReference "Spezi" */;
 			productName = Spezi;
 		};
-		2F61BDD229DDE98C00D71D33 /* XCTestExtensions */ = {
+		97C6AF7A2ACC89000060155B /* XCTestExtensions */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 2F61BDD129DDE98C00D71D33 /* XCRemoteSwiftPackageReference "XCTestExtensions" */;
+			package = 97C6AF752ACC74080060155B /* XCRemoteSwiftPackageReference "XCTestExtensions" */;
 			productName = XCTestExtensions;
 		};
 /* End XCSwiftPackageProductDependency section */

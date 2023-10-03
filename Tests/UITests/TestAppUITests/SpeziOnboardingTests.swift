@@ -62,6 +62,12 @@ final class OnboardingTests: XCTestCase {
         XCTAssert(app.buttons["I Consent"].waitForExistence(timeout: 2))
         app.buttons["I Consent"].tap()
         
+        // Check if the consent export was successful
+        XCTAssert(app.staticTexts["Consent PDF rendering exists"].waitForExistence(timeout: 2))
+        
+        XCTAssert(app.buttons["Next"].waitForExistence(timeout: 2))
+        app.buttons["Next"].tap()
+        
         // Check if on consent (HTML) view
         _ = XCTWaiter.wait(for: [expectation(description: "Wait for HTML to load.")], timeout: 10.0)
 
@@ -190,11 +196,61 @@ final class OnboardingTests: XCTestCase {
         
         hitConsentButton(app)
         
-        _ = XCTWaiter.wait(for: [expectation(description: "Wait for HTML to load.")], timeout: 10.0)
+        XCTAssert(app.staticTexts["Consent PDF rendering exists"].waitForExistence(timeout: 2))
+    }
+    
+    func testOnboardingConsentMarkdownRendering() throws {
+        let app = XCUIApplication()
+        app.launch()
+        
+        // Test that the consent view is not exported
+        XCTAssert(app.buttons["Rendered Consent View (Markdown)"].waitForExistence(timeout: 2))
+        app.buttons["Rendered Consent View (Markdown)"].tap()
+        
+        XCTAssert(app.staticTexts["Consent PDF rendering doesn't exist"].waitForExistence(timeout: 2))
+        
+        // Navigate back to start screen
+        XCTAssert(app.buttons["Back"].waitForExistence(timeout: 2))
+        app.buttons["Back"].tap()
+        
+        // Go through markdown consent form and check rendering
+        XCTAssert(app.buttons["Consent View (Markdown)"].waitForExistence(timeout: 2))
+        app.buttons["Consent View (Markdown)"].tap()
         
         XCTAssert(app.staticTexts["Consent"].waitForExistence(timeout: 2))
         XCTAssert(app.staticTexts["Version 1.0"].waitForExistence(timeout: 2))
-        XCTAssert(app.staticTexts["This is an example of a study consent written in HTML."].waitForExistence(timeout: 2))
+        XCTAssert(app.staticTexts["This is a markdown example"].waitForExistence(timeout: 2))
+        
+        XCTAssertFalse(app.staticTexts["Leland Stanford"].waitForExistence(timeout: 2))
+        XCTAssertFalse(app.staticTexts["X"].waitForExistence(timeout: 2))
+        
+        hitConsentButton(app)
+        
+        #if targetEnvironment(simulator) && (arch(i386) || arch(x86_64))
+            throw XCTSkip("PKCanvas view-related tests are currently skipped on Intel-based iOS simulators due to a metal bug on the simulator.")
+        #endif
+        
+        XCTAssert(app.staticTexts["First Name"].waitForExistence(timeout: 2))
+        try app.textFields["Enter your first name ..."].enter(value: "Leland")
+        
+        XCTAssert(app.staticTexts["Surname"].waitForExistence(timeout: 2))
+        try app.textFields["Enter your surname ..."].enter(value: "Stanford")
+        
+        hitConsentButton(app)
+        
+        XCTAssert(app.staticTexts["Name: Leland Stanford"].waitForExistence(timeout: 2))
+        app.staticTexts["Name: Leland Stanford"].swipeRight()
+        XCTAssert(app.buttons["Undo"].waitForExistence(timeout: 2))
+        app.buttons["Undo"].tap()
+        
+        hitConsentButton(app)
+
+        XCTAssert(app.scrollViews["Signature Field"].waitForExistence(timeout: 2))
+        app.scrollViews["Signature Field"].swipeRight()
+        
+        hitConsentButton(app)
+        
+        XCTAssert(app.staticTexts["Consent PDF rendering exists"].waitForExistence(timeout: 2))
     }
     
     func testOnboardingConsentHTML() throws {

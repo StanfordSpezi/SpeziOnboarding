@@ -45,9 +45,13 @@ struct OnboardingConsentHTMLTestView: View {
 
 
 #if DEBUG
-struct ConsentHTMLTestView_Previews: PreviewProvider {
+struct OnboardingConsentHTMLTestView_Previews: PreviewProvider {
     static var previews: some View {
-        OnboardingConsentHTMLTestView()
+        OnboardingStack(startAtStep: OnboardingConsentHTMLTestView.self) {
+            for onboardingView in OnboardingFlow.previewSimulatorViews {
+                onboardingView
+            }
+        }
     }
 }
 #endif

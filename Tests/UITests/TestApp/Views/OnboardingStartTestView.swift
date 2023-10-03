@@ -37,6 +37,12 @@ struct OnboardingStartTestView: View {
             }
             
             Button {
+                path.append(OnboardingConsentMarkdownRenderingView.self)
+            } label: {
+                Text("Rendered Consent View (Markdown)")
+            }
+            
+            Button {
                 path.append(OnboardingConsentHTMLTestView.self)
             } label: {
                 Text("Consent View (HTML)")
@@ -72,9 +78,11 @@ struct OnboardingStartTestView: View {
 #if DEBUG
 struct OnboardingStartTestView_Previews: PreviewProvider {
     static var previews: some View {
-        OnboardingStartTestView(
-            showConditionalView: .constant(false)
-        )
+        OnboardingStack(startAtStep: OnboardingStartTestView.self) {
+            for onboardingView in OnboardingFlow.previewSimulatorViews {
+                onboardingView
+            }
+        }
     }
 }
 #endif

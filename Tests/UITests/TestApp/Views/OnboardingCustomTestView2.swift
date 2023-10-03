@@ -29,7 +29,11 @@ struct OnboardingCustomTestView2: View {
 #if DEBUG
 struct OnboardingCustomTestView2_Previews: PreviewProvider {
     static var previews: some View {
-        OnboardingCustomTestView2()
+        OnboardingStack(startAtStep: OnboardingCustomTestView2.self) {
+            for onboardingView in OnboardingFlow.previewSimulatorViews {
+                onboardingView
+            }
+        }
     }
 }
 #endif

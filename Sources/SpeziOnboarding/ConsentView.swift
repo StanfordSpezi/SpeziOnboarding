@@ -313,30 +313,40 @@ extension ConsentView {
         )
         renderer.proposedSize = .init(paperSize)
         
-        renderer.render { _, context in
-            var box = CGRect(origin: .zero, size: paperSize)
-            
-            /// Creates the `CGContext` that stores the to-be-rendered PDF in-memory as a Swift `Data` struct.
-            guard let mutableData = CFDataCreateMutable(kCFAllocatorDefault, 0),
-                  let consumer = CGDataConsumer(data: mutableData),
-                  let pdf = CGContext(consumer: consumer, mediaBox: &box, nil) else {
-                return
+        let renderedData: Data? = await withCheckedContinuation { continuation in
+            renderer.render { _, context in
+                var box = CGRect(origin: .zero, size: paperSize)
+                
+                /// Creates the `CGContext` that stores the to-be-rendered PDF in-memory as a Swift `Data` struct.
+                guard let mutableData = CFDataCreateMutable(kCFAllocatorDefault, 0),
+                      let consumer = CGDataConsumer(data: mutableData),
+                      let pdf = CGContext(consumer: consumer, mediaBox: &box, nil) else {
+                    continuation.resume(returning: nil)
+                    return
+                }
+                
+                pdf.beginPDFPage(nil)
+                pdf.translateBy(x: 0, y: 0)
+                
+                context(pdf)
+                
+                pdf.endPDFPage()
+                pdf.closePDF()
+                
+                continuation.resume(returning: mutableData as Data)
             }
-            
-            pdf.beginPDFPage(nil)
-            pdf.translateBy(
-                x: 0,
-                y: 0
-            )
-            
-            context(pdf)
-            
-            pdf.endPDFPage()
-            pdf.closePDF()
-            
-            /// Stores the finished PDF within the Spezi `Standard`.
-            onboardingDataSource.store(mutableData as Data)
         }
+        
+        guard let renderedData else {
+            print("""
+            Warning: Failed to export the consent form.
+            Encountered an issue allocating in-memory buffer for the PDF rendering.
+            """)
+            return
+        }
+        
+        /// Stores the finished PDF within the Spezi `Standard`.
+        await onboardingDataSource.store(renderedData)
     }
 }
 
