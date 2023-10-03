@@ -48,7 +48,7 @@ public struct ConsentView<ContentView: View, Action: View>: View {
     private let action: Action
     private let givenNameField: FieldLocalizationResource
     private let familyNameField: FieldLocalizationResource
-    private var exportConsentForm: Bool = false
+    private var exportConsentForm = false
     private var asyncMarkdown: (() async -> Data)?
     
     
@@ -61,7 +61,7 @@ public struct ConsentView<ContentView: View, Action: View>: View {
     
     
     public var body: some View {
-        ScrollViewReader { proxy in
+        ScrollViewReader { proxy in // swiftlint:disable:this closure_body_length
             OnboardingView(
                 contentView: {
                     contentView
@@ -227,7 +227,7 @@ public struct ConsentView<ContentView: View, Action: View>: View {
 
 
 /// Extension of ``ConsentView`` enabling the export of the signed consent page in the onboarding flow.
-private extension ConsentView {
+extension ConsentView {
     /// Creates a view representation of the consent content, ready for PDF export via SwiftUIs `ImageRenderer`.
     /// At the moment, this is
     ///
@@ -277,7 +277,10 @@ private extension ConsentView {
                     .foregroundColor(.secondary)
                     .padding(.horizontal, 20)
                     .padding(.bottom, 30 - 18)
-                Image(uiImage: signature.image(from: .init(x: 0, y: 0, width: signatureSize.width, height: signatureSize.height), scale: UIScreen.main.scale))
+                Image(uiImage: signature.image(
+                    from: .init(x: 0, y: 0, width: signatureSize.width, height: signatureSize.height),
+                    scale: UIScreen.main.scale
+                ))
             }
             .frame(width: signatureSize.width, height: signatureSize.height)
         }
@@ -291,7 +294,7 @@ private extension ConsentView {
     /// The `Standard` must conform to the ``OnboardingConstraint``.
     ///
     /// - Parameter paperSize: The desired size for the exported PDF, defaulting to `.usLetter`.
-    func export(paperSize: PaperSize = .usLetter) async {
+    fileprivate func export(paperSize: PaperSize = .usLetter) async {
         guard let asyncMarkdown else {
             preconditionFailure("SpeziOnboarding: Consent form export is only supported for Markdown documents!")
         }
@@ -310,7 +313,7 @@ private extension ConsentView {
         )
         renderer.proposedSize = .init(paperSize)
         
-        renderer.render { size, context in
+        renderer.render { _, context in
             var box = CGRect(origin: .zero, size: paperSize)
             
             /// Creates the `CGContext` that stores the to-be-rendered PDF in-memory as a Swift `Data` struct.

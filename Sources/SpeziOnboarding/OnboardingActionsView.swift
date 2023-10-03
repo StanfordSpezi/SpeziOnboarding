@@ -64,8 +64,7 @@ public struct OnboardingActionsView: View {
     @State private var secondaryActionState: ViewState = .idle
 
 
-    @MainActor
-    private var verticalBody: some View {
+    @MainActor private var verticalBody: some View {
         VStack {
             AsyncButton(state: $primaryActionState, action: primaryAction) {
                 AnyView(primaryView)
@@ -87,7 +86,7 @@ public struct OnboardingActionsView: View {
     }
     
     @MainActor
-    private func horizontalBody(proportions: Double) -> some View {
+    private func horizontalBody(proportions: Double) -> some View { // swiftlint:disable:this type_contents_order
         VStack {
             HStack {
                 AsyncButton(state: $primaryActionState, action: primaryAction) {

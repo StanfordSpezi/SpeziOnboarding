@@ -52,7 +52,7 @@ public class OnboardingDataSource: Component, ObservableObject, ObservableObject
     ///
     /// - Returns: The loaded consent data.
     public func load() async throws -> Data {
-        return await withCheckedContinuation { continuation in
+        await withCheckedContinuation { continuation in
             Task { @MainActor in
                 let result = try await standard.loadConsent()
                 continuation.resume(returning: result)
