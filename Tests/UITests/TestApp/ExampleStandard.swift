@@ -26,6 +26,6 @@ extension ExampleStandard: OnboardingConstraint {
     }
     
     func loadConsent() async throws -> Data {
-        return await self.consentData
+        await self.consentData
     }
 }
