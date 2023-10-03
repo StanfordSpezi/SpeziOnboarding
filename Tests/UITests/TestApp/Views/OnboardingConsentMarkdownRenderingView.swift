@@ -52,7 +52,7 @@ struct OnboardingConsentMarkdownRenderingView: View {
         .navigationBarTitleDisplayMode(.inline)
         .task {
             self.exportedConsent = try? await onboardingDataSource.load()
-            // Reset onboardingDataSource
+            // Reset OnboardingDataSource
             await onboardingDataSource.store(.init())
         }
     }
@@ -65,14 +65,12 @@ struct OnboardingConsentMarkdownRenderingView_Previews: PreviewProvider {
     
     
     static var previews: some View {
-        let stack = OnboardingStack(startAtStep: OnboardingConsentMarkdownRenderingView.self) {
+        OnboardingStack(startAtStep: OnboardingConsentMarkdownRenderingView.self) {
             for onboardingView in OnboardingFlow.previewSimulatorViews {
                 onboardingView
+                    .environmentObject(onboardingDataSource)
             }
         }
-        
-        stack
-            .environmentObject(onboardingDataSource)
     }
 }
 #endif
