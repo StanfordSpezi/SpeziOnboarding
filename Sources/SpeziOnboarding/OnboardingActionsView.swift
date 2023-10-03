@@ -70,6 +70,7 @@ public struct OnboardingActionsView: View {
                 AnyView(primaryView)
                     .frame(maxWidth: .infinity, minHeight: 38)
             }
+                .buttonStyle(.borderedProminent)
             
             if let secondaryView, let secondaryAction {
                 AsyncButton(state: $secondaryActionState, action: secondaryAction) {
@@ -79,7 +80,6 @@ public struct OnboardingActionsView: View {
                     .padding(.top, 10)
             }
         }
-            .buttonStyle(.borderedProminent)
             .disabled(primaryActionState != .idle || secondaryActionState != .idle)
             .viewStateAlert(state: $primaryActionState)
             .viewStateAlert(state: $secondaryActionState)
