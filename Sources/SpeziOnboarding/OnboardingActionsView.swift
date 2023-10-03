@@ -188,7 +188,7 @@ public struct OnboardingActionsView: View {
     ) {
         guard case .horizontal(let proportions) = layout,
               0.0...1.0 ~= proportions else {
-            preconditionFailure("OnboardingActionsView Horizontal proportions must be between 0 and 1.")
+            preconditionFailure("SpeziOnboarding: OnboardingActionsView Horizontal proportions must be between 0 and 1.")
         }
         
         self.primaryView = primaryContent.view
@@ -215,7 +215,7 @@ public struct OnboardingActionsView: View {
     ) {
         guard case .horizontal(let proportions) = layout,
               0.0...1.0 ~= proportions else {
-            preconditionFailure("OnboardingActionsView Horizontal proportions must be between 0 and 1.")
+            preconditionFailure("SpeziOnboarding: OnboardingActionsView Horizontal proportions must be between 0 and 1.")
         }
         
         self.primaryView = Text(primaryText)

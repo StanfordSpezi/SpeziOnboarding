@@ -40,10 +40,23 @@ public class OnboardingDataSource: Component, ObservableObject, ObservableObject
     
     
     /// Adds a new exported consent form represented as `Data` to the ``OnboardingDataSource``.
+    ///
     /// - Parameter consent: The exported consent form represented as `Data` that should be added.
     public func store(_ consent: Data) {
         Task { @MainActor in
             await standard.store(consent: consent)
+        }
+    }
+    
+    /// Loads the exported consent form represented as `Data` from the ``OnboardingDataSource``.
+    ///
+    /// - Returns: The loaded consent data.
+    public func load() async throws -> Data {
+        return await withCheckedContinuation { continuation in
+            Task { @MainActor in
+                let result = try await standard.loadConsent()
+                continuation.resume(returning: result)
+            }
         }
     }
 }

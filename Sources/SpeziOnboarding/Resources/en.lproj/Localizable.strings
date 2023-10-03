@@ -29,3 +29,6 @@
 
 // MARK: Illegal Onboarding Step
 "ILLEGAL_ONBOARDING_STEP" = "SpeziOnboarding: Illegal Onboarding Step";
+
+// MARK: Consent Form Export
+"MARKDOWN_LOADING_ERROR" = "Could not load and parse the document.";

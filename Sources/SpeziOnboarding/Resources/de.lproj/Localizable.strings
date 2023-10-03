@@ -29,3 +29,6 @@
 
 // MARK: Illegal Onboarding Step
 "ILLEGAL_ONBOARDING_STEP" = "SpeziOnboarding: Unerlaubter Schritt während des Onboardings";
+
+// MARK: Consent Form Export
+"MARKDOWN_LOADING_ERROR" = "Das Dokument konnte nicht geladen werden.";

@@ -176,7 +176,7 @@ public class OnboardingNavigationPath: ObservableObject {
                 
                 guard self.onboardingSteps[onboardingStepIdentifier] == nil else {
                     preconditionFailure("""
-                    Duplicate Onboarding step of type `\(onboardingStepIdentifier.onboardingStepType)` identified.
+                    SpeziOnboarding: Duplicate Onboarding step of type `\(onboardingStepIdentifier.onboardingStepType)` identified.
                     Ensure unique Onboarding view instances within the `OnboardingStack`!
                     """)
                 }
