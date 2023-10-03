@@ -17,6 +17,8 @@ import SwiftUI
 /// The ``ConsentView`` provides a convenience initializer with a provided action view using an ``OnboardingActionsView`` (``ConsentView/init(header:asyncMarkdown:footer:action:)``)
 /// or a more customized ``ConsentView/init(contentView:actionView:)`` initializer with a custom-provided content and action view.
 ///
+/// The ``ConsentView`` is able to automatically export the signed consent form (in the Markdown version) as a PDF  to the Spezi `Standard`. To handle the exported form, the `Standard` needs to conform to ``OnboardingConstraint``. Developers can opt-out by setting the `exportConsentForm` parameter in ``ConsentView/init(header:asyncMarkdown:footer:action:givenNameField:familyNameField:exportConsentForm:)`` to `false`.
+///
 /// ```swift
 /// ConsentView(
 ///     asyncMarkdown: {
@@ -24,7 +26,8 @@ import SwiftUI
 ///     },
 ///     action: {
 ///         // The action that should be performed once the user has provided their consent.
-///     }
+///     },
+///     exportConsentForm: false  // Opt-out of the automatic export of the signed consent form as PDF to the Spezi Standard
 /// )
 /// ```
 public struct ConsentView<ContentView: View, Action: View>: View {
