@@ -6,16 +6,21 @@
 // SPDX-License-Identifier: MIT
 //
 
+import PDFKit
 import SwiftUI
 import UIKit
 
 extension ConsentView {
     struct ShareSheet: UIViewControllerRepresentable {
-        let activityItems: [Any]
+        let sharedItem: PDFDocument
 
         func makeUIViewController(context: Context) -> UIActivityViewController {
+            /// Note: Need to write down the PDF to storage as in-memory PDFs are not recognized properly
+            let temporaryPath = FileManager.default.temporaryDirectory.appendingPathComponent("Signed Consent Form.pdf")
+            try? sharedItem.dataRepresentation()?.write(to: temporaryPath)
+            
             let controller = UIActivityViewController(
-                activityItems: activityItems,
+                activityItems: [temporaryPath],
                 applicationActivities: nil
             )
             return controller

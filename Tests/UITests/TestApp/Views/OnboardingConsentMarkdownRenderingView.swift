@@ -14,13 +14,13 @@ import SwiftUI
 
 struct OnboardingConsentMarkdownRenderingView: View {
     @EnvironmentObject private var path: OnboardingNavigationPath
-    @EnvironmentObject private var onboardingDataSource: OnboardingDataSource
+    @EnvironmentObject private var standard: ExampleStandard
     @State var exportedConsent: PDFDocument?
     
     
     var body: some View {
         VStack {
-            if exportedConsent?.pageCount == 0 {
+            if (exportedConsent?.pageCount ?? 0) == 0 {
                 Circle()
                     .fill(Color.red)
                     .frame(width: 200, height: 200)
@@ -52,9 +52,9 @@ struct OnboardingConsentMarkdownRenderingView: View {
         .padding()
         .navigationBarTitleDisplayMode(.inline)
         .task {
-            //self.exportedConsent = try? await onboardingDataSource.load()
+            self.exportedConsent = try? await standard.loadConsent()
             // Reset OnboardingDataSource
-            await onboardingDataSource.store(.init())
+            await standard.store(consent: .init())
         }
     }
 }
@@ -62,14 +62,14 @@ struct OnboardingConsentMarkdownRenderingView: View {
 
 #if DEBUG
 struct OnboardingConsentMarkdownRenderingView_Previews: PreviewProvider {
-    static var onboardingDataSource: OnboardingDataSource = .init()
+    static var standard: OnboardingDataSource = .init()
     
     
     static var previews: some View {
         OnboardingStack(startAtStep: OnboardingConsentMarkdownRenderingView.self) {
             for onboardingView in OnboardingFlow.previewSimulatorViews {
                 onboardingView
-                    .environmentObject(onboardingDataSource)
+                    .environmentObject(standard)
             }
         }
     }

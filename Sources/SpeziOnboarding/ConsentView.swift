@@ -70,6 +70,7 @@ public struct ConsentView: View {
         case export
         case exportShare
         case exported(PDFDocument)
+        case error(ConsentRenderError)
         
         
         var complete: Bool {
@@ -85,13 +86,13 @@ public struct ConsentView: View {
         }
     }
     
-    public enum ConsentRenderError: Error {
+    public enum ConsentRenderError: LocalizedError {
         case memoryAllocationError
     }
     
-    
-    // private let contentView: DocumentView
-    // private let action: OnboardingActionsView
+
+    private let header: any View
+    private let footer: any View
     private let givenNameField: FieldLocalizationResource
     private let familyNameField: FieldLocalizationResource
     private let exportConfiguration: ExportConfiguration
@@ -110,12 +111,11 @@ public struct ConsentView: View {
     @Binding private var viewState: ViewState
     
     
-    var actionsView: some View {
+    var actionButtons: some View {
         OnboardingActionsView(
             primaryContent: .text(LocalizedStringResource("CONSENT_ACTION", bundle: .atURL(from: .module))),
             primaryAction: {
                 viewState = .export
-                await actionClosure()
             },
             secondaryContent: .image("square.and.arrow.up"),
             secondaryAction: {
@@ -131,10 +131,16 @@ public struct ConsentView: View {
         ScrollViewReader { proxy in // swiftlint:disable:this closure_body_length
             OnboardingView(
                 contentView: {
-                    DocumentView(
-                        asyncData: asyncMarkdown,
-                        type: .markdown,
-                        state: $contentState
+                    AnyView(
+                        VStack {
+                            AnyView(header)
+                            DocumentView(
+                                asyncData: asyncMarkdown,
+                                type: .markdown,
+                                state: $contentState
+                            )
+                            AnyView(footer)
+                        }
                     )
                 },
                 actionView: {
@@ -160,7 +166,7 @@ public struct ConsentView: View {
 
                         Divider()
                         
-                        actionsView
+                        actionButtons
                             .id("ActionButtons")
                             .onChange(of: showSignatureView) { _ in
                                 proxy.scrollTo("ActionButtons")
@@ -176,14 +182,18 @@ public struct ConsentView: View {
                     Task { @MainActor in
                         /// Renders the consent form as PDF, stores it in the Spezi `Standard`
                         guard let consentPDF = try? await export() else {
-                            // TODO: Handle error
+                            viewState = .error(.memoryAllocationError)
                             return
                         }
                         if newValue == .exportShare {
-                            viewState = .exported(consentPDF)
                             showShareSheet = true
-                        } else {
-                            viewState = .exported(consentPDF)
+                        }
+                        
+                        viewState = .exported(consentPDF)
+                        
+                        // Execute action closure only when viewState is exported
+                        if newValue != .exportShare {
+                            await actionClosure()
                         }
                     }
                 }
@@ -197,11 +207,12 @@ public struct ConsentView: View {
                     viewState = .idle
                 }
             }
+            .viewStateAlert(state: $contentState)
         }
         .sheet(isPresented: $showShareSheet) {
             switch viewState {
             case .exported(let consent):
-                ShareSheet(activityItems: [consent.dataRepresentation() as Any])
+                ShareSheet(sharedItem: consent)
                     .presentationDetents([.medium])
             default:
                 EmptyView()
@@ -246,34 +257,23 @@ public struct ConsentView: View {
     ///   - familyNameField: The localization to use for the family (last) name field.
     ///   - exportConsentForm: Indicates weather the signed consent form should be exported as a PDF to the `Standard`. Defaults to true.
     public init(
-        asyncMarkdown: @escaping () async -> Data,
         viewState: Binding<ViewState> = .constant(.idle),
+        @ViewBuilder header: () -> some View = { EmptyView() },
+        asyncMarkdown: @escaping () async -> Data,
+        @ViewBuilder footer: () -> some View = { EmptyView() },
         givenNameField: FieldLocalizationResource = LocalizationDefaults.givenName,
         familyNameField: FieldLocalizationResource = LocalizationDefaults.familyName,
         exportConfiguration: ExportConfiguration = .init(),
         action: @escaping () async -> Void
     ) {
-        /*
-        self.action = OnboardingActionsView(LocalizedStringResource("CONSENT_ACTION", bundle: .atURL(from: .module))) {
-            await action()
-        }
-         */
-        
         self._viewState = viewState
-        //self._contentState = State(initialValue: .idle)
+        self.header = header()
+        self.asyncMarkdown = asyncMarkdown
+        self.footer = footer()
         self.givenNameField = givenNameField
         self.familyNameField = familyNameField
-        self.asyncMarkdown = asyncMarkdown
         self.exportConfiguration = exportConfiguration
         self.actionClosure = action
-        
-        /*
-        self.contentView = DocumentView(
-            asyncData: asyncMarkdown,
-            type: .markdown,
-            state: $contentState
-        )
-         */
     }
 }
 
@@ -392,12 +392,14 @@ extension ConsentView {
 }
 
 
-/*
 #if DEBUG
 struct ConsentView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationStack {
             ConsentView(
+                header: {
+                    OnboardingTitleView(title: "Consent", subtitle: "Version 1.0")
+                },
                 asyncMarkdown: {
                     Data("This is a *markdown* **example**".utf8)
                 },
@@ -410,4 +412,3 @@ struct ConsentView_Previews: PreviewProvider {
     }
 }
 #endif
-*/
