@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import PDFKit
 
 
 extension ConsentView {
@@ -40,3 +41,6 @@ extension ConsentView {
         }
     }
 }
+
+
+extension PDFDocument: @unchecked Sendable {}

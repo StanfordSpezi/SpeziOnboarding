@@ -7,18 +7,14 @@
 //
 
 import Foundation
+import PDFKit
 import Spezi
 
 
 /// A Constraint which all `Standard` instances must conform to when using the Spezi Onboarding module.
 public protocol OnboardingConstraint: Standard {
-    /// Adds a new exported consent form represented as `Data` to the `Standard` conforming to ``OnboardingConstraint``.
+    /// Adds a new exported consent form represented as `PDFDocument` to the `Standard` conforming to ``OnboardingConstraint``.
     /// 
-    /// - Parameter consent: The exported consent form represented as `Data` that should be added.
-    func store(consent: Data) async
-    
-    /// Loads the exported consent form represented as `Data` from the ``OnboardingDataSource``.
-    ///
-    /// - Returns: The loaded consent data.
-    func loadConsent() async throws -> Data
+    /// - Parameter consent: The exported consent form represented as `PDFDocument` that should be added.
+    func store(consent: PDFDocument) async
 }

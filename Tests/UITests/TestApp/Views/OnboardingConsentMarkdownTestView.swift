@@ -13,9 +13,23 @@ import SwiftUI
 
 struct OnboardingConsentMarkdownTestView: View {
     @EnvironmentObject private var path: OnboardingNavigationPath
+    @State private var viewState: ConsentView.ViewState = .idle
     
     
     var body: some View {
+        ConsentView(
+            asyncMarkdown: {
+                Data("This is a *markdown* **example**".utf8)
+            },
+            viewState: $viewState,
+            givenNameField: FieldLocalizationResource(title: "First Name", placeholder: "Enter your first name ..."),
+            familyNameField: FieldLocalizationResource(title: "Surname", placeholder: "Enter your surname ..."),
+            exportConfiguration: .init(paperSize: .dinA4, includingTimestamp: true)
+        ) {
+            path.nextStep()
+        }
+        
+        /*
         ConsentView(
             header: {
                 OnboardingTitleView(title: "Consent", subtitle: "Version 1.0")
@@ -29,6 +43,7 @@ struct OnboardingConsentMarkdownTestView: View {
             givenNameField: FieldLocalizationResource(title: "First Name", placeholder: "Enter your first name ..."),
             familyNameField: FieldLocalizationResource(title: "Surname", placeholder: "Enter your surname ...")
         )
+         */
         .navigationBarTitleDisplayMode(.inline)
     }
 }

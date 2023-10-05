@@ -32,3 +32,5 @@
 
 // MARK: Consent Form Export
 "MARKDOWN_LOADING_ERROR" = "Could not load and parse the document.";
+"EXPORTED_TAG" = "Exported";
+"CONSENT_TITLE" = "Spezi Consent";

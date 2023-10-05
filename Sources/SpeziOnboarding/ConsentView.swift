@@ -7,6 +7,7 @@
 //
 
 import CoreGraphics
+import PDFKit
 import PencilKit
 import SpeziViews
 import SwiftUI
@@ -30,7 +31,7 @@ import SwiftUI
 ///     exportConsentForm: false  // Opt-out of the automatic export of the signed consent form as PDF to the Spezi Standard
 /// )
 /// ```
-public struct ConsentView<ContentView: View, Action: View>: View {
+public struct ConsentView: View {
     public enum LocalizationDefaults {
         public static var givenName: FieldLocalizationResource {
             FieldLocalizationResource(
@@ -46,13 +47,56 @@ public struct ConsentView<ContentView: View, Action: View>: View {
         }
     }
     
+    public struct ExportConfiguration {
+        let consentTitle: LocalizedStringResource
+        let paperSize: PaperSize
+        let includingTimestamp: Bool
+        
+        public init(
+            paperSize: PaperSize = .usLetter,
+            consentTitle: LocalizedStringResource? = nil,   // Workaround as `.module` is not available in init
+            includingTimestamp: Bool = true
+        ) {
+            self.paperSize = paperSize
+            self.consentTitle = consentTitle ?? LocalizedStringResource("CONSENT_TITLE", bundle: .atURL(from: .module))
+            self.includingTimestamp = includingTimestamp
+        }
+    }
     
-    private let contentView: ContentView
-    private let action: Action
+    public enum ViewState: Equatable {
+        case processing
+        case idle
+        case signed
+        case export
+        case exportShare
+        case exported(PDFDocument)
+        
+        
+        var complete: Bool {
+            if case .exported(_) = self {
+                return true
+            }
+            return false
+        }
+        
+        
+        init() {
+            self = .idle
+        }
+    }
+    
+    public enum ConsentRenderError: Error {
+        case memoryAllocationError
+    }
+    
+    
+    // private let contentView: DocumentView
+    // private let action: OnboardingActionsView
     private let givenNameField: FieldLocalizationResource
     private let familyNameField: FieldLocalizationResource
-    private var exportConsentForm = false
-    private var asyncMarkdown: (() async -> Data)?
+    private let exportConfiguration: ExportConfiguration
+    private let asyncMarkdown: (() async -> Data)
+    private let actionClosure: () async -> Void
     
     
     @EnvironmentObject private var onboardingDataSource: OnboardingDataSource
@@ -61,59 +105,111 @@ public struct ConsentView<ContentView: View, Action: View>: View {
     @State private var isSigning = false
     @State private var signature = PKDrawing()
     @State private var signatureSize: CGSize = .zero
+    @State private var contentState: SpeziViews.ViewState = .idle
+    @State private var showShareSheet = false
+    @Binding private var viewState: ViewState
     
+    
+    var actionsView: some View {
+        OnboardingActionsView(
+            primaryContent: .text(LocalizedStringResource("CONSENT_ACTION", bundle: .atURL(from: .module))),
+            primaryAction: {
+                viewState = .export
+                await actionClosure()
+            },
+            secondaryContent: .image("square.and.arrow.up"),
+            secondaryAction: {
+                viewState = .exportShare
+            },
+            layout: .horizontal(proportions: 0.8)
+        )
+            .disabled(actionButtonsDisabled)
+            .animation(.easeInOut, value: actionButtonsDisabled)
+    }
     
     public var body: some View {
         ScrollViewReader { proxy in // swiftlint:disable:this closure_body_length
             OnboardingView(
                 contentView: {
-                    contentView
+                    DocumentView(
+                        asyncData: asyncMarkdown,
+                        type: .markdown,
+                        state: $contentState
+                    )
                 },
                 actionView: {
                     VStack {
                         Divider()
+                        
                         NameFields(
                             name: $name,
                             givenNameField: givenNameField,
                             familyNameField: familyNameField
                         )
+                            .disabled(contentDisabled)
+                        
                         if showSignatureView {
                             Divider()
                             SignatureView(signature: $signature, isSigning: $isSigning, name: name)
                                 .padding(.vertical, 4)
                                 /// Capture the canvas size of the signature, important to export the consent form to a PDF
-                                .onPreferenceChange(CanvasView.CanvasSizePreferenceKey.self, perform: { value in
+                                .onPreferenceChange(CanvasView.CanvasSizePreferenceKey.self) { value in
                                     signatureSize = value
-                                })
+                                }
                         }
-                        
+
                         Divider()
                         
-                        action
-                            .disabled(buttonDisabled)
-                            .animation(.easeInOut, value: buttonDisabled)
+                        actionsView
                             .id("ActionButtons")
                             .onChange(of: showSignatureView) { _ in
                                 proxy.scrollTo("ActionButtons")
                             }
-                            /// Use `.simultaneousGesture()` to detect tap as action subview would otherwise capture the tap gesture
-                            .simultaneousGesture(TapGesture().onEnded {
-                                if !buttonDisabled && exportConsentForm {
-                                    Task { @MainActor in
-                                        await self.export()
-                                    }
-                                }
-                            })
                     }
                     .transition(.opacity)
                     .animation(.easeInOut, value: showSignatureView)
                 }
             )
             .scrollDisabled(isSigning)
+            .onChange(of: viewState) { newValue in
+                if newValue == .export || newValue == .exportShare {
+                    Task { @MainActor in
+                        /// Renders the consent form as PDF, stores it in the Spezi `Standard`
+                        guard let consentPDF = try? await export() else {
+                            // TODO: Handle error
+                            return
+                        }
+                        if newValue == .exportShare {
+                            viewState = .exported(consentPDF)
+                            showShareSheet = true
+                        } else {
+                            viewState = .exported(consentPDF)
+                        }
+                    }
+                }
+                
+                // Some more logic, e.g., enabling the name fields after the content has been loading ...
+            }
+            .onChange(of: contentState) { newState in
+                if newState == .processing {
+                    viewState = .processing
+                } else if newState == .idle {
+                    viewState = .idle
+                }
+            }
+        }
+        .sheet(isPresented: $showShareSheet) {
+            switch viewState {
+            case .exported(let consent):
+                ShareSheet(activityItems: [consent.dataRepresentation() as Any])
+                    .presentationDetents([.medium])
+            default:
+                EmptyView()
+            }
         }
     }
     
-    var buttonDisabled: Bool {
+    var actionButtonsDisabled: Bool {
         let showSignatureView = !(name.givenName?.isEmpty ?? true) && !(name.familyName?.isEmpty ?? true)
         if !self.showSignatureView && showSignatureView {
             Task { @MainActor in
@@ -121,7 +217,21 @@ public struct ConsentView<ContentView: View, Action: View>: View {
             }
         }
         
-        return signature.strokes.isEmpty || (name.givenName?.isEmpty ?? true) || (name.familyName?.isEmpty ?? true)
+        if signature.strokes.isEmpty || (name.givenName?.isEmpty ?? true) || (name.familyName?.isEmpty ?? true) {
+            return true
+        } else {
+            // As soon as form is complete, set it to signed
+            Task { @MainActor in
+                if viewState == .idle {
+                    viewState = .signed
+                }
+            }
+            return false
+        }
+    }
+    
+    var contentDisabled: Bool {
+        viewState == .processing || viewState == .export
     }
     
     
@@ -136,95 +246,34 @@ public struct ConsentView<ContentView: View, Action: View>: View {
     ///   - familyNameField: The localization to use for the family (last) name field.
     ///   - exportConsentForm: Indicates weather the signed consent form should be exported as a PDF to the `Standard`. Defaults to true.
     public init(
-        @ViewBuilder header: () -> some View = { EmptyView() },
         asyncMarkdown: @escaping () async -> Data,
-        @ViewBuilder footer: () -> some View = { EmptyView() },
-        action: @escaping () async -> Void,
+        viewState: Binding<ViewState> = .constant(.idle),
         givenNameField: FieldLocalizationResource = LocalizationDefaults.givenName,
         familyNameField: FieldLocalizationResource = LocalizationDefaults.familyName,
-        exportConsentForm: Bool = true
-    ) where ContentView == AnyView, Action == OnboardingActionsView {
-        self.init(
-            contentView: {
-                AnyView(
-                    VStack {
-                        header()
-                        DocumentView(
-                            asyncData: asyncMarkdown,
-                            type: .markdown
-                        )
-                        footer()
-                    }
-                )
-            },
-            actionView: {
-                OnboardingActionsView(LocalizedStringResource("CONSENT_ACTION", bundle: .atURL(from: .module))) {
-                    await action()
-                }
-            },
-            givenNameField: givenNameField,
-            familyNameField: familyNameField
-        )
-        
-        self.asyncMarkdown = asyncMarkdown
-        self.exportConsentForm = exportConsentForm
-    }
-
-    /// Creates a ``ConsentView`` with a provided action view using  an``OnboardingActionsView`` and renders HTML in a web view.
-    /// - Parameters:
-    ///   - header: The header view will be displayed above the html content.
-    ///   - asyncHTML: The html content provided as an UTF8 encoded `Data` instance that can be provided asynchronously.
-    ///   - footer: The footer view will be displayed above the html content.
-    ///   - action: The action that should be performed once the consent has been given.
-    ///   - givenNameField: The localization for the given name field.
-    ///   - familyNameField: The localization for the family name field.
-    public init(
-        @ViewBuilder header: () -> some View = { EmptyView() },
-        asyncHTML: @escaping () async -> Data,
-        @ViewBuilder footer: () -> some View = { EmptyView() },
-        action: @escaping () async -> Void,
-        givenNameField: FieldLocalizationResource = LocalizationDefaults.givenName,
-        familyNameField: FieldLocalizationResource = LocalizationDefaults.familyName
-    ) where ContentView == AnyView, Action == OnboardingActionsView {
-        self.init(
-            contentView: {
-                AnyView(
-                    VStack {
-                        header()
-                        DocumentView(
-                            asyncData: asyncHTML,
-                            type: .html
-                        )
-                        footer()
-                    }
-                )
-            },
-            actionView: {
-                OnboardingActionsView(LocalizedStringResource("CONSENT_ACTION", bundle: .atURL(from: .module))) {
-                    await action()
-                }
-            },
-            givenNameField: givenNameField,
-            familyNameField: familyNameField
-        )
-    }
-
-    /// Creates a ``ConsentView`` with a custom-provided action view.
-    /// - Parameters:
-    ///   - contentView: The content view providing context about the consent view.
-    ///   - actionView: The action view that should be displayed under the name and signature boxes.
-    ///   - givenNameField: The localization to use for the given (first) name field.
-    ///   - familyNameField: The localization to use for the family (last) name field.
-    public init(
-        @ViewBuilder contentView: () -> ContentView,
-        @ViewBuilder actionView: () -> Action,
-        givenNameField: FieldLocalizationResource = LocalizationDefaults.givenName,
-        familyNameField: FieldLocalizationResource = LocalizationDefaults.familyName
+        exportConfiguration: ExportConfiguration = .init(),
+        action: @escaping () async -> Void
     ) {
-        self.contentView = contentView()
-        self.action = actionView()
+        /*
+        self.action = OnboardingActionsView(LocalizedStringResource("CONSENT_ACTION", bundle: .atURL(from: .module))) {
+            await action()
+        }
+         */
+        
+        self._viewState = viewState
+        //self._contentState = State(initialValue: .idle)
         self.givenNameField = givenNameField
         self.familyNameField = familyNameField
+        self.asyncMarkdown = asyncMarkdown
+        self.exportConfiguration = exportConfiguration
+        self.actionClosure = action
+        
+        /*
+        self.contentView = DocumentView(
+            asyncData: asyncMarkdown,
+            type: .markdown,
+            state: $contentState
+        )
+         */
     }
 }
 
@@ -246,18 +295,20 @@ extension ConsentView {
     /// - Note: This function avoids the use of asynchronous operations.
     /// Asynchronous tasks are incompatible with SwiftUI's `ImageRenderer`,
     /// which expects all rendering processes to be synchronous.
-    func exportBody(markdown: AttributedString) -> some View {
+    private func exportBody(markdown: AttributedString) -> some View {
         VStack {
-            HStack {
-                Spacer()
-                
-                Text("Exported: \(DateFormatter.localizedString(from: Date(), dateStyle: .medium, timeStyle: .short))")
-                    .font(.caption)
+            if exportConfiguration.includingTimestamp {
+                HStack {
+                    Spacer()
+                    
+                    Text(LocalizedStringResource("EXPORTED_TAG", bundle: .atURL(from: .module)))
+                    + Text(": \(DateFormatter.localizedString(from: Date(), dateStyle: .medium, timeStyle: .short))")
+                }
+                .font(.caption)
+                .padding()
             }
-            .padding()
             
-            Text("Spezi Consent")
-                .font(.title)
+            OnboardingTitleView(title: exportConfiguration.consentTitle, paddingTop: 8)
             
             Text(markdown)
                 .padding()
@@ -265,21 +316,8 @@ extension ConsentView {
             Spacer()
             
             ZStack(alignment: .bottomLeading) {
-                Rectangle()
-                    .fill(.secondary)
-                    .frame(maxWidth: .infinity, maxHeight: 1)
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, 30)
-                Text("X")
-                    .font(.title2)
-                    .foregroundColor(.secondary)
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, 30 + 2)
-                Text(name.formatted(.name(style: .long)))
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, 30 - 18)
+                SignatureViewBackground(name: name, contrastBackground: false)
+                
                 Image(uiImage: signature.image(
                     from: .init(x: 0, y: 0, width: signatureSize.width, height: signatureSize.height),
                     scale: UIScreen.main.scale
@@ -297,11 +335,9 @@ extension ConsentView {
     /// The `Standard` must conform to the ``OnboardingConstraint``.
     ///
     /// - Parameter paperSize: The desired size for the exported PDF, defaulting to `.usLetter`.
-    fileprivate func export(paperSize: PaperSize = .usLetter) async {
-        guard let asyncMarkdown else {
-            preconditionFailure("SpeziOnboarding: Consent form export is only supported for Markdown documents!")
-        }
-        
+    ///
+    /// - Returns: The exported consent form in PDF format as `Data`
+    fileprivate func export() async throws -> PDFDocument {
         let markdown = await asyncMarkdown()
         
         let markdownString = (try? AttributedString(
@@ -311,12 +347,12 @@ extension ConsentView {
         
         let renderer = ImageRenderer(content: exportBody(markdown: markdownString))
         let paperSize = CGSize(
-            width: paperSize.dimensions.width,
-            height: paperSize.dimensions.height
+            width: exportConfiguration.paperSize.dimensions.width,
+            height: exportConfiguration.paperSize.dimensions.height
         )
         renderer.proposedSize = .init(paperSize)
         
-        let renderedData: Data? = await withCheckedContinuation { continuation in
+        let renderedDocument: PDFDocument? = await withCheckedContinuation { continuation in
             renderer.render { _, context in
                 var box = CGRect(origin: .zero, size: paperSize)
                 
@@ -336,24 +372,27 @@ extension ConsentView {
                 pdf.endPDFPage()
                 pdf.closePDF()
                 
-                continuation.resume(returning: mutableData as Data)
+                continuation.resume(returning: PDFDocument(data: mutableData as Data))
             }
         }
         
-        guard let renderedData else {
+        guard let renderedDocument else {
             print("""
             Warning: Failed to export the consent form.
             Encountered an issue allocating in-memory buffer for the PDF rendering.
             """)
-            return
+            throw ConsentRenderError.memoryAllocationError
         }
         
         /// Stores the finished PDF within the Spezi `Standard`.
-        await onboardingDataSource.store(renderedData)
+        await onboardingDataSource.store(renderedDocument)
+        
+        return renderedDocument
     }
 }
 
 
+/*
 #if DEBUG
 struct ConsentView_Previews: PreviewProvider {
     static var previews: some View {
@@ -371,3 +410,4 @@ struct ConsentView_Previews: PreviewProvider {
     }
 }
 #endif
+*/

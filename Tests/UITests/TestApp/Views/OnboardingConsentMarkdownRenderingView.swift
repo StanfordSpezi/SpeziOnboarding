@@ -6,6 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
+import PDFKit
 import SpeziOnboarding
 import SpeziViews
 import SwiftUI
@@ -14,27 +15,27 @@ import SwiftUI
 struct OnboardingConsentMarkdownRenderingView: View {
     @EnvironmentObject private var path: OnboardingNavigationPath
     @EnvironmentObject private var onboardingDataSource: OnboardingDataSource
-    @State var exportedConsent: Data?
+    @State var exportedConsent: PDFDocument?
     
     
     var body: some View {
         VStack {
-            if !(exportedConsent?.isEmpty ?? true) {
+            if exportedConsent?.pageCount == 0 {
                 Circle()
-                    .fill(Color.green)
+                    .fill(Color.red)
                     .frame(width: 200, height: 200)
                     .overlay(
-                        Text("Consent PDF rendering exists")
+                        Text("Consent PDF rendering doesn't exist")
                             .foregroundColor(.white)
                             .multilineTextAlignment(.center)
                             .padding()
                     )
             } else {
                 Circle()
-                    .fill(Color.red)
+                    .fill(Color.green)
                     .frame(width: 200, height: 200)
                     .overlay(
-                        Text("Consent PDF rendering doesn't exist")
+                        Text("Consent PDF rendering exists")
                             .foregroundColor(.white)
                             .multilineTextAlignment(.center)
                             .padding()
@@ -51,7 +52,7 @@ struct OnboardingConsentMarkdownRenderingView: View {
         .padding()
         .navigationBarTitleDisplayMode(.inline)
         .task {
-            self.exportedConsent = try? await onboardingDataSource.load()
+            //self.exportedConsent = try? await onboardingDataSource.load()
             // Reset OnboardingDataSource
             await onboardingDataSource.store(.init())
         }

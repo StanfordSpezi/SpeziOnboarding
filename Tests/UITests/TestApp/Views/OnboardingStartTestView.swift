@@ -42,11 +42,13 @@ struct OnboardingStartTestView: View {
                 Text("Rendered Consent View (Markdown)")
             }
             
+            /*
             Button {
                 path.append(OnboardingConsentHTMLTestView.self)
             } label: {
                 Text("Consent View (HTML)")
             }
+             */
             
             Button {
                 path.append(

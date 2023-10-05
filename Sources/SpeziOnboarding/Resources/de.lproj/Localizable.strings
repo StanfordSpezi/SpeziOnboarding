@@ -32,3 +32,5 @@
 
 // MARK: Consent Form Export
 "MARKDOWN_LOADING_ERROR" = "Das Dokument konnte nicht geladen werden.";
+"EXPORTED_TAG" = "Exportiert";
+"CONSENT_TITLE" = "Spezi Einwilligung";

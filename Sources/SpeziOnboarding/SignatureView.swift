@@ -37,33 +37,14 @@ public struct SignatureView: View {
     public var body: some View {
         VStack {
             ZStack(alignment: .bottomLeading) {
-                Color(.secondarySystemBackground)
-                Rectangle()
-                    .fill(.secondary)
-                    .frame(maxWidth: .infinity, maxHeight: 1)
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, lineOffset)
-                Text(verbatim: "X")
-                    .font(.title2)
-                    .foregroundColor(.secondary)
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, lineOffset + 2)
-                    .accessibilityHidden(true)
-
-                let name = name.formatted(.name(style: .long))
-                Text(name)
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, lineOffset - 18)
-                    .accessibilityLabel(Text("SIGNATURE_NAME \(name)", bundle: .module))
-                    .accessibilityHidden(name.isEmpty)
+                SignatureViewBackground(name: name, lineOffset: lineOffset)
 
                 CanvasView(drawing: $signature, isDrawing: $isSigning, showToolPicker: .constant(false))
                     .accessibilityLabel(Text("SIGNATURE_FIELD", bundle: .module))
                     .accessibilityAddTraits(.allowsDirectInteraction)
             }
                 .frame(height: 120)
+            
             Button(action: {
                 undoManager?.undo()
                 canUndo = undoManager?.canUndo ?? false

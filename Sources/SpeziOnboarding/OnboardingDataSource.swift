@@ -6,6 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
+import PDFKit
 import Spezi
 import SwiftUI
 
@@ -39,24 +40,12 @@ public class OnboardingDataSource: Component, ObservableObject, ObservableObject
     public init() { }
     
     
-    /// Adds a new exported consent form represented as `Data` to the ``OnboardingDataSource``.
+    /// Adds a new exported consent form represented as `PDFDocument` to the ``OnboardingDataSource``.
     ///
-    /// - Parameter consent: The exported consent form represented as `Data` that should be added.
-    public func store(_ consent: Data) async {
+    /// - Parameter consent: The exported consent form represented as `PDFDocument` that should be added.
+    public func store(_ consent: PDFDocument) async {
         Task { @MainActor in
             await standard.store(consent: consent)
-        }
-    }
-    
-    /// Loads the exported consent form represented as `Data` from the ``OnboardingDataSource``.
-    ///
-    /// - Returns: The loaded consent data.
-    public func load() async throws -> Data {
-        await withCheckedContinuation { continuation in
-            Task { @MainActor in
-                let result = try await standard.loadConsent()
-                continuation.resume(returning: result)
-            }
         }
     }
 }
