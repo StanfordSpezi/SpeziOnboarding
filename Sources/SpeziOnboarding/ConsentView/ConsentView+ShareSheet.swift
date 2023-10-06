@@ -16,7 +16,9 @@ extension ConsentView {
 
         func makeUIViewController(context: Context) -> UIActivityViewController {
             /// Note: Need to write down the PDF to storage as in-memory PDFs are not recognized properly
-            let temporaryPath = FileManager.default.temporaryDirectory.appendingPathComponent("Signed Consent Form.pdf")
+            let temporaryPath = FileManager.default.temporaryDirectory.appendingPathComponent(
+                LocalizedStringResource("FILE_NAME_EXPORTED_CONSENT_FORM", bundle: .atURL(from: .module)).localizedString() + ".pdf"
+            )
             try? sharedItem.dataRepresentation()?.write(to: temporaryPath)
             
             let controller = UIActivityViewController(

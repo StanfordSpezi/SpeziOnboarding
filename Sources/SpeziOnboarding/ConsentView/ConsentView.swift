@@ -45,8 +45,12 @@ public struct ConsentView: View {
                 placeholder: LocalizedStringResource("NAME_FIELD_FAMILY_NAME_PLACEHOLDER", bundle: .atURL(from: .module))
             )
         }
+        public static var exportedConsentFormTitle: LocalizedStringResource {
+            LocalizedStringResource("CONSENT_TITLE", bundle: .atURL(from: .module))
+        }
     }
     
+    /// The ``ExportConfiguration`` enables developers to define the properties of the exported consent form.
     public struct ExportConfiguration {
         let consentTitle: LocalizedStringResource
         let paperSize: PaperSize
@@ -54,26 +58,21 @@ public struct ConsentView: View {
         
         public init(
             paperSize: PaperSize = .usLetter,
-            consentTitle: LocalizedStringResource? = nil,   /// As `.module` is not available in init
+            consentTitle: LocalizedStringResource = LocalizationDefaults.exportedConsentFormTitle,
             includingTimestamp: Bool = true
         ) {
             self.paperSize = paperSize
-            self.consentTitle = consentTitle ?? LocalizedStringResource("CONSENT_TITLE", bundle: .atURL(from: .module))
+            self.consentTitle = consentTitle
             self.includingTimestamp = includingTimestamp
         }
     }
     
+    /// The ``ViewState`` indicates in what state the ``ConsentView`` currently is, especially in regards to the consent export functionality.
     public enum ViewState: Equatable {
-        case processing
-        case idle
+        case base(SpeziViews.ViewState)
         case signed
         case export(share: Bool = false)
         case exported(PDFDocument)
-        case error(ConsentRenderError)
-    }
-    
-    public enum ConsentRenderError: LocalizedError {
-        case memoryAllocationError
     }
     
 
@@ -93,9 +92,24 @@ public struct ConsentView: View {
     @State private var signature = PKDrawing()
     @State private var signatureSize: CGSize = .zero
     @State private var showShareSheet = false
-    @State private var viewState: ViewState = .idle
-    @State private var contentViewState: SpeziViews.ViewState = .idle
+    @State private var viewState: ViewState = .base(.idle)
+    @State private var _contentViewState: SpeziViews.ViewState = .idle
     
+    
+    /// Access to a `Binding` of the ``ViewState/base(_:)``
+    private var contentViewStateBinding: Binding<SpeziViews.ViewState> {
+        .init(
+            get: {
+                if case let .base(value) = self.viewState {
+                    return value
+                }
+                return .idle    // Default case
+            },
+            set: {
+                self.viewState = .base($0)
+            }
+        )
+    }
     
     private var contentView: some View {
         VStack {
@@ -103,7 +117,7 @@ public struct ConsentView: View {
             DocumentView(
                 asyncData: asyncMarkdown,
                 type: .markdown,
-                state: $contentViewState
+                state: $_contentViewState
             )
             AnyView(footer)
         }
@@ -171,14 +185,14 @@ public struct ConsentView: View {
                 if case .export(let share) = newState {
                     Task { @MainActor in
                         guard let exportedConsent = await export() else {
-                            viewState = .error(.memoryAllocationError)
+                            viewState = .base(.error(Error.memoryAllocationError))
                             return
                         }
                         
                         /// Stores the finished PDF within the Spezi `Standard`.
                         await onboardingDataSource.store(exportedConsent)
                         viewState = .exported(exportedConsent)
-
+                        
                         /// Show share sheet or execute the user's action closure
                         if share {
                             showShareSheet = true
@@ -188,15 +202,17 @@ public struct ConsentView: View {
                     }
                 }
             }
-            /// Propagates the state of the content (e.g., `SpeziViews/MarkdownView` to the ``ConsentView``
-            .onChange(of: contentViewState) { newState in
-                if newState == .processing {
-                    viewState = .processing
-                } else if newState == .idle {
-                    viewState = .idle
+            /// Propagates the state of the content (e.g., `SpeziViews/MarkdownView`) to the view state of the ``ConsentView``
+            .onChange(of: _contentViewState) { newState in
+                switch newState {
+                case .idle:
+                    viewState = .base(.idle)
+                case .processing:
+                    viewState = .base(.processing)
+                case .error(let error):
+                    viewState = .base(.error(error))
                 }
             }
-            .viewStateAlert(state: $contentViewState)
             .sheet(isPresented: $showShareSheet) {
                 switch viewState {
                 case .exported(let consent):
@@ -206,12 +222,13 @@ public struct ConsentView: View {
                     EmptyView()
                 }
             }
+            .viewStateAlert(state: contentViewStateBinding)
         }
     }
     
     private var inputFieldsDisabled: Bool {
         switch viewState {
-        case .processing, .export(_): true  // swiftlint:disable:this empty_enum_arguments
+        case .base(.processing), .export(_): true  // swiftlint:disable:this empty_enum_arguments
         default: false
         }
     }
@@ -229,7 +246,7 @@ public struct ConsentView: View {
         } else {
             // As soon as form is complete, set it to signed
             Task { @MainActor in
-                if viewState == .idle {
+                if viewState == .base(.idle) {
                     viewState = .signed
                 }
             }
