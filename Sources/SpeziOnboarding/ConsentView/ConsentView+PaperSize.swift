@@ -41,6 +41,3 @@ extension ConsentView {
         }
     }
 }
-
-
-extension PDFDocument: @unchecked Sendable {}

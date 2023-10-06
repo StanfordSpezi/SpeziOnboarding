@@ -68,25 +68,6 @@ final class OnboardingTests: XCTestCase {
         XCTAssert(app.buttons["Next"].waitForExistence(timeout: 2))
         app.buttons["Next"].tap()
         
-        // Check if on consent (HTML) view
-        _ = XCTWaiter.wait(for: [expectation(description: "Wait for HTML to load.")], timeout: 10.0)
-
-        XCTAssert(app.staticTexts["Consent"].waitForExistence(timeout: 2))
-        XCTAssert(app.staticTexts["Version 1.0"].waitForExistence(timeout: 2))
-        XCTAssert(app.staticTexts["This is an example of a study consent written in HTML."].waitForExistence(timeout: 2))
-        
-        XCTAssert(app.staticTexts["First Name"].waitForExistence(timeout: 2))
-        try app.textFields["Enter your first name ..."].enter(value: "Leland")
-        
-        XCTAssert(app.staticTexts["Last Name"].waitForExistence(timeout: 2))
-        try app.textFields["Enter your last name ..."].enter(value: "Stanford")
-        
-        XCTAssert(app.staticTexts["Name: Leland Stanford"].waitForExistence(timeout: 2))
-        app.staticTexts["Name: Leland Stanford"].firstMatch.swipeUp()
-        
-        XCTAssert(app.buttons["I Consent"].waitForExistence(timeout: 2))
-        app.buttons["I Consent"].tap()
-        
         // Check if on final page
         XCTAssert(app.staticTexts["Onboarding complete"].waitForExistence(timeout: 2))
     }
@@ -253,20 +234,6 @@ final class OnboardingTests: XCTestCase {
         XCTAssert(app.staticTexts["Consent PDF rendering exists"].waitForExistence(timeout: 2))
     }
     
-    func testOnboardingConsentHTML() throws {
-        let app = XCUIApplication()
-        app.launch()
-
-        // Test that the consent view can render HTML
-        XCTAssert(app.buttons["Consent View (HTML)"].waitForExistence(timeout: 2))
-        app.buttons["Consent View (HTML)"].tap()
-        _ = XCTWaiter.wait(for: [expectation(description: "Wait for HTML to load.")], timeout: 10.0)
-
-        XCTAssert(app.staticTexts["Consent"].waitForExistence(timeout: 2))
-        XCTAssert(app.staticTexts["Version 1.0"].waitForExistence(timeout: 2))
-        XCTAssert(app.staticTexts["This is an example of a study consent written in HTML."].waitForExistence(timeout: 2))
-    }
-    
     func testOnboardingCustomViews() throws {
         let app = XCUIApplication()
         app.launch()
@@ -322,21 +289,14 @@ final class OnboardingTests: XCTestCase {
             app.buttons["Show Conditional View"].tap()
         }
         
-        XCTAssert(app.buttons["Consent View (HTML)"].waitForExistence(timeout: 2))
-        app.buttons["Consent View (HTML)"].tap()
+        XCTAssert(app.buttons["Rendered Consent View (Markdown)"].waitForExistence(timeout: 2))
+        app.buttons["Rendered Consent View (Markdown)"].tap()
         
-        // Check if on consent (HTML) view
-        XCTAssert(app.staticTexts["First Name"].waitForExistence(timeout: 2))
-        try app.textFields["Enter your first name ..."].enter(value: "Leland")
+        // Check if on consent export page
+        XCTAssert(app.staticTexts["Consent PDF rendering doesn't exist"].waitForExistence(timeout: 2))
         
-        XCTAssert(app.staticTexts["Last Name"].waitForExistence(timeout: 2))
-        try app.textFields["Enter your last name ..."].enter(value: "Stanford")
-        
-        XCTAssert(app.staticTexts["Name: Leland Stanford"].waitForExistence(timeout: 2))
-        app.staticTexts["Name: Leland Stanford"].firstMatch.swipeUp()
-        
-        XCTAssert(app.buttons["I Consent"].waitForExistence(timeout: 2))
-        app.buttons["I Consent"].tap()
+        XCTAssert(app.buttons["Next"].waitForExistence(timeout: 2))
+        app.buttons["Next"].tap()
         
         if showConditionalView {
             // Check if on conditional test view

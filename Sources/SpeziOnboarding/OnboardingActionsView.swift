@@ -41,6 +41,7 @@ public struct OnboardingActionsView: View {
         /// Image content using an SF symbol via system image name.
         case image(String)
         
+        
         /// Provides the associated view for the button's content.
         var view: any View {
             switch self {
@@ -187,8 +188,8 @@ public struct OnboardingActionsView: View {
         secondaryAction: @escaping () async throws -> Void,
         layout: ButtonLayout = .vertical
     ) {
-        guard case .horizontal(let proportions) = layout,
-              0.0...1.0 ~= proportions else {
+        if case .horizontal(let proportions) = layout,
+           !(0.0...1.0 ~= proportions) {
             preconditionFailure("SpeziOnboarding: OnboardingActionsView Horizontal proportions must be between 0 and 1.")
         }
         
@@ -214,8 +215,8 @@ public struct OnboardingActionsView: View {
         secondaryAction: @escaping () async throws -> Void,
         layout: ButtonLayout = .vertical
     ) {
-        guard case .horizontal(let proportions) = layout,
-              0.0...1.0 ~= proportions else {
+        if case .horizontal(let proportions) = layout,
+           !(0.0...1.0 ~= proportions) {
             preconditionFailure("SpeziOnboarding: OnboardingActionsView Horizontal proportions must be between 0 and 1.")
         }
         
@@ -232,9 +233,6 @@ public struct OnboardingActionsView: View {
 struct OnboardingActionsView_Previews: PreviewProvider {
     static var previews: some View {
         VStack {
-            OnboardingActionsView("PRIMARY") {
-                print("Primary!")
-            }
             OnboardingActionsView(
                 primaryText: "PRIMARY",
                 primaryAction: {
@@ -245,7 +243,23 @@ struct OnboardingActionsView_Previews: PreviewProvider {
                     print("Secondary")
                 }
             )
+            
+            Spacer()
+                .frame(maxHeight: 30)
+            
+            OnboardingActionsView(
+                primaryText: "PRIMARY",
+                primaryAction: {
+                    print("Primary")
+                },
+                secondaryText: "SECONDARY",
+                secondaryAction: {
+                    print("Secondary")
+                },
+                layout: .horizontal(proportions: 0.5)
+            )
         }
+        .padding()
     }
 }
 #endif
