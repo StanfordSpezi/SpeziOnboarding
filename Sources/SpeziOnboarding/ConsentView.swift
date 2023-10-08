@@ -13,8 +13,8 @@ import SwiftUI
 
 /// The ``ConsentView`` allows the display of markdown-based documents that can be signed using a family and given name and a hand drawn signature.
 ///
-/// The ``ConsentView`` provides a convenience initializer with a provided action view using an ``OnboardingActionsView`` (``ConsentView/init(header:asyncMarkdown:footer:action:)``)
-/// or a more customized ``ConsentView/init(contentView:actionView:)`` initializer with a custom-provided content and action view.
+/// The ``ConsentView`` provides a convenience initializer with a provided action view using an ``OnboardingActionsView`` (``ConsentView/init(header:asyncMarkdown:footer:action:givenNameField:familyNameField:)``)
+/// or a more customized ``ConsentView/init(contentView:actionView:givenNameField:familyNameField:)`` initializer with a custom-provided content and action view.
 ///
 /// ```swift
 /// ConsentView(

@@ -18,13 +18,15 @@ SPDX-License-Identifier: MIT
 
 Provides UI components for onboarding and consent.
 
+
 ## Overview
 
-The Spezi Onboarding module provides user interface components to onboard a user to an application including the possibility to retrieve consent for a study participation.
+The Spezi Onboarding module provides user interface components to onboard a user to an application, including the possibility of retrieving consent for study participation.
 
-|![Screenshot displaying the onboarding view.](Sources/SpeziOnboarding/SpeziOnboarding.docc/Resources/OnboardingView.png#gh-light-mode-only) ![Screenshot displaying the onboarding view.](Sources/SpeziOnboarding/SpeziOnboarding.docc/Resources/OnboardingView-dark.png#gh-dark-mode-only)|![Screenshot displaying the sequential onboarding view.](Sources/SpeziOnboarding/SpeziOnboarding.docc/Resources/SequentialOnboardingView.png#gh-light-mode-only) ![Screenshot displaying the sequential onboarding view.](Sources/SpeziOnboarding/SpeziOnboarding.docc/Resources/SequentialOnboardingView-dark.png#gh-dark-mode-only)|![Screenshot displaying the consent view.](Sources/SpeziOnboarding/SpeziOnboarding.docc/Resources/ConsentView.png#gh-light-mode-only) ![Screenshot displaying the consent view.](Sources/SpeziOnboarding/SpeziOnboarding.docc/Resources/ConsentView-dark.png#gh-dark-mode-only)
+|![Screenshot displaying the onboarding view.](Sources/SpeziOnboarding/SpeziOnboarding.docc/Resources/OnboardingView.png#gh-light-mode-only) ![Screenshot displaying the onboarding view.](Sources/SpeziOnboarding/SpeziOnboarding.docc/Resources/OnboardingView~dark.png#gh~dark-mode-only)|![Screenshot displaying the sequential onboarding view.](Sources/SpeziOnboarding/SpeziOnboarding.docc/Resources/SequentialOnboardingView.png#gh-light-mode-only) ![Screenshot displaying the sequential onboarding view.](Sources/SpeziOnboarding/SpeziOnboarding.docc/Resources/SequentialOnboardingView~dark.png#gh~dark-mode-only)|![Screenshot displaying the consent view.](Sources/SpeziOnboarding/SpeziOnboarding.docc/Resources/ConsentView.png#gh-light-mode-only) ![Screenshot displaying the consent view.](Sources/SpeziOnboarding/SpeziOnboarding.docc/Resources/ConsentView~dark.png#gh~dark-mode-only)
 |:--:|:--:|:--:|
 |[`OnboardingView`](https://swiftpackageindex.com/stanfordspezi/spezionboarding/documentation/spezionboarding/onboardingview)|[`SequentialOnboardingView`](https://swiftpackageindex.com/stanfordspezi/spezionboarding/documentation/spezionboarding/sequentialonboardingview)|[`ConsentView`](https://swiftpackageindex.com/stanfordspezi/spezionboarding/documentation/spezionboarding/consentview)|
+
 
 ## Setup
 
@@ -33,6 +35,7 @@ The Spezi Onboarding module provides user interface components to onboard a user
 You need to add the Spezi Onboarding Swift package to
 [your app in Xcode](https://developer.apple.com/documentation/xcode/adding-package-dependencies-to-your-app#) or
 [Swift package](https://developer.apple.com/documentation/xcode/creating-a-standalone-swift-package-with-xcode#Add-a-dependency-on-another-Swift-package).
+
 
 ## Examples
 
@@ -74,8 +77,8 @@ struct OnboardingViewExample: View {
         )
     }
 }
-
 ```
+
 
 ### Sequential Onboarding View
 
@@ -94,15 +97,15 @@ struct SequentialOnboardingViewExample: View {
             content: [
                 .init(
                     title: "A thing to know", 
-                    description: "This is a first thing that you should know, read carefully!"
+                    description: "This is a first thing that you should know; read carefully!"
                 ),
                 .init(
                     title: "Second thing to know", 
-                    description: "This is a second thing that you should know, read carefully!"
+                    description: "This is a second thing that you should know; read carefully!"
                 ),
                 .init(
                     title: "Third thing to know", 
-                    description: "This is a third thing that you should know, read carefully!"
+                    description: "This is a third thing that you should know; read carefully!"
                 )
             ],
             actionText: "Continue"
@@ -111,12 +114,12 @@ struct SequentialOnboardingViewExample: View {
         }
     }
 }
-
 ```
+
 
 ### Consent View
 
-The [`ConsentView`](https://swiftpackageindex.com/stanfordspezi/spezionboarding/documentation/spezionboarding/consentview) can be used to allow your users to read and agree to a document, e.g. a consent document for a research study or a terms and conditions document for an app. The document can be signed using a family and given name, and a hand drawn signature. 
+The [`ConsentView`](https://swiftpackageindex.com/stanfordspezi/spezionboarding/documentation/spezionboarding/consentview) can be used to allow your users to read and agree to a document, e.g., a consent document for a research study or a terms and conditions document for an app. The document can be signed using a family and given name and a hand-drawn signature. 
 
 The following example demonstrates how the [`ConsentView`](https://swiftpackageindex.com/stanfordspezi/spezionboarding/documentation/spezionboarding/consentview) shown above is constructed by providing a header, markdown content encoded as a [UTF8](https://www.swift.org/blog/utf8-string/) [`Data`](https://developer.apple.com/documentation/foundation/data) instance (which may be provided asynchronously), and an action that should be performed once the consent has been given.
 
@@ -143,6 +146,7 @@ struct ConsentViewExample: View {
 ```
 
 For more information, please refer to the [API documentation](https://swiftpackageindex.com/StanfordSpezi/SpeziOnboarding/documentation).
+
 
 ## The Spezi Template Application
 

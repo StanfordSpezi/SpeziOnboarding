@@ -21,14 +21,19 @@ The ``SpeziOnboarding`` module provides views that can be used for performing on
         @Image(source: "OnboardingView", alt: "Screenshot displaying the onboarding view.") {
             An ``OnboardingView`` allows you to separate information into areas on a screen, each with a title, description, and icon
         }
+    }
+    @Column {
         @Image(source: "SequentialOnboardingView", alt: "Screenshot displaying the sequential onboarding view.") {
             A ``SequentialOnboardingView`` allows you to display information step-by-step with each additional area appearing when the user taps the `Continue` button.
         }
+    }
+    @Column {
         @Image(source: "ConsentView", alt: "Screenshot displaying the consent view.") {
             A ``ConsentView`` can be used to allow your users to read and agree to a document.
         }
     }
 }
+
 
 ## Setup
 
@@ -37,6 +42,7 @@ The ``SpeziOnboarding`` module provides views that can be used for performing on
 You need to add the Spezi Onboarding Swift package to
 [your app in Xcode](https://developer.apple.com/documentation/xcode/adding-package-dependencies-to-your-app#) or
 [Swift package](https://developer.apple.com/documentation/xcode/creating-a-standalone-swift-package-with-xcode#Add-a-dependency-on-another-Swift-package).
+
 
 ## Examples
 
@@ -78,12 +84,12 @@ struct OnboardingViewExample: View {
         )
     }
 }
-
 ```
+
 
 ### Sequential Onboarding View
 
-The ``SequentialOnboardingView`` allows you to display information step-by-step with each additional area appearing when the user taps the `Continue` button.
+The ``SequentialOnboardingView`` allows you to display information step-by-step, with each additional area appearing when the user taps the `Continue` button.
 
 ```swift
 import SpeziOnboarding
@@ -98,15 +104,15 @@ struct SequentialOnboardingViewExample: View {
             content: [
                 .init(
                     title: "A thing to know", 
-                    description: "This is a first thing that you should know, read carefully!"
+                    description: "This is a first thing that you should know; read carefully!"
                 ),
                 .init(
                     title: "Second thing to know", 
-                    description: "This is a second thing that you should know, read carefully!"
+                    description: "This is a second thing that you should know; read carefully!"
                 ),
                 .init(
                     title: "Third thing to know", 
-                    description: "This is a third thing that you should know, read carefully!"
+                    description: "This is a third thing that you should know; read carefully!"
                 )
             ],
             actionText: "Continue"
@@ -115,14 +121,14 @@ struct SequentialOnboardingViewExample: View {
         }
     }
 }
-
 ```
+
 
 ### Consent View
 
-The ``ConsentView`` can be used to allow your users to read and agree to a document, e.g. a consent document for a research study or a terms and conditions document for an app. The document can be signed using a family and given name, and a hand drawn signature. 
+The ``ConsentView`` can allow users to read and agree to a document, e.g., a consent document for a research study or a terms and conditions document for an app. The document can be signed using a family and given name and a hand-drawn signature. 
 
-The following example demonstrates how the ``ConsentView`` shown above is constructed by providing a header, markdown content encoded as a UTF8 ``Data`` instance (which may be provided asynchronously), and an action that should be performed once the consent has been given.
+The following example demonstrates how the ``ConsentView`` shown above is constructed by providing a header, markdown content encoded as a [UTF8](https://www.swift.org/blog/utf8-string/) [`Data`](https://developer.apple.com/documentation/foundation/data) instance (which may be provided asynchronously), and an action that should be performed once the consent has been given.
 
 ```swift
 import SpeziOnboarding
@@ -149,12 +155,17 @@ struct ConsentViewExample: View {
 
 ## Topics
 
-### Creating an Onboarding Flow
+### Articles
 
 - <doc:DisplayingInformation>
 - <doc:ObtainingUserConsent>
 
-### Views
+### Structuring an Onboarding Flow
+
+- ``OnboardingStack``
+- ``OnboardingNavigationPath``
+
+### Onboarding Views
 
 - ``ConsentView``
 - ``OnboardingActionsView``
