@@ -19,12 +19,12 @@ The ``SpeziOnboarding`` module provides views that can be used for performing on
 @Row {
     @Column {
         @Image(source: "OnboardingView", alt: "Screenshot displaying the onboarding view.") {
-            An ``OnboardingView`` allows you to separate information into areas on a screen, each with a title, description, and icon
+            An ``OnboardingView`` allows you to separate information into areas on a screen, each with a title, description, and icon.
         }
     }
     @Column {
         @Image(source: "SequentialOnboardingView", alt: "Screenshot displaying the sequential onboarding view.") {
-            A ``SequentialOnboardingView`` allows you to display information step-by-step with each additional area appearing when the user taps the `Continue` button.
+            A ``SequentialOnboardingView`` allows you to display information step-by-step with each additional area appearing when the user taps the "Continue" button.
         }
     }
     @Column {
