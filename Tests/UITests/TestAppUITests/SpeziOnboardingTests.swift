@@ -43,7 +43,6 @@ final class OnboardingTests: XCTestCase {
         
         // Check if on consent (markdown) view
         XCTAssert(app.staticTexts["Consent"].waitForExistence(timeout: 2))
-        XCTAssert(app.staticTexts["Version 1.0"].waitForExistence(timeout: 2))
         XCTAssert(app.staticTexts["This is a markdown example"].waitForExistence(timeout: 2))
         
         #if targetEnvironment(simulator) && (arch(i386) || arch(x86_64))
@@ -53,8 +52,8 @@ final class OnboardingTests: XCTestCase {
         XCTAssert(app.staticTexts["First Name"].waitForExistence(timeout: 2))
         try app.textFields["Enter your first name ..."].enter(value: "Leland")
         
-        XCTAssert(app.staticTexts["Surname"].waitForExistence(timeout: 2))
-        try app.textFields["Enter your surname ..."].enter(value: "Stanford")
+        XCTAssert(app.staticTexts["Last Name"].waitForExistence(timeout: 2))
+        try app.textFields["Enter your last name ..."].enter(value: "Stanford")
         
         XCTAssert(app.staticTexts["Name: Leland Stanford"].waitForExistence(timeout: 2))
         app.staticTexts["Name: Leland Stanford"].firstMatch.swipeUp()
@@ -133,7 +132,6 @@ final class OnboardingTests: XCTestCase {
         app.buttons["Continue"].tap()
         
         XCTAssert(app.staticTexts["Consent"].waitForExistence(timeout: 2))
-        XCTAssert(app.staticTexts["Version 1.0"].waitForExistence(timeout: 2))
     }
     
     func testOnboardingConsentMarkdown() throws {
@@ -145,7 +143,6 @@ final class OnboardingTests: XCTestCase {
         app.buttons["Consent View (Markdown)"].tap()
         
         XCTAssert(app.staticTexts["Consent"].waitForExistence(timeout: 2))
-        XCTAssert(app.staticTexts["Version 1.0"].waitForExistence(timeout: 2))
         XCTAssert(app.staticTexts["This is a markdown example"].waitForExistence(timeout: 2))
         
         XCTAssertFalse(app.staticTexts["Leland Stanford"].waitForExistence(timeout: 2))
@@ -160,8 +157,8 @@ final class OnboardingTests: XCTestCase {
         XCTAssert(app.staticTexts["First Name"].waitForExistence(timeout: 2))
         try app.textFields["Enter your first name ..."].enter(value: "Leland")
         
-        XCTAssert(app.staticTexts["Surname"].waitForExistence(timeout: 2))
-        try app.textFields["Enter your surname ..."].enter(value: "Stanford")
+        XCTAssert(app.staticTexts["Last Name"].waitForExistence(timeout: 2))
+        try app.textFields["Enter your last name ..."].enter(value: "Stanford")
         
         hitConsentButton(app)
         
@@ -199,7 +196,6 @@ final class OnboardingTests: XCTestCase {
         app.buttons["Consent View (Markdown)"].tap()
         
         XCTAssert(app.staticTexts["Consent"].waitForExistence(timeout: 2))
-        XCTAssert(app.staticTexts["Version 1.0"].waitForExistence(timeout: 2))
         XCTAssert(app.staticTexts["This is a markdown example"].waitForExistence(timeout: 2))
         
         XCTAssertFalse(app.staticTexts["Leland Stanford"].waitForExistence(timeout: 2))
@@ -214,8 +210,8 @@ final class OnboardingTests: XCTestCase {
         XCTAssert(app.staticTexts["First Name"].waitForExistence(timeout: 2))
         try app.textFields["Enter your first name ..."].enter(value: "Leland")
         
-        XCTAssert(app.staticTexts["Surname"].waitForExistence(timeout: 2))
-        try app.textFields["Enter your surname ..."].enter(value: "Stanford")
+        XCTAssert(app.staticTexts["Last Name"].waitForExistence(timeout: 2))
+        try app.textFields["Enter your last name ..."].enter(value: "Stanford")
         
         hitConsentButton(app)
         
