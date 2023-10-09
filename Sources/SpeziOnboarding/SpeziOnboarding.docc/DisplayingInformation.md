@@ -14,7 +14,7 @@ Display information to your user during an onboarding flow.
 
 ## OnboardingView
 
-The ``OnboardingView`` allows you to separate information into areas on a screen, each with a title, description, and icon.
+The <doc:OnboardingView> allows you to separate information into areas on a screen, each with a title, description, and icon.
 
 ![OnboardingView](OnboardingView.png)
 
@@ -45,11 +45,12 @@ OnboardingView(
     action: {
         // Action to perform when the user taps the action button.
     }
+)
 ```
 
 ## SequentialOnboardingView
 
-The ``SequentialOnboardingView`` allows you to display information step-by-step with each additional area appearing when the user taps the `Continue` button.
+The <doc:SequentialOnboardingView> allows you to display information step-by-step, with each additional area appearing when the user taps the `Continue` button.
 
 ![SequentialOnboardingView](SequentialOnboardingView.png)
 
@@ -62,15 +63,15 @@ SequentialOnboardingView(
     content: [
         .init(
             title: "A thing to know", 
-            description: "This is a first thing that you should know, read carefully!"
+            description: "This is a first thing that you should know; read carefully!"
         ),
         .init(
             title: "Second thing to know", 
-            description: "This is a second thing that you should know, read carefully!"
+            description: "This is a second thing that you should know; read carefully!"
         ),
         .init(
             title: "Third thing to know", 
-            description: "This is a third thing that you should know, read carefully!"
+            description: "This is a third thing that you should know; read carefully!"
         )
     ],
     actionText: "Continue"
@@ -83,5 +84,5 @@ SequentialOnboardingView(
 
 ### Views
 
-- ``OnboardingView``
-- ``SequentialOnboardingView``
+- <doc:OnboardingView>
+- <doc:SequentialOnboardingView>
