@@ -17,8 +17,7 @@ import SwiftUI
 /// The exported consent form is automatically stored in the Spezi `Standard`, requiring the `Standard`
 /// to conform to the ``OnboardingConstraint``.
 ///
-/// The ``OnboardingConsentView`` builds on top of the SpeziOnboarding ``ConsentDocument`` but provides a more developer friendly, convenient API with additional functionalities like the share consent option.
-///
+/// The ``OnboardingConsentView`` builds on top of the SpeziOnboarding ``ConsentDocument`` by providing a more developer-friendly, convenient API with additional functionalities like the share consent option.
 ///
 /// ```swift
 /// ConsentView(
