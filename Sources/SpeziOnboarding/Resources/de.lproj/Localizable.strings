@@ -10,6 +10,17 @@
 "CONSENT_ACTION" = "Ich Stimme Zu";
 
 
+// MARK: Consent Document
+"MARKDOWN_LOADING_ERROR" = "Das Dokument konnte nicht geladen werden.";
+"EXPORTED_TAG" = "Exportiert";
+"CONSENT_TITLE" = "Spezi Einwilligung";
+"FILE_NAME_EXPORTED_CONSENT_FORM" = "Unterschriebe Einwilligung";
+"CONSENT_EXPORT_ERROR_DESCRIPTION" = "Die unterschriebene Einwilligung konnte nicht exportiert werden.";
+"CONSENT_EXPORT_ERROR_RECOVERY_SUGGESTION" = "Bitte versuche es erneut oder starte die Applikation neu.";
+"CONSENT_EXPORT_ERROR_FAILURE_REASON" = "Der Speicherplatz für das Exportieren der Einwilligung konnte nicht reserviert werden.";
+"CONSENT_VIEW_TITLE" = "Einwilligung";
+
+
 // MARK: Sequential Onboarding
 "SEQUENTIAL_ONBOARDING_NEXT" = "Nächster Schritt";
 
@@ -29,9 +40,3 @@
 
 // MARK: Illegal Onboarding Step
 "ILLEGAL_ONBOARDING_STEP" = "SpeziOnboarding: Unerlaubter Schritt während des Onboardings";
-
-// MARK: Consent Form Export
-"MARKDOWN_LOADING_ERROR" = "Das Dokument konnte nicht geladen werden.";
-"EXPORTED_TAG" = "Exportiert";
-"CONSENT_TITLE" = "Spezi Einwilligung";
-"FILE_NAME_EXPORTED_CONSENT_FORM" = "Unterschriebe Einwilligung";

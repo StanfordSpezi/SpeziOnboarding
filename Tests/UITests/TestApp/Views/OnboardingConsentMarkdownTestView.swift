@@ -16,20 +16,15 @@ struct OnboardingConsentMarkdownTestView: View {
     
     
     var body: some View {
-        ConsentView(
-            header: {
-                OnboardingTitleView(title: "Consent", subtitle: "Version 1.0")
-            },
-            asyncMarkdown: {
+        OnboardingConsentView(
+            markdown: {
                 Data("This is a *markdown* **example**".utf8)
             },
-            givenNameField: FieldLocalizationResource(title: "First Name", placeholder: "Enter your first name ..."),
-            familyNameField: FieldLocalizationResource(title: "Surname", placeholder: "Enter your surname ..."),
+            action: {
+                path.nextStep()
+            },
             exportConfiguration: .init(paperSize: .dinA4, includingTimestamp: true)
-        ) {
-            path.nextStep()
-        }
-        .navigationBarTitleDisplayMode(.inline)
+        )
     }
 }
 

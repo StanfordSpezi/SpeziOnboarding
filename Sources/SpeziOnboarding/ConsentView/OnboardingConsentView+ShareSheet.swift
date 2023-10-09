@@ -10,7 +10,7 @@ import PDFKit
 import SwiftUI
 import UIKit
 
-extension ConsentView {
+extension OnboardingConsentView {
     struct ShareSheet: UIViewControllerRepresentable {
         let sharedItem: PDFDocument
 
