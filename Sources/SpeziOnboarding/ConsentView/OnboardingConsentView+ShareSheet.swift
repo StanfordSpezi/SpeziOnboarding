@@ -11,7 +11,6 @@ import SwiftUI
 import UIKit
 
 extension OnboardingConsentView {
-    // TODO: Clean state
     struct ShareSheet: UIViewControllerRepresentable {
         let sharedItem: PDFDocument
 
@@ -26,6 +25,10 @@ extension OnboardingConsentView {
                 activityItems: [temporaryPath],
                 applicationActivities: nil
             )
+            controller.completionWithItemsHandler = { _, _, _, _ in
+                try? FileManager.default.removeItem(at: temporaryPath)
+            }
+            
             return controller
         }
 

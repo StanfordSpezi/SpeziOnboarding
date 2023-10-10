@@ -78,7 +78,6 @@ public struct ConsentDocument: View {
                 signatureSize = size
             }
             .onChange(of: signature) { signature in
-                // TODO: May need to be adapted as $viewState.isSigning quickly results in jump to .idle
                 if !(signature.strokes.isEmpty || (name.givenName?.isEmpty ?? true) || (name.familyName?.isEmpty ?? true)) {
                     viewState = .signed
                 } else {
