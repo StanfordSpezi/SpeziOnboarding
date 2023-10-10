@@ -10,10 +10,12 @@ import PDFKit
 import SwiftUI
 import UIKit
 
+
 extension OnboardingConsentView {
     struct ShareSheet: UIViewControllerRepresentable {
         let sharedItem: PDFDocument
 
+        
         func makeUIViewController(context: Context) -> UIActivityViewController {
             /// Note: Need to write down the PDF to storage as in-memory PDFs are not recognized properly
             let temporaryPath = FileManager.default.temporaryDirectory.appendingPathComponent(

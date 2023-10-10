@@ -107,7 +107,6 @@ public struct ConsentDocument: View {
         .transition(.opacity)
         .animation(.easeInOut, value: viewState == .namesEntered)
         .onChange(of: viewState) { newState in
-            /// Based on the view state, trigger the export of the consent form
             if case .export = newState {
                 Task {
                     guard let exportedConsent = await export() else {
@@ -118,7 +117,7 @@ public struct ConsentDocument: View {
                 }
             } else if case .base(let baseViewState) = newState,
                       case .idle = baseViewState {
-                /// Reset view state to correct one, not just `.idle` (e.g., after `.error` state)
+                /// Reset view state to correct one after handling an error view state via `.viewStateAlert()`
                 if !signature.strokes.isEmpty {
                     viewState = .signed
                 } else if !((name.givenName?.isEmpty ?? true) || (name.familyName?.isEmpty ?? true)) {
@@ -234,7 +233,7 @@ extension ConsentDocument {
             Spacer()
             
             ZStack(alignment: .bottomLeading) {
-                SignatureViewBackground(name: name, contrastBackground: false)
+                SignatureViewBackground(name: name, backgroundColor: .clear)
                 
                 Image(uiImage: signature.image(
                     from: .init(x: 0, y: 0, width: signatureSize.width, height: signatureSize.height),
@@ -249,7 +248,7 @@ extension ConsentDocument {
 
 #if DEBUG
 struct ConsentDocument_Previews: PreviewProvider {
-    @State static var viewState: ConsentViewState = .base(.idle)
+    @State private static var viewState: ConsentViewState = .base(.idle)
     
     
     static var previews: some View {

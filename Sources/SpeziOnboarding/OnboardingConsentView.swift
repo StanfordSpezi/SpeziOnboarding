@@ -73,7 +73,7 @@ public struct OnboardingConsentView: View {
                 if case .exported(let exportedConsentDocumented) = newState {
                     if !willShowShareSheet {
                         Task { @MainActor in
-                            /// Stores the finished PDF within the Spezi `Standard`.
+                            /// Stores the finished PDF in the Spezi `Standard`.
                             await onboardingDataSource.store(exportedConsentDocumented)
                             await action()
                         }
@@ -115,7 +115,7 @@ public struct OnboardingConsentView: View {
         }
     }
     
-    var actionButtonsEnabled: Bool {
+    private var actionButtonsEnabled: Bool {
         switch viewState {
         case .signing, .signed, .export, .exported: true
         default: false
@@ -142,7 +142,7 @@ public struct OnboardingConsentView: View {
 
 #if DEBUG
 struct OnboardingConsentView_Previews: PreviewProvider {
-    @State static var viewState: ConsentViewState = .base(.idle)
+    @State private static var viewState: ConsentViewState = .base(.idle)
     
     
     static var previews: some View {

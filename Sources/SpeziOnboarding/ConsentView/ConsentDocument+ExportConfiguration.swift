@@ -43,6 +43,7 @@ extension ConsentDocument {
             }
         }
         
+        
         let consentTitle: LocalizedStringResource
         let paperSize: PaperSize
         let includingTimestamp: Bool

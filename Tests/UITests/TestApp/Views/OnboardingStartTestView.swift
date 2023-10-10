@@ -42,14 +42,6 @@ struct OnboardingStartTestView: View {
                 Text("Rendered Consent View (Markdown)")
             }
             
-            /*
-            Button {
-                path.append(OnboardingConsentHTMLTestView.self)
-            } label: {
-                Text("Consent View (HTML)")
-            }
-             */
-            
             Button {
                 path.append(
                     customView: OnboardingCustomTestView1(exampleArgument: "Hello Spezi!")
@@ -67,7 +59,7 @@ struct OnboardingStartTestView: View {
             Spacer()
                 .frame(height: 8)
             
-            // Sadly we need to use a custom-built toggle as UI tests are very flakey when clicking on SwiftUI Toggles
+            /// We need to use a custom-built toggle as UI tests are very flakey when clicking on SwiftUI `Toggle`'s
             CustomToggleView(
                 text: "Show Conditional View",
                 condition: $showConditionalView

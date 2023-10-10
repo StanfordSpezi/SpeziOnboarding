@@ -9,16 +9,15 @@
 import SwiftUI
 
 
-public struct SignatureViewBackground: View {
+/// The `SignatureViewBackground` provides the background view for the ``SignatureView`` including the name and the signature line.
+struct SignatureViewBackground: View {
     private let name: PersonNameComponents
     private let lineOffset: CGFloat
-    private let contrastBackground: Bool
+    private let backgroundColor: UIColor
     
     
     public var body: some View {
-        if contrastBackground {
-            Color(.secondarySystemBackground)
-        }
+        Color(uiColor: backgroundColor)
         Rectangle()
             .fill(.secondary)
             .frame(maxWidth: .infinity, maxHeight: 1)
@@ -42,18 +41,18 @@ public struct SignatureViewBackground: View {
     }
     
     
-    /// Creates a new instance of an ``SignatureViewBackgriund``.
+    /// Creates a new instance of an ``SignatureViewBackground``.
     /// - Parameters:
     ///   - name: The name that is displayed under the signature line.
     ///   - lineOffset: Defines the distance of the signature line from the bottom of the view. The default value is 30.
-    ///   - contrastBackground: Indicates if the background of the signature view should have a contrast to the surrounding area.
+    ///   - backgroundColor: The color of the background of the signature canvas.
     init(
         name: PersonNameComponents = PersonNameComponents(),
         lineOffset: CGFloat = 30,
-        contrastBackground: Bool = true
+        backgroundColor: UIColor = .secondarySystemBackground
     ) {
         self.name = name
         self.lineOffset = lineOffset
-        self.contrastBackground = contrastBackground
+        self.backgroundColor = backgroundColor
     }
 }

@@ -20,6 +20,7 @@ extension ConsentDocument {
                 placeholder: LocalizedStringResource("NAME_FIELD_GIVEN_NAME_PLACEHOLDER", bundle: .atURL(from: .module))
             )
         }
+        
         /// Default localized value for the family name field of the consent form in the ``ConsentDocument``.
         public static var familyName: FieldLocalizationResource {
             FieldLocalizationResource(
@@ -27,6 +28,7 @@ extension ConsentDocument {
                 placeholder: LocalizedStringResource("NAME_FIELD_FAMILY_NAME_PLACEHOLDER", bundle: .atURL(from: .module))
             )
         }
+        
         /// Default localized value for the title of the exported consent form.
         public static var exportedConsentFormTitle: LocalizedStringResource {
             LocalizedStringResource("CONSENT_TITLE", bundle: .atURL(from: .module))

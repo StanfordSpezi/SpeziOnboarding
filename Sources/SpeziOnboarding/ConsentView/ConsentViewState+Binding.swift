@@ -10,8 +10,9 @@ import SpeziViews
 import SwiftUI
 
 
+/// Extension to SwiftUI `Binding`'s enabling easy access to individual states of the ``ConsentViewState``
 extension Binding where Value == ConsentViewState {
-    /// Access to a `Binding` of the ``ConsentViewState/base(_:)``
+    /// Access to a `Binding` of the ``ConsentViewState/base(_:)`` view state
     var base: Binding<SpeziViews.ViewState> {
         .init(
             get: {
@@ -28,7 +29,7 @@ extension Binding where Value == ConsentViewState {
         )
     }
     
-    /// Access to a `Binding` of the ``ConsentViewState/signing``
+    /// Access to a `Binding` of the ``ConsentViewState/signing`` view state
     var signing: Binding<Bool> {
         .init(
             get: {
