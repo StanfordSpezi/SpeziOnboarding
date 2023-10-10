@@ -34,56 +34,16 @@ import SwiftUI
 /// ```
 @MainActor
 public struct ConsentDocument: View {
-    /// The ``ConsentViewState`` indicates in what state the ``ConsentDocument`` currently is.
-    /// It can be used to observe and control the behaviour of the ``ConsentDocument``, especially in regards
-    /// to the export functionality.
-    public enum ConsentViewState: Equatable {
-        /// The ``ConsentDocument/ConsentViewState/base(_:)`` state utilizes the
-        /// SpeziViews `ViewState`'s to indicate the state of the ``ConsentDocument``, either `.idle`, `.processing`, or `.error(_:)`.
-        case base(SpeziViews.ViewState)
-        /// The ``ConsentDocument/ConsentViewState/signing`` state indicates that the ``ConsentDocument`` is currently being signed by the user.
-        case signing
-        /// The ``ConsentDocument/ConsentViewState/signed`` state indicates that the ``ConsentDocument`` is signed by the user.
-        case signed
-        /// The ``ConsentDocument/ConsentViewState/export`` state can be set by an outside view
-        /// encapsulating the ``ConsentDocument`` to trigger the export of the consent document as a PDF.
-        /// The previous state must be ``ConsentDocument/ConsentViewState/signed``, indicating that the consent document is signed.
-        case export
-        /// The ``ConsentDocument/ConsentViewState/exported(document:)`` state indicates that the
-        /// ``ConsentDocument`` has been successfully exported. The rendered `PDFDocument` can be found as the associated value of the state.
-        /// The export procedure (resulting in the ``ConsentDocument/ConsentViewState/exported(document:)`` state) can be triggered via setting the ``ConsentDocument/ConsentViewState/export`` state of the ``ConsentDocument``    .
-        case exported(document: PDFDocument)
-    }
-    
-    
     private let asyncMarkdown: (() async -> Data)
     private let givenNameField: FieldLocalizationResource
     private let familyNameField: FieldLocalizationResource
     private let exportConfiguration: ExportConfiguration
     
     @State private var name = PersonNameComponents()
-    @State private var showSignatureView = false
-    @State private var isSigning = false
     @State private var signature = PKDrawing()
     @State private var signatureSize: CGSize = .zero
-    @State private var _contentViewState: SpeziViews.ViewState = .idle
     @Binding private var viewState: ConsentViewState
     
-    
-    /// Access to a `Binding` of the ``ViewState/base(_:)``
-    private var contentViewStateBinding: Binding<SpeziViews.ViewState> {
-        .init(
-            get: {
-                if case let .base(value) = self.viewState {
-                    return value
-                }
-                return .idle    // Default case
-            },
-            set: {
-                self.viewState = .base($0)
-            }
-        )
-    }
     
     private var nameView: some View {
         VStack {
@@ -97,9 +57,8 @@ public struct ConsentDocument: View {
                 .disabled(inputFieldsDisabled)
                 .onChange(of: name) { _ in
                     if !(name.givenName?.isEmpty ?? true) && !(name.familyName?.isEmpty ?? true) {
-                        showSignatureView = true
+                        viewState = .namesEntered
                     } else {
-                        showSignatureView = false
                         viewState = .base(.idle)
                         /// Reset all strokes if name fields are not complete anymore
                         signature.strokes.removeAll()
@@ -111,7 +70,7 @@ public struct ConsentDocument: View {
     }
     
     private var signatureView: some View {
-        SignatureView(signature: $signature, isSigning: $isSigning, name: name)
+        SignatureView(signature: $signature, isSigning: $viewState.signing, name: name)
             .padding(.vertical, 4)
             .disabled(inputFieldsDisabled)
             /// Capture the canvas size of the signature, important to export the consent form to a PDF
@@ -119,17 +78,11 @@ public struct ConsentDocument: View {
                 signatureSize = size
             }
             .onChange(of: signature) { signature in
+                // TODO: May need to be adapted as $viewState.isSigning quickly results in jump to .idle
                 if !(signature.strokes.isEmpty || (name.givenName?.isEmpty ?? true) || (name.familyName?.isEmpty ?? true)) {
                     viewState = .signed
                 } else {
-                    viewState = .base(.idle)
-                }
-            }
-            .onChange(of: isSigning) { isSigning in
-                if isSigning {
-                    viewState = .signing
-                } else {
-                    viewState = .signed
+                    viewState = .namesEntered
                 }
             }
     }
@@ -139,20 +92,21 @@ public struct ConsentDocument: View {
             DocumentView(
                 asyncData: asyncMarkdown,
                 type: .markdown,
-                state: $_contentViewState
+                state: $viewState.base
             )
             
             Spacer()
             
             nameView
             
-            if showSignatureView {
+            if case .base = viewState {
+                EmptyView()
+            } else {
                 signatureView
             }
         }
         .transition(.opacity)
-        .animation(.easeInOut, value: showSignatureView)
-        // .scrollDisabled(isSigning)    // TODO: Check if that's possible
+        .animation(.easeInOut, value: viewState == .namesEntered)
         .onChange(of: viewState) { newState in
             /// Based on the view state, trigger the export of the consent form
             if case .export = newState {
@@ -167,13 +121,13 @@ public struct ConsentDocument: View {
             }
         }
         /// Propagate the state of the content to the view state of the ``ConsentDocument``
-        .onChange(of: _contentViewState) { newState in
+        .onChange(of: $viewState.base.wrappedValue) { newState in
             /// Only propagate changes when in the base case of the view state
             if case .base = viewState {
                 viewState = .base(newState)
             }
         }
-        .viewStateAlert(state: contentViewStateBinding)
+        .viewStateAlert(state: $viewState.base)
     }
     
     private var inputFieldsDisabled: Bool {
@@ -296,7 +250,7 @@ extension ConsentDocument {
 
 #if DEBUG
 struct ConsentDocument_Previews: PreviewProvider {
-    @State static var viewState: ConsentDocument.ConsentViewState = .base(.idle)
+    @State static var viewState: ConsentViewState = .base(.idle)
     
     
     static var previews: some View {

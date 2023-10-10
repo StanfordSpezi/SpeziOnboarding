@@ -11,6 +11,7 @@ import SwiftUI
 import UIKit
 
 extension OnboardingConsentView {
+    // TODO: Clean state
     struct ShareSheet: UIViewControllerRepresentable {
         let sharedItem: PDFDocument
 

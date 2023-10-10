@@ -10,17 +10,16 @@ import Foundation
 import SwiftUI
 
 
-/// The ``OnboardingConsentView`` provides a convenient onboarding view for the display of
-/// markdown-based documents that can be signed using a family and given name and a hand drawn
-/// signature. Furthermore, the view includes an export functionality, enabling users to share and store the
-/// signed consent form. 
-/// The exported consent form is automatically stored in the Spezi `Standard`, requiring the `Standard`
-/// to conform to the ``OnboardingConstraint``.
+/// The ``OnboardingConsentView`` provides a convenient onboarding view for the display of markdown-based documents that can be
+/// signed using a family and given name and a hand drawn signature. Furthermore, the view includes an export functionality, enabling users
+/// to share and store the signed consent form.
+/// The exported consent form is automatically stored in the Spezi `Standard`, requiring the `Standard` to conform to the ``OnboardingConstraint``.
 ///
-/// The ``OnboardingConsentView`` builds on top of the SpeziOnboarding ``ConsentDocument`` by providing a more developer-friendly, convenient API with additional functionalities like the share consent option.
+/// The ``OnboardingConsentView`` builds on top of the SpeziOnboarding ``ConsentDocument`` 
+/// by providing a more developer-friendly, convenient API with additional functionalities like the share consent option.
 ///
 /// ```swift
-/// ConsentView(
+/// OnboardingConsentView(
 ///     markdown: {
 ///         Data("This is a *markdown* **example**".utf8)
 ///     },
@@ -36,58 +35,57 @@ public struct OnboardingConsentView: View {
     private let exportConfiguration: ConsentDocument.ExportConfiguration
     
     @EnvironmentObject private var onboardingDataSource: OnboardingDataSource
-    @State private var consentViewState: ConsentDocument.ConsentViewState = .base(.idle)
+    @State private var viewState: ConsentViewState = .base(.idle)
     @State private var showShareSheet = false
-    @State private var disableScrolling = false
     
     
     public var body: some View {
-        OnboardingView(
-            titleView: {
-                OnboardingTitleView(
-                    title: LocalizedStringResource("CONSENT_VIEW_TITLE", bundle: .atURL(from: .module))
-                )
-            },
-            contentView: {
-                ConsentDocument(
-                    markdown: markdown,
-                    viewState: $consentViewState,
-                    exportConfiguration: exportConfiguration
-                )
+        ScrollViewReader { proxy in // swiftlint:disable:this closure_body_length
+            OnboardingView(
+                titleView: {
+                    OnboardingTitleView(
+                        title: LocalizedStringResource("CONSENT_VIEW_TITLE", bundle: .atURL(from: .module))
+                    )
+                },
+                contentView: {
+                    ConsentDocument(
+                        markdown: markdown,
+                        viewState: $viewState,
+                        exportConfiguration: exportConfiguration
+                    )
                     .padding(.bottom)
-            },
-            actionView: {
-                OnboardingActionsView(
-                    LocalizedStringResource("CONSENT_ACTION", bundle: .atURL(from: .module)),
-                    action: {
-                        consentViewState = .export
-                    }
-                )
+                },
+                actionView: {
+                    OnboardingActionsView(
+                        LocalizedStringResource("CONSENT_ACTION", bundle: .atURL(from: .module)),
+                        action: {
+                            viewState = .export
+                        }
+                    )
                     .disabled(!actionButtonsEnabled)
                     .animation(.easeInOut, value: actionButtonsEnabled)
-                    // TODO: Is .scrollTo possible here? i dont think so (also via view state tricky) - Is it actually needed?
-            }
-        )
-        .scrollDisabled(disableScrolling)
-        .onChange(of: consentViewState) { newState in
-            if case .exported(let exportedConsentDocumented) = newState {
-                if !showShareSheet {
-                    Task { @MainActor in
-                        /// Stores the finished PDF within the Spezi `Standard`.
-                        await onboardingDataSource.store(exportedConsentDocumented)
-                        await action()
-                    }
+                    .id("ActionButton")
                 }
-            } else if case .signing = newState {
-                disableScrolling = true
-            } else {
-                disableScrolling = false
+            )
+            .scrollDisabled($viewState.signing.wrappedValue)
+            .onChange(of: viewState) { newState in
+                if case .exported(let exportedConsentDocumented) = newState {
+                    if !showShareSheet {
+                        Task { @MainActor in
+                            /// Stores the finished PDF within the Spezi `Standard`.
+                            await onboardingDataSource.store(exportedConsentDocumented)
+                            await action()
+                        }
+                    }
+                } else if case .namesEntered = newState {
+                    proxy.scrollTo("ActionButton")
+                }
             }
         }
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button(action: {
-                    consentViewState = .export
+                    viewState = .export
                     showShareSheet = true
                 }) {
                     Image(systemName: "square.and.arrow.up")
@@ -99,7 +97,7 @@ public struct OnboardingConsentView: View {
             }
         }
         .sheet(isPresented: $showShareSheet) {
-            switch consentViewState {
+            switch viewState {
             case .exported(let exportedConsentDocumented):
                 ShareSheet(sharedItem: exportedConsentDocumented)
                     .presentationDetents([.medium])
@@ -111,7 +109,7 @@ public struct OnboardingConsentView: View {
     }
     
     var actionButtonsEnabled: Bool {
-        switch consentViewState {
+        switch viewState {
         case .signing, .signed, .export, .exported: true
         default: false
         }
@@ -137,7 +135,7 @@ public struct OnboardingConsentView: View {
 
 #if DEBUG
 struct OnboardingConsentView_Previews: PreviewProvider {
-    @State static var viewState: ConsentDocument.ConsentViewState = .base(.idle)
+    @State static var viewState: ConsentViewState = .base(.idle)
     
     
     static var previews: some View {
