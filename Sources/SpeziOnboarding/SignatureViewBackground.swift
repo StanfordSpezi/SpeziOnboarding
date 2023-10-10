@@ -16,7 +16,7 @@ struct SignatureViewBackground: View {
     private let backgroundColor: UIColor
     
     
-    public var body: some View {
+    var body: some View {
         Color(uiColor: backgroundColor)
         Rectangle()
             .fill(.secondary)
