@@ -19,6 +19,7 @@
 "CONSENT_EXPORT_ERROR_RECOVERY_SUGGESTION" = "Please try again or restart the application.";
 "CONSENT_EXPORT_ERROR_FAILURE_REASON" = "The system wasn't able to reserve the necessary memory for rendering the consent form.";
 "CONSENT_VIEW_TITLE" = "Consent";
+"CONSENT_SHARE" = "Share consent form";
 
 // MARK: Sequential Onboarding
 "SEQUENTIAL_ONBOARDING_NEXT" = "Next";

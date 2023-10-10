@@ -89,6 +89,7 @@ public struct OnboardingConsentView: View {
                     showShareSheet = true
                 }) {
                     Image(systemName: "square.and.arrow.up")
+                        .accessibilityLabel(LocalizedStringResource("CONSENT_SHARE", bundle: .atURL(from: .module)).localizedString())
                         .opacity(actionButtonsEnabled ? 1.0 : 0.0)
                         .scaleEffect(actionButtonsEnabled ? 1.0 : 0.8)
                         .animation(.easeInOut, value: actionButtonsEnabled)

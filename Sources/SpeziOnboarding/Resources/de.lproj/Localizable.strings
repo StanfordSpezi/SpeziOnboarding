@@ -19,7 +19,7 @@
 "CONSENT_EXPORT_ERROR_RECOVERY_SUGGESTION" = "Bitte versuche es erneut oder starte die Applikation neu.";
 "CONSENT_EXPORT_ERROR_FAILURE_REASON" = "Der Speicherplatz für das Exportieren der Einwilligung konnte nicht reserviert werden.";
 "CONSENT_VIEW_TITLE" = "Einwilligung";
-
+"CONSENT_SHARE" = "Teile die Einwilligung";
 
 // MARK: Sequential Onboarding
 "SEQUENTIAL_ONBOARDING_NEXT" = "Nächster Schritt";
