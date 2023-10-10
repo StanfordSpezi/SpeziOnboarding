@@ -85,15 +85,15 @@ public struct SequentialOnboardingView: View {
             self.description = String(description)
         }
     }
-
-    @Environment(\.locale) private var locale
     
     
     private let titleView: AnyView
     private let content: [Content]
-    @State private var currentContentIndex: Int = 0
     private let actionText: String
     private let action: () async throws -> Void
+
+    @Environment(\.locale) private var locale
+    @State private var currentContentIndex: Int = 0
     
     
     public var body: some View {

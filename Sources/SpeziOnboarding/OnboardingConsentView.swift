@@ -36,6 +36,7 @@ public struct OnboardingConsentView: View {
     
     @EnvironmentObject private var onboardingDataSource: OnboardingDataSource
     @State private var viewState: ConsentViewState = .base(.idle)
+    @State private var willShowShareSheet = false
     @State private var showShareSheet = false
     
     
@@ -70,12 +71,14 @@ public struct OnboardingConsentView: View {
             .scrollDisabled($viewState.signing.wrappedValue)
             .onChange(of: viewState) { newState in
                 if case .exported(let exportedConsentDocumented) = newState {
-                    if !showShareSheet {
+                    if !willShowShareSheet {
                         Task { @MainActor in
                             /// Stores the finished PDF within the Spezi `Standard`.
                             await onboardingDataSource.store(exportedConsentDocumented)
                             await action()
                         }
+                    } else {
+                        showShareSheet = true
                     }
                 } else if case .namesEntered = newState {
                     proxy.scrollTo("ActionButton")
@@ -86,7 +89,7 @@ public struct OnboardingConsentView: View {
             ToolbarItem(placement: .topBarTrailing) {
                 Button(action: {
                     viewState = .export
-                    showShareSheet = true
+                    willShowShareSheet = true
                 }) {
                     Image(systemName: "square.and.arrow.up")
                         .accessibilityLabel(LocalizedStringResource("CONSENT_SHARE", bundle: .atURL(from: .module)).localizedString())
@@ -102,6 +105,9 @@ public struct OnboardingConsentView: View {
             case .exported(let exportedConsentDocumented):
                 ShareSheet(sharedItem: exportedConsentDocumented)
                     .presentationDetents([.medium])
+                    .task {
+                        willShowShareSheet = false
+                    }
             default:
                 ProgressView()
                     .padding()

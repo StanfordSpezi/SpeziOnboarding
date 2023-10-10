@@ -32,7 +32,6 @@ import SwiftUI
 ///     exportConfiguration: .init(paperSize: .usLetter)   // Configure the properties of the exported consent form
 /// )
 /// ```
-@MainActor
 public struct ConsentDocument: View {
     private let asyncMarkdown: (() async -> Data)
     private let givenNameField: FieldLocalizationResource
@@ -98,7 +97,8 @@ public struct ConsentDocument: View {
             
             nameView
             
-            if case .base = viewState {
+            if case .base(let baseViewState) = viewState,
+               case .idle = baseViewState {
                 EmptyView()
             } else {
                 signatureView
@@ -114,16 +114,16 @@ public struct ConsentDocument: View {
                         viewState = .base(.error(Error.memoryAllocationError))
                         return
                     }
-                    
                     viewState = .exported(document: exportedConsent)
                 }
-            }
-        }
-        /// Propagate the state of the content to the view state of the ``ConsentDocument``
-        .onChange(of: $viewState.base.wrappedValue) { newState in
-            /// Only propagate changes when in the base case of the view state
-            if case .base = viewState {
-                viewState = .base(newState)
+            } else if case .base(let baseViewState) = newState,
+                      case .idle = baseViewState {
+                /// Reset view state to correct one, not just `.idle` (e.g., after `.error` state)
+                if !signature.strokes.isEmpty {
+                    viewState = .signed
+                } else if !((name.givenName?.isEmpty ?? true) || (name.familyName?.isEmpty ?? true)) {
+                    viewState = .namesEntered
+                }
             }
         }
         .viewStateAlert(state: $viewState.base)
@@ -163,6 +163,7 @@ extension ConsentDocument {
     /// Renders the `PDFDocument` according to the specified ``ConsentDocument/ExportConfiguration``.
     ///
     /// - Returns: The exported consent form in PDF format as a PDFKit `PDFDocument`
+    @MainActor
     private func export() async -> PDFDocument? {
         let markdown = await asyncMarkdown()
         
@@ -219,14 +220,13 @@ extension ConsentDocument {
                 HStack {
                     Spacer()
                     
-                    Text(LocalizedStringResource("EXPORTED_TAG", bundle: .atURL(from: .module)))
-                    + Text(": \(DateFormatter.localizedString(from: Date(), dateStyle: .medium, timeStyle: .short))")
+                    Text("\(LocalizedStringResource("EXPORTED_TAG", bundle: .atURL(from: .module))): \(DateFormatter.localizedString(from: Date(), dateStyle: .medium, timeStyle: .short))")
                 }
                 .font(.caption)
                 .padding()
             }
             
-            OnboardingTitleView(title: exportConfiguration.consentTitle, paddingTop: 8)
+            OnboardingTitleView(title: exportConfiguration.consentTitle)
             
             Text(markdown)
                 .padding()
