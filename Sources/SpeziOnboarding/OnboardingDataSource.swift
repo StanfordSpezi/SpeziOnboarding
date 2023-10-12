@@ -17,7 +17,7 @@ import SwiftUI
 /// protocol to store exported consent forms.
 /// ```swift
 /// actor ExampleStandard: Standard, OnboardingConstraint {
-///    func store(consent: Data, name: PersonNameComponents) {
+///    func store(consent: Data) {
 ///        ...
 ///    }
 /// }
@@ -42,12 +42,10 @@ public class OnboardingDataSource: Component, ObservableObject, ObservableObject
     
     /// Adds a new exported consent form represented as `PDFDocument` to the ``OnboardingDataSource``.
     ///
-    /// - Parameters:
-    ///   - consent: The exported consent form represented as `PDFDocument` that should be added.
-    ///   - name: The name components used in the consent form.
-    public func store(_ consent: PDFDocument, name: PersonNameComponents) async {
+    /// - Parameter consent: The exported consent form represented as `PDFDocument` that should be added.
+    public func store(_ consent: PDFDocument) async {
         Task { @MainActor in
-            await standard.store(consent: consent, name: name)
+            await standard.store(consent: consent)
         }
     }
 }
