@@ -15,6 +15,8 @@ import Spezi
 public protocol OnboardingConstraint: Standard {
     /// Adds a new exported consent form represented as `PDFDocument` to the `Standard` conforming to ``OnboardingConstraint``.
     /// 
-    /// - Parameter consent: The exported consent form represented as `PDFDocument` that should be added.
-    func store(consent: PDFDocument) async
+    /// - Parameters:
+    ///   - consent: The exported consent form represented as `PDFDocument` that should be added.
+    ///   - name: The name components used in the consent form.
+    func store(consent: PDFDocument, name: PersonNameComponents) async
 }
