@@ -26,12 +26,23 @@ import SwiftUI
 ///     action: {
 ///         // The action that should be performed once the user has provided their consent.
 ///     },
+///     title: "Consent",   // Configure the title of the consent view
 ///     exportConfiguration: .init(paperSize: .usLetter)   // Configure the properties of the exported consent form
 /// )
 /// ```
 public struct OnboardingConsentView: View {
+    /// Provides default localization values for necessary fields in the ``OnboardingConsentView``.
+    public enum LocalizationDefaults {
+        /// Default localized value for the title of the consent form.
+        public static var consentFormTitle: LocalizedStringResource {
+            LocalizedStringResource("CONSENT_VIEW_TITLE", bundle: .atURL(from: .module))
+        }
+    }
+    
+    
     private let markdown: (() async -> Data)
     private let action: (() async -> Void)
+    private let title: LocalizedStringResource?
     private let exportConfiguration: ConsentDocument.ExportConfiguration
     
     @EnvironmentObject private var onboardingDataSource: OnboardingDataSource
@@ -44,9 +55,11 @@ public struct OnboardingConsentView: View {
         ScrollViewReader { proxy in // swiftlint:disable:this closure_body_length
             OnboardingView(
                 titleView: {
-                    OnboardingTitleView(
-                        title: LocalizedStringResource("CONSENT_VIEW_TITLE", bundle: .atURL(from: .module))
-                    )
+                    if let title {
+                        OnboardingTitleView(
+                            title: title
+                        )
+                    }
                 },
                 contentView: {
                     ConsentDocument(
@@ -127,14 +140,17 @@ public struct OnboardingConsentView: View {
     /// - Parameters:
     ///   - markdown: The markdown content provided as an UTF8 encoded `Data` instance that can be provided asynchronously.
     ///   - action: The action that should be performed once the consent is given.
+    ///   - title: The title of the view displayed at the top. Can be `nil`, meaning no title is displayed.
     ///   - exportConfiguration: Defines the properties of the exported consent form via ``ConsentDocument/ExportConfiguration``.
     public init(
         markdown: @escaping () async -> Data,
         action: @escaping () async -> Void,
+        title: LocalizedStringResource? = LocalizationDefaults.consentFormTitle,
         exportConfiguration: ConsentDocument.ExportConfiguration = .init()
     ) {
         self.markdown = markdown
         self.exportConfiguration = exportConfiguration
+        self.title = title
         self.action = action
     }
 }

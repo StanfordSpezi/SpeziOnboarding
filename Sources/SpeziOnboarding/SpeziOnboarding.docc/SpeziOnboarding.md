@@ -163,12 +163,16 @@ struct ConsentViewExample: View {
 - ``OnboardingStack``
 - ``OnboardingNavigationPath``
 
-### Onboarding Views
+### Consent Views
 
 - ``OnboardingConsentView``
+- ``ConsentDocument``
+- ``SignatureView``
+
+### Onboarding Views
+
 - ``OnboardingActionsView``
 - ``OnboardingInformationView``
 - ``OnboardingTitleView``
 - ``OnboardingView``
 - ``SequentialOnboardingView``
-- ``SignatureView``
