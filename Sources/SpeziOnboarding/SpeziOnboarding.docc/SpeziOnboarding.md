@@ -28,7 +28,7 @@ The ``SpeziOnboarding`` module provides views that can be used for performing on
         }
     }
     @Column {
-        @Image(source: "OnboardingConsentView", alt: "Screenshot displaying the consent view.") {
+        @Image(source: "ConsentView", alt: "Screenshot displaying the consent view.") {
             A ``OnboardingConsentView`` can be used to allow your users to read and agree to a document as well as exporting it.
         }
     }
