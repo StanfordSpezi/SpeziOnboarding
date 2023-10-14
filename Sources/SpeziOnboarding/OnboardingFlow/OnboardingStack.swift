@@ -45,7 +45,7 @@ public struct OnboardingStack: View {
     @ObservedObject var onboardingFlowViewCollection: _OnboardingFlowViewCollection
     
     
-    /// The ``OnboardingStack/body`` contains a SwiftUI `NavigationStack` that is responsible for the navigation between the different onboarding views via a ``OnboardingNavigationPath``
+    /// The ``OnboardingStack/body`` contains a SwiftUI `NavigationStack` that is responsible for the navigation between the different onboarding views via an ``OnboardingNavigationPath``
     public var body: some View {
         NavigationStack(path: $onboardingNavigationPath.path) {
             onboardingNavigationPath.firstOnboardingView

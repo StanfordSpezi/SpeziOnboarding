@@ -11,33 +11,32 @@ import SpeziViews
 import SwiftUI
 
 
-struct ConsentMarkdownTestView: View {
+struct OnboardingConsentMarkdownTestView: View {
     @EnvironmentObject private var path: OnboardingNavigationPath
     
     
     var body: some View {
-        ConsentView(
-            header: {
-                OnboardingTitleView(title: "Consent", subtitle: "Version 1.0")
-            },
-            asyncMarkdown: {
+        OnboardingConsentView(
+            markdown: {
                 Data("This is a *markdown* **example**".utf8)
             },
             action: {
                 path.nextStep()
             },
-            givenNameField: FieldLocalizationResource(title: "First Name", placeholder: "Enter your first name ..."),
-            familyNameField: FieldLocalizationResource(title: "Surname", placeholder: "Enter your surname ...")
+            exportConfiguration: .init(paperSize: .dinA4, includingTimestamp: true)
         )
-        .navigationBarTitleDisplayMode(.inline)
     }
 }
 
 
 #if DEBUG
-struct ConsentMarkdownTestView_Previews: PreviewProvider {
+struct OnboardingConsentMarkdownTestView_Previews: PreviewProvider {
     static var previews: some View {
-        ConsentMarkdownTestView()
+        OnboardingStack(startAtStep: OnboardingConsentMarkdownTestView.self) {
+            for onboardingView in OnboardingFlow.previewSimulatorViews {
+                onboardingView
+            }
+        }
     }
 }
 #endif

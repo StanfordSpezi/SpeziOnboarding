@@ -15,7 +15,7 @@ struct OnboardingStartTestView: View {
     @EnvironmentObject private var path: OnboardingNavigationPath
     @Binding var showConditionalView: Bool
     
-    
+
     var body: some View {
         VStack(spacing: 8) {  // swiftlint:disable:this closure_body_length
             Button {
@@ -25,21 +25,21 @@ struct OnboardingStartTestView: View {
             }
             
             Button {
-                path.append(SequentialOnboardingTestView.self)
+                path.append(OnboardingSequentialTestView.self)
             } label: {
                 Text("Sequential Onboarding")
             }
 
             Button {
-                path.append(ConsentMarkdownTestView.self)
+                path.append(OnboardingConsentMarkdownTestView.self)
             } label: {
                 Text("Consent View (Markdown)")
             }
             
             Button {
-                path.append(ConsentHTMLTestView.self)
+                path.append(OnboardingConsentMarkdownRenderingView.self)
             } label: {
-                Text("Consent View (HTML)")
+                Text("Rendered Consent View (Markdown)")
             }
             
             Button {
@@ -59,7 +59,7 @@ struct OnboardingStartTestView: View {
             Spacer()
                 .frame(height: 8)
             
-            // Sadly we need to use a custom-built toggle as UI tests are very flakey when clicking on SwiftUI Toggles
+            /// We need to use a custom-built toggle as UI tests are very flakey when clicking on SwiftUI `Toggle`'s
             CustomToggleView(
                 text: "Show Conditional View",
                 condition: $showConditionalView
@@ -72,9 +72,11 @@ struct OnboardingStartTestView: View {
 #if DEBUG
 struct OnboardingStartTestView_Previews: PreviewProvider {
     static var previews: some View {
-        OnboardingStartTestView(
-            showConditionalView: .constant(false)
-        )
+        OnboardingStack(startAtStep: OnboardingStartTestView.self) {
+            for onboardingView in OnboardingFlow.previewSimulatorViews {
+                onboardingView
+            }
+        }
     }
 }
 #endif

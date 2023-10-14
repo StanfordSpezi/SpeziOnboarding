@@ -11,7 +11,7 @@ import SpeziViews
 import SwiftUI
 
 
-struct SequentialOnboardingTestView: View {
+struct OnboardingSequentialTestView: View {
     @EnvironmentObject private var path: OnboardingNavigationPath
     
     
@@ -35,9 +35,13 @@ struct SequentialOnboardingTestView: View {
 
 
 #if DEBUG
-struct SequentialOnboardingTestView_Previews: PreviewProvider {
+struct OnboardingSequentialTestView_Previews: PreviewProvider {
     static var previews: some View {
-        SequentialOnboardingTestView()
+        OnboardingStack(startAtStep: OnboardingSequentialTestView.self) {
+            for onboardingView in OnboardingFlow.previewSimulatorViews {
+                onboardingView
+            }
+        }
     }
 }
 #endif

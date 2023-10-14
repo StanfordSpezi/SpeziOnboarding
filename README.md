@@ -25,7 +25,7 @@ The Spezi Onboarding module provides user interface components to onboard a user
 
 |![Screenshot displaying the onboarding view.](Sources/SpeziOnboarding/SpeziOnboarding.docc/Resources/OnboardingView.png#gh-light-mode-only) ![Screenshot displaying the onboarding view.](Sources/SpeziOnboarding/SpeziOnboarding.docc/Resources/OnboardingView~dark.png#gh-dark-mode-only)|![Screenshot displaying the sequential onboarding view.](Sources/SpeziOnboarding/SpeziOnboarding.docc/Resources/SequentialOnboardingView.png#gh-light-mode-only) ![Screenshot displaying the sequential onboarding view.](Sources/SpeziOnboarding/SpeziOnboarding.docc/Resources/SequentialOnboardingView~dark.png#gh-dark-mode-only)|![Screenshot displaying the consent view.](Sources/SpeziOnboarding/SpeziOnboarding.docc/Resources/ConsentView.png#gh-light-mode-only) ![Screenshot displaying the consent view.](Sources/SpeziOnboarding/SpeziOnboarding.docc/Resources/ConsentView~dark.png#gh-dark-mode-only)
 |:--:|:--:|:--:|
-|[`OnboardingView`](https://swiftpackageindex.com/stanfordspezi/spezionboarding/documentation/spezionboarding/onboardingview)|[`SequentialOnboardingView`](https://swiftpackageindex.com/stanfordspezi/spezionboarding/documentation/spezionboarding/sequentialonboardingview)|[`ConsentView`](https://swiftpackageindex.com/stanfordspezi/spezionboarding/documentation/spezionboarding/consentview)|
+|[`OnboardingView`](https://swiftpackageindex.com/stanfordspezi/spezionboarding/documentation/spezionboarding/onboardingview)|[`SequentialOnboardingView`](https://swiftpackageindex.com/stanfordspezi/spezionboarding/documentation/spezionboarding/sequentialonboardingview)|[`OnboardingConsentView`](https://swiftpackageindex.com/stanfordspezi/spezionboarding/documentation/spezionboarding/onboardingconsentview)|
 
 
 ## Setup
@@ -117,11 +117,11 @@ struct SequentialOnboardingViewExample: View {
 ```
 
 
-### Consent View
+### Onboarding Consent View
 
-The [`ConsentView`](https://swiftpackageindex.com/stanfordspezi/spezionboarding/documentation/spezionboarding/consentview) can be used to allow your users to read and agree to a document, e.g., a consent document for a research study or a terms and conditions document for an app. The document can be signed using a family and given name and a hand-drawn signature. 
+The [`OnboardingConsentView`](https://swiftpackageindex.com/stanfordspezi/spezionboarding/documentation/spezionboarding/onboardingconsentview) can be used to allow your users to read and agree to a document, e.g., a consent document for a research study or a terms and conditions document for an app. The document can be signed using a family and given name and a hand-drawn signature. The signed consent form can then be exported and shared as a PDF file.
 
-The following example demonstrates how the [`ConsentView`](https://swiftpackageindex.com/stanfordspezi/spezionboarding/documentation/spezionboarding/consentview) shown above is constructed by providing a header, markdown content encoded as a [UTF8](https://www.swift.org/blog/utf8-string/) [`Data`](https://developer.apple.com/documentation/foundation/data) instance (which may be provided asynchronously), and an action that should be performed once the consent has been given.
+The following example demonstrates how the [`OnboardingConsentView`](https://swiftpackageindex.com/stanfordspezi/spezionboarding/documentation/spezionboarding/onboardingconsentview) shown above is constructed by providing markdown content encoded as a [UTF8](https://www.swift.org/blog/utf8-string/) [`Data`](https://developer.apple.com/documentation/foundation/data) instance (which may be provided asynchronously), an action that should be performed once the consent has been given, as well as a configuration defining the properties of the exported consent form.
 
 ```swift
 import SpeziOnboarding
@@ -130,16 +130,14 @@ import SwiftUI
 
 struct ConsentViewExample: View {
     var body: some View {
-        ConsentView(
-            header: {
-                OnboardingTitleView(title: "Consent", subtitle: "Version 1.0")
-            },
-            asyncMarkdown: {
+        OnboardingConsentView(
+            markdown: {
                 Data("This is a *markdown* **example**".utf8)
             },
             action: {
                 // Action to perform once the user has given their consent
-            }
+            },
+            exportConfiguration: .init(paperSize: .usLetter)    // Configure the properties of the exported consent form
         )
     }
 }
