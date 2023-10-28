@@ -21,10 +21,11 @@ struct OnboardingWelcomeTestView: View {
             title: "Welcome",
             subtitle: "Spezi UI Tests",
             areas: [
-                .init(icon: { Image(systemName: "tortoise.fill").foregroundColor(.red) }, title: "Tortoise", description: "A Tortoise!"),
+                .init(icon: { Image(systemName: "tortoise.fill").foregroundColor(.green) }, title: "Tortoise", description: "A Tortoise!"),
                 .init(icon: Image(systemName: "lizard.fill"), title: "Lizard", description: "A Lizard!"),
                 .init(icon: Image(systemName: "tree.fill"), title: "Tree", description: "A Tree!"),
-                .init(icon: { Text("T") }, title: "Letter", description: "A letter!")
+                .init(icon: { Text("T") }, title: "Letter", description: "A letter!"),
+                .init(icon: { Circle().fill(Color.orange) }, title: "Circle", description: "A circle!")
             ],
             actionText: "Learn More",
             action: {
