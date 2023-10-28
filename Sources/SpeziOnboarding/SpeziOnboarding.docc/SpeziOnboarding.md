@@ -67,14 +67,19 @@ struct OnboardingViewExample: View {
                     description: "A Tortoise!"
                 ),
                 .init(
-                    icon: Image(systemName: "lizard.fill"), 
+                    icon: {
+                        Image(systemName: "lizard.fill")
+                            .foregroundColor(.green)
+                    },
                     title: "Lizard", 
                     description: "A Lizard!"
                 ),
                 .init(
-                    icon: Image(systemName: "tree.fill"), 
-                    title: "Tree", 
-                    description: "A Tree!"
+                    icon: {
+                        Circle().fill(.orange)
+                    }, 
+                    title: "Circle", 
+                    description: "A Circle!"
                 )
             ],
             actionText: "Learn More",
