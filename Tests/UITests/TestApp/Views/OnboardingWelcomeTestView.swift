@@ -21,9 +21,10 @@ struct OnboardingWelcomeTestView: View {
             title: "Welcome",
             subtitle: "Spezi UI Tests",
             areas: [
-                .init(icon: Image(systemName: "tortoise.fill"), title: "Tortoise", description: "A Tortoise!"),
+                .init(icon: { Image(systemName: "tortoise.fill").foregroundColor(.red) }, title: "Tortoise", description: "A Tortoise!"),
                 .init(icon: Image(systemName: "lizard.fill"), title: "Lizard", description: "A Lizard!"),
-                .init(icon: Image(systemName: "tree.fill"), title: "Tree", description: "A Tree!")
+                .init(icon: Image(systemName: "tree.fill"), title: "Tree", description: "A Tree!"),
+                .init(icon: { Text("T") }, title: "Letter", description: "A letter!")
             ],
             actionText: "Learn More",
             action: {
