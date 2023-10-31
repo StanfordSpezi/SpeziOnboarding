@@ -84,12 +84,15 @@ final class OnboardingTests: XCTestCase {
         XCTAssert(app.staticTexts["Tortoise"].waitForExistence(timeout: 2))
         XCTAssert(app.staticTexts["A Tortoise!"].waitForExistence(timeout: 2))
 
-        XCTAssert(app.staticTexts["Lizard"].waitForExistence(timeout: 2))
-        XCTAssert(app.staticTexts["A Lizard!"].waitForExistence(timeout: 2))
-
         XCTAssert(app.staticTexts["Tree"].waitForExistence(timeout: 2))
         XCTAssert(app.staticTexts["A Tree!"].waitForExistence(timeout: 2))
-        
+
+        XCTAssert(app.staticTexts["Letter"].waitForExistence(timeout: 2))
+        XCTAssert(app.staticTexts["A letter!"].waitForExistence(timeout: 2))
+
+        XCTAssert(app.staticTexts["Circle"].waitForExistence(timeout: 2))
+        XCTAssert(app.staticTexts["A circle!"].waitForExistence(timeout: 2))
+
         XCTAssert(app.buttons["Learn More"].waitForExistence(timeout: 2))
         app.buttons["Learn More"].tap()
         

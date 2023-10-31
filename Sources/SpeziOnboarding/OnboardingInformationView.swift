@@ -34,7 +34,7 @@ public struct OnboardingInformationView: View {
     /// A ``Content`` defines the way that information is displayed in an ``OnboardingInformationView``.
     public struct Content {
         /// The icon of the area in the ``OnboardingInformationView``.
-        public let icon: Image
+        public let icon: AnyView
         /// The title of the area in the ``OnboardingInformationView``.
         public let title: String
         /// The description of the area in the ``OnboardingInformationView``.
@@ -47,12 +47,12 @@ public struct OnboardingInformationView: View {
         ///   - title: The title of the area in the ``OnboardingInformationView`` without localization.
         ///   - description: The description of the area in the ``OnboardingInformationView`` without localization.
         @_disfavoredOverload
-        public init<Title: StringProtocol, Description: StringProtocol>(
-            icon: Image,
+        public init<Icon: View, Title: StringProtocol, Description: StringProtocol>(
+            @ViewBuilder icon: () -> Icon,
             title: Title,
             description: Description
         ) {
-            self.icon = icon
+            self.icon = AnyView(icon())
             self.title = String(title)
             self.description = String(description)
         }
@@ -67,7 +67,7 @@ public struct OnboardingInformationView: View {
             title: LocalizedStringResource,
             description: LocalizedStringResource
         ) {
-            self.init(icon: icon, title: title.localizedString(), description: description.localizedString())
+            self.init(icon: { icon }, title: title.localizedString(), description: description.localizedString())
         }
     }
     

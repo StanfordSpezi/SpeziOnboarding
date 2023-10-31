@@ -16,7 +16,7 @@ Display information to your user during an onboarding flow.
 
 The <doc:OnboardingView> allows you to separate information into areas on a screen, each with a title, description, and icon.
 
-![OnboardingView](OnboardingView.png)
+@Image(source: "OnboardingView.png")
 
 The following example demonstrates how the above view is constructed:
 
@@ -52,7 +52,7 @@ OnboardingView(
 
 The <doc:SequentialOnboardingView> allows you to display information step-by-step, with each additional area appearing when the user taps the `Continue` button.
 
-![SequentialOnboardingView](SequentialOnboardingView.png)
+@Image(source: "SequentialOnboardingView.png")
 
 The following example demonstrates how the above view is constructed:
 
