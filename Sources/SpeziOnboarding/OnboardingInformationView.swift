@@ -62,6 +62,33 @@ public struct OnboardingInformationView: View {
         ///   - icon: The icon of the area in the ``OnboardingInformationView``.
         ///   - title: The localized title of the area in the ``OnboardingInformationView``.
         ///   - description: The localized description of the area in the ``OnboardingInformationView``.
+        public init<Icon: View>(
+            @ViewBuilder icon: () -> Icon,
+            title: LocalizedStringResource,
+            description: LocalizedStringResource
+        ) {
+            self.init(icon: icon, title: title.localizedString(), description: description.localizedString())
+        }
+        
+        /// Creates a new content for an area in the ``OnboardingInformationView``.
+        /// - Parameters:
+        ///   - icon: The icon of the area in the ``OnboardingInformationView``.
+        ///   - title: The title of the area in the ``OnboardingInformationView`` without localization.
+        ///   - description: The description of the area in the ``OnboardingInformationView`` without localization.
+        @_disfavoredOverload
+        public init<Title: StringProtocol, Description: StringProtocol>(
+            icon: Image,
+            title: Title,
+            description: Description
+        ) {
+            self.init(icon: { icon }, title: title, description: description)
+        }
+        
+        /// Creates a new content for an area in the ``OnboardingInformationView``.
+        /// - Parameters:
+        ///   - icon: The icon of the area in the ``OnboardingInformationView``.
+        ///   - title: The localized title of the area in the ``OnboardingInformationView``.
+        ///   - description: The localized description of the area in the ``OnboardingInformationView``.
         public init(
             icon: Image,
             title: LocalizedStringResource,
