@@ -35,10 +35,10 @@ import SwiftUI
 /// ```
 public struct ConsentDocument: View {
     private let asyncMarkdown: (() async -> Data)
-    private var givenNameTitle: LocalizedStringResource
-    private var givenNamePlaceholder: LocalizedStringResource
-    private var familyNameTitle: LocalizedStringResource
-    private var familyNamePlaceholder: LocalizedStringResource
+    private let givenNameTitle: LocalizedStringResource
+    private let givenNamePlaceholder: LocalizedStringResource
+    private let familyNameTitle: LocalizedStringResource
+    private let familyNamePlaceholder: LocalizedStringResource
     private let exportConfiguration: ExportConfiguration
     
     @State private var name = PersonNameComponents()
@@ -50,7 +50,7 @@ public struct ConsentDocument: View {
     private var nameView: some View {
         VStack {
             Divider()
-            Grid(horizontalSpacing: 15) { // optional horizontal spacing
+            Grid(horizontalSpacing: 15) {
                 NameFieldRow(name: $name, for: \.givenName) {
                     Text(givenNameTitle)
                 } label: {
