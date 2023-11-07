@@ -9,6 +9,7 @@
 import Foundation
 import PDFKit
 import PencilKit
+import SpeziPersonalInfo
 import SpeziViews
 import SwiftUI
 
@@ -34,8 +35,10 @@ import SwiftUI
 /// ```
 public struct ConsentDocument: View {
     private let asyncMarkdown: (() async -> Data)
-    private let givenNameField: FieldLocalizationResource
-    private let familyNameField: FieldLocalizationResource
+    private let givenNameTitle: LocalizedStringResource
+    private let givenNamePlaceholder: LocalizedStringResource
+    private let familyNameTitle: LocalizedStringResource
+    private let familyNamePlaceholder: LocalizedStringResource
     private let exportConfiguration: ExportConfiguration
     
     @State private var name = PersonNameComponents()
@@ -47,14 +50,22 @@ public struct ConsentDocument: View {
     private var nameView: some View {
         VStack {
             Divider()
-            
-            NameFields(
-                name: $name,
-                givenNameField: givenNameField,
-                familyNameField: familyNameField
-            )
+            Grid(horizontalSpacing: 15) {
+                NameFieldRow(name: $name, for: \.givenName) {
+                    Text(givenNameTitle)
+                } label: {
+                    Text(givenNamePlaceholder)
+                }
+                Divider()
+                    .gridCellUnsizedAxes(.horizontal)
+                NameFieldRow(name: $name, for: \.familyName) {
+                    Text(familyNameTitle)
+                } label: {
+                    Text(familyNamePlaceholder)
+                }
+            }
                 .disabled(inputFieldsDisabled)
-                .onChange(of: name) { _ in
+                .onChange(of: name) {
                     if !(name.givenName?.isEmpty ?? true) && !(name.familyName?.isEmpty ?? true) {
                         viewState = .namesEntered
                     } else {
@@ -76,7 +87,7 @@ public struct ConsentDocument: View {
             .onPreferenceChange(CanvasView.CanvasSizePreferenceKey.self) { size in
                 signatureSize = size
             }
-            .onChange(of: signature) { signature in
+            .onChange(of: signature) {
                 if !(signature.strokes.isEmpty || (name.givenName?.isEmpty ?? true) || (name.familyName?.isEmpty ?? true)) {
                     viewState = .signed
                 } else {
@@ -87,16 +98,9 @@ public struct ConsentDocument: View {
     
     public var body: some View {
         VStack {
-            DocumentView(
-                asyncData: asyncMarkdown,
-                type: .markdown,
-                state: $viewState.base
-            )
-            
+            MarkdownView(asyncMarkdown: asyncMarkdown, state: $viewState.base)
             Spacer()
-            
             nameView
-            
             if case .base(let baseViewState) = viewState,
                case .idle = baseViewState {
                 EmptyView()
@@ -104,28 +108,28 @@ public struct ConsentDocument: View {
                 signatureView
             }
         }
-        .transition(.opacity)
-        .animation(.easeInOut, value: viewState == .namesEntered)
-        .onChange(of: viewState) { newState in
-            if case .export = newState {
-                Task {
-                    guard let exportedConsent = await export() else {
-                        viewState = .base(.error(Error.memoryAllocationError))
-                        return
+            .transition(.opacity)
+            .animation(.easeInOut, value: viewState == .namesEntered)
+            .onChange(of: viewState) {
+                if case .export = viewState {
+                    Task {
+                        guard let exportedConsent = await export() else {
+                            viewState = .base(.error(Error.memoryAllocationError))
+                            return
+                        }
+                        viewState = .exported(document: exportedConsent)
                     }
-                    viewState = .exported(document: exportedConsent)
-                }
-            } else if case .base(let baseViewState) = newState,
-                      case .idle = baseViewState {
-                /// Reset view state to correct one after handling an error view state via `.viewStateAlert()`
-                if !signature.strokes.isEmpty {
-                    viewState = .signed
-                } else if !((name.givenName?.isEmpty ?? true) || (name.familyName?.isEmpty ?? true)) {
-                    viewState = .namesEntered
+                } else if case .base(let baseViewState) = viewState,
+                          case .idle = baseViewState {
+                    /// Reset view state to correct one after handling an error view state via `.viewStateAlert()`
+                    if !signature.strokes.isEmpty {
+                        viewState = .signed
+                    } else if !((name.givenName?.isEmpty ?? true) || (name.familyName?.isEmpty ?? true)) {
+                        viewState = .namesEntered
+                    }
                 }
             }
-        }
-        .viewStateAlert(state: $viewState.base)
+            .viewStateAlert(state: $viewState.base)
     }
     
     private var inputFieldsDisabled: Bool {
@@ -143,14 +147,18 @@ public struct ConsentDocument: View {
     public init(
         markdown: @escaping () async -> Data,
         viewState: Binding<ConsentViewState>,
-        givenNameField: FieldLocalizationResource = LocalizationDefaults.givenName,
-        familyNameField: FieldLocalizationResource = LocalizationDefaults.familyName,
+        givenNameTitle: LocalizedStringResource = LocalizationDefaults.givenNameTitle,
+        givenNamePlaceholder: LocalizedStringResource = LocalizationDefaults.givenNamePlaceholder,
+        familyNameTitle: LocalizedStringResource = LocalizationDefaults.familyNameTitle,
+        familyNamePlaceholder: LocalizedStringResource = LocalizationDefaults.familyNamePlaceholder,
         exportConfiguration: ExportConfiguration = .init()
     ) {
         self.asyncMarkdown = markdown
         self._viewState = viewState
-        self.givenNameField = givenNameField
-        self.familyNameField = familyNameField
+        self.givenNameTitle = givenNameTitle
+        self.givenNamePlaceholder = givenNamePlaceholder
+        self.familyNameTitle = familyNameTitle
+        self.familyNamePlaceholder = familyNamePlaceholder
         self.exportConfiguration = exportConfiguration
     }
 }

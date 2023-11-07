@@ -44,16 +44,18 @@ public struct SignatureView: View {
                     .accessibilityAddTraits(.allowsDirectInteraction)
             }
                 .frame(height: 120)
-            
-            Button(action: {
-                undoManager?.undo()
-                canUndo = undoManager?.canUndo ?? false
-            }) {
-                Text("SIGNATURE_VIEW_UNDO", bundle: .module)
-            }
+            Button(
+                action: {
+                    undoManager?.undo()
+                    canUndo = undoManager?.canUndo ?? false
+                },
+                label: {
+                    Text("SIGNATURE_VIEW_UNDO", bundle: .module)
+                }
+            )
                 .disabled(!canUndo)
         }
-            .onChange(of: isSigning) { _ in
+            .onChange(of: isSigning) {
                 Task { @MainActor in
                     canUndo = undoManager?.canUndo ?? false
                 }

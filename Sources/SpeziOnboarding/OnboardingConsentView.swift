@@ -82,8 +82,8 @@ public struct OnboardingConsentView: View {
                 }
             )
             .scrollDisabled($viewState.signing.wrappedValue)
-            .onChange(of: viewState) { newState in
-                if case .exported(let exportedConsentDocumented) = newState {
+            .onChange(of: viewState) {
+                if case .exported(let exportedConsentDocumented) = viewState {
                     if !willShowShareSheet {
                         Task { @MainActor in
                             /// Stores the finished PDF in the Spezi `Standard`.
@@ -93,7 +93,7 @@ public struct OnboardingConsentView: View {
                     } else {
                         showShareSheet = true
                     }
-                } else if case .namesEntered = newState {
+                } else if case .namesEntered = viewState {
                     proxy.scrollTo("ActionButton")
                 }
             }
