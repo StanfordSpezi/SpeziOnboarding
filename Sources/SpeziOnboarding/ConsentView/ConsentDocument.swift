@@ -226,8 +226,9 @@ extension ConsentDocument {
             if exportConfiguration.includingTimestamp {
                 HStack {
                     Spacer()
-                    
-                    Text("\(LocalizedStringResource("EXPORTED_TAG", bundle: .atURL(from: .module))): \(DateFormatter.localizedString(from: Date(), dateStyle: .medium, timeStyle: .short))")
+
+                    Text("EXPORTED_TAG", bundle: .module)
+                        + Text(verbatim: ": \(DateFormatter.localizedString(from: Date(), dateStyle: .medium, timeStyle: .short))")
                 }
                 .font(.caption)
                 .padding()
@@ -267,7 +268,7 @@ struct ConsentDocument_Previews: PreviewProvider {
                 },
                 viewState: $viewState
             )
-            .navigationTitle("Consent")
+            .navigationTitle(Text(verbatim: "Consent"))
             .padding()
         }
     }

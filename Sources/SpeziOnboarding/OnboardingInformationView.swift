@@ -36,11 +36,16 @@ public struct OnboardingInformationView: View {
         /// The icon of the area in the ``OnboardingInformationView``.
         public let icon: AnyView
         /// The title of the area in the ``OnboardingInformationView``.
-        public let title: String
+        public let title: Text
         /// The description of the area in the ``OnboardingInformationView``.
-        public let description: String
-        
-        
+        public let description: Text
+
+        private init(icon: AnyView, title: Text, description: Text) {
+            self.icon = icon
+            self.title = title
+            self.description = description
+        }
+
         /// Creates a new content for an area in the ``OnboardingInformationView``.
         /// - Parameters:
         ///   - icon: The icon of the area in the ``OnboardingInformationView``.
@@ -52,9 +57,7 @@ public struct OnboardingInformationView: View {
             title: Title,
             description: Description
         ) {
-            self.icon = AnyView(icon())
-            self.title = String(title)
-            self.description = String(description)
+            self.init(icon: AnyView(icon()), title: Text(verbatim: String(title)), description: Text(verbatim: String(description)))
         }
         
         /// Creates a new content for an area in the ``OnboardingInformationView``.
@@ -67,7 +70,7 @@ public struct OnboardingInformationView: View {
             title: LocalizedStringResource,
             description: LocalizedStringResource
         ) {
-            self.init(icon: icon, title: title.localizedString(), description: description.localizedString())
+            self.init(icon: AnyView(icon()), title: Text(title), description: Text(description))
         }
         
         /// Creates a new content for an area in the ``OnboardingInformationView``.
@@ -94,7 +97,7 @@ public struct OnboardingInformationView: View {
             title: LocalizedStringResource,
             description: LocalizedStringResource
         ) {
-            self.init(icon: { icon }, title: title.localizedString(), description: description.localizedString())
+            self.init(icon: { icon }, title: title, description: description)
         }
     }
     
@@ -128,10 +131,10 @@ public struct OnboardingInformationView: View {
                 .accessibilityHidden(true)
             
             VStack(alignment: .leading) {
-                Text(area.title)
+                area.title
                     .bold()
                     .accessibilityAddTraits(.isHeader)
-                Text(area.description)
+                area.description
                     .foregroundColor(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
             }
@@ -147,18 +150,18 @@ struct AreasView_Previews: PreviewProvider {
         [
             OnboardingInformationView.Content(
                 icon: Image(systemName: "pc"),
-                title: "PC",
-                description: "This is a PC. And we can write a lot about PCs in a section like this. A very long text!"
+                title: String("PC"),
+                description: String("This is a PC. And we can write a lot about PCs in a section like this. A very long text!")
             ),
             OnboardingInformationView.Content(
                 icon: Image(systemName: "desktopcomputer"),
-                title: "Mac",
-                description: "This is an iMac"
+                title: String("Mac"),
+                description: String("This is an iMac")
             ),
             OnboardingInformationView.Content(
                 icon: Image(systemName: "laptopcomputer"),
-                title: "MacBook",
-                description: "This is a MacBook"
+                title: String("MacBook"),
+                description: String("This is a MacBook")
             )
         ]
     }
@@ -169,13 +172,13 @@ struct AreasView_Previews: PreviewProvider {
             areas: [
                 OnboardingInformationView.Content(
                     icon: Image(systemName: "pc"),
-                    title: "PC",
-                    description: "This is a PC."
+                    title: String("PC"),
+                    description: String("This is a PC.")
                 ),
                 OnboardingInformationView.Content(
                     icon: Image(systemName: "desktopcomputer"),
-                    title: "Mac",
-                    description: "This is an iMac."
+                    title: String("Mac"),
+                    description: String("This is an iMac.")
                 )
             ]
         )

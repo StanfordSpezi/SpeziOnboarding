@@ -37,14 +37,14 @@ import SwiftUI
 ///     // Action that should be performed on pressing the "Continue" button ...
 /// }
 /// ```
-public struct SequentialOnboardingView: View {
+public struct SequentialOnboardingView<TitleView: View>: View {
     /// A ``Content`` defines the way that information is displayed in an ``SequentialOnboardingView``.
     public struct Content {
         /// The title of the area in the ``SequentialOnboardingView``.
-        public let title: String?
+        public let title: Text?
         /// The description of the area in the ``SequentialOnboardingView``.
-        public let description: String
-        
+        public let description: Text
+
         
         /// Creates a new content for an area in the ``SequentialOnboardingView``.
         /// - Parameters:
@@ -54,11 +54,8 @@ public struct SequentialOnboardingView: View {
             title: LocalizedStringResource? = nil,
             description: LocalizedStringResource
         ) {
-            if let title {
-                self.init(title: title.localizedString(), description: description.localizedString())
-            } else {
-                self.init(description: description.localizedString())
-            }
+            self.title = title.map { Text($0) }
+            self.description = Text(description)
         }
         
         /// Creates a new content for an area in the ``SequentialOnboardingView``.
@@ -70,8 +67,8 @@ public struct SequentialOnboardingView: View {
             title: Title,
             description: Description
         ) {
-            self.title = String(title)
-            self.description = String(description)
+            self.title = Text(verbatim: String(title))
+            self.description = Text(verbatim: String(description))
         }
 
         /// Creates a new content for an area in the ``SequentialOnboardingView``.
@@ -82,17 +79,16 @@ public struct SequentialOnboardingView: View {
             description: Description
         ) {
             self.title = nil
-            self.description = String(description)
+            self.description = Text(verbatim: String(description))
         }
     }
     
     
-    private let titleView: AnyView
+    private let titleView: TitleView
     private let content: [Content]
-    private let actionText: String
+    private let actionText: Text
     private let action: () async throws -> Void
 
-    @Environment(\.locale) private var locale
     @State private var currentContentIndex: Int = 0
     
     
@@ -112,7 +108,7 @@ public struct SequentialOnboardingView: View {
                 },
                 actionView: {
                     OnboardingActionsView(
-                        actionButtonTitle
+                        primaryText: actionButtonTitle
                     ) {
                         if currentContentIndex < content.count - 1 {
                             currentContentIndex += 1
@@ -128,15 +124,21 @@ public struct SequentialOnboardingView: View {
         }
     }
     
-    private var actionButtonTitle: String {
+    private var actionButtonTitle: Text {
         if currentContentIndex < content.count - 1 {
-            return String(localized: "SEQUENTIAL_ONBOARDING_NEXT", bundle: .module, locale: locale)
+            return Text("SEQUENTIAL_ONBOARDING_NEXT", bundle: .module)
         } else {
             return actionText
         }
     }
-    
-    
+
+    private init(titleView: TitleView, content: [Content], actionText: Text, action: @escaping () async throws -> Void) {
+        self.titleView = titleView
+        self.content = content
+        self.actionText = actionText
+        self.action = action
+    }
+
     /// Creates the default style of the ``SequentialOnboardingView`` that uses a combination of an ``OnboardingTitleView``
     /// and ``OnboardingActionsView``.
     ///
@@ -152,11 +154,11 @@ public struct SequentialOnboardingView: View {
         content: [Content],
         actionText: LocalizedStringResource,
         action: @escaping () async throws -> Void
-    ) {
+    ) where TitleView == OnboardingTitleView {
         self.init(
             titleView: OnboardingTitleView(title: title, subtitle: subtitle),
             content: content,
-            actionText: actionText.localizedString(),
+            actionText: Text(actionText),
             action: action
         )
     }
@@ -175,11 +177,11 @@ public struct SequentialOnboardingView: View {
         content: [Content],
         actionText: ActionText,
         action: @escaping () async throws -> Void
-    ) {
+    ) where TitleView == OnboardingTitleView {
         self.init(
             titleView: OnboardingTitleView(title: title),
             content: content,
-            actionText: String(actionText),
+            actionText: Text(verbatim: String(actionText)),
             action: action
         )
     }
@@ -200,11 +202,11 @@ public struct SequentialOnboardingView: View {
         content: [Content],
         actionText: ActionText,
         action: @escaping () async throws -> Void
-    ) {
+    ) where TitleView == OnboardingTitleView {
         self.init(
             titleView: OnboardingTitleView(title: title, subtitle: subtitle),
             content: content,
-            actionText: String(actionText),
+            actionText: Text(verbatim: String(actionText)),
             action: action
         )
     }
@@ -218,16 +220,18 @@ public struct SequentialOnboardingView: View {
     ///   - actionText: The text that should appear on the ``SequentialOnboardingView``'s primary button without localization.
     ///   - action: The close that is called then the primary button is pressed.
     @_disfavoredOverload
-    public init<TitleView: View, ActionText: StringProtocol>(
+    public init<ActionText: StringProtocol>(
         titleView: TitleView,
         content: [Content],
         actionText: ActionText,
         action: @escaping () async throws -> Void
     ) {
-        self.titleView = AnyView(titleView)
-        self.content = content
-        self.actionText = String(actionText)
-        self.action = action
+        self.init(
+            titleView: titleView,
+            content: content,
+            actionText: Text(verbatim: String(actionText)),
+            action: action
+        )
     }
     
     /// Creates a customized ``SequentialOnboardingView`` allowing a complete customization of the  ``SequentialOnboardingView``'s title view.
@@ -237,16 +241,18 @@ public struct SequentialOnboardingView: View {
     ///   - content: The areas of the ``SequentialOnboardingView`` defined using ``SequentialOnboardingView/Content`` instances..
     ///   - actionText: The localized text that should appear on the ``SequentialOnboardingView``'s primary button.
     ///   - action: The close that is called then the primary button is pressed.
-    public init<TitleView: View>(
+    public init(
         titleView: TitleView,
         content: [Content],
         actionText: LocalizedStringResource,
         action: @escaping () async throws -> Void
     ) {
-        self.titleView = AnyView(titleView)
-        self.content = content
-        self.actionText = actionText.localizedString()
-        self.action = action
+        self.init(
+            titleView: titleView,
+            content: content,
+            actionText: Text(actionText),
+            action: action
+        )
     }
     
     
@@ -262,16 +268,16 @@ public struct SequentialOnboardingView: View {
                         Circle()
                             .fill(Color.accentColor)
                     }
-                    .accessibilityLabel("\(index + 1).")
+                    .accessibilityLabel(String("\(index + 1)."))
                     .accessibilityHidden(content.title != nil)
                 VStack(alignment: .leading, spacing: 8) {
                     if let title = content.title {
-                        Text(title)
+                        title
                             .bold()
-                            .accessibilityLabel(Text(verbatim: "\(index + 1). ") + Text(title))
+                            .accessibilityLabel(Text(verbatim: "\(index + 1). ") + title)
                             .accessibilityAddTraits(.isHeader)
                     }
-                    Text(content.description)
+                    content.description
                 }
                 Spacer()
             }
@@ -289,20 +295,16 @@ public struct SequentialOnboardingView: View {
 
 #if DEBUG
 struct SequentialOnboardingView_Previews: PreviewProvider {
-    static var mock: [SequentialOnboardingView.Content] {
-        [
-            .init(title: "A thing to know", description: "This is a first thing that you should know, read carefully!"),
-            .init(title: "Second thing to know", description: "This is a second thing that you should know, read carefully!"),
-            .init(title: "Third thing to know", description: "This is a third thing that you should know, read carefully!")
-        ]
-    }
-    
     static var previews: some View {
         SequentialOnboardingView(
-            title: "Title",
-            subtitle: "Subtitle",
-            content: mock,
-            actionText: "Continue"
+            title: String("Title"),
+            subtitle: String("Subtitle"),
+            content: [
+                .init(title: String("A thing to know"), description: String("This is a first thing that you should know, read carefully!")),
+                .init(title: String("Second thing to know"), description: String("This is a second thing that you should know, read carefully!")),
+                .init(title: String("Third thing to know"), description: String("This is a third thing that you should know, read carefully!"))
+            ],
+            actionText: String("Continue")
         ) {
             print("Done!")
         }

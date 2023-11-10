@@ -33,7 +33,7 @@ import SwiftUI
 ///     }
 /// }
 /// ```
-public class OnboardingDataSource: Component, ObservableObject, ObservableObjectProvider {
+public class OnboardingDataSource: Module, EnvironmentAccessible {
     @StandardActor var standard: any OnboardingConstraint
     
     

@@ -41,9 +41,9 @@ import SwiftUI
 /// }
 /// ```
 public struct OnboardingStack: View {
-    @StateObject var onboardingNavigationPath: OnboardingNavigationPath
-    @ObservedObject var onboardingFlowViewCollection: _OnboardingFlowViewCollection
-    
+    @State var onboardingNavigationPath: OnboardingNavigationPath
+    private let collection: _OnboardingFlowViewCollection
+
     
     /// The ``OnboardingStack/body`` contains a SwiftUI `NavigationStack` that is responsible for the navigation between the different onboarding views via an ``OnboardingNavigationPath``
     public var body: some View {
@@ -53,11 +53,11 @@ public struct OnboardingStack: View {
                     onboardingNavigationPath.navigate(to: onboardingStep)
                 }
         }
-        .environmentObject(onboardingNavigationPath)
-        /// Inject onboarding views resulting from a re-triggered evaluation of the onboarding result builder into the `OnboardingNavigationPath`
-        .onReceive(onboardingFlowViewCollection.$views, perform: { updatedOnboardingViews in
-            self.onboardingNavigationPath.updateViews(with: updatedOnboardingViews)
-        })
+            .environment(onboardingNavigationPath)
+            .onChange(of: ObjectIdentifier(collection)) {
+                // ensure the model uses the latest views from the initializer
+                self.onboardingNavigationPath.updateViews(with: collection.views)
+            }
     }
     
     
@@ -66,15 +66,16 @@ public struct OnboardingStack: View {
     ///   - onboardingFlowComplete: An optional SwiftUI `Binding` that is automatically set to true by the ``OnboardingNavigationPath`` once the onboarding flow is completed. Can be used to conditionally show/hide the ``OnboardingStack``.
     ///   - startAtStep: An optional SwiftUI (Onboarding) `View` type indicating the first to-be-shown step of the onboarding flow.
     ///   - content: The SwiftUI (Onboarding) `View`s that are part of the onboarding flow. You can define the `View`s using the onboarding view builder.
+    @MainActor
     public init(
         onboardingFlowComplete: Binding<Bool>? = nil,
         startAtStep: (any View.Type)? = nil,
         @OnboardingViewBuilder _ content: @escaping () -> _OnboardingFlowViewCollection
     ) {
         let onboardingFlowViewCollection = content()
-        self.onboardingFlowViewCollection = onboardingFlowViewCollection
-        
-        self._onboardingNavigationPath = StateObject(
+        self.collection = onboardingFlowViewCollection
+
+        self._onboardingNavigationPath = State(
             wrappedValue: OnboardingNavigationPath(
                 views: onboardingFlowViewCollection.views,
                 complete: onboardingFlowComplete,
@@ -89,7 +90,7 @@ public struct OnboardingStack: View {
 struct OnboardingStack_Previews: PreviewProvider {
     static var previews: some View {
         OnboardingStack {
-            Text("Hello Spezi!")
+            Text(verbatim: "Hello Spezi!")
         }
     }
 }
