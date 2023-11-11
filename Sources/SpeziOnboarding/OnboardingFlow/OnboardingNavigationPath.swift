@@ -18,7 +18,7 @@ import SwiftUI
 ///
 /// ```swift
 /// struct Welcome: View {
-///     @Environment(OnboardingNavigationPath.self) private var onboardingNavigationPath: OnboardingNavigationPath
+///     @Environment(OnboardingNavigationPath.self) private var onboardingNavigationPath
 ///
 ///     var body: some View {
 ///         OnboardingView(
