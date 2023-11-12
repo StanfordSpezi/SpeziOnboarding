@@ -26,9 +26,9 @@ import SwiftUI
 /// )
 /// ```
 public struct OnboardingActionsView: View {
-    private let primaryText: String
+    private let primaryText: Text
     private let primaryAction: () async throws -> Void
-    private let secondaryText: String?
+    private let secondaryText: Text?
     private let secondaryAction: (() async throws -> Void)?
     
     @State private var primaryActionState: ViewState = .idle
@@ -38,12 +38,14 @@ public struct OnboardingActionsView: View {
     public var body: some View {
         VStack {
             AsyncButton(state: $primaryActionState, action: primaryAction) {
-                Text(primaryText)
+                primaryText
                     .frame(maxWidth: .infinity, minHeight: 38)
             }
                 .buttonStyle(.borderedProminent)
             if let secondaryText, let secondaryAction {
-                AsyncButton(secondaryText, state: $secondaryActionState, action: secondaryAction)
+                AsyncButton(state: $secondaryActionState, action: secondaryAction) {
+                    secondaryText
+                }
                     .padding(.top, 10)
             }
         }
@@ -51,21 +53,30 @@ public struct OnboardingActionsView: View {
             .viewStateAlert(state: $primaryActionState)
             .viewStateAlert(state: $secondaryActionState)
     }
-    
-    
+
+
+    init(
+        primaryText: Text,
+        primaryAction: @escaping () async throws -> Void,
+        secondaryText: Text? = nil,
+        secondaryAction: (() async throws -> Void)? = nil
+    ) {
+        self.primaryText = primaryText
+        self.primaryAction = primaryAction
+        self.secondaryText = secondaryText
+        self.secondaryAction = secondaryAction
+    }
+
     /// Creates an ``OnboardingActionsView`` instance that only contains a primary button.
     /// - Parameters:
     ///   - text: The title of the primary button without localization.
     ///   - action: The action that should be performed when pressing the primary button
     @_disfavoredOverload
     public init<Text: StringProtocol>(
-        _ text: Text,
+        verbatim text: Text,
         action: @escaping () async throws -> Void
     ) {
-        self.primaryText = String(text)
-        self.primaryAction = action
-        self.secondaryText = nil
-        self.secondaryAction = nil
+        self.init(primaryText: SwiftUI.Text(verbatim: String(text)), primaryAction: action)
     }
     
     /// Creates an ``OnboardingActionsView`` instance that only contains a primary button.
@@ -76,7 +87,7 @@ public struct OnboardingActionsView: View {
         _ text: LocalizedStringResource,
         action: @escaping () async throws -> Void
     ) {
-        self.init(text.localizedString(), action: action)
+        self.init(primaryText: Text(text), primaryAction: action)
     }
     
     /// Creates an ``OnboardingActionsView`` instance that contains a primary button and a secondary button.
@@ -91,12 +102,7 @@ public struct OnboardingActionsView: View {
         secondaryText: LocalizedStringResource,
         secondaryAction: @escaping () async throws -> Void
     ) {
-        self.init(
-            primaryText: primaryText.localizedString(),
-            primaryAction: primaryAction,
-            secondaryText: secondaryText.localizedString(),
-            secondaryAction: secondaryAction
-        )
+        self.init(primaryText: Text(primaryText), primaryAction: primaryAction, secondaryText: Text(secondaryText), secondaryAction: secondaryAction)
     }
     
     /// Creates an ``OnboardingActionsView`` instance that contains a primary button and a secondary button.
@@ -112,10 +118,12 @@ public struct OnboardingActionsView: View {
         secondaryText: SecondaryText,
         secondaryAction: @escaping () async throws -> Void
     ) {
-        self.primaryText = String(primaryText)
-        self.primaryAction = primaryAction
-        self.secondaryText = String(secondaryText)
-        self.secondaryAction = secondaryAction
+        self.init(
+            primaryText: Text(verbatim: String(primaryText)),
+            primaryAction: primaryAction,
+            secondaryText: Text(verbatim: String(secondaryText)),
+            secondaryAction: secondaryAction
+        )
     }
 }
 
@@ -124,15 +132,15 @@ public struct OnboardingActionsView: View {
 struct OnboardingActionsView_Previews: PreviewProvider {
     static var previews: some View {
         VStack {
-            OnboardingActionsView("PRIMARY") {
+            OnboardingActionsView(verbatim: "PRIMARY") {
                 print("Primary!")
             }
             OnboardingActionsView(
-                primaryText: "PRIMARY",
+                primaryText: String("PRIMARY"),
                 primaryAction: {
                     print("Primary")
                 },
-                secondaryText: "SECONDARY",
+                secondaryText: String("SECONDARY"),
                 secondaryAction: {
                     print("Secondary")
                 }

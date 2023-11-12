@@ -11,7 +11,7 @@ import SwiftUI
 
 
 struct OnboardingCustomTestView1: View {
-    @EnvironmentObject private var path: OnboardingNavigationPath
+    @Environment(OnboardingNavigationPath.self) private var path
     var exampleArgument: String
     
     

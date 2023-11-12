@@ -13,7 +13,7 @@ import SwiftUI
 /// This behavior shouldn't occur at all as there are lots of checks performed within the ``OnboardingNavigationPath`` that prevent such illegal steps.
 struct IllegalOnboardingStepView: View {
     var body: some View {
-        Text("ILLEGAL_ONBOARDING_STEP")
+        Text("ILLEGAL_ONBOARDING_STEP", bundle: .module)
     }
 }
 

@@ -10,7 +10,7 @@ import SpeziOnboarding
 import SwiftUI
 
 struct OnboardingCustomTestView2: View {
-    @EnvironmentObject private var path: OnboardingNavigationPath
+    @Environment(OnboardingNavigationPath.self) private var path
     
     
     var body: some View {

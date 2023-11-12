@@ -13,7 +13,7 @@ import SwiftUI
 
 
 /// An example Standard used for the configuration.
-actor ExampleStandard: Standard, ObservableObject, ObservableObjectProvider {
+actor ExampleStandard: Standard, EnvironmentAccessible {
     @Published @MainActor var consentData: PDFDocument = .init()
 }
 

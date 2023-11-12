@@ -13,8 +13,8 @@ import SwiftUI
 
 
 struct OnboardingConsentMarkdownRenderingView: View {
-    @EnvironmentObject private var path: OnboardingNavigationPath
-    @EnvironmentObject private var standard: ExampleStandard
+    @Environment(OnboardingNavigationPath.self) private var path
+    @Environment(ExampleStandard.self) private var standard
     @State var exportedConsent: PDFDocument?
     
     
@@ -69,7 +69,7 @@ struct OnboardingConsentMarkdownRenderingView_Previews: PreviewProvider {
         OnboardingStack(startAtStep: OnboardingConsentMarkdownRenderingView.self) {
             for onboardingView in OnboardingFlow.previewSimulatorViews {
                 onboardingView
-                    .environmentObject(standard)
+                    .environment(standard)
             }
         }
     }

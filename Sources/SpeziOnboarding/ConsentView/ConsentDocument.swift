@@ -14,12 +14,14 @@ import SpeziViews
 import SwiftUI
 
 
-/// The ``ConsentDocument`` allows the display of markdown-based consent documents that can be signed using a family and given name and a hand drawn signature. In addition, it enables the export of the signed form as a PDF document.
+/// Allows the display of markdown-based consent documents that can be signed using a family and given name and a hand drawn signature. In addition, it enables the export of the signed form as a PDF document.
 ///
-/// To observe and control the current state of the ``ConsentDocument``, the view requires passing down a ``ConsentDocument/ConsentViewState`` as a SwiftUI `Binding` in the ``ConsentView/init(header:asyncMarkdown:footer:givenNameField:familyNameField:exportConfiguration:action:)`` initializer.
-/// This `Binding` can then be used to trigger the export of the consent form via setting the state to ``ConsentDocument/ConsentViewState/export``.
-/// After the rendering completes, the finished `PDFDocument` from Apple's PDFKit is accessible via the associated value of the view state in ``ConsentDocument/ConsentViewState/exported(document:)``.
-/// Other possible states of the ``ConsentDocument`` are the SpeziViews `ViewState`'s accessible via the associated value in ``ConsentDocument/ConsentViewState/base(_:)``. In addition, the view provides information about the signing progress via the ``ConsentDocument/ConsentViewState/signing`` and ``ConsentDocument/ConsentViewState/signed`` states.
+/// To observe and control the current state of the ``ConsentDocument``, the view requires passing down a ``ConsentViewState`` as a SwiftUI `Binding` in the
+/// ``init(markdown:viewState:givenNameTitle:givenNamePlaceholder:familyNameTitle:familyNamePlaceholder:exportConfiguration:)`` initializer.
+/// This `Binding` can then be used to trigger the export of the consent form via setting the state to ``ConsentViewState/export``.
+/// After the rendering completes, the finished `PDFDocument` from Apple's PDFKit is accessible via the associated value of the view state in ``ConsentViewState/exported(document:)``.
+/// Other possible states of the ``ConsentDocument`` are the SpeziViews `ViewState`'s accessible via the associated value in ``ConsentViewState/base(_:)``.
+/// In addition, the view provides information about the signing progress via the ``ConsentViewState/signing`` and ``ConsentViewState/signed`` states.
 ///
 /// ```swift
 /// // Enables observing the view state of the consent document
@@ -137,10 +139,10 @@ public struct ConsentDocument: View {
     }
     
     
-    /// Creates a ``ConsentDocument`` which renders a consent document with a markdown view. The passed ``ConsentDocument/ConsentViewState`` indicates in which state the view currently is. This is especially useful for exporting the consent form as well as error management.
+    /// Creates a ``ConsentDocument`` which renders a consent document with a markdown view. The passed ``ConsentViewState`` indicates in which state the view currently is. This is especially useful for exporting the consent form as well as error management.
     /// - Parameters:
     ///   - markdown: The markdown content provided as an UTF8 encoded `Data` instance that can be provided asynchronously.
-    ///   - viewState: A `Binding` to observe the ``ConsentDocument/ConsentViewState`` of the ``ConsentDocument``. 
+    ///   - viewState: A `Binding` to observe the ``ConsentViewState`` of the ``ConsentDocument``. 
     ///   - givenNameField: The localization to use for the given (first) name field.
     ///   - familyNameField: The localization to use for the family (last) name field.
     ///   - exportConfiguration: Defines the properties of the exported consent form via ``ConsentDocument/ExportConfiguration``.
@@ -226,8 +228,9 @@ extension ConsentDocument {
             if exportConfiguration.includingTimestamp {
                 HStack {
                     Spacer()
-                    
-                    Text("\(LocalizedStringResource("EXPORTED_TAG", bundle: .atURL(from: .module))): \(DateFormatter.localizedString(from: Date(), dateStyle: .medium, timeStyle: .short))")
+
+                    Text("EXPORTED_TAG", bundle: .module)
+                        + Text(verbatim: ": \(DateFormatter.localizedString(from: Date(), dateStyle: .medium, timeStyle: .short))")
                 }
                 .font(.caption)
                 .padding()
@@ -267,7 +270,7 @@ struct ConsentDocument_Previews: PreviewProvider {
                 },
                 viewState: $viewState
             )
-            .navigationTitle("Consent")
+            .navigationTitle(Text(verbatim: "Consent"))
             .padding()
         }
     }

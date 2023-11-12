@@ -18,7 +18,7 @@ import SwiftUI
 ///
 /// ```swift
 /// struct Welcome: View {
-///     @EnvironmentObject private var onboardingNavigationPath: OnboardingNavigationPath
+///     @Environment(OnboardingNavigationPath.self) private var onboardingNavigationPath
 ///
 ///     var body: some View {
 ///         OnboardingView(
@@ -38,14 +38,15 @@ import SwiftUI
 /// }
 /// ```
 @MainActor
-public class OnboardingNavigationPath: ObservableObject {
+@Observable
+public class OnboardingNavigationPath {
     /// Internal SwiftUI `NavigationPath` that serves as the source of truth for the navigation state.
     /// Holds elements of type `OnboardingStepIdentifier` which identify the individual onboarding steps.
-    @MainActor @Published var path = NavigationPath()
+    var path = NavigationPath()
     /// Boolean binding that is injected via the ``OnboardingStack``.
     /// Indicates if the onboarding flow is completed, meaning the last view declared within the ``OnboardingStack`` is completed.
-    @MainActor private var complete: Binding<Bool>?
-    
+    private let complete: Binding<Bool>?
+
     /// Stores all onboarding views as declared within the ``OnboardingStack``.
     private var onboardingSteps: [OnboardingStepIdentifier: any View] = [:]
     /// Stores all custom onboarding views that are appended to the ``OnboardingNavigationPath`` via the ``append(customView:)`` or ``append(customViewInit:)`` instance methods
@@ -86,10 +87,9 @@ public class OnboardingNavigationPath: ObservableObject {
     ///   - complete: An optional SwiftUI `Binding` that is injected by the ``OnboardingStack``. Is managed by the ``OnboardingNavigationPath`` to indicate whether the onboarding flow is complete.
     ///   - startAtStep: An optional SwiftUI (Onboarding) `View` type indicating the first to-be-shown step of the onboarding flow.
     init(views: [any View], complete: Binding<Bool>?, startAtStep: (any View.Type)?) {
-        updateViews(with: views)
-        
         self.complete = complete
-        
+        updateViews(with: views)
+
         // If specified, navigate to the first to-be-shown onboarding step
         if let startAtStep {
             append(startAtStep)

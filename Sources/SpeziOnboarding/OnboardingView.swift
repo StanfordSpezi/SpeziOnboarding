@@ -137,7 +137,7 @@ public struct OnboardingView<TitleView: View, ContentView: View, ActionView: Vie
             contentView: {
                 OnboardingInformationView(areas: areas)
             }, actionView: {
-                OnboardingActionsView(actionText) {
+                OnboardingActionsView(verbatim: actionText) {
                     try await action()
                 }
             }
@@ -166,7 +166,7 @@ public struct OnboardingView<TitleView: View, ContentView: View, ActionView: Vie
             contentView: {
                 OnboardingInformationView(areas: areas)
             }, actionView: {
-                OnboardingActionsView(actionText) {
+                OnboardingActionsView(verbatim: actionText) {
                     try await action()
                 }
             }
@@ -179,10 +179,10 @@ public struct OnboardingView<TitleView: View, ContentView: View, ActionView: Vie
 struct OnboardingView_Previews: PreviewProvider {
     static var previews: some View {
         OnboardingView(
-            title: "Title",
-            subtitle: "Subtitle",
+            title: String("Title"),
+            subtitle: String("Subtitle"),
             areas: AreasView_Previews.mock,
-            actionText: "Primary Button"
+            actionText: String("Primary Button")
         ) {
             print("Primary!")
         }

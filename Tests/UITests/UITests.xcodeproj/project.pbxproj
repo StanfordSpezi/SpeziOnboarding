@@ -10,7 +10,6 @@
 		2F61BDC329DD02D600D71D33 /* SpeziOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = 2F61BDC229DD02D600D71D33 /* SpeziOnboarding */; };
 		2F61BDC929DD3CC000D71D33 /* OnboardingTestsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F61BDC829DD3CC000D71D33 /* OnboardingTestsView.swift */; };
 		2F61BDCB29DDE76D00D71D33 /* SpeziOnboardingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F61BDCA29DDE76D00D71D33 /* SpeziOnboardingTests.swift */; };
-		2F61BDCE29DDE7B300D71D33 /* Spezi in Frameworks */ = {isa = PBXBuildFile; productRef = 2F61BDCD29DDE7B300D71D33 /* Spezi */; };
 		2F6D139A28F5F386007C25D6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2F6D139928F5F386007C25D6 /* Assets.xcassets */; };
 		2FA7382C290ADFAA007ACEB9 /* TestApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FA7382B290ADFAA007ACEB9 /* TestApp.swift */; };
 		970D444B2A6F031200756FE2 /* OnboardingConsentMarkdownTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 970D444A2A6F031200756FE2 /* OnboardingConsentMarkdownTestView.swift */; };
@@ -67,7 +66,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				2F61BDC329DD02D600D71D33 /* SpeziOnboarding in Frameworks */,
-				2F61BDCE29DDE7B300D71D33 /* Spezi in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -175,7 +173,6 @@
 			name = TestApp;
 			packageProductDependencies = (
 				2F61BDC229DD02D600D71D33 /* SpeziOnboarding */,
-				2F61BDCD29DDE7B300D71D33 /* Spezi */,
 			);
 			productName = Example;
 			productReference = 2F6D139228F5F384007C25D6 /* TestApp.app */;
@@ -232,7 +229,6 @@
 			);
 			mainGroup = 2F6D138928F5F384007C25D6;
 			packageReferences = (
-				2F61BDCC29DDE7B300D71D33 /* XCRemoteSwiftPackageReference "Spezi" */,
 				97C6AF752ACC74080060155B /* XCRemoteSwiftPackageReference "XCTestExtensions" */,
 			);
 			productRefGroup = 2F6D139328F5F384007C25D6 /* Products */;
@@ -690,14 +686,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		2F61BDCC29DDE7B300D71D33 /* XCRemoteSwiftPackageReference "Spezi" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/StanfordSpezi/Spezi.git";
-			requirement = {
-				kind = upToNextMinorVersion;
-				minimumVersion = 0.7.0;
-			};
-		};
 		97C6AF752ACC74080060155B /* XCRemoteSwiftPackageReference "XCTestExtensions" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordBDHG/XCTestExtensions";
@@ -712,11 +700,6 @@
 		2F61BDC229DD02D600D71D33 /* SpeziOnboarding */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SpeziOnboarding;
-		};
-		2F61BDCD29DDE7B300D71D33 /* Spezi */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 2F61BDCC29DDE7B300D71D33 /* XCRemoteSwiftPackageReference "Spezi" */;
-			productName = Spezi;
 		};
 		97C6AF7A2ACC89000060155B /* XCTestExtensions */ = {
 			isa = XCSwiftPackageProductDependency;

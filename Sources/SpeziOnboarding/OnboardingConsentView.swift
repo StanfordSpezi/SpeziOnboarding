@@ -45,7 +45,7 @@ public struct OnboardingConsentView: View {
     private let title: LocalizedStringResource?
     private let exportConfiguration: ConsentDocument.ExportConfiguration
     
-    @EnvironmentObject private var onboardingDataSource: OnboardingDataSource
+    @Environment(OnboardingDataSource.self) private var onboardingDataSource
     @State private var viewState: ConsentViewState = .base(.idle)
     @State private var willShowShareSheet = false
     @State private var showShareSheet = false
@@ -105,7 +105,7 @@ public struct OnboardingConsentView: View {
                     willShowShareSheet = true
                 }) {
                     Image(systemName: "square.and.arrow.up")
-                        .accessibilityLabel(LocalizedStringResource("CONSENT_SHARE", bundle: .atURL(from: .module)).localizedString())
+                        .accessibilityLabel(Text("CONSENT_SHARE", bundle: .module))
                         .opacity(actionButtonsEnabled ? 1.0 : 0.0)
                         .scaleEffect(actionButtonsEnabled ? 1.0 : 0.8)
                         .animation(.easeInOut, value: actionButtonsEnabled)

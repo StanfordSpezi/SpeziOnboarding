@@ -16,21 +16,21 @@ import SwiftUI
 /// OnboardingTitleView(title: "Title", subtitle: "Subtitle")
 /// ```
 public struct OnboardingTitleView: View {
-    private let title: String
-    private let subtitle: String?
-    
+    private let title: Text
+    private let subtitle: Text?
+
     
     public var body: some View {
         VStack {
-            Text(title)
+            title
                 .bold()
                 .font(.largeTitle)
                 .multilineTextAlignment(.center)
                 .padding(.bottom)
                 .accessibilityAddTraits(.isHeader)
             
-            if let subtitle = subtitle {
-                Text(subtitle)
+            if let subtitle {
+                subtitle
                     .multilineTextAlignment(.center)
                     .padding(.bottom)
             }
@@ -42,15 +42,14 @@ public struct OnboardingTitleView: View {
     /// Creates an ``OnboardingTitleView`` instance that only contains a title.
     /// - Parameter title: The localized title of the ``OnboardingTitleView``.
     public init(title: LocalizedStringResource) {
-        self.title = title.localizedString()
-        self.subtitle = nil
+        self.init(title: title, subtitle: nil)
     }
     
     /// Creates an ``OnboardingTitleView`` instance that only contains a title.
     /// - Parameter title: The title of the ``OnboardingTitleView`` without localization.
     @_disfavoredOverload
     public init<Title: StringProtocol>(title: Title) {
-        self.title = String(title)
+        self.title = Text(verbatim: String(title))
         self.subtitle = nil
     }
     
@@ -59,7 +58,8 @@ public struct OnboardingTitleView: View {
     ///   - title: The localized title of the ``OnboardingTitleView``.
     ///   - subtitle: The localized subtitle of the ``OnboardingTitleView``.
     public init(title: LocalizedStringResource, subtitle: LocalizedStringResource?) {
-        self.init(title: title.localizedString(), subtitle: subtitle?.localizedString())
+        self.title = Text(title)
+        self.subtitle = subtitle.map { Text($0) }
     }
     
     /// Creates an ``OnboardingTitleView`` instance that contains a title and a subtitle.
@@ -68,8 +68,8 @@ public struct OnboardingTitleView: View {
     ///   - subtitle: The subtitle of the ``OnboardingTitleView`` without localization.
     @_disfavoredOverload
     public init<Title: StringProtocol, Subtitle: StringProtocol>(title: Title, subtitle: Subtitle?) {
-        self.title = String(title)
-        self.subtitle = subtitle.flatMap { String($0) }
+        self.title = Text(verbatim: String(title))
+        self.subtitle = subtitle.map { Text(verbatim: String($0)) }
     }
 }
 
@@ -77,7 +77,7 @@ public struct OnboardingTitleView: View {
 #if DEBUG
 struct OnboardingTitleView_Previews: PreviewProvider {
     static var previews: some View {
-        OnboardingTitleView(title: "Title", subtitle: "Subtitle")
+        OnboardingTitleView(title: String("Title"), subtitle: String("Subtitle"))
     }
 }
 #endif
