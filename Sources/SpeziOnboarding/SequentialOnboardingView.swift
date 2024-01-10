@@ -9,9 +9,11 @@
 import SwiftUI
 
 
-/// The ``SequentialOnboardingView`` provides a view to display information that is displayed step by step.
+/// Present onboarding information step by step.
 ///
-/// The ``OnboardingView`` provides an alternative to provide  information that is displayed all at once.
+/// The `SequentialOnboardingView` provides a view to display information that is displayed step by step.
+///
+/// - Tip: The ``OnboardingView`` provides an alternative to provide  information that is displayed all at once.
 ///
 /// The following example demonstrates the usage of the ``SequentialOnboardingView``:
 /// ```swift
@@ -38,7 +40,7 @@ import SwiftUI
 /// }
 /// ```
 public struct SequentialOnboardingView<TitleView: View>: View {
-    /// A ``Content`` defines the way that information is displayed in an ``SequentialOnboardingView``.
+    /// A `Content` defines the way that information is displayed in an ``SequentialOnboardingView``.
     public struct Content {
         /// The title of the area in the ``SequentialOnboardingView``.
         public let title: Text?
@@ -139,14 +141,14 @@ public struct SequentialOnboardingView<TitleView: View>: View {
         self.action = action
     }
 
-    /// Creates the default style of the ``SequentialOnboardingView`` that uses a combination of an ``OnboardingTitleView``
+    /// Creates the default style of the `SequentialOnboardingView` that uses a combination of an ``OnboardingTitleView``
     /// and ``OnboardingActionsView``.
     ///
     /// - Parameters:
-    ///   - title: The localized title of the ``SequentialOnboardingView``.
-    ///   - subtitle: The localized subtitle of the ``SequentialOnboardingView``.
-    ///   - content: The areas of the ``SequentialOnboardingView`` defined using ``SequentialOnboardingView/Content`` instances..
-    ///   - actionText: The localized text that should appear on the ``SequentialOnboardingView``'s primary button.
+    ///   - title: The localized title.
+    ///   - subtitle: The localized subtitle.
+    ///   - content: The areas of the `SequentialOnboardingView` defined using ``SequentialOnboardingView/Content`` instances..
+    ///   - actionText: The localized text that should appear on the `SequentialOnboardingView`'s primary button.
     ///   - action: The close that is called then the primary button is pressed.
     public init( // swiftlint:disable:this function_default_parameter_at_end
         title: LocalizedStringResource,
@@ -163,13 +165,13 @@ public struct SequentialOnboardingView<TitleView: View>: View {
         )
     }
     
-    /// Creates the default style of the ``SequentialOnboardingView`` that uses a combination of an ``OnboardingTitleView``
+    /// Creates the default style of the `SequentialOnboardingView` that uses a combination of an ``OnboardingTitleView``
     /// and ``OnboardingActionsView``.
     ///
     /// - Parameters:
-    ///   - title: The title of the ``SequentialOnboardingView`` without localization.
-    ///   - content: The areas of the ``SequentialOnboardingView`` defined using ``SequentialOnboardingView/Content`` instances..
-    ///   - actionText: The text that should appear on the ``SequentialOnboardingView``'s primary button.
+    ///   - title: The title  without localization.
+    ///   - content: The areas of the `SequentialOnboardingView` defined using ``SequentialOnboardingView/Content`` instances..
+    ///   - actionText: The text that should appear on the `SequentialOnboardingView`'s primary button.
     ///   - action: The close that is called then the primary button is pressed.
     @_disfavoredOverload
     public init<Title: StringProtocol, ActionText: StringProtocol>(
@@ -186,14 +188,14 @@ public struct SequentialOnboardingView<TitleView: View>: View {
         )
     }
     
-    /// Creates the default style of the ``SequentialOnboardingView`` that uses a combination of an ``OnboardingTitleView``
+    /// Creates the default style of the `SequentialOnboardingView` that uses a combination of an ``OnboardingTitleView``
     /// and ``OnboardingActionsView``.
     ///
     /// - Parameters:
-    ///   - title: The title of the ``SequentialOnboardingView`` without localization.
-    ///   - subtitle: The subtitle of the ``SequentialOnboardingView`` without localization.
-    ///   - content: The areas of the ``SequentialOnboardingView`` defined using ``SequentialOnboardingView/Content`` instances..
-    ///   - actionText: The text that should appear on the ``SequentialOnboardingView``'s primary button.
+    ///   - title: The title without localization.
+    ///   - subtitle: The subtitle without localization.
+    ///   - content: The areas of the `SequentialOnboardingView` defined using ``SequentialOnboardingView/Content`` instances..
+    ///   - actionText: The text that should appear on the `SequentialOnboardingView`'s primary button.
     ///   - action: The close that is called then the primary button is pressed.
     @_disfavoredOverload
     public init<Title: StringProtocol, Subtitle: StringProtocol, ActionText: StringProtocol>(
@@ -212,12 +214,12 @@ public struct SequentialOnboardingView<TitleView: View>: View {
     }
     
     
-    /// Creates a customized ``SequentialOnboardingView`` allowing a complete customization of the  ``SequentialOnboardingView``'s title view.
+    /// Creates a customized `SequentialOnboardingView` allowing a complete customization of the  `SequentialOnboardingView`'s title view.
     ///
     /// - Parameters:
     ///   - titleView: The title view displayed at the top.
-    ///   - content: The areas of the ``SequentialOnboardingView`` defined using ``SequentialOnboardingView/Content`` instances..
-    ///   - actionText: The text that should appear on the ``SequentialOnboardingView``'s primary button without localization.
+    ///   - content: The areas of the `SequentialOnboardingView` defined using ``SequentialOnboardingView/Content`` instances..
+    ///   - actionText: The text that should appear on the `SequentialOnboardingView`'s primary button without localization.
     ///   - action: The close that is called then the primary button is pressed.
     @_disfavoredOverload
     public init<ActionText: StringProtocol>(
@@ -234,7 +236,7 @@ public struct SequentialOnboardingView<TitleView: View>: View {
         )
     }
     
-    /// Creates a customized ``SequentialOnboardingView`` allowing a complete customization of the  ``SequentialOnboardingView``'s title view.
+    /// Creates a customized `SequentialOnboardingView` allowing a complete customization of the  `SequentialOnboardingView`'s title view.
     ///
     /// - Parameters:
     ///   - titleView: The title view displayed at the top.
@@ -294,20 +296,18 @@ public struct SequentialOnboardingView<TitleView: View>: View {
 
 
 #if DEBUG
-struct SequentialOnboardingView_Previews: PreviewProvider {
-    static var previews: some View {
-        SequentialOnboardingView(
-            title: String("Title"),
-            subtitle: String("Subtitle"),
-            content: [
-                .init(title: String("A thing to know"), description: String("This is a first thing that you should know, read carefully!")),
-                .init(title: String("Second thing to know"), description: String("This is a second thing that you should know, read carefully!")),
-                .init(title: String("Third thing to know"), description: String("This is a third thing that you should know, read carefully!"))
-            ],
-            actionText: String("Continue")
-        ) {
-            print("Done!")
-        }
+#Preview {
+    SequentialOnboardingView(
+        title: String("Title"),
+        subtitle: String("Subtitle"),
+        content: [
+            .init(title: String("A thing to know"), description: String("This is a first thing that you should know, read carefully!")),
+            .init(title: String("Second thing to know"), description: String("This is a second thing that you should know, read carefully!")),
+            .init(title: String("Third thing to know"), description: String("This is a third thing that you should know, read carefully!"))
+        ],
+        actionText: String("Continue")
+    ) {
+        print("Done!")
     }
 }
 #endif

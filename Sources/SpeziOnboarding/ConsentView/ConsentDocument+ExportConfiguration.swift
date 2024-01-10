@@ -49,7 +49,7 @@ extension ConsentDocument {
         let includingTimestamp: Bool
         
         
-        /// Creates an ``ConsentDocument/ExportConfiguration`` specifying the properties of the exported consent form.
+        /// Creates an `ExportConfiguration` specifying the properties of the exported consent form.
         /// - Parameters:
         ///   - paperSize: The page size of the exported form represented by ``ConsentDocument/ExportConfiguration/PaperSize``.
         ///   - consentTitle: The title of the exported consent form.

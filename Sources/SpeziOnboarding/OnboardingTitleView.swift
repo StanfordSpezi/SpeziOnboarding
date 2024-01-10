@@ -9,8 +9,7 @@
 import SwiftUI
 
 
-/// The ``OnboardingTitleView`` allows developers to present a unified style for the in an onboarding flow.
-/// The ``OnboardingTitleView`` can contain one title and a optional subtitle below the title.
+/// A unified onboarding title with an optional subtitle.
 ///
 /// ```swift
 /// OnboardingTitleView(title: "Title", subtitle: "Subtitle")
@@ -39,33 +38,33 @@ public struct OnboardingTitleView: View {
     }
     
     
-    /// Creates an ``OnboardingTitleView`` instance that only contains a title.
-    /// - Parameter title: The localized title of the ``OnboardingTitleView``.
+    /// Creates an `OnboardingTitleView` instance that only contains a title.
+    /// - Parameter title: The localized title.
     public init(title: LocalizedStringResource) {
         self.init(title: title, subtitle: nil)
     }
     
-    /// Creates an ``OnboardingTitleView`` instance that only contains a title.
-    /// - Parameter title: The title of the ``OnboardingTitleView`` without localization.
+    /// Creates an `OnboardingTitleView` instance that only contains a title.
+    /// - Parameter title: The title.
     @_disfavoredOverload
     public init<Title: StringProtocol>(title: Title) {
         self.title = Text(verbatim: String(title))
         self.subtitle = nil
     }
     
-    /// Creates an ``OnboardingTitleView`` instance that contains a title and a subtitle.
+    /// Creates an `OnboardingTitleView` instance that contains a title and a subtitle.
     /// - Parameters:
-    ///   - title: The localized title of the ``OnboardingTitleView``.
-    ///   - subtitle: The localized subtitle of the ``OnboardingTitleView``.
+    ///   - title: The localized title.
+    ///   - subtitle: The localized subtitle.
     public init(title: LocalizedStringResource, subtitle: LocalizedStringResource?) {
         self.title = Text(title)
         self.subtitle = subtitle.map { Text($0) }
     }
     
-    /// Creates an ``OnboardingTitleView`` instance that contains a title and a subtitle.
+    /// Creates an `OnboardingTitleView` instance that contains a title and a subtitle.
     /// - Parameters:
-    ///   - title: The title of the ``OnboardingTitleView`` without localization.
-    ///   - subtitle: The subtitle of the ``OnboardingTitleView`` without localization.
+    ///   - title: The title.
+    ///   - subtitle: The subtitle.
     @_disfavoredOverload
     public init<Title: StringProtocol, Subtitle: StringProtocol>(title: Title, subtitle: Subtitle?) {
         self.title = Text(verbatim: String(title))
@@ -75,9 +74,7 @@ public struct OnboardingTitleView: View {
 
 
 #if DEBUG
-struct OnboardingTitleView_Previews: PreviewProvider {
-    static var previews: some View {
-        OnboardingTitleView(title: String("Title"), subtitle: String("Subtitle"))
-    }
+#Preview {
+    OnboardingTitleView(title: String("Title"), subtitle: String("Subtitle"))
 }
 #endif

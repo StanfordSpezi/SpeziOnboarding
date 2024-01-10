@@ -11,6 +11,7 @@ import SwiftUI
 
 
 /// An `OnboardingStepIdentifier` serves as an abstraction of a step in the onboarding flow as outlined within the ``OnboardingStack``.
+/// 
 /// It contains both the identifier for an onboarding step (the view's type) as well as a flag that indicates if it's a custom onboarding step.
 struct OnboardingStepIdentifier: Hashable, Codable {
     let onboardingStepType: String

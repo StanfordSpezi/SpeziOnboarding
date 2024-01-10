@@ -10,12 +10,15 @@ import Foundation
 import SwiftUI
 
 
-/// The ``OnboardingConsentView`` provides a convenient onboarding view for the display of markdown-based documents that can be
-/// signed using a family and given name and a hand drawn signature. Furthermore, the view includes an export functionality, enabling users
-/// to share and store the signed consent form.
+/// Onboarding view to display markdown-based consent documents that can be signed and exported.
+///
+/// The `OnboardingConsentView` provides a convenient onboarding view for the display of markdown-based documents that can be
+/// signed using a family and given name and a hand drawn signature.
+///
+/// Furthermore, the view includes an export functionality, enabling users to share and store the signed consent form.
 /// The exported consent form is automatically stored in the Spezi `Standard`, requiring the `Standard` to conform to the ``OnboardingConstraint``.
 ///
-/// The ``OnboardingConsentView`` builds on top of the SpeziOnboarding ``ConsentDocument`` 
+/// The `OnboardingConsentView` builds on top of the SpeziOnboarding ``ConsentDocument`` 
 /// by providing a more developer-friendly, convenient API with additional functionalities like the share consent option.
 ///
 /// ```swift
@@ -136,7 +139,7 @@ public struct OnboardingConsentView: View {
     }
     
     
-    /// Creates an ``OnboardingConsentView`` which provides a convenient onboarding view for visualizing, signing, and exporting a consent form.
+    /// Creates an `OnboardingConsentView` which provides a convenient onboarding view for visualizing, signing, and exporting a consent form.
     /// - Parameters:
     ///   - markdown: The markdown content provided as an UTF8 encoded `Data` instance that can be provided asynchronously.
     ///   - action: The action that should be performed once the consent is given.

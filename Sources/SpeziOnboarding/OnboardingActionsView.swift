@@ -10,8 +10,9 @@ import SpeziViews
 import SwiftUI
 
 
-/// The ``OnboardingActionsView`` allows developers to present a unified style for action buttons in an onboarding flow.
-/// The ``OnboardingActionsView`` can contain one primary button and a optional secondary button below the primary button.
+/// Unified style for action buttons in an onboarding flow.
+///
+/// The `OnboardingActionsView` can contain one primary button and a optional secondary button below the primary button.
 ///
 /// ```swift
 /// OnboardingActionsView(
@@ -67,7 +68,7 @@ public struct OnboardingActionsView: View {
         self.secondaryAction = secondaryAction
     }
 
-    /// Creates an ``OnboardingActionsView`` instance that only contains a primary button.
+    /// Creates an `OnboardingActionsView` instance that only contains a primary button.
     /// - Parameters:
     ///   - text: The title of the primary button without localization.
     ///   - action: The action that should be performed when pressing the primary button
@@ -79,9 +80,9 @@ public struct OnboardingActionsView: View {
         self.init(primaryText: SwiftUI.Text(verbatim: String(text)), primaryAction: action)
     }
     
-    /// Creates an ``OnboardingActionsView`` instance that only contains a primary button.
+    /// Creates an `OnboardingActionsView` instance that only contains a primary button.
     /// - Parameters:
-    ///   - text: The localized title ot the primary button.
+    ///   - text: The localized title of the primary button.
     ///   - action: The action that should be performed when pressing the primary button
     public init(
         _ text: LocalizedStringResource,
@@ -90,11 +91,11 @@ public struct OnboardingActionsView: View {
         self.init(primaryText: Text(text), primaryAction: action)
     }
     
-    /// Creates an ``OnboardingActionsView`` instance that contains a primary button and a secondary button.
+    /// Creates an `OnboardingActionsView` instance that contains a primary button and a secondary button.
     /// - Parameters:
-    ///   - primaryText: The localized title ot the primary button.
+    ///   - primaryText: The localized title of the primary button.
     ///   - primaryAction: The action that should be performed when pressing the primary button
-    ///   - secondaryText: The localized title ot the secondary button.
+    ///   - secondaryText: The localized title of the secondary button.
     ///   - secondaryAction: The action that should be performed when pressing the secondary button
     public init(
         primaryText: LocalizedStringResource,
@@ -105,11 +106,11 @@ public struct OnboardingActionsView: View {
         self.init(primaryText: Text(primaryText), primaryAction: primaryAction, secondaryText: Text(secondaryText), secondaryAction: secondaryAction)
     }
     
-    /// Creates an ``OnboardingActionsView`` instance that contains a primary button and a secondary button.
+    /// Creates an `OnboardingActionsView` instance that contains a primary button and a secondary button.
     /// - Parameters:
-    ///   - primaryText: The title ot the primary button without localization.
+    ///   - primaryText: The title of the primary button without localization.
     ///   - primaryAction: The action that should be performed when pressing the primary button
-    ///   - secondaryText: The title ot the secondary button without localization.
+    ///   - secondaryText: The title of the secondary button without localization.
     ///   - secondaryAction: The action that should be performed when pressing the secondary button
     @_disfavoredOverload
     public init<PrimaryText: StringProtocol, SecondaryText: StringProtocol>(
@@ -129,23 +130,21 @@ public struct OnboardingActionsView: View {
 
 
 #if DEBUG
-struct OnboardingActionsView_Previews: PreviewProvider {
-    static var previews: some View {
-        VStack {
-            OnboardingActionsView(verbatim: "PRIMARY") {
-                print("Primary!")
-            }
-            OnboardingActionsView(
-                primaryText: String("PRIMARY"),
-                primaryAction: {
-                    print("Primary")
-                },
-                secondaryText: String("SECONDARY"),
-                secondaryAction: {
-                    print("Secondary")
-                }
-            )
+#Preview {
+    VStack {
+        OnboardingActionsView(verbatim: "PRIMARY") {
+            print("Primary!")
         }
+        OnboardingActionsView(
+            primaryText: String("PRIMARY"),
+            primaryAction: {
+                print("Primary")
+            },
+            secondaryText: String("SECONDARY"),
+            secondaryAction: {
+                print("Secondary")
+            }
+        )
     }
 }
 #endif
