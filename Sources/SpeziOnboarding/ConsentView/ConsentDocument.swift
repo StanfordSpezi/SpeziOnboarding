@@ -117,7 +117,7 @@ public struct ConsentDocument: View {
             .animation(.easeInOut, value: viewState == .namesEntered)
             .onChange(of: viewState) {
                 if case .export = viewState {
-                    Task { // TODO: how to cancel??
+                    Task {
                         guard let exportedConsent = await export() else {
                             viewState = .base(.error(Error.memoryAllocationError))
                             return
