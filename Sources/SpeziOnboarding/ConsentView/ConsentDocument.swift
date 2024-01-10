@@ -14,13 +14,16 @@ import SpeziViews
 import SwiftUI
 
 
-/// Allows the display of markdown-based consent documents that can be signed using a family and given name and a hand drawn signature. In addition, it enables the export of the signed form as a PDF document.
+/// Display markdown-based consent documents that can be signed and exported.
 ///
-/// To observe and control the current state of the ``ConsentDocument``, the view requires passing down a ``ConsentViewState`` as a SwiftUI `Binding` in the
+/// Allows the display markdown-based consent documents that can be signed using a family and given name and a hand drawn signature.
+/// In addition, it enables the export of the signed form as a PDF document.
+///
+/// To observe and control the current state of the `ConsentDocument`, the view requires passing down a ``ConsentViewState`` as a SwiftUI `Binding` in the
 /// ``init(markdown:viewState:givenNameTitle:givenNamePlaceholder:familyNameTitle:familyNamePlaceholder:exportConfiguration:)`` initializer.
 /// This `Binding` can then be used to trigger the export of the consent form via setting the state to ``ConsentViewState/export``.
 /// After the rendering completes, the finished `PDFDocument` from Apple's PDFKit is accessible via the associated value of the view state in ``ConsentViewState/exported(document:)``.
-/// Other possible states of the ``ConsentDocument`` are the SpeziViews `ViewState`'s accessible via the associated value in ``ConsentViewState/base(_:)``.
+/// Other possible states of the `ConsentDocument` are the SpeziViews `ViewState`'s accessible via the associated value in ``ConsentViewState/base(_:)``.
 /// In addition, the view provides information about the signing progress via the ``ConsentViewState/signing`` and ``ConsentViewState/signed`` states.
 ///
 /// ```swift
@@ -36,7 +39,7 @@ import SwiftUI
 /// )
 /// ```
 public struct ConsentDocument: View {
-    private let asyncMarkdown: (() async -> Data)
+    private let asyncMarkdown: () async -> Data
     private let givenNameTitle: LocalizedStringResource
     private let givenNamePlaceholder: LocalizedStringResource
     private let familyNameTitle: LocalizedStringResource
@@ -139,12 +142,17 @@ public struct ConsentDocument: View {
     }
     
     
-    /// Creates a ``ConsentDocument`` which renders a consent document with a markdown view. The passed ``ConsentViewState`` indicates in which state the view currently is. This is especially useful for exporting the consent form as well as error management.
+    /// Creates a `ConsentDocument` which renders a consent document with a markdown view.
+    ///
+    /// The passed ``ConsentViewState`` indicates in which state the view currently is.
+    /// This is especially useful for exporting the consent form as well as error management.
     /// - Parameters:
     ///   - markdown: The markdown content provided as an UTF8 encoded `Data` instance that can be provided asynchronously.
     ///   - viewState: A `Binding` to observe the ``ConsentViewState`` of the ``ConsentDocument``. 
-    ///   - givenNameField: The localization to use for the given (first) name field.
-    ///   - familyNameField: The localization to use for the family (last) name field.
+    ///   - givenNameTitle: The localization to use for the given (first) name field.
+    ///   - givenNamePlaceholder: The localization to use for the given name field placeholder.
+    ///   - familyNameTitle: The localization to use for the family (last) name field.
+    ///   - familyNamePlaceholder: The localization to use for the family name field placeholder.
     ///   - exportConfiguration: Defines the properties of the exported consent form via ``ConsentDocument/ExportConfiguration``.
     public init(
         markdown: @escaping () async -> Data,
@@ -166,9 +174,10 @@ public struct ConsentDocument: View {
 }
 
 
-/// Extension of ``ConsentDocument`` enabling the export of the signed consent page.
+/// Extension of `ConsentDocument` enabling the export of the signed consent page.
 extension ConsentDocument {
     /// Exports the signed consent form as a `PDFDocument` via the SwiftUI `ImageRenderer`.
+    ///
     /// Renders the `PDFDocument` according to the specified ``ConsentDocument/ExportConfiguration``.
     ///
     /// - Returns: The exported consent form in PDF format as a PDFKit `PDFDocument`

@@ -51,7 +51,7 @@ struct OnboardingStartTestView: View {
             }
             
             Button {
-                path.append(customViewInit: OnboardingCustomTestView2.init)
+                path.append(customView: OnboardingCustomTestView2())
             } label: {
                 Text("Custom Onboarding View 2")
             }

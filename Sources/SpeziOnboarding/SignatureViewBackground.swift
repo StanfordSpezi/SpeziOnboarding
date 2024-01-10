@@ -41,7 +41,7 @@ struct SignatureViewBackground: View {
     }
     
     
-    /// Creates a new instance of an ``SignatureViewBackground``.
+    /// Creates a new instance of an `SignatureViewBackground`.
     /// - Parameters:
     ///   - name: The name that is displayed under the signature line.
     ///   - lineOffset: Defines the distance of the signature line from the bottom of the view. The default value is 30.

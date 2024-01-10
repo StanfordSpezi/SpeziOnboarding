@@ -20,7 +20,7 @@ struct OnboardingCustomTestView1: View {
             Text("Custom Test View 1: \(exampleArgument)")
             
             Button {
-                path.append(customViewInit: OnboardingCustomTestView2.init)
+                path.append(customView: OnboardingCustomTestView2())
             } label: {
                 Text("Next")
             }

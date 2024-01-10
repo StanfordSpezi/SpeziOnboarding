@@ -10,7 +10,9 @@ import SpeziViews
 import SwiftUI
 
 
-/// The ``OnboardingInformationView`` allows developers to present a unified style the display informational content as defined
+/// Present informational content in a row-based style.
+///
+/// The `OnboardingInformationView` allows developers to present a unified style to display informational content as defined
 /// by the ``OnboardingInformationView/Content`` type.
 ///
 /// The following example displays an ``OnboardingInformationView`` with two information areas:
@@ -114,7 +116,7 @@ public struct OnboardingInformationView: View {
     }
     
     
-    /// Creates an ``OnboardingInformationView`` instance with a collection of areas defined by the ``Content`` type.
+    /// Creates an `OnboardingInformationView` instance with a collection of areas defined by the ``Content`` type.
     /// - Parameter areas: The areas that should be displayed.
     public init(areas: [Content]) {
         self.areas = areas

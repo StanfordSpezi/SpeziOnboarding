@@ -11,7 +11,7 @@ import SpeziViews
 import SwiftUI
 
 
-/// A ``SignatureView`` enables the collection of signatures using a view that allows freeform signatures using a finger and the Apple Pencil.
+/// Input freeform signatures using a finger or the Apple Pencil.
 ///
 /// Use SwiftUI `Bindings` to obtain information like the content of the signature and if the user is currently signing:
 /// ```swift

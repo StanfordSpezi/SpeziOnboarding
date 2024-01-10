@@ -9,14 +9,15 @@
 import SwiftUI
 
 
-/// The ``OnboardingView`` allows developers to present a unified style for the in an onboarding flow.
-/// The default style of the ``OnboardingView`` uses a combination of an ``OnboardingTitleView``, ``OnboardingInformationView``,
+/// Present onboarding information in a unified style.
+///
+/// The default style of the `OnboardingView` uses a combination of an ``OnboardingTitleView``, ``OnboardingInformationView``,
 /// and ``OnboardingActionsView``.
 ///
-/// The ``SequentialOnboardingView`` provides an alternative to provide
+/// - Tip: The ``SequentialOnboardingView`` provides an alternative to provide
 /// sequential information that is displayed step by step.
 ///
-/// The following example demonstrates the usage of the ``OnboardingView`` using its default configuration.
+/// The following example demonstrates the usage of the `OnboardingView` using its default configuration.
 /// ```swift
 /// OnboardingView(
 ///     title: "Title",
@@ -68,7 +69,7 @@ public struct OnboardingView<TitleView: View, ContentView: View, ActionView: Vie
     }
     
     
-    /// Creates a customized ``OnboardingView`` allowing a complete customization of the  ``OnboardingView``.
+    /// Creates a customized `OnboardingView` allowing a complete customization of the  `OnboardingView`.
     /// - Parameters:
     ///   - titleView: The title view displayed at the top.
     ///   - contentView: The content view.
@@ -83,7 +84,7 @@ public struct OnboardingView<TitleView: View, ContentView: View, ActionView: Vie
         self.actionView = actionView()
     }
     
-    /// Creates the default style of the ``OnboardingView`` uses a combination of an ``OnboardingTitleView``, ``OnboardingInformationView``,
+    /// Creates the default style of the `OnboardingView` uses a combination of an ``OnboardingTitleView``, ``OnboardingInformationView``,
     /// and ``OnboardingActionsView``.
     ///
     /// - Parameters:
@@ -113,14 +114,14 @@ public struct OnboardingView<TitleView: View, ContentView: View, ActionView: Vie
         )
     }
     
-    /// Creates the default style of the ``OnboardingView`` uses a combination of an ``OnboardingTitleView``, ``OnboardingInformationView``,
+    /// Creates the default style of the `OnboardingView` uses a combination of an ``OnboardingTitleView``, ``OnboardingInformationView``,
     /// and ``OnboardingActionsView``.
     /// 
     /// - Parameters:
-    ///   - title: The title of the ``OnboardingView`` without localization.
-    ///   - subtitle: The subtitle of the ``OnboardingView`` without localization.
-    ///   - areas: The areas of the ``OnboardingView`` defined using ``OnboardingInformationView/Content`` instances..
-    ///   - actionText: The text that should appear on the ``OnboardingView``'s primary button without localization.
+    ///   - title: The title without localization.
+    ///   - subtitle: The subtitle without localization.
+    ///   - areas: The areas of the `OnboardingView` defined using ``OnboardingInformationView/Content`` instances..
+    ///   - actionText: The text that should appear on the `OnboardingView`'s primary button without localization.
     ///   - action: The close that is called then the primary button is pressed.
     @_disfavoredOverload
     public init<Title: StringProtocol, Subtitle: StringProtocol, ActionText: StringProtocol>(
@@ -144,13 +145,13 @@ public struct OnboardingView<TitleView: View, ContentView: View, ActionView: Vie
         )
     }
     
-    /// Creates the default style of the ``OnboardingView`` uses a combination of an ``OnboardingTitleView``, ``OnboardingInformationView``,
+    /// Creates the default style of the `OnboardingView` uses a combination of an ``OnboardingTitleView``, ``OnboardingInformationView``,
     /// and ``OnboardingActionsView``.
     ///
     /// - Parameters:
-    ///   - title: The title of the ``OnboardingView`` without localization.
-    ///   - areas: The areas of the ``OnboardingView`` defined using ``OnboardingInformationView/Content`` instances..
-    ///   - actionText: The text that should appear on the ``OnboardingView``'s primary button without localization.
+    ///   - title: The title without localization.
+    ///   - areas: The areas of the `OnboardingView` defined using ``OnboardingInformationView/Content`` instances..
+    ///   - actionText: The text that should appear on the `OnboardingView`'s primary button without localization.
     ///   - action: The close that is called then the primary button is pressed.
     @_disfavoredOverload
     public init<Title: StringProtocol, ActionText: StringProtocol>(
@@ -176,16 +177,14 @@ public struct OnboardingView<TitleView: View, ContentView: View, ActionView: Vie
 
 
 #if DEBUG
-struct OnboardingView_Previews: PreviewProvider {
-    static var previews: some View {
-        OnboardingView(
-            title: String("Title"),
-            subtitle: String("Subtitle"),
-            areas: AreasView_Previews.mock,
-            actionText: String("Primary Button")
-        ) {
-            print("Primary!")
-        }
+#Preview {
+    OnboardingView(
+        title: String("Title"),
+        subtitle: String("Subtitle"),
+        areas: AreasView_Previews.mock,
+        actionText: String("Primary Button")
+    ) {
+        print("Primary!")
     }
 }
 #endif

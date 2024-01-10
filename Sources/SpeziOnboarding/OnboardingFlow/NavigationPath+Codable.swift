@@ -11,6 +11,7 @@ import SwiftUI
 
 
 /// This extension enhances SwiftUI's `NavigationPath` by introducing a property that gives access to the last element in the `NavigationPath`.
+/// 
 /// SwiftUI does not provide this functionality out-of-the-box. However, it can be engineered using the `Codable` nature of the `NavigationPath`.
 /// This is particularly useful for the ``OnboardingNavigationPath`` to identify the topmost element on SwiftUI's `NavigationPath` which is of type `OnboardingStepIdentifier`.
 extension NavigationPath {
