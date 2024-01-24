@@ -46,6 +46,7 @@ public struct ConsentDocument: View {
     private let familyNamePlaceholder: LocalizedStringResource
     private let exportConfiguration: ExportConfiguration
     
+    @Environment(\.colorScheme) private var colorScheme
     @State private var name = PersonNameComponents()
     @State private var signature = PKDrawing()
     @State private var signatureSize: CGSize = .zero
@@ -176,6 +177,25 @@ public struct ConsentDocument: View {
 
 /// Extension of `ConsentDocument` enabling the export of the signed consent page.
 extension ConsentDocument {
+    /// As the `PKDrawing.image()` function automatically converts the ink color dependent on the used color scheme (light or dark mode),
+    /// force the ink used in the image of the drawing to always be black by adjusting it according to the color scheme.
+    private var blackInkSignatureIndependentOfScheme: PKDrawing {
+        var updatedDrawing = PKDrawing()
+        
+        for stroke in signature.strokes {
+            let blackStroke = PKStroke(
+                ink: PKInk(stroke.ink.inkType, color: colorScheme == .light ? .black : .white),
+                path: stroke.path,
+                transform: stroke.transform,
+                mask: stroke.mask
+            )
+
+            updatedDrawing.strokes.append(blackStroke)
+        }
+        
+        return updatedDrawing
+    }
+    
     /// Exports the signed consent form as a `PDFDocument` via the SwiftUI `ImageRenderer`.
     ///
     /// Renders the `PDFDocument` according to the specified ``ConsentDocument/ExportConfiguration``.
@@ -255,7 +275,7 @@ extension ConsentDocument {
             ZStack(alignment: .bottomLeading) {
                 SignatureViewBackground(name: name, backgroundColor: .clear)
                 
-                Image(uiImage: signature.image(
+                Image(uiImage: blackInkSignatureIndependentOfScheme.image(
                     from: .init(x: 0, y: 0, width: signatureSize.width, height: signatureSize.height),
                     scale: UIScreen.main.scale
                 ))
