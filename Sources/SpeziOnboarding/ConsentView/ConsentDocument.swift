@@ -178,7 +178,7 @@ public struct ConsentDocument: View {
 /// Extension of `ConsentDocument` enabling the export of the signed consent page.
 extension ConsentDocument {
     /// As the `PKDrawing.image()` function automatically converts the ink color dependent on the used color scheme (light or dark mode),
-    /// force the ink used in the image of the drawing to always be black by adjusting it according to the color scheme.
+    /// force the ink used in the `UIImage` of the `PKDrawing` to always be black by adjusting the signature ink according to the color scheme.
     private var blackInkSignatureIndependentOfScheme: PKDrawing {
         var updatedDrawing = PKDrawing()
         
