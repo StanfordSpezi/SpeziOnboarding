@@ -233,6 +233,92 @@ final class OnboardingTests: XCTestCase {
         XCTAssert(app.staticTexts["Consent PDF rendering exists"].waitForExistence(timeout: 2))
     }
     
+    func testOnboardingConsentPDFExport() throws {  // swiftlint:disable:this function_body_length
+        let app = XCUIApplication()
+        let filesApp = XCUIApplication(bundleIdentifier: "com.apple.DocumentsApp")
+        let maxRetries = 10
+        
+        app.launch()
+        
+        XCTAssert(app.buttons["Consent View (Markdown)"].waitForExistence(timeout: 2))
+        app.buttons["Consent View (Markdown)"].tap()
+        
+        XCTAssert(app.staticTexts["Consent"].waitForExistence(timeout: 2))
+        XCTAssert(app.staticTexts["This is a markdown example"].waitForExistence(timeout: 2))
+        
+        XCTAssert(app.staticTexts["First Name"].waitForExistence(timeout: 2))
+        try app.textFields["Enter your first name ..."].enter(value: "Leland")
+        
+        XCTAssert(app.staticTexts["Last Name"].waitForExistence(timeout: 2))
+        try app.textFields["Enter your last name ..."].enter(value: "Stanford")
+        
+        XCTAssert(app.scrollViews["Signature Field"].waitForExistence(timeout: 2))
+        app.scrollViews["Signature Field"].swipeRight()
+        
+        sleep(1)
+                
+        for _ in 0...maxRetries {
+            // Export consent form via share sheet button
+            XCTAssert(app.buttons["Share consent form"].waitForExistence(timeout: 2))
+            app.buttons["Share consent form"].tap()
+            
+            // Store exported consent form in Files
+            XCTAssert(app.staticTexts["Save to Files"].waitForExistence(timeout: 10))
+            app.staticTexts["Save to Files"].tap()
+            sleep(3)
+            XCTAssert(app.buttons["Save"].waitForExistence(timeout: 2))
+            app.buttons["Save"].tap()
+            sleep(10)    // Wait until file is saved
+            
+            if app.staticTexts["Replace Existing Items?"].waitForExistence(timeout: 5) {
+                XCTAssert(app.buttons["Replace"].waitForExistence(timeout: 2))
+                app.buttons["Replace"].tap()
+                sleep(3)    // Wait until file is saved
+            }
+            
+            // Wait until share sheet closed and back on the consent form screen
+            XCTAssert(app.staticTexts["Consent"].waitForExistence(timeout: 10))
+            
+            XCUIDevice.shared.press(.home)
+            
+            // Launch the Files app
+            filesApp.launch()
+            
+            // Handle already open files
+            if filesApp.buttons["Done"].waitForExistence(timeout: 2) {
+                filesApp.buttons["Done"].tap()
+            }
+            
+            // Check if file exists - If not, try the export procedure again
+            // Saving to files is very flakey on the runners, needs multiple attempts to succeed
+            if filesApp.staticTexts["Signed Consent Form"].waitForExistence(timeout: 2) {
+                break
+            }
+            
+            // Launch test app and try another export
+            app.launch()
+        }
+        
+        // Open File
+        XCTAssert(filesApp.staticTexts["Signed Consent Form"].waitForExistence(timeout: 2))
+        XCTAssert(filesApp.collectionViews["File View"].cells["Signed Consent Form, pdf"].waitForExistence(timeout: 2))
+        
+        XCTAssert(filesApp.collectionViews["File View"].cells["Signed Consent Form, pdf"].images.firstMatch.waitForExistence(timeout: 2))
+        filesApp.collectionViews["File View"].cells["Signed Consent Form, pdf"].images.firstMatch.tap()
+        
+        sleep(3)    // Wait until file is opened
+        
+        // Check if PDF contains consent title, name, and markdown message
+        for searchString in ["Spezi Consent", "This is a markdown example", "Leland Stanford"] {
+            let predicate = NSPredicate(format: "label CONTAINS[c] %@", searchString)
+            XCTAssert(filesApp.otherElements.containing(predicate).firstMatch.waitForExistence(timeout: 2))
+        }
+        
+        // Close File
+        XCTAssert(filesApp.buttons["Done"].waitForExistence(timeout: 2))
+        filesApp.buttons["Done"].tap()
+    }
+    
     func testOnboardingCustomViews() throws {
         let app = XCUIApplication()
         app.launch()
