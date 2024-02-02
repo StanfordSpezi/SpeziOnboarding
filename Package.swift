@@ -15,7 +15,8 @@ let package = Package(
     name: "SpeziOnboarding",
     defaultLocalization: "en",
     platforms: [
-        .iOS(.v17)
+        .iOS(.v17),
+        .visionOS(.v1)
     ],
     products: [
         .library(name: "SpeziOnboarding", targets: ["SpeziOnboarding"])

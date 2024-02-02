@@ -195,7 +195,7 @@ extension ConsentDocument {
         
         return updatedDrawing.image(
             from: .init(x: 0, y: 0, width: signatureSize.width, height: signatureSize.height),
-            scale: UIScreen.main.scale
+            scale: 1.0 // TODO: UIScreen.main.scale // TODO: what is the scale for vision os? this is currently broken?
         )
     }
     
