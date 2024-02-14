@@ -22,8 +22,8 @@ let package = Package(
         .library(name: "SpeziOnboarding", targets: ["SpeziOnboarding"])
     ],
     dependencies: [
-        .package(url: "https://github.com/StanfordSpezi/Spezi", from: "1.0.0"),
-        .package(url: "https://github.com/StanfordSpezi/SpeziViews", from: "1.0.0")
+        .package(url: "https://github.com/StanfordSpezi/Spezi", branch: "feature/platform-support"),
+        .package(url: "https://github.com/StanfordSpezi/SpeziViews", from: "1.2.0")
     ],
     targets: [
         .target(

@@ -79,11 +79,12 @@ public struct OnboardingConsentView: View {
                             viewState = .export
                         }
                     )
-                    .disabled(!actionButtonsEnabled)
-                    .animation(.easeInOut, value: actionButtonsEnabled)
-                    .id("ActionButton")
+                        .disabled(!actionButtonsEnabled)
+                        .animation(.easeInOut, value: actionButtonsEnabled)
+                        .id("ActionButton")
                 }
             )
+            .frame(maxWidth: ConsentDocument.maxWidth)
             .scrollDisabled($viewState.signing.wrappedValue)
             .onChange(of: viewState) {
                 if case .exported(let exportedConsentDocumented) = viewState {
@@ -101,34 +102,35 @@ public struct OnboardingConsentView: View {
                 }
             }
         }
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button(action: {
-                    viewState = .export
-                    willShowShareSheet = true
-                }) {
-                    Image(systemName: "square.and.arrow.up")
-                        .accessibilityLabel(Text("CONSENT_SHARE", bundle: .module))
-                        .opacity(actionButtonsEnabled ? 1.0 : 0.0)
-                        .scaleEffect(actionButtonsEnabled ? 1.0 : 0.8)
-                        .animation(.easeInOut, value: actionButtonsEnabled)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(action: {
+                        viewState = .export
+                        willShowShareSheet = true
+                    }) {
+                        Label {
+                            Text("CONSENT_SHARE", bundle: .module)
+                        } icon: {
+                            Image(systemName: "square.and.arrow.up")
+                                .accessibilityHidden(true)
+                        }
+                    }
                         .disabled(!actionButtonsEnabled)
                 }
             }
-        }
-        .sheet(isPresented: $showShareSheet) {
-            switch viewState {
-            case .exported(let exportedConsentDocumented):
-                ShareSheet(sharedItem: exportedConsentDocumented)
-                    .presentationDetents([.medium])
-                    .task {
-                        willShowShareSheet = false
-                    }
-            default:
-                ProgressView()
-                    .padding()
+            .sheet(isPresented: $showShareSheet) {
+                switch viewState {
+                case .exported(let exportedConsentDocumented):
+                    ShareSheet(sharedItem: exportedConsentDocumented)
+                        .presentationDetents([.medium])
+                        .task {
+                            willShowShareSheet = false
+                        }
+                default:
+                    ProgressView()
+                        .padding()
+                }
             }
-        }
     }
     
     private var actionButtonsEnabled: Bool {

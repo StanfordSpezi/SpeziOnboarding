@@ -39,6 +39,8 @@ import SwiftUI
 /// )
 /// ```
 public struct ConsentDocument: View {
+    static let maxWidth: CGFloat = 500
+
     private let asyncMarkdown: () async -> Data
     private let givenNameTitle: LocalizedStringResource
     private let givenNamePlaceholder: LocalizedStringResource
@@ -86,13 +88,9 @@ public struct ConsentDocument: View {
     }
     
     private var signatureView: some View {
-        SignatureView(signature: $signature, isSigning: $viewState.signing, name: name)
+        SignatureView(signature: $signature, isSigning: $viewState.signing, canvasSize: $signatureSize, name: name)
             .padding(.vertical, 4)
             .disabled(inputFieldsDisabled)
-            /// Capture the canvas size of the signature, important to export the consent form to a PDF
-            .onPreferenceChange(CanvasView.CanvasSizePreferenceKey.self) { size in
-                signatureSize = size
-            }
             .onChange(of: signature) {
                 if !(signature.strokes.isEmpty || (name.givenName?.isEmpty ?? true) || (name.familyName?.isEmpty ?? true)) {
                     viewState = .signed
@@ -106,13 +104,16 @@ public struct ConsentDocument: View {
         VStack {
             MarkdownView(asyncMarkdown: asyncMarkdown, state: $viewState.base)
             Spacer()
-            nameView
-            if case .base(let baseViewState) = viewState,
-               case .idle = baseViewState {
-                EmptyView()
-            } else {
-                signatureView
+            Group {
+                nameView
+                if case .base(let baseViewState) = viewState,
+                   case .idle = baseViewState {
+                    EmptyView()
+                } else {
+                    signatureView
+                }
             }
+                .frame(maxWidth: Self.maxWidth)
         }
             .transition(.opacity)
             .animation(.easeInOut, value: viewState == .namesEntered)
@@ -192,10 +193,16 @@ extension ConsentDocument {
 
             updatedDrawing.strokes.append(blackStroke)
         }
-        
+
+        #if os(iOS)
+        let scale = UIScreen.main.scale
+        #else
+        let scale = 3.0 // retina scale is default
+        #endif
+
         return updatedDrawing.image(
             from: .init(x: 0, y: 0, width: signatureSize.width, height: signatureSize.height),
-            scale: 1.0 // TODO: UIScreen.main.scale // TODO: what is the scale for vision os? this is currently broken?
+            scale: scale
         )
     }
     
@@ -277,7 +284,7 @@ extension ConsentDocument {
             
             ZStack(alignment: .bottomLeading) {
                 SignatureViewBackground(name: name, backgroundColor: .clear)
-                
+
                 Image(uiImage: blackInkSignatureImage)
             }
             .frame(width: signatureSize.width, height: signatureSize.height)
