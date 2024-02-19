@@ -39,7 +39,8 @@ import SwiftUI
 /// )
 /// ```
 public struct ConsentDocument: View {
-    static let maxWidth: CGFloat = 500
+    /// The maximum width such that the drawing canvas fits onto the PDF.
+    static let maxWidthDrawing: CGFloat = 550
 
     private let asyncMarkdown: () async -> Data
     private let givenNameTitle: LocalizedStringResource
@@ -113,7 +114,7 @@ public struct ConsentDocument: View {
                     signatureView
                 }
             }
-                .frame(maxWidth: Self.maxWidth)
+                .frame(maxWidth: Self.maxWidthDrawing) // we limit the max view size so it fits on the PDF
         }
             .transition(.opacity)
             .animation(.easeInOut, value: viewState == .namesEntered)

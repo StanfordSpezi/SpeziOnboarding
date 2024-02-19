@@ -43,8 +43,8 @@ public struct OnboardingConsentView: View {
     }
     
     
-    private let markdown: (() async -> Data)
-    private let action: (() async -> Void)
+    private let markdown: () async -> Data
+    private let action: () async -> Void
     private let title: LocalizedStringResource?
     private let exportConfiguration: ConsentDocument.ExportConfiguration
     
@@ -84,7 +84,6 @@ public struct OnboardingConsentView: View {
                         .id("ActionButton")
                 }
             )
-            .frame(maxWidth: ConsentDocument.maxWidth)
             .scrollDisabled($viewState.signing.wrappedValue)
             .onChange(of: viewState) {
                 if case .exported(let exportedConsentDocumented) = viewState {

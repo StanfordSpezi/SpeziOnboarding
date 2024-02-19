@@ -711,8 +711,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/StanfordBDHG/XCTestExtensions";
 			requirement = {
-				branch = "feature/visionos-text-input";
-				kind = branch;
+				kind = upToNextMinorVersion;
+				minimumVersion = 0.4.9;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */

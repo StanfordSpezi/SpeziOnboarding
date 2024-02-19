@@ -10,7 +10,7 @@ import XCTest
 import XCTestExtensions
 
 
-final class OnboardingTests: XCTestCase {
+final class OnboardingTests: XCTestCase { // swiftlint:disable:this type_body_length
     func testOverallOnboardingFlow() throws {
         let app = XCUIApplication()
         app.launch()
@@ -261,10 +261,16 @@ final class OnboardingTests: XCTestCase {
             // Export consent form via share sheet button
             XCTAssert(app.buttons["Share consent form"].waitForExistence(timeout: 2))
             app.buttons["Share consent form"].tap()
-            
+
             // Store exported consent form in Files
+            #if os(visionOS)
+            // on visionOS the save to files button has no label lol
+            XCTAssert(app.cells["XCElementSnapshotPrivilegedValuePlaceholder"].waitForExistence(timeout: 10))
+            app.cells["XCElementSnapshotPrivilegedValuePlaceholder"].tap()
+            #else
             XCTAssert(app.staticTexts["Save to Files"].waitForExistence(timeout: 10))
             app.staticTexts["Save to Files"].tap()
+            #endif
             sleep(3)
             XCTAssert(app.buttons["Save"].waitForExistence(timeout: 2))
             app.buttons["Save"].tap()
@@ -308,15 +314,24 @@ final class OnboardingTests: XCTestCase {
         
         sleep(3)    // Wait until file is opened
         
+
+#if os(visionOS)
+        let fileView = XCUIApplication(bundleIdentifier: "com.apple.MRQuickLook")
+#else
+        let fileView = filesApp
+#endif
+
         // Check if PDF contains consent title, name, and markdown message
         for searchString in ["Spezi Consent", "This is a markdown example", "Leland Stanford"] {
             let predicate = NSPredicate(format: "label CONTAINS[c] %@", searchString)
-            XCTAssert(filesApp.otherElements.containing(predicate).firstMatch.waitForExistence(timeout: 2))
+            XCTAssert(fileView.otherElements.containing(predicate).firstMatch.waitForExistence(timeout: 2))
         }
-        
+
+#if os(iOS)
         // Close File
-        XCTAssert(filesApp.buttons["Done"].waitForExistence(timeout: 2))
-        filesApp.buttons["Done"].tap()
+        XCTAssert(fileView.buttons["Done"].waitForExistence(timeout: 2))
+        fileView.buttons["Done"].tap()
+#endif
     }
     
     func testOnboardingCustomViews() throws {
