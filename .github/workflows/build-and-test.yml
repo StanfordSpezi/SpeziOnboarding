@@ -16,40 +16,95 @@ on:
   workflow_dispatch:
 
 jobs:
-  buildandtest:
-    name: Build and Test Swift Package
+  buildandtest_ios:
+    name: Build and Test Swift Package iOS
     uses: StanfordSpezi/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
     strategy:
       matrix:
         include:
           - buildConfig: Debug
-            artifactname: SpeziOnboarding.xcresult
+            artifactname: SpeziOnboarding-iOS.xcresult
           - buildConfig: Release
-            artifactname: SpeziOnboarding-Release.xcresult
+            artifactname: SpeziOnboarding-iOS-Release.xcresult
     with:
-      artifactname: ${{ matrix.artifactname }}
       runsonlabels: '["macOS", "self-hosted"]'
       scheme: SpeziOnboarding
       buildConfig: ${{ matrix.buildConfig }}
-  buildandtestuitests:
-    name: Build and Test UI Tests
+      artifactname: ${{ matrix.artifactname }}
+      resultBundle: ${{ matrix.artifactname }}
+  buildandtest_visionos:
+    name: Build and Test Swift Package visionOS
     uses: StanfordSpezi/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
     strategy:
       matrix:
         include:
           - buildConfig: Debug
-            artifactname: TestApp.xcresult
+            artifactname: SpeziOnboarding-visionOS.xcresult
           - buildConfig: Release
-            artifactname: TestApp-Release.xcresult
+            artifactname: SpeziOnboarding-visionOS-Release.xcresult
     with:
+      runsonlabels: '["macOS", "self-hosted"]'
+      destination: 'platform=visionOS Simulator,name=Apple Vision Pro'
+      scheme: SpeziOnboarding
+      buildConfig: ${{ matrix.buildConfig }}
       artifactname: ${{ matrix.artifactname }}
+      resultBundle: ${{ matrix.artifactname }}
+  buildandtestuitests_ios:
+    name: Build and Test UI Tests iOS
+    uses: StanfordSpezi/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
+    strategy:
+      matrix:
+        include:
+          - buildConfig: Debug
+            artifactname: TestApp-iOS.xcresult
+          - buildConfig: Release
+            artifactname: TestApp-iOS-Release.xcresult
+    with:
       runsonlabels: '["macOS", "self-hosted"]'
       path: 'Tests/UITests'
       scheme: TestApp
       buildConfig: ${{ matrix.buildConfig }}
+      artifactname: ${{ matrix.artifactname }}
+      resultBundle: ${{ matrix.artifactname }}
+  buildandtestuitests_ipad:
+    name: Build and Test UI Tests iPad
+    uses: StanfordSpezi/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
+    strategy:
+      matrix:
+        include:
+          - buildConfig: Debug
+            artifactname: TestApp-iPad.xcresult
+          - buildConfig: Release
+            artifactname: TestApp-iPad-Release.xcresult
+    with:
+      runsonlabels: '["macOS", "self-hosted"]'
+      destination: 'platform=iOS Simulator,name=iPad Air (5th generation)'
+      path: 'Tests/UITests'
+      scheme: TestApp
+      buildConfig: ${{ matrix.buildConfig }}
+      artifactname: ${{ matrix.artifactname }}
+      resultBundle: ${{ matrix.artifactname }}
+  buildandtestuitests_visionos:
+    name: Build and Test UI Tests visionOS
+    uses: StanfordSpezi/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
+    strategy:
+      matrix:
+        include:
+          - buildConfig: Debug
+            artifactname: TestApp-visionOS.xcresult
+          - buildConfig: Release
+            artifactname: TestApp-visionOS-Release.xcresult
+    with:
+      runsonlabels: '["macOS", "self-hosted"]'
+      destination: 'platform=visionOS Simulator,name=Apple Vision Pro'
+      path: 'Tests/UITests'
+      scheme: TestApp
+      buildConfig: ${{ matrix.buildConfig }}
+      artifactname: ${{ matrix.artifactname }}
+      resultBundle: ${{ matrix.artifactname }}
   uploadcoveragereport:
     name: Upload Coverage Report
-    needs: [buildandtest, buildandtestuitests]
+    needs: [buildandtest_ios, buildandtest_visionos, buildandtestuitests_ios, buildandtestuitests_ipad, buildandtestuitests_visionos]
     uses: StanfordSpezi/.github/.github/workflows/create-and-upload-coverage-report.yml@v2
     with:
-      coveragereports: SpeziOnboarding.xcresult TestApp.xcresult
+      coveragereports: SpeziOnboarding-iOS.xcresult SpeziOnboarding-visionOS.xcresult TestApp-iOS.xcresult TestApp-iPad.xcresult TestApp-visionOS.xcresult
