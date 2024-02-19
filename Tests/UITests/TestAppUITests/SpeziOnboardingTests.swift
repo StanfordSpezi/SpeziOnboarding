@@ -264,7 +264,7 @@ final class OnboardingTests: XCTestCase { // swiftlint:disable:this type_body_le
 
             // Store exported consent form in Files
             #if os(visionOS)
-            // on visionOS the save to files button has no label lol
+            // on visionOS the save to files button has no label
             XCTAssert(app.cells["XCElementSnapshotPrivilegedValuePlaceholder"].waitForExistence(timeout: 10))
             app.cells["XCElementSnapshotPrivilegedValuePlaceholder"].tap()
             #else

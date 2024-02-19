@@ -45,7 +45,6 @@ public struct SignatureView: View {
                     .accessibilityAddTraits(.allowsDirectInteraction)
                     .onPreferenceChange(CanvasView.CanvasSizePreferenceKey.self) { size in
                         // for some reason, the preference won't update on visionOS if placed in a parent view
-                        print("Canvas size inner is \(size)")
                         self.canvasSize = size
                     }
             }
@@ -75,6 +74,7 @@ public struct SignatureView: View {
     /// - Parameters:
     ///   - signature: A `Binding` containing the current signature as an `PKDrawing`.
     ///   - isSigning: A `Binding` indicating if the user is currently signing.
+    ///   - canvasSize: The size of the canvas as a Binding.
     ///   - name: The name that is displayed under the signature line.
     ///   - lineOffset: Defines the distance of the signature line from the bottom of the view. The default value is 30.
     init(
