@@ -15,14 +15,15 @@ let package = Package(
     name: "SpeziOnboarding",
     defaultLocalization: "en",
     platforms: [
-        .iOS(.v17)
+        .iOS(.v17),
+        .visionOS(.v1)
     ],
     products: [
         .library(name: "SpeziOnboarding", targets: ["SpeziOnboarding"])
     ],
     dependencies: [
-        .package(url: "https://github.com/StanfordSpezi/Spezi", from: "1.0.0"),
-        .package(url: "https://github.com/StanfordSpezi/SpeziViews", from: "1.0.0")
+        .package(url: "https://github.com/StanfordSpezi/Spezi", from: "1.2.0"),
+        .package(url: "https://github.com/StanfordSpezi/SpeziViews", from: "1.3.0")
     ],
     targets: [
         .target(
