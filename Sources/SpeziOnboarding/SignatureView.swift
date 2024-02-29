@@ -89,11 +89,11 @@ public struct SignatureView: View {
         }
             .accessibilityLabel(Text("SIGNATURE_FIELD", bundle: .module))
             .accessibilityAddTraits(.allowsDirectInteraction)
+            .font(.custom("Snell Roundhand", size: 32))
             .textFieldStyle(PlainTextFieldStyle())
             .background(Color.clear)
-            .font(.title3)
             .padding(.bottom, lineOffset + 2)
-            .padding(.leading, 42)
+            .padding(.leading, 46)
             .padding(.trailing, 24)
     }
     #endif
