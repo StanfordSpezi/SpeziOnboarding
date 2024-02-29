@@ -277,17 +277,13 @@ final class OnboardingTests: XCTestCase { // swiftlint:disable:this type_body_le
         try app.textFields["Enter your last name ..."].enter(value: "Stanford")
         
         XCTAssert(app.staticTexts["Name: Leland Stanford"].waitForExistence(timeout: 2))
-        
-        #if !os(macOS)
         app.staticTexts["Name: Leland Stanford"].swipeRight()
+        
         XCTAssert(app.buttons["Undo"].waitForExistence(timeout: 2))
         app.buttons["Undo"].tap()
+        
         XCTAssert(app.scrollViews["Signature Field"].waitForExistence(timeout: 2))
         app.scrollViews["Signature Field"].swipeRight()
-        #else
-        XCTAssert(app.textFields["Signature Field"].waitForExistence(timeout: 2))
-        try app.textFields["Signature Field"].enter(value: "Leland Stanford")
-        #endif
         
         sleep(1)
                 
@@ -351,11 +347,11 @@ final class OnboardingTests: XCTestCase { // swiftlint:disable:this type_body_le
         sleep(3)    // Wait until file is opened
         
 
-#if os(visionOS)
+        #if os(visionOS)
         let fileView = XCUIApplication(bundleIdentifier: "com.apple.MRQuickLook")
-#else
+        #else
         let fileView = filesApp
-#endif
+        #endif
 
         // Check if PDF contains consent title, name, and markdown message
         for searchString in ["Spezi Consent", "This is a markdown example", "Leland Stanford"] {
@@ -363,11 +359,11 @@ final class OnboardingTests: XCTestCase { // swiftlint:disable:this type_body_le
             XCTAssert(fileView.otherElements.containing(predicate).firstMatch.waitForExistence(timeout: 2))
         }
 
-#if os(iOS)
+        #if os(iOS)
         // Close File
         XCTAssert(fileView.buttons["Done"].waitForExistence(timeout: 2))
         fileView.buttons["Done"].tap()
-#endif
+        #endif
     }
     #endif
     
