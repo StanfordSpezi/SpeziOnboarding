@@ -169,7 +169,7 @@ public struct ConsentDocument: View {
                     
                     if !isSignatureEmpty {
                         viewState = .signed
-                    } else if !(name.givenName?.isEmpty ?? true) && !(name.familyName?.isEmpty ?? true) {
+                    } else if !(name.givenName?.isEmpty ?? true) || !(name.familyName?.isEmpty ?? true) {
                         viewState = .namesEntered
                     }
                 }
