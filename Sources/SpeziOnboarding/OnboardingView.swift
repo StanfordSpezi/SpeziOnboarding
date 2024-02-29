@@ -17,7 +17,9 @@ import SwiftUI
 /// - Tip: The ``SequentialOnboardingView`` provides an alternative to provide
 /// sequential information that is displayed step by step.
 ///
-/// The following example demonstrates the usage of the `OnboardingView` using its default configuration.
+/// The following example demonstrates the usage of the `OnboardingView` using its default configuration. The default configuration divides up
+/// each screen into sections and allows you to add a title and subtitle for the overall view itself, as well as create separate information areas. Finally,
+/// there is an option for an action that should be performed (which can be used to go to the next screen in the onboarding flow).
 /// ```swift
 /// OnboardingView(
 ///     title: "Title",
@@ -39,6 +41,7 @@ import SwiftUI
 ///     // Action that should be performed on pressing the "Continue" button ...
 /// }
 /// ```
+///
 public struct OnboardingView<TitleView: View, ContentView: View, ActionView: View>: View {
     private let titleView: TitleView
     private let contentView: ContentView
@@ -85,7 +88,7 @@ public struct OnboardingView<TitleView: View, ContentView: View, ActionView: Vie
     }
     
     /// Creates the default style of the `OnboardingView` uses a combination of an ``OnboardingTitleView``, ``OnboardingInformationView``,
-    /// and ``OnboardingActionsView``.
+    /// and ``OnboardingActionsView``. This intitializer uses localized stirings for the title, subtitle, and actionText.
     ///
     /// - Parameters:
     ///   - title: The localized title of the ``OnboardingView``.
@@ -115,8 +118,8 @@ public struct OnboardingView<TitleView: View, ContentView: View, ActionView: Vie
     }
     
     /// Creates the default style of the `OnboardingView` uses a combination of an ``OnboardingTitleView``, ``OnboardingInformationView``,
-    /// and ``OnboardingActionsView``.
-    /// 
+    /// and ``OnboardingActionsView``. This intitializer uses stirings without localization for the title, subtitle, and actionText.
+    ///
     /// - Parameters:
     ///   - title: The title without localization.
     ///   - subtitle: The subtitle without localization.
@@ -146,7 +149,7 @@ public struct OnboardingView<TitleView: View, ContentView: View, ActionView: Vie
     }
     
     /// Creates the default style of the `OnboardingView` uses a combination of an ``OnboardingTitleView``, ``OnboardingInformationView``,
-    /// and ``OnboardingActionsView``.
+    /// and ``OnboardingActionsView``. This intiatializer does not have a subtitle for the view and uses stirings without localization for the title, subtitle, and actionText.
     ///
     /// - Parameters:
     ///   - title: The title without localization.
