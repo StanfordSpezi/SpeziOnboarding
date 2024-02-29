@@ -1,7 +1,7 @@
 #
-# This source file is part of the Stanford Spezi open-source project
+# This source file is part of the Stanford Spezi open source project
 #
-# SPDX-FileCopyrightText: 2022 Stanford University and the project authors (see CONTRIBUTORS.md)
+# SPDX-FileCopyrightText: 2023 Stanford University and the project authors (see CONTRIBUTORS.md)
 #
 # SPDX-License-Identifier: MIT
 #
@@ -24,14 +24,16 @@ jobs:
         include:
           - buildConfig: Debug
             artifactname: SpeziOnboarding-iOS.xcresult
+            resultBundle: SpeziOnboarding-iOS.xcresult
           - buildConfig: Release
             artifactname: SpeziOnboarding-iOS-Release.xcresult
+            resultBundle: SpeziOnboarding-iOS-Release.xcresult
     with:
       runsonlabels: '["macOS", "self-hosted"]'
       scheme: SpeziOnboarding
       buildConfig: ${{ matrix.buildConfig }}
+      resultBundle: ${{ matrix.resultBundle }}
       artifactname: ${{ matrix.artifactname }}
-      resultBundle: ${{ matrix.artifactname }}
   buildandtest_visionos:
     name: Build and Test Swift Package visionOS
     uses: StanfordSpezi/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
@@ -40,15 +42,36 @@ jobs:
         include:
           - buildConfig: Debug
             artifactname: SpeziOnboarding-visionOS.xcresult
+            resultBundle: SpeziOnboarding-visionOS.xcresult
           - buildConfig: Release
             artifactname: SpeziOnboarding-visionOS-Release.xcresult
+            resultBundle: SpeziOnboarding-visionOS-Release.xcresult
     with:
       runsonlabels: '["macOS", "self-hosted"]'
-      destination: 'platform=visionOS Simulator,name=Apple Vision Pro'
       scheme: SpeziOnboarding
+      destination: 'platform=visionOS Simulator,name=Apple Vision Pro'
       buildConfig: ${{ matrix.buildConfig }}
+      resultBundle: ${{ matrix.resultBundle }}
       artifactname: ${{ matrix.artifactname }}
-      resultBundle: ${{ matrix.artifactname }}
+  buildandtest_macos:
+    name: Build and Test Swift Package macOS
+    uses: StanfordSpezi/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
+    strategy:
+      matrix:
+        include:
+          - buildConfig: Debug
+            artifactname: SpeziOnboarding-macOS.xcresult
+            resultBundle: SpeziOnboarding-macOS.xcresult
+          - buildConfig: Release
+            artifactname: SpeziOnboarding-macOS-Release.xcresult
+            resultBundle: SpeziOnboarding-macOS-Release.xcresult
+    with:
+      runsonlabels: '["macOS", "self-hosted"]'
+      scheme: SpeziOnboarding
+      destination: 'platform=macOS,arch=arm64'
+      buildConfig: ${{ matrix.buildConfig }}
+      resultBundle: ${{ matrix.resultBundle }}
+      artifactname: ${{ matrix.artifactname }}
   buildandtestuitests_ios:
     name: Build and Test UI Tests iOS
     uses: StanfordSpezi/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
@@ -56,34 +79,38 @@ jobs:
       matrix:
         include:
           - buildConfig: Debug
+            resultBundle: TestApp-iOS.xcresult
             artifactname: TestApp-iOS.xcresult
           - buildConfig: Release
+            resultBundle: TestApp-iOS-Release.xcresult
             artifactname: TestApp-iOS-Release.xcresult
     with:
       runsonlabels: '["macOS", "self-hosted"]'
       path: 'Tests/UITests'
       scheme: TestApp
       buildConfig: ${{ matrix.buildConfig }}
+      resultBundle: ${{ matrix.resultBundle }}
       artifactname: ${{ matrix.artifactname }}
-      resultBundle: ${{ matrix.artifactname }}
   buildandtestuitests_ipad:
-    name: Build and Test UI Tests iPad
+    name: Build and Test UI Tests iPadOS
     uses: StanfordSpezi/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
     strategy:
       matrix:
         include:
           - buildConfig: Debug
+            resultBundle: TestApp-iPad.xcresult
             artifactname: TestApp-iPad.xcresult
           - buildConfig: Release
+            resultBundle: TestApp-iPad-Release.xcresult
             artifactname: TestApp-iPad-Release.xcresult
     with:
       runsonlabels: '["macOS", "self-hosted"]'
-      destination: 'platform=iOS Simulator,name=iPad Air (5th generation)'
       path: 'Tests/UITests'
       scheme: TestApp
+      destination: 'platform=iOS Simulator,name=iPad Air (5th generation)'
       buildConfig: ${{ matrix.buildConfig }}
+      resultBundle: ${{ matrix.resultBundle }}
       artifactname: ${{ matrix.artifactname }}
-      resultBundle: ${{ matrix.artifactname }}
   buildandtestuitests_visionos:
     name: Build and Test UI Tests visionOS
     uses: StanfordSpezi/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
@@ -91,20 +118,22 @@ jobs:
       matrix:
         include:
           - buildConfig: Debug
+            resultBundle: TestApp-visionOS.xcresult
             artifactname: TestApp-visionOS.xcresult
           - buildConfig: Release
+            resultBundle: TestApp-visionOS-Release.xcresult
             artifactname: TestApp-visionOS-Release.xcresult
     with:
       runsonlabels: '["macOS", "self-hosted"]'
-      destination: 'platform=visionOS Simulator,name=Apple Vision Pro'
       path: 'Tests/UITests'
       scheme: TestApp
+      destination: 'platform=visionOS Simulator,name=Apple Vision Pro'
       buildConfig: ${{ matrix.buildConfig }}
+      resultBundle: ${{ matrix.resultBundle }}
       artifactname: ${{ matrix.artifactname }}
-      resultBundle: ${{ matrix.artifactname }}
   uploadcoveragereport:
     name: Upload Coverage Report
-    needs: [buildandtest_ios, buildandtest_visionos, buildandtestuitests_ios, buildandtestuitests_ipad, buildandtestuitests_visionos]
+    needs: [buildandtest_ios, buildandtest_visionos, buildandtest_macos, buildandtestuitests_ios, buildandtestuitests_ipad, buildandtestuitests_visionos]
     uses: StanfordSpezi/.github/.github/workflows/create-and-upload-coverage-report.yml@v2
     with:
-      coveragereports: SpeziOnboarding-iOS.xcresult SpeziOnboarding-visionOS.xcresult TestApp-iOS.xcresult TestApp-iPad.xcresult TestApp-visionOS.xcresult
+      coveragereports: 'SpeziOnboarding-iOS.xcresult SpeziOnboarding-visionOS.xcresult SpeziOnboarding-macOS.xcresult TestApp-iOS.xcresult TestApp-iPad.xcresult TestApp-visionOS.xcresult'

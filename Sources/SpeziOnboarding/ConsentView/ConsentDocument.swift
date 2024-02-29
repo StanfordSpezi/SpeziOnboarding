@@ -51,7 +51,11 @@ public struct ConsentDocument: View {
     
     @Environment(\.colorScheme) private var colorScheme
     @State private var name = PersonNameComponents()
+    #if !os(macOS)
     @State private var signature = PKDrawing()
+    #else
+    @State private var signature = String()
+    #endif
     @State private var signatureSize: CGSize = .zero
     @Binding private var viewState: ConsentViewState
     
@@ -80,7 +84,11 @@ public struct ConsentDocument: View {
                     } else {
                         viewState = .base(.idle)
                         /// Reset all strokes if name fields are not complete anymore
+                        #if !os(macOS)
                         signature.strokes.removeAll()
+                        #else
+                        signature.removeAll()
+                        #endif
                     }
                 }
             
@@ -89,6 +97,7 @@ public struct ConsentDocument: View {
     }
     
     private var signatureView: some View {
+        #if !os(macOS)
         SignatureView(signature: $signature, isSigning: $viewState.signing, canvasSize: $signatureSize, name: name)
             .padding(.vertical, 4)
             .disabled(inputFieldsDisabled)
@@ -99,6 +108,18 @@ public struct ConsentDocument: View {
                     viewState = .namesEntered
                 }
             }
+        #else
+        SignatureView(signature: $signature, name: name)
+            .padding(.vertical, 4)
+            .disabled(inputFieldsDisabled)
+            .onChange(of: signature) {
+                if !(signature.isEmpty || (name.givenName?.isEmpty ?? true) || (name.familyName?.isEmpty ?? true)) {
+                    viewState = .signed
+                } else {
+                    viewState = .namesEntered
+                }
+            }
+        #endif
     }
     
     public var body: some View {
@@ -130,9 +151,15 @@ public struct ConsentDocument: View {
                 } else if case .base(let baseViewState) = viewState,
                           case .idle = baseViewState {
                     /// Reset view state to correct one after handling an error view state via `.viewStateAlert()`
-                    if !signature.strokes.isEmpty {
+                    #if !os(macOS)
+                    let isSignatureEmpty = signature.strokes.isEmpty
+                    #else
+                    let isSignatureEmpty = signature.isEmpty
+                    #endif
+                    
+                    if !isSignatureEmpty {
                         viewState = .signed
-                    } else if !((name.givenName?.isEmpty ?? true) || (name.familyName?.isEmpty ?? true)) {
+                    } else if !(name.givenName?.isEmpty ?? true) && !(name.familyName?.isEmpty ?? true) {
                         viewState = .namesEntered
                     }
                 }
@@ -179,6 +206,7 @@ public struct ConsentDocument: View {
 
 /// Extension of `ConsentDocument` enabling the export of the signed consent page.
 extension ConsentDocument {
+    #if !os(macOS)
     /// As the `PKDrawing.image()` function automatically converts the ink color dependent on the used color scheme (light or dark mode),
     /// force the ink used in the `UIImage` of the `PKDrawing` to always be black by adjusting the signature ink according to the color scheme.
     private var blackInkSignatureImage: UIImage {
@@ -206,6 +234,7 @@ extension ConsentDocument {
             scale: scale
         )
     }
+    #endif
     
     /// Exports the signed consent form as a `PDFDocument` via the SwiftUI `ImageRenderer`.
     ///
@@ -286,9 +315,19 @@ extension ConsentDocument {
             ZStack(alignment: .bottomLeading) {
                 SignatureViewBackground(name: name, backgroundColor: .clear)
 
+                #if !os(macOS)
                 Image(uiImage: blackInkSignatureImage)
+                #else
+                Text(signature)
+                    .padding(.bottom, 34)
+                    .padding(.leading, 40)
+                #endif
             }
-            .frame(width: signatureSize.width, height: signatureSize.height)
+                #if !os(macOS)
+                .frame(width: signatureSize.width, height: signatureSize.height)
+                #else
+                .padding(.horizontal, 100)
+                #endif
         }
     }
 }

@@ -49,13 +49,15 @@ struct OnboardingConsentMarkdownRenderingView: View {
             }
                 .buttonStyle(.borderedProminent)
         }
-        .padding()
-        .navigationBarTitleDisplayMode(.inline)
-        .task {
-            self.exportedConsent = try? await standard.loadConsent()
-            // Reset OnboardingDataSource
-            await standard.store(consent: .init())
-        }
+            .padding()
+            #if !os(macOS)
+            .navigationBarTitleDisplayMode(.inline)
+            #endif
+            .task {
+                self.exportedConsent = try? await standard.loadConsent()
+                // Reset OnboardingDataSource
+                await standard.store(consent: .init())
+            }
     }
 }
 

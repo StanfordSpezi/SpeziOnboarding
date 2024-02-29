@@ -13,11 +13,19 @@ import SwiftUI
 struct SignatureViewBackground: View {
     private let name: PersonNameComponents
     private let lineOffset: CGFloat
+    #if !os(macOS)
     private let backgroundColor: UIColor
+    #else
+    private let backgroundColor: NSColor
+    #endif
     
     
     var body: some View {
+        #if !os(macOS)
         Color(uiColor: backgroundColor)
+        #else
+        Color(nsColor: backgroundColor)
+        #endif
         Rectangle()
             .fill(.secondary)
             .frame(maxWidth: .infinity, maxHeight: 1)
@@ -46,6 +54,7 @@ struct SignatureViewBackground: View {
     ///   - name: The name that is displayed under the signature line.
     ///   - lineOffset: Defines the distance of the signature line from the bottom of the view. The default value is 30.
     ///   - backgroundColor: The color of the background of the signature canvas.
+    #if !os(macOS)
     init(
         name: PersonNameComponents = PersonNameComponents(),
         lineOffset: CGFloat = 30,
@@ -55,4 +64,15 @@ struct SignatureViewBackground: View {
         self.lineOffset = lineOffset
         self.backgroundColor = backgroundColor
     }
+    #else
+    init(
+        name: PersonNameComponents = PersonNameComponents(),
+        lineOffset: CGFloat = 30,
+        backgroundColor: NSColor = .secondarySystemFill
+    ) {
+        self.name = name
+        self.lineOffset = lineOffset
+        self.backgroundColor = backgroundColor
+    }
+    #endif
 }

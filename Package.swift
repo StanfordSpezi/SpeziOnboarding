@@ -16,13 +16,14 @@ let package = Package(
     defaultLocalization: "en",
     platforms: [
         .iOS(.v17),
-        .visionOS(.v1)
+        .visionOS(.v1),
+        .macOS(.v14)
     ],
     products: [
         .library(name: "SpeziOnboarding", targets: ["SpeziOnboarding"])
     ],
     dependencies: [
-        .package(url: "https://github.com/StanfordSpezi/Spezi", from: "1.2.0"),
+        .package(url: "https://github.com/StanfordSpezi/Spezi", from: "1.2.1"),
         .package(url: "https://github.com/StanfordSpezi/SpeziViews", from: "1.3.0")
     ],
     targets: [
