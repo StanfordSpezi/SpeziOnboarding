@@ -55,11 +55,24 @@ final class OnboardingTests: XCTestCase { // swiftlint:disable:this type_body_le
         XCTAssert(app.staticTexts["Last Name"].waitForExistence(timeout: 2))
         try app.textFields["Enter your last name ..."].enter(value: "Stanford")
         
-        XCTAssert(app.staticTexts["Name: Leland Stanford"].waitForExistence(timeout: 2))
-        app.staticTexts["Name: Leland Stanford"].firstMatch.swipeUp()
+        hitConsentButton(app)
         
-        XCTAssert(app.buttons["I Consent"].waitForExistence(timeout: 2))
-        app.buttons["I Consent"].tap()
+        XCTAssert(app.staticTexts["Name: Leland Stanford"].waitForExistence(timeout: 2))
+        
+        hitConsentButton(app)
+        
+        #if !os(macOS)
+        app.staticTexts["Name: Leland Stanford"].swipeRight()
+        XCTAssert(app.buttons["Undo"].waitForExistence(timeout: 2))
+        app.buttons["Undo"].tap()
+        XCTAssert(app.scrollViews["Signature Field"].waitForExistence(timeout: 2))
+        app.scrollViews["Signature Field"].swipeRight()
+        #else
+        XCTAssert(app.textFields["Signature Field"].waitForExistence(timeout: 2))
+        try app.textFields["Signature Field"].enter(value: "Leland Stanford")
+        #endif
+        
+        hitConsentButton(app)
         
         // Check if the consent export was successful
         XCTAssert(app.staticTexts["Consent PDF rendering exists"].waitForExistence(timeout: 2))
@@ -166,14 +179,19 @@ final class OnboardingTests: XCTestCase { // swiftlint:disable:this type_body_le
         hitConsentButton(app)
         
         XCTAssert(app.staticTexts["Name: Leland Stanford"].waitForExistence(timeout: 2))
+        
+        hitConsentButton(app)
+        
+        #if !os(macOS)
         app.staticTexts["Name: Leland Stanford"].swipeRight()
         XCTAssert(app.buttons["Undo"].waitForExistence(timeout: 2))
         app.buttons["Undo"].tap()
-        
-        hitConsentButton(app)
-
         XCTAssert(app.scrollViews["Signature Field"].waitForExistence(timeout: 2))
         app.scrollViews["Signature Field"].swipeRight()
+        #else
+        XCTAssert(app.textFields["Signature Field"].waitForExistence(timeout: 2))
+        try app.textFields["Signature Field"].enter(value: "Leland Stanford")
+        #endif
         
         hitConsentButton(app)
         
@@ -219,20 +237,26 @@ final class OnboardingTests: XCTestCase { // swiftlint:disable:this type_body_le
         hitConsentButton(app)
         
         XCTAssert(app.staticTexts["Name: Leland Stanford"].waitForExistence(timeout: 2))
+        
+        hitConsentButton(app)
+        
+        #if !os(macOS)
         app.staticTexts["Name: Leland Stanford"].swipeRight()
         XCTAssert(app.buttons["Undo"].waitForExistence(timeout: 2))
         app.buttons["Undo"].tap()
-        
-        hitConsentButton(app)
-
         XCTAssert(app.scrollViews["Signature Field"].waitForExistence(timeout: 2))
         app.scrollViews["Signature Field"].swipeRight()
+        #else
+        XCTAssert(app.textFields["Signature Field"].waitForExistence(timeout: 2))
+        try app.textFields["Signature Field"].enter(value: "Leland Stanford")
+        #endif
         
         hitConsentButton(app)
         
         XCTAssert(app.staticTexts["Consent PDF rendering exists"].waitForExistence(timeout: 2))
     }
     
+    #if !os(macOS)  // Only test export on non macOS platforms
     func testOnboardingConsentPDFExport() throws {  // swiftlint:disable:this function_body_length
         let app = XCUIApplication()
         let filesApp = XCUIApplication(bundleIdentifier: "com.apple.DocumentsApp")
@@ -252,8 +276,18 @@ final class OnboardingTests: XCTestCase { // swiftlint:disable:this type_body_le
         XCTAssert(app.staticTexts["Last Name"].waitForExistence(timeout: 2))
         try app.textFields["Enter your last name ..."].enter(value: "Stanford")
         
+        XCTAssert(app.staticTexts["Name: Leland Stanford"].waitForExistence(timeout: 2))
+        
+        #if !os(macOS)
+        app.staticTexts["Name: Leland Stanford"].swipeRight()
+        XCTAssert(app.buttons["Undo"].waitForExistence(timeout: 2))
+        app.buttons["Undo"].tap()
         XCTAssert(app.scrollViews["Signature Field"].waitForExistence(timeout: 2))
         app.scrollViews["Signature Field"].swipeRight()
+        #else
+        XCTAssert(app.textFields["Signature Field"].waitForExistence(timeout: 2))
+        try app.textFields["Signature Field"].enter(value: "Leland Stanford")
+        #endif
         
         sleep(1)
                 
@@ -285,7 +319,9 @@ final class OnboardingTests: XCTestCase { // swiftlint:disable:this type_body_le
             // Wait until share sheet closed and back on the consent form screen
             XCTAssert(app.staticTexts["Consent"].waitForExistence(timeout: 10))
             
+            #if !os(macOS)
             XCUIDevice.shared.press(.home)
+            #endif
             
             // Launch the Files app
             filesApp.launch()
@@ -333,6 +369,7 @@ final class OnboardingTests: XCTestCase { // swiftlint:disable:this type_body_le
         fileView.buttons["Done"].tap()
 #endif
     }
+    #endif
     
     func testOnboardingCustomViews() throws {
         let app = XCUIApplication()
