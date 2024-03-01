@@ -31,7 +31,9 @@ struct OnboardingWelcomeTestView: View {
                 path.nextStep()
             }
         )
-        .navigationBarTitleDisplayMode(.inline)
+            #if !os(macOS)
+            .navigationBarTitleDisplayMode(.inline)
+            #endif
     }
 }
 
