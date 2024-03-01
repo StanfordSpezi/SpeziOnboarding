@@ -24,7 +24,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/StanfordSpezi/Spezi", from: "1.2.1"),
-        .package(url: "https://github.com/StanfordSpezi/SpeziViews", from: "1.3.0")
+        .package(url: "https://github.com/StanfordSpezi/SpeziViews", from: "1.3.1")
     ],
     targets: [
         .target(
