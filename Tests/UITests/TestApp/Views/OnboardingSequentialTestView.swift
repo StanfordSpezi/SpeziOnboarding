@@ -29,7 +29,9 @@ struct OnboardingSequentialTestView: View {
         ) {
             path.nextStep()
         }
-        .navigationBarTitleDisplayMode(.inline)
+            #if !os(macOS)
+            .navigationBarTitleDisplayMode(.inline)
+            #endif
     }
 }
 

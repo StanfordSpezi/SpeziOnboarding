@@ -102,7 +102,7 @@ public struct OnboardingConsentView: View {
             }
         }
             .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
+                ToolbarItem(placement: .primaryAction) {
                     Button(action: {
                         viewState = .export
                         willShowShareSheet = true
@@ -118,18 +118,39 @@ public struct OnboardingConsentView: View {
                 }
             }
             .sheet(isPresented: $showShareSheet) {
-                switch viewState {
-                case .exported(let exportedConsentDocumented):
+                if case .exported(let exportedConsentDocumented) = viewState {
+                    #if !os(macOS)
                     ShareSheet(sharedItem: exportedConsentDocumented)
                         .presentationDetents([.medium])
                         .task {
                             willShowShareSheet = false
                         }
-                default:
+                    #endif
+                } else {
                     ProgressView()
                         .padding()
                 }
             }
+            #if os(macOS)
+            .onChange(of: showShareSheet) { _, isPresented in
+                if isPresented,
+                   case .exported(let exportedConsentDocumented) = viewState {
+                    let shareSheet = ShareSheet(sharedItem: exportedConsentDocumented)
+                    shareSheet.show()
+
+                    showShareSheet = false
+                }
+            }
+            // `NSSharingServicePicker` doesn't provide a completion handler as `UIActivityViewController` does,
+            // therefore necessitating the deletion of the temporary file on disappearing.
+            .onDisappear {
+                try? FileManager.default.removeItem(
+                    at: FileManager.default.temporaryDirectory.appendingPathComponent(
+                        LocalizedStringResource("FILE_NAME_EXPORTED_CONSENT_FORM", bundle: .atURL(from: .module)).localizedString() + ".pdf"
+                    )
+                )
+            }
+            #endif
     }
     
     private var actionButtonsEnabled: Bool {

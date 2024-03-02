@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import PDFKit
 import PencilKit
 import SpeziPersonalInfo
 import SpeziViews
@@ -42,36 +41,36 @@ public struct ConsentDocument: View {
     /// The maximum width such that the drawing canvas fits onto the PDF.
     static let maxWidthDrawing: CGFloat = 550
 
-    private let asyncMarkdown: () async -> Data
+    let asyncMarkdown: () async -> Data
     private let givenNameTitle: LocalizedStringResource
     private let givenNamePlaceholder: LocalizedStringResource
     private let familyNameTitle: LocalizedStringResource
     private let familyNamePlaceholder: LocalizedStringResource
-    private let exportConfiguration: ExportConfiguration
+    let exportConfiguration: ExportConfiguration
     
-    @Environment(\.colorScheme) private var colorScheme
-    @State private var name = PersonNameComponents()
-    @State private var signature = PKDrawing()
-    @State private var signatureSize: CGSize = .zero
+    @Environment(\.colorScheme) var colorScheme
+    @State var name = PersonNameComponents()
+    #if !os(macOS)
+    @State var signature = PKDrawing()
+    #else
+    @State var signature = String()
+    #endif
+    @State var signatureSize: CGSize = .zero
     @Binding private var viewState: ConsentViewState
     
     
     private var nameView: some View {
         VStack {
             Divider()
-            Grid(horizontalSpacing: 15) {
-                NameFieldRow(name: $name, for: \.givenName) {
-                    Text(givenNameTitle)
-                } label: {
-                    Text(givenNamePlaceholder)
+            Group {
+                #if !os(macOS)
+                nameInputView
+                #else
+                // Need to wrap the `NameFieldRow` from SpeziViews into a SwiftUI `Form, otherwise the Label is omitted
+                Form {
+                    nameInputView
                 }
-                Divider()
-                    .gridCellUnsizedAxes(.horizontal)
-                NameFieldRow(name: $name, for: \.familyName) {
-                    Text(familyNameTitle)
-                } label: {
-                    Text(familyNamePlaceholder)
-                }
+                #endif
             }
                 .disabled(inputFieldsDisabled)
                 .onChange(of: name) {
@@ -79,8 +78,12 @@ public struct ConsentDocument: View {
                         viewState = .namesEntered
                     } else {
                         viewState = .base(.idle)
-                        /// Reset all strokes if name fields are not complete anymore
+                        // Reset all strokes if name fields are not complete anymore
+                        #if !os(macOS)
                         signature.strokes.removeAll()
+                        #else
+                        signature.removeAll()
+                        #endif
                     }
                 }
             
@@ -88,12 +91,40 @@ public struct ConsentDocument: View {
         }
     }
     
+    private var nameInputView: some View {
+        Grid(horizontalSpacing: 15) {
+            NameFieldRow(name: $name, for: \.givenName) {
+                Text(givenNameTitle)
+            } label: {
+                Text(givenNamePlaceholder)
+            }
+            Divider()
+                .gridCellUnsizedAxes(.horizontal)
+            NameFieldRow(name: $name, for: \.familyName) {
+                Text(familyNameTitle)
+            } label: {
+                Text(familyNamePlaceholder)
+            }
+        }
+    }
+    
     private var signatureView: some View {
-        SignatureView(signature: $signature, isSigning: $viewState.signing, canvasSize: $signatureSize, name: name)
+        Group {
+            #if !os(macOS)
+            SignatureView(signature: $signature, isSigning: $viewState.signing, canvasSize: $signatureSize, name: name)
+            #else
+            SignatureView(signature: $signature, name: name)
+            #endif
+        }
             .padding(.vertical, 4)
             .disabled(inputFieldsDisabled)
             .onChange(of: signature) {
-                if !(signature.strokes.isEmpty || (name.givenName?.isEmpty ?? true) || (name.familyName?.isEmpty ?? true)) {
+                #if !os(macOS)
+                let isSignatureEmpty = signature.strokes.isEmpty
+                #else
+                let isSignatureEmpty = signature.isEmpty
+                #endif
+                if !(isSignatureEmpty || (name.givenName?.isEmpty ?? true) || (name.familyName?.isEmpty ?? true)) {
                     viewState = .signed
                 } else {
                     viewState = .namesEntered
@@ -114,7 +145,7 @@ public struct ConsentDocument: View {
                     signatureView
                 }
             }
-                .frame(maxWidth: Self.maxWidthDrawing) // we limit the max view size so it fits on the PDF
+                .frame(maxWidth: Self.maxWidthDrawing) // Limit the max view size so it fits on the PDF
         }
             .transition(.opacity)
             .animation(.easeInOut, value: viewState == .namesEntered)
@@ -129,15 +160,21 @@ public struct ConsentDocument: View {
                     }
                 } else if case .base(let baseViewState) = viewState,
                           case .idle = baseViewState {
-                    /// Reset view state to correct one after handling an error view state via `.viewStateAlert()`
-                    if !signature.strokes.isEmpty {
+                    // Reset view state to correct one after handling an error view state via `.viewStateAlert()`
+                    #if !os(macOS)
+                    let isSignatureEmpty = signature.strokes.isEmpty
+                    #else
+                    let isSignatureEmpty = signature.isEmpty
+                    #endif
+                    
+                    if !isSignatureEmpty {
                         viewState = .signed
-                    } else if !((name.givenName?.isEmpty ?? true) || (name.familyName?.isEmpty ?? true)) {
+                    } else if !(name.givenName?.isEmpty ?? true) || !(name.familyName?.isEmpty ?? true) {
                         viewState = .namesEntered
                     }
                 }
             }
-            .viewStateAlert(state: $viewState.base)
+                .viewStateAlert(state: $viewState.base)
     }
     
     private var inputFieldsDisabled: Bool {
@@ -173,123 +210,6 @@ public struct ConsentDocument: View {
         self.familyNameTitle = familyNameTitle
         self.familyNamePlaceholder = familyNamePlaceholder
         self.exportConfiguration = exportConfiguration
-    }
-}
-
-
-/// Extension of `ConsentDocument` enabling the export of the signed consent page.
-extension ConsentDocument {
-    /// As the `PKDrawing.image()` function automatically converts the ink color dependent on the used color scheme (light or dark mode),
-    /// force the ink used in the `UIImage` of the `PKDrawing` to always be black by adjusting the signature ink according to the color scheme.
-    private var blackInkSignatureImage: UIImage {
-        var updatedDrawing = PKDrawing()
-        
-        for stroke in signature.strokes {
-            let blackStroke = PKStroke(
-                ink: PKInk(stroke.ink.inkType, color: colorScheme == .light ? .black : .white),
-                path: stroke.path,
-                transform: stroke.transform,
-                mask: stroke.mask
-            )
-
-            updatedDrawing.strokes.append(blackStroke)
-        }
-
-        #if os(iOS)
-        let scale = UIScreen.main.scale
-        #else
-        let scale = 3.0 // retina scale is default
-        #endif
-
-        return updatedDrawing.image(
-            from: .init(x: 0, y: 0, width: signatureSize.width, height: signatureSize.height),
-            scale: scale
-        )
-    }
-    
-    /// Exports the signed consent form as a `PDFDocument` via the SwiftUI `ImageRenderer`.
-    ///
-    /// Renders the `PDFDocument` according to the specified ``ConsentDocument/ExportConfiguration``.
-    ///
-    /// - Returns: The exported consent form in PDF format as a PDFKit `PDFDocument`
-    @MainActor
-    private func export() async -> PDFDocument? {
-        let markdown = await asyncMarkdown()
-        
-        let markdownString = (try? AttributedString(
-            markdown: markdown,
-            options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace)
-        )) ?? AttributedString(String(localized: "MARKDOWN_LOADING_ERROR", bundle: .module))
-        
-        let renderer = ImageRenderer(content: exportBody(markdown: markdownString))
-        let paperSize = CGSize(
-            width: exportConfiguration.paperSize.dimensions.width,
-            height: exportConfiguration.paperSize.dimensions.height
-        )
-        renderer.proposedSize = .init(paperSize)
-        
-        return await withCheckedContinuation { continuation in
-            renderer.render { _, context in
-                var box = CGRect(origin: .zero, size: paperSize)
-                
-                /// Create in-memory `CGContext` that stores the PDF
-                guard let mutableData = CFDataCreateMutable(kCFAllocatorDefault, 0),
-                      let consumer = CGDataConsumer(data: mutableData),
-                      let pdf = CGContext(consumer: consumer, mediaBox: &box, nil) else {
-                    continuation.resume(returning: nil)
-                    return
-                }
-                
-                pdf.beginPDFPage(nil)
-                pdf.translateBy(x: 0, y: 0)
-                
-                context(pdf)
-                
-                pdf.endPDFPage()
-                pdf.closePDF()
-                
-                continuation.resume(returning: PDFDocument(data: mutableData as Data))
-            }
-        }
-    }
-    
-    /// Creates a representation of the consent form that is ready to be exported via the SwiftUI `ImageRenderer`.
-    ///
-    /// - Parameters:
-    ///   - markdown: The markdown consent content as an `AttributedString`.
-    ///
-    /// - Returns: A SwiftUI `View` representation of the consent content and signature.
-    ///
-    /// - Note: This function avoids the use of asynchronous operations.
-    /// Asynchronous tasks are incompatible with SwiftUI's `ImageRenderer`,
-    /// which expects all rendering processes to be synchronous.
-    private func exportBody(markdown: AttributedString) -> some View {
-        VStack {
-            if exportConfiguration.includingTimestamp {
-                HStack {
-                    Spacer()
-
-                    Text("EXPORTED_TAG", bundle: .module)
-                        + Text(verbatim: ": \(DateFormatter.localizedString(from: Date(), dateStyle: .medium, timeStyle: .short))")
-                }
-                .font(.caption)
-                .padding()
-            }
-            
-            OnboardingTitleView(title: exportConfiguration.consentTitle)
-            
-            Text(markdown)
-                .padding()
-            
-            Spacer()
-            
-            ZStack(alignment: .bottomLeading) {
-                SignatureViewBackground(name: name, backgroundColor: .clear)
-
-                Image(uiImage: blackInkSignatureImage)
-            }
-            .frame(width: signatureSize.width, height: signatureSize.height)
-        }
     }
 }
 

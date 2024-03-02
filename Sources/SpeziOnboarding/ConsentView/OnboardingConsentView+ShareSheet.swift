@@ -8,16 +8,21 @@
 
 import PDFKit
 import SwiftUI
+#if os(macOS)
+import AppKit
+#else
 import UIKit
+#endif
 
 
 extension OnboardingConsentView {
+    #if !os(macOS)
     struct ShareSheet: UIViewControllerRepresentable {
         let sharedItem: PDFDocument
 
         
         func makeUIViewController(context: Context) -> UIActivityViewController {
-            /// Note: Need to write down the PDF to storage as in-memory PDFs are not recognized properly
+            // Note: Need to write down the PDF to storage as in-memory PDFs are not recognized properly
             let temporaryPath = FileManager.default.temporaryDirectory.appendingPathComponent(
                 LocalizedStringResource("FILE_NAME_EXPORTED_CONSENT_FORM", bundle: .atURL(from: .module)).localizedString() + ".pdf"
             )
@@ -36,4 +41,25 @@ extension OnboardingConsentView {
 
         func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
     }
+    #else
+    struct ShareSheet {
+        let sharedItem: PDFDocument
+
+
+        func show() {
+            // Note: Need to write down the PDF to storage as in-memory PDFs are not recognized properly
+            let temporaryPath = FileManager.default.temporaryDirectory.appendingPathComponent(
+                LocalizedStringResource("FILE_NAME_EXPORTED_CONSENT_FORM", bundle: .atURL(from: .module)).localizedString() + ".pdf"
+            )
+            try? sharedItem.dataRepresentation()?.write(to: temporaryPath)
+
+            let sharingServicePicker = NSSharingServicePicker(items: [temporaryPath])
+
+            // Present the sharing service picker
+            if let keyWindow = NSApp.keyWindow, let contentView = keyWindow.contentView {
+                sharingServicePicker.show(relativeTo: contentView.bounds, of: contentView, preferredEdge: .minY)
+            }
+        }
+    }
+    #endif
 }

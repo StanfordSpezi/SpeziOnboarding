@@ -26,11 +26,15 @@ import SwiftUI
 /// )
 /// ```
 public struct SignatureView: View {
+    #if !os(macOS)
     @Environment(\.undoManager) private var undoManager
     @Binding private var signature: PKDrawing
-    @Binding private var isSigning: Bool
     @Binding private var canvasSize: CGSize
+    @Binding private var isSigning: Bool
     @State private var canUndo = false
+    #else
+    @Binding private var signature: String
+    #endif
     private let name: PersonNameComponents
     private let lineOffset: CGFloat
     
@@ -39,7 +43,8 @@ public struct SignatureView: View {
         VStack {
             ZStack(alignment: .bottomLeading) {
                 SignatureViewBackground(name: name, lineOffset: lineOffset)
-
+                
+                #if !os(macOS)
                 CanvasView(drawing: $signature, isDrawing: $isSigning, showToolPicker: .constant(false))
                     .accessibilityLabel(Text("SIGNATURE_FIELD", bundle: .module))
                     .accessibilityAddTraits(.allowsDirectInteraction)
@@ -47,8 +52,13 @@ public struct SignatureView: View {
                         // for some reason, the preference won't update on visionOS if placed in a parent view
                         self.canvasSize = size
                     }
+                #else
+                signatureTextField
+                #endif
             }
                 .frame(height: 120)
+            
+            #if !os(macOS)
             Button(
                 action: {
                     undoManager?.undo()
@@ -59,7 +69,9 @@ public struct SignatureView: View {
                 }
             )
                 .disabled(!canUndo)
+            #endif
         }
+            #if !os(macOS)
             .onChange(of: isSigning) {
                 Task { @MainActor in
                     canUndo = undoManager?.canUndo ?? false
@@ -67,9 +79,27 @@ public struct SignatureView: View {
             }
             .transition(.opacity)
             .animation(.easeInOut, value: canUndo)
+            #endif
     }
     
+    #if os(macOS)
+    private var signatureTextField: some View {
+        TextField(text: $signature) {
+            Text("SIGNATURE_FIELD", bundle: .module)
+        }
+            .accessibilityLabel(Text("SIGNATURE_FIELD", bundle: .module))
+            .accessibilityAddTraits(.allowsDirectInteraction)
+            .font(.custom("Snell Roundhand", size: 32))
+            .textFieldStyle(PlainTextFieldStyle())
+            .background(Color.clear)
+            .padding(.bottom, lineOffset + 2)
+            .padding(.leading, 46)
+            .padding(.trailing, 24)
+    }
+    #endif
     
+    
+    #if !os(macOS)
     /// Creates a new instance of an ``SignatureView``.
     /// - Parameters:
     ///   - signature: A `Binding` containing the current signature as an `PKDrawing`.
@@ -90,6 +120,22 @@ public struct SignatureView: View {
         self.name = name
         self.lineOffset = lineOffset
     }
+    #else
+    /// Creates a new instance of an ``SignatureView``.
+    /// - Parameters:
+    ///   - signature: A `Binding` containing the current text-based signature as a `String`.
+    ///   - name: The name that is displayed under the signature line.
+    ///   - lineOffset: Defines the distance of the signature line from the bottom of the view. The default value is 30.
+    init(
+        signature: Binding<String> = .constant(String()),
+        name: PersonNameComponents = PersonNameComponents(),
+        lineOffset: CGFloat = 30
+    ) {
+        self._signature = signature
+        self.name = name
+        self.lineOffset = lineOffset
+    }
+    #endif
 }
 
 

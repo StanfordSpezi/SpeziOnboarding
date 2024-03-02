@@ -288,7 +288,11 @@ public struct SequentialOnboardingView<TitleView: View>: View {
                 .padding(.bottom, 12)
                 .background {
                     RoundedRectangle(cornerRadius: 16)
+                        #if !os(macOS)
                         .fill(Color(.systemGroupedBackground))
+                        #else
+                        .fill(Color(.windowBackgroundColor))
+                        #endif
                 }
         }
     }
