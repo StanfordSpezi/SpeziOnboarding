@@ -17,9 +17,12 @@ import SwiftUI
 /// - Tip: The ``SequentialOnboardingView`` provides an alternative to provide
 /// sequential information that is displayed step by step.
 ///
+/// ### Usage
+///
 /// The following example demonstrates the usage of the `OnboardingView` using its default configuration. The default configuration divides up
 /// each screen into sections and allows you to add a title and subtitle for the overall view itself, as well as create separate information areas. Finally,
 /// there is an option for an action that should be performed (which can be used to go to the next screen in the onboarding flow).
+///
 /// ```swift
 /// OnboardingView(
 ///     title: "Title",
@@ -42,7 +45,7 @@ import SwiftUI
 /// }
 /// ```
 ///
-///  In implementation, you can treat the titleView, contentView, and actionView as regular views. However, to simplify things, you can also use the built-in OnboardingTitleView and built-in OnboardingActionsView, as demonstrated below.
+///  In implementation, you can treat the titleView, contentView, and actionView as regular SwiftUI Views. However, to simplify things, you can also use the built-in ``OnboardingTitleView`` and built-in ``OnboardingActionsView``, as demonstrated below.
 /// ``` swift
 /// OnboardingView(
 ///     titleView: {
