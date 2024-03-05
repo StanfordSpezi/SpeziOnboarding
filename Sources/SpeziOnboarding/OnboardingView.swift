@@ -101,6 +101,7 @@ public struct OnboardingView<TitleView: View, ContentView: View, ActionView: Vie
     
     
     /// Creates a customized `OnboardingView` allowing a complete customization of the  `OnboardingView`.
+    /// 
     /// - Parameters:
     ///   - titleView: The title view displayed at the top.
     ///   - contentView: The content view.
@@ -117,6 +118,7 @@ public struct OnboardingView<TitleView: View, ContentView: View, ActionView: Vie
     
     /// Creates the default style of the `OnboardingView` uses a combination of an ``OnboardingTitleView``, ``OnboardingInformationView``,
     /// and ``OnboardingActionsView``.
+    ///
     /// - Parameters:
     ///   - title: The localized title of the ``OnboardingView``.
     ///   - subtitle: The localized subtitle of the ``OnboardingView``.
