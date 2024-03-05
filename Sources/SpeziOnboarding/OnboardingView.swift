@@ -19,7 +19,7 @@ import SwiftUI
 ///
 /// ### Usage
 ///
-/// The following example demonstrates the usage of the `OnboardingView` using its default configuration. The default configuration divides up
+/// The following example demonstrates the usage of the ``OnboardingView`` using its default configuration. The default configuration divides up
 /// each screen into sections and allows you to add a title and subtitle for the overall view itself, as well as create separate information areas. Finally,
 /// there is an option for an action that should be performed (which can be used to go to the next screen in the onboarding flow).
 ///
