@@ -17,7 +17,12 @@ import SwiftUI
 /// - Tip: The ``SequentialOnboardingView`` provides an alternative to provide
 /// sequential information that is displayed step by step.
 ///
-/// The following example demonstrates the usage of the `OnboardingView` using its default configuration.
+/// ### Usage
+///
+/// The following example demonstrates the usage of the ``OnboardingView`` using its default configuration. The default configuration divides up
+/// each screen into sections and allows you to add a title and subtitle for the overall view itself, as well as create separate information areas. Finally,
+/// there is an option for an action that should be performed (which can be used to go to the next screen in the onboarding flow).
+///
 /// ```swift
 /// OnboardingView(
 ///     title: "Title",
@@ -38,6 +43,32 @@ import SwiftUI
 /// ) {
 ///     // Action that should be performed on pressing the "Continue" button ...
 /// }
+/// ```
+///
+/// In implementation, you can treat the titleView, contentView, and actionView as regular SwiftUI Views. However, to simplify things, you can also use the built-in ``OnboardingTitleView`` and built-in ``OnboardingActionsView``, as demonstrated below.
+/// ``` swift
+/// OnboardingView(
+///     titleView: {
+///         OnboardingTitleView(
+///             title: "Title",
+///             subtitle: "Subtitle"
+///         )
+///     },
+///     contentView: {
+///         VStack {
+///             Text("This is the onboarding content.")
+///                 .font(.headline)
+///         }
+///     },
+///     actionView: {
+///         OnboardingActionsView (
+///             Text: "Action Text",
+///             Action: {
+///                 // Desired Action
+///             }
+///         )
+///     }
+/// )
 /// ```
 public struct OnboardingView<TitleView: View, ContentView: View, ActionView: View>: View {
     private let titleView: TitleView
@@ -70,6 +101,7 @@ public struct OnboardingView<TitleView: View, ContentView: View, ActionView: Vie
     
     
     /// Creates a customized `OnboardingView` allowing a complete customization of the  `OnboardingView`.
+    /// 
     /// - Parameters:
     ///   - titleView: The title view displayed at the top.
     ///   - contentView: The content view.
