@@ -55,7 +55,13 @@ struct OnboardingStartTestView: View {
             } label: {
                 Text("Custom Onboarding View 2")
             }
-            
+
+            Button {
+                path.append(identifiableView: OnboardingIdentifiableTestViewDefault())
+            } label: {
+                Text("Onboarding Identifiable View")
+            }
+
             Spacer()
                 .frame(height: 8)
             

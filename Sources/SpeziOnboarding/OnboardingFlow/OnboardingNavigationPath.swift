@@ -176,7 +176,25 @@ public class OnboardingNavigationPath {
         
         appendToInternalNavigationPath(of: customOnboardingStepIdentifier)
     }
-    
+
+    /// Moves the navigation path to the custom identifiable view.
+    ///
+    /// - Note: The custom identifiable `View` does not have to be declared within the ``OnboardingStack``.
+    ///     Resulting from that, the internal state of the ``OnboardingNavigationPath`` is still referencing to the last regular `OnboardingStep`.
+    ///
+    /// - Parameters:
+    ///   - identifiableView: An instance of ``OnboardingIdentifiableView`` that should be shown next in the onboarding flow.
+    ///     It isn't required to declare this view within the ``OnboardingStack``.
+    public func append(identifiableView: any OnboardingIdentifiableView) {
+        let customOnboardingStepIdentifier = OnboardingStepIdentifier(
+            fromIdentifiableView: identifiableView,
+            custom: true
+        )
+        customOnboardingSteps[customOnboardingStepIdentifier] = identifiableView
+
+        appendToInternalNavigationPath(of: customOnboardingStepIdentifier)
+    }
+
     /// Removes the last element on top of the navigation path.
     ///
     /// This method allows to manually move backwards within the onboarding navigation flow.
