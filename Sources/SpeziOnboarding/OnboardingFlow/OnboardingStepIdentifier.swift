@@ -28,4 +28,9 @@ struct OnboardingStepIdentifier: Hashable, Codable {
         self.onboardingStepType = String(describing: type(of: view))
         self.custom = custom
     }
+
+    init(fromIdentifiableView view: any OnboardingIdentifiableView, custom: Bool = false) {
+        self.onboardingStepType = view.id
+        self.custom = custom
+    }
 }
