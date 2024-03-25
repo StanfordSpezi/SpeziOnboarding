@@ -184,29 +184,40 @@ public class OnboardingNavigationPath {
     /// - Parameters:
     ///   - views: The updated `View`s from the ``OnboardingStack``.
     func updateViews(with views: [any View]) {
-        // Only allow view updates as long as the first onboarding view is shown.
-        // Without this condition, the stored onboarding steps would continue to be updated when conditionals declared
-        // within the ``OnboardingStack`` change their outcome during the onboarding flow (e.g. when HealthKit permissions are granted during the onboarding),
-        // making it complex to keep track of the internal state of the navigation.
-        if currentOnboardingStep == onboardingStepsOrder.first {
-            self.onboardingSteps.removeAll(keepingCapacity: true)
-            self.onboardingStepsOrder.removeAll(keepingCapacity: true)
-            
-            for view in views {
-                let onboardingStepIdentifier = OnboardingStepIdentifier(fromView: view)
-                
-                guard self.onboardingSteps[onboardingStepIdentifier] == nil else {
-                    preconditionFailure("""
+        // Only allow view updates to views ahead of the current onboarding step.
+        // Without this limitation, attempts to navigate backwards or dismiss the currently displayed onboarding step
+        // (for example, after receiving HealthKit authorizations) could lead to unintended behavior.
+        let currentStepIndex = if let currentOnboardingStep {
+            onboardingStepsOrder.firstIndex(of: currentOnboardingStep) ?? 0
+        } else {
+            0
+        }
+
+        // Remove all onboarding steps after the current onboarding step
+        let nextStepIndex = currentStepIndex + 1
+        if nextStepIndex < onboardingStepsOrder.count {
+            self.onboardingStepsOrder.removeSubrange(nextStepIndex...)
+            self.onboardingSteps = onboardingSteps.filter { onboardingStepsOrder.contains($0.key) }
+        }
+
+        for view in views {
+            let onboardingStepIdentifier = OnboardingStepIdentifier(fromView: view)
+            let stepIsAfterCurrentStep = !self.onboardingStepsOrder.contains(onboardingStepIdentifier)
+            guard stepIsAfterCurrentStep else {
+                continue
+            }
+
+            guard self.onboardingSteps[onboardingStepIdentifier] == nil else {
+                preconditionFailure("""
                     SpeziOnboarding: Duplicate Onboarding step of type `\(onboardingStepIdentifier.onboardingStepType)` identified.
                     Ensure unique Onboarding view instances within the `OnboardingStack`!
                     """)
-                }
-                self.onboardingStepsOrder.append(onboardingStepIdentifier)
-                self.onboardingSteps[onboardingStepIdentifier] = view
             }
-            
-            onboardingComplete()
+
+            self.onboardingStepsOrder.append(onboardingStepIdentifier)
+            self.onboardingSteps[onboardingStepIdentifier] = view
         }
+        onboardingComplete()
     }
     
     /// Internal function used to navigate to the respective onboarding `View` via the `NavigationStack.navigationDestination(for:)`,
