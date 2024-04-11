@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import OrderedCollections
 import SwiftUI
 
 
@@ -54,15 +55,23 @@ public class OnboardingNavigationPath {
     /// Indicates if the onboarding flow is completed, meaning the last view declared within the ``OnboardingStack`` is completed.
     private let complete: Binding<Bool>?
 
-    /// Stores all onboarding views as declared within the ``OnboardingStack``.
-    private var onboardingSteps: [OnboardingStepIdentifier: any View] = [:]
+    /// Stores all onboarding views as declared within the ``OnboardingStack`` and keep them in order.
+    private var onboardingSteps: OrderedDictionary<OnboardingStepIdentifier, any View> = [:]
     /// Stores all custom onboarding views that are appended to the `OnboardingNavigationPath`
     /// via the ``append(customView:)`` or ``append(customViewInit:)`` instance methods
     private var customOnboardingSteps: [OnboardingStepIdentifier: any View] = [:]
-    /// Stores all `OnboardingStepIdentifier`s in-order as declared by the onboarding views within the ``OnboardingStack``.
-    private var onboardingStepsOrder: [OnboardingStepIdentifier] = []
+
     
-    
+    /// ``OnboardingStepIdentifier`` of first view in ``OnboardingStack``.
+    /// `nil` if ``OnboardingStack`` is empty.
+    private var firstOnboardingStepIdentifier: OnboardingStepIdentifier? {
+        if onboardingSteps.elements.isEmpty {
+            return nil
+        } else {
+            return onboardingSteps.elements[0].key
+        }
+    }
+
     /// The initial view that is presented to the user.
     ///
     /// The first onboarding view of the `OnboardingNavigationPath.onboardingSteps`.
@@ -72,7 +81,7 @@ public class OnboardingNavigationPath {
     /// the property serves an `EmptyView` which is then dismissed immediately as the `OnboardingNavigationPath.complete` property
     /// is automatically set to true.
     var firstOnboardingView: AnyView {
-        guard let firstOnboardingStepIdentifier = onboardingStepsOrder.first,
+        guard let firstOnboardingStepIdentifier,
               let view = onboardingSteps[firstOnboardingStepIdentifier] else {
             return .init(EmptyView())
         }
@@ -89,12 +98,11 @@ public class OnboardingNavigationPath {
     /// of the first onboarding view.
     private var currentOnboardingStep: OnboardingStepIdentifier? {
         guard let lastElement = path.last(where: { !$0.custom }) else {
-            return onboardingStepsOrder.first
+            return firstOnboardingStepIdentifier
         }
         
         return lastElement
     }
-    
     
     /// An `OnboardingNavigationPath` represents the current navigation path within the ``OnboardingStack``.
     /// - Parameters:
@@ -122,14 +130,14 @@ public class OnboardingNavigationPath {
     ///
     /// After all onboarding steps have been shown, the injected `complete` `Binding` is set to true indicating that the onboarding flow is completed.
     public func nextStep() {
-        guard let currentStepIndex = onboardingStepsOrder.firstIndex(where: { $0 == currentOnboardingStep }),
-              currentStepIndex + 1 < onboardingStepsOrder.count else {
+        guard let currentStepIndex = onboardingSteps.elements.keys.firstIndex(where: { $0 == currentOnboardingStep }),
+              currentStepIndex + 1 < onboardingSteps.elements.count else {
             complete?.wrappedValue = true
             return
         }
         
         appendToInternalNavigationPath(
-            of: onboardingStepsOrder[currentStepIndex + 1]
+            of: onboardingSteps.elements.keys[currentStepIndex + 1]
         )
     }
     
@@ -188,21 +196,20 @@ public class OnboardingNavigationPath {
         // Without this limitation, attempts to navigate backwards or dismiss the currently displayed onboarding step
         // (for example, after receiving HealthKit authorizations) could lead to unintended behavior.
         let currentStepIndex = if let currentOnboardingStep {
-            onboardingStepsOrder.firstIndex(of: currentOnboardingStep) ?? 0
+            onboardingSteps.elements.keys.firstIndex(of: currentOnboardingStep) ?? 0
         } else {
             0
         }
 
         // Remove all onboarding steps after the current onboarding step
         let nextStepIndex = currentStepIndex + 1
-        if nextStepIndex < onboardingStepsOrder.count {
-            self.onboardingStepsOrder.removeSubrange(nextStepIndex...)
-            self.onboardingSteps = onboardingSteps.filter { onboardingStepsOrder.contains($0.key) }
+        if nextStepIndex < onboardingSteps.elements.count {
+            self.onboardingSteps.removeSubrange(nextStepIndex...)
         }
 
         for view in views {
             let onboardingStepIdentifier = OnboardingStepIdentifier(fromView: view)
-            let stepIsAfterCurrentStep = !self.onboardingStepsOrder.contains(onboardingStepIdentifier)
+            let stepIsAfterCurrentStep = !self.onboardingSteps.keys.contains(onboardingStepIdentifier)
             guard stepIsAfterCurrentStep else {
                 continue
             }
@@ -214,7 +221,6 @@ public class OnboardingNavigationPath {
                     """)
             }
 
-            self.onboardingStepsOrder.append(onboardingStepIdentifier)
             self.onboardingSteps[onboardingStepIdentifier] = view
         }
         onboardingComplete()
