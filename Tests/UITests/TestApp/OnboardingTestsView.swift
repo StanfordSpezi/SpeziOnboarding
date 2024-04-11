@@ -25,7 +25,8 @@ struct OnboardingTestsView: View {
             OnboardingSequentialTestView()
             OnboardingConsentMarkdownTestView()
             OnboardingConsentMarkdownRenderingView()
-            
+            OnboardingCustomToggleTestView(showConditionalView: $showConditionalView)
+
             if showConditionalView {
                 OnboardingConditionalTestView()
             }

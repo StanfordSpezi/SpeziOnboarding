@@ -72,7 +72,10 @@ final class OnboardingTests: XCTestCase { // swiftlint:disable:this type_body_le
         
         XCTAssert(app.buttons["Next"].waitForExistence(timeout: 2))
         app.buttons["Next"].tap()
-        
+
+        XCTAssert(app.buttons["Next"].waitForExistence(timeout: 2))
+        app.buttons["Next"].tap()
+
         // Check if on final page
         XCTAssert(app.staticTexts["Onboarding complete"].waitForExistence(timeout: 2))
     }
@@ -386,7 +389,36 @@ final class OnboardingTests: XCTestCase { // swiftlint:disable:this type_body_le
         
         try dynamicOnboardingFlow(app: app, showConditionalView: true)
     }
-    
+
+    func testDynamicOnboardingFlow3() throws {
+        let app = XCUIApplication()
+        app.launch()
+
+        XCTAssert(app.buttons["Rendered Consent View (Markdown)"].waitForExistence(timeout: 2))
+        app.buttons["Rendered Consent View (Markdown)"].tap()
+
+        // Check if on consent export page
+        XCTAssert(app.staticTexts["Consent PDF rendering doesn't exist"].waitForExistence(timeout: 2))
+
+        XCTAssert(app.buttons["Next"].waitForExistence(timeout: 2))
+        app.buttons["Next"].tap()
+
+        XCTAssert(app.buttons["Show Conditional View"].waitForExistence(timeout: 2))
+        app.buttons["Show Conditional View"].tap()
+
+        XCTAssert(app.buttons["Next"].waitForExistence(timeout: 2))
+        app.buttons["Next"].tap()
+
+        // Check if on conditional test view
+        XCTAssert(app.staticTexts["Conditional Test View"].waitForExistence(timeout: 2))
+
+        XCTAssert(app.buttons["Next"].waitForExistence(timeout: 2))
+        app.buttons["Next"].tap()
+
+        // Check if on final page
+        XCTAssert(app.staticTexts["Onboarding complete"].waitForExistence(timeout: 2))
+    }
+
     private func hitConsentButton(_ app: XCUIApplication) {
         if app.staticTexts["This is a markdown example"].isHittable {
             app.staticTexts["This is a markdown example"].swipeUp()
@@ -412,7 +444,10 @@ final class OnboardingTests: XCTestCase { // swiftlint:disable:this type_body_le
         
         XCTAssert(app.buttons["Next"].waitForExistence(timeout: 2))
         app.buttons["Next"].tap()
-        
+
+        XCTAssert(app.buttons["Next"].waitForExistence(timeout: 2))
+        app.buttons["Next"].tap()
+
         if showConditionalView {
             // Check if on conditional test view
             XCTAssert(app.staticTexts["Conditional Test View"].waitForExistence(timeout: 2))
