@@ -16,21 +16,4 @@ import SwiftUI
 struct OnboardingStepIdentifier: Hashable, Codable {
     let onboardingStepType: String
     let custom: Bool
-    
-    
-    init(fromType type: any View.Type, custom: Bool = false) {
-        self.onboardingStepType = String(describing: type)
-        self.custom = custom
-    }
-    
-    
-    init(fromView view: any View, custom: Bool = false) {
-        self.onboardingStepType = String(describing: type(of: view))
-        self.custom = custom
-    }
-
-    init(fromIdentifiableView view: any OnboardingIdentifiableView, custom: Bool = false) {
-        self.onboardingStepType = view.id
-        self.custom = custom
-    }
 }

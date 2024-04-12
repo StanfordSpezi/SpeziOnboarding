@@ -9,7 +9,7 @@
 import SpeziOnboarding
 import SwiftUI
 
-struct OnboardingIdentifiableTestViewCustom: OnboardingIdentifiableView {
+struct OnboardingIdentifiableTestViewCustom: View, Identifiable {
     var id: String
 
     @Environment(OnboardingNavigationPath.self) private var path
@@ -21,7 +21,7 @@ struct OnboardingIdentifiableTestViewCustom: OnboardingIdentifiableView {
 
             Button {
                 if self.id == "ID: 1" {
-                    path.append(identifiableView: OnboardingIdentifiableTestViewCustom(id: "ID: 2"))
+                    path.append(customView: OnboardingIdentifiableTestViewCustom(id: "ID: 2"))
                 } else {
                     path.nextStep()
                 }

@@ -465,9 +465,6 @@ final class OnboardingTests: XCTestCase { // swiftlint:disable:this type_body_le
         app.launch()
         app.buttons["Onboarding Identifiable View"].tap()
 
-        XCTAssert(app.staticTexts["OnboardingIdentifiableTestViewDefault"].waitForExistence(timeout: 2))
-        app.buttons["Next"].tap()
-
         XCTAssert(app.staticTexts["ID: 1"].waitForExistence(timeout: 2))
         app.buttons["Next"].tap()
 

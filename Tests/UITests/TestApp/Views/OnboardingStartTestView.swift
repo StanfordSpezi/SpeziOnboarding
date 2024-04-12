@@ -57,7 +57,7 @@ struct OnboardingStartTestView: View {
             }
 
             Button {
-                path.append(identifiableView: OnboardingIdentifiableTestViewDefault())
+                path.append(customView: OnboardingIdentifiableTestViewCustom(id: "ID: 1"))
             } label: {
                 Text("Onboarding Identifiable View")
             }
