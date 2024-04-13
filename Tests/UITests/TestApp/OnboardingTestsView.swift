@@ -14,8 +14,8 @@ import SwiftUI
 struct OnboardingTestsView: View {
     @Binding var onboardingFlowComplete: Bool
     @State var showConditionalView = false
-    
-    
+
+
     var body: some View {
         OnboardingStack(onboardingFlowComplete: $onboardingFlowComplete) {
             OnboardingStartTestView(
@@ -26,6 +26,8 @@ struct OnboardingTestsView: View {
             OnboardingConsentMarkdownTestView()
             OnboardingConsentMarkdownRenderingView()
             OnboardingCustomToggleTestView(showConditionalView: $showConditionalView)
+            OnboardingTestViewNotIdentifiable(text: "Leland").onboardingIdentifier("a")
+            OnboardingTestViewNotIdentifiable(text: "Stanford").onboardingIdentifier("b")
 
             if showConditionalView {
                 OnboardingConditionalTestView()
