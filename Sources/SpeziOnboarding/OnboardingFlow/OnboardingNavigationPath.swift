@@ -222,8 +222,8 @@ public class OnboardingNavigationPath {
 
             guard self.onboardingSteps[onboardingStepIdentifier] == nil else {
                 preconditionFailure("""
-                    SpeziOnboarding: Duplicate Onboarding step of type `\(onboardingStepIdentifier.onboardingStepType)` identified.
-                    Ensure unique Onboarding view instances within the `OnboardingStack`!
+                    SpeziOnboarding: Duplicate Onboarding step identifier hash `\(onboardingStepIdentifier.identifierHash)` identified.
+                    Ensure unique Onboarding view identifiers within the `OnboardingStack`!
                     """)
             }
 

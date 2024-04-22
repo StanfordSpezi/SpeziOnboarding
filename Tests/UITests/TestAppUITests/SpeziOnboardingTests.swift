@@ -81,6 +81,9 @@ final class OnboardingTests: XCTestCase { // swiftlint:disable:this type_body_le
         XCTAssert(app.buttons["Next"].waitForExistence(timeout: 2))
         app.buttons["Next"].tap()
 
+        XCTAssert(app.buttons["Next"].waitForExistence(timeout: 2))
+        app.buttons["Next"].tap()
+
         // Check if on final page
         XCTAssert(app.staticTexts["Onboarding complete"].waitForExistence(timeout: 2))
     }
@@ -408,6 +411,12 @@ final class OnboardingTests: XCTestCase { // swiftlint:disable:this type_body_le
         XCTAssert(app.buttons["Next"].waitForExistence(timeout: 2))
         app.buttons["Next"].tap()
 
+        XCTAssert(app.buttons["Next"].waitForExistence(timeout: 2))
+        app.buttons["Next"].tap()
+
+        XCTAssert(app.buttons["Next"].waitForExistence(timeout: 2))
+        app.buttons["Next"].tap()
+
         XCTAssert(app.buttons["Show Conditional View"].waitForExistence(timeout: 2))
         app.buttons["Show Conditional View"].tap()
 
@@ -446,6 +455,9 @@ final class OnboardingTests: XCTestCase { // swiftlint:disable:this type_body_le
 
         // Check if on consent export page
         XCTAssert(app.staticTexts["Consent PDF rendering doesn't exist"].waitForExistence(timeout: 2))
+
+        XCTAssert(app.buttons["Next"].waitForExistence(timeout: 2))
+        app.buttons["Next"].tap()
 
         XCTAssert(app.buttons["Next"].waitForExistence(timeout: 2))
         app.buttons["Next"].tap()

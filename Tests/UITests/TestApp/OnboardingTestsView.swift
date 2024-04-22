@@ -25,9 +25,9 @@ struct OnboardingTestsView: View {
             OnboardingSequentialTestView()
             OnboardingConsentMarkdownTestView()
             OnboardingConsentMarkdownRenderingView()
-            OnboardingCustomToggleTestView(showConditionalView: $showConditionalView)
             OnboardingTestViewNotIdentifiable(text: "Leland").onboardingIdentifier("a")
             OnboardingTestViewNotIdentifiable(text: "Stanford").onboardingIdentifier("b")
+            OnboardingCustomToggleTestView(showConditionalView: $showConditionalView)
 
             if showConditionalView {
                 OnboardingConditionalTestView()
