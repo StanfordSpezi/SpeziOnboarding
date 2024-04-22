@@ -8,28 +8,17 @@
 
 import SwiftUI
 
-/// Wrap `Content` `View` in an `Identifiable` `View`.
-private struct OnboardingIdentifiableView<Content, ID>: View, Identifiable where Content: View, ID: Hashable {
-    /// Unique identifier of the wrapped `View`.
-    let id: ID
-    /// Wrapped `View`.
-    let body: Content
-}
-
 private struct OnboardingIdentifiableViewModifier<ID>: ViewModifier, Identifiable where ID: Hashable {
     let id: ID
 
-    func body(content: Content) -> some View {
-        OnboardingIdentifiableView(
-            id: self.id,
-            body: content
-        )
-    }
+    func body(content: Content) -> some View { content }
 }
 
 extension View {
-    /// `ViewModifier` assigning an identifier to the `View` it is applied to.
-    /// When applying this modifier repeatedly, the outermost ``onboardingIdentifier(_:)`` counts.
+    /// Assign a unique identifier to a ``SwiftUI/View`` appearing in an ``OnboardingStack``.
+    ///
+    /// A `ViewModifier` assigning an identifier to the `View` it is applied to.
+    /// When applying this modifier repeatedly, the outermost ``SwiftUI/View/onboardingIdentifier(_:)`` counts.
     ///
     /// - Note: This `ViewModifier` should only be used to identify `View`s of the same type within an ``OnboardingStack``.
     ///
