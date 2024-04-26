@@ -64,7 +64,7 @@ public class OnboardingNavigationPath {
 
     /// ``OnboardingStepIdentifier`` of first view in ``OnboardingStack``.
     /// `nil` if ``OnboardingStack`` is empty.
-    private var firstOnboardingStepIdentifier: OnboardingStepIdentifier? {
+    internal var firstOnboardingStepIdentifier: OnboardingStepIdentifier? {
         if onboardingSteps.elements.isEmpty {
             return nil
         } else {
