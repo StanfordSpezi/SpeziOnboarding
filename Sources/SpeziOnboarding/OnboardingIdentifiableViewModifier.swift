@@ -8,11 +8,13 @@
 
 import SwiftUI
 
+
 private struct OnboardingIdentifiableViewModifier<ID>: ViewModifier, Identifiable where ID: Hashable {
     let id: ID
 
     func body(content: Content) -> some View { content }
 }
+
 
 extension View {
     /// Assign a unique identifier to a ``SwiftUI/View`` appearing in an ``OnboardingStack``.
@@ -31,8 +33,10 @@ extension View {
     ///
     ///     var body: some View {
     ///         OnboardingStack(onboardingFlowComplete: $completedOnboardingFlow) {
-    ///             MyOwnView().onboardingIdentifier("my-own-view-1")
-    ///             MyOwnView().onboardingIdentifier("my-own-view-2")
+    ///             MyOwnView()
+    ///                 .onboardingIdentifier("my-own-view-1")
+    ///             MyOwnView()
+    ///                 .onboardingIdentifier("my-own-view-2")
     ///         }
     ///     }
     /// }
@@ -41,6 +45,7 @@ extension View {
         modifier(OnboardingIdentifiableViewModifier(id: identifier))
     }
 }
+
 
 extension ModifiedContent: Identifiable where Modifier: Identifiable {
     public var id: Modifier.ID {
