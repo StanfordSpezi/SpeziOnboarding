@@ -49,6 +49,29 @@ import SwiftUI
 ///     }
 /// }
 /// ```
+///
+/// ### Identifying Onboarding Views
+///
+/// Apply the ``SwiftUI/View/onboardingIdentifier(_:)`` modifier to clearly identify a view in the `OnboardingStack`.
+/// This is particularly useful in scenarios where multiple instances of the same view type might appear in the stack.
+///
+/// ```swift
+/// struct Onboarding: View {
+///     @AppStorage(StorageKeys.onboardingFlowComplete) var completedOnboardingFlow = false
+///
+///     var body: some View {
+///         OnboardingStack(onboardingFlowComplete: $completedOnboardingFlow) {
+///             MyOwnView()
+///                 .onboardingIdentifier("my-own-view-1")
+///             MyOwnView()
+///                 .onboardingIdentifier("my-own-view-2")
+///             // Other views as needed
+///         }
+///     }
+/// }
+/// ```
+///
+/// - Note: When the ``SwiftUI/View/onboardingIdentifier(_:)`` modifier is applied multiple times to the same view, the outermost identifier takes precedence.
 public struct OnboardingStack: View {
     @State var onboardingNavigationPath: OnboardingNavigationPath
     private let collection: _OnboardingFlowViewCollection
