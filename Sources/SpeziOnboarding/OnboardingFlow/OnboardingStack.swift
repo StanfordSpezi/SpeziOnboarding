@@ -61,8 +61,10 @@ import SwiftUI
 ///
 ///     var body: some View {
 ///         OnboardingStack(onboardingFlowComplete: $completedOnboardingFlow) {
-///             MyOwnView().onboardingIdentifier("my-own-view-1")
-///             MyOwnView().onboardingIdentifier("my-own-view-2")
+///             MyOwnView()
+///                 .onboardingIdentifier("my-own-view-1")
+///             MyOwnView()
+///                 .onboardingIdentifier("my-own-view-2")
 ///             // Other views as needed
 ///         }
 ///     }
