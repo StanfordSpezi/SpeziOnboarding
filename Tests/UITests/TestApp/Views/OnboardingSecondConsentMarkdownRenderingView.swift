@@ -12,11 +12,12 @@ import SpeziViews
 import SwiftUI
 
 
-struct OnboardingConsentMarkdownRenderingView: View {
+struct OnboardingSecondConsentMarkdownRenderingView: View {
     @Environment(OnboardingNavigationPath.self) private var path
     @Environment(ExampleStandard.self) private var standard
     @State var exportedConsent: PDFDocument?
-    
+
+    private var documentIdentifier = "SecondConsentDocument"
     
     var body: some View {
         VStack {
@@ -25,7 +26,7 @@ struct OnboardingConsentMarkdownRenderingView: View {
                     .fill(Color.red)
                     .frame(width: 200, height: 200)
                     .overlay(
-                        Text("Consent PDF rendering doesn't exist")
+                        Text("Second Consent PDF rendering doesn't exist")
                             .foregroundColor(.white)
                             .multilineTextAlignment(.center)
                             .padding()
@@ -35,7 +36,7 @@ struct OnboardingConsentMarkdownRenderingView: View {
                     .fill(Color.green)
                     .frame(width: 200, height: 200)
                     .overlay(
-                        Text("Consent PDF rendering exists")
+                        Text("Second Consent PDF rendering exists")
                             .foregroundColor(.white)
                             .multilineTextAlignment(.center)
                             .padding()
@@ -54,21 +55,21 @@ struct OnboardingConsentMarkdownRenderingView: View {
             .navigationBarTitleDisplayMode(.inline)
             #endif
             .task {
-                self.exportedConsent = try? await standard.loadConsent()
+                self.exportedConsent = try? await standard.loadConsentDocument(identifier: documentIdentifier)
                 // Reset OnboardingDataSource
-                await standard.store(consent: .init())
+                await standard.store(consent: .init(), identifier: documentIdentifier)
             }
     }
 }
 
 
 #if DEBUG
-struct OnboardingConsentMarkdownRenderingView_Previews: PreviewProvider {
+struct OnboardingSecondConsentMarkdownRenderingView_Previews: PreviewProvider {
     static var standard: OnboardingDataSource = .init()
     
     
     static var previews: some View {
-        OnboardingStack(startAtStep: OnboardingConsentMarkdownRenderingView.self) {
+        OnboardingStack(startAtStep: OnboardingSecondConsentMarkdownRenderingView.self) {
             for onboardingView in OnboardingFlow.previewSimulatorViews {
                 onboardingView
                     .environment(standard)

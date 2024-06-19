@@ -28,6 +28,7 @@ OnboardingConsentView(
     action: {
         // Action to perform once the user has given their consent
     },
+    identifier: "MyFirstConsentForm", // Specify an optional unique identifier for the consent form, helpful for distinguishing consent forms when storing.
     exportConfiguration: .init(paperSize: .usLetter)   // Configure the properties of the exported consent form
 )
 ```

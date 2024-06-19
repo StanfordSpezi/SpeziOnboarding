@@ -16,8 +16,10 @@ enum OnboardingFlow {
             OnboardingStartTestView(showConditionalView: .constant(true)),
             OnboardingWelcomeTestView(),
             OnboardingSequentialTestView(),
-            OnboardingConsentMarkdownTestView(),
-            OnboardingConsentMarkdownRenderingView(),
+            OnboardingFirstConsentMarkdownTestView(),
+            OnboardingFirstConsentMarkdownRenderingView(),
+            OnboardingSecondConsentMarkdownTestView(),
+            OnboardingSecondConsentMarkdownRenderingView(),
             OnboardingCustomTestView1(exampleArgument: "test"),
             OnboardingCustomTestView2(),
             OnboardingConditionalTestView()

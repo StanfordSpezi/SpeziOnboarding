@@ -43,7 +43,7 @@ final class OnboardingTests: XCTestCase { // swiftlint:disable:this type_body_le
 
         // Check if on consent (markdown) view
         XCTAssert(app.staticTexts["Consent"].waitForExistence(timeout: 2))
-        XCTAssert(app.staticTexts["This is a markdown example"].waitForExistence(timeout: 2))
+        XCTAssert(app.staticTexts["This is the first markdown example"].waitForExistence(timeout: 2))
 
         #if targetEnvironment(simulator) && (arch(i386) || arch(x86_64))
             throw XCTSkip("PKCanvas view-related tests are currently skipped on Intel-based iOS simulators due to a metal bug on the simulator.")
@@ -163,7 +163,7 @@ final class OnboardingTests: XCTestCase { // swiftlint:disable:this type_body_le
         app.buttons["Consent View (Markdown)"].tap()
 
         XCTAssert(app.staticTexts["Consent"].waitForExistence(timeout: 2))
-        XCTAssert(app.staticTexts["This is a markdown example"].waitForExistence(timeout: 2))
+        XCTAssert(app.staticTexts["This is the first markdown example"].waitForExistence(timeout: 2))
 
         XCTAssertFalse(app.staticTexts["Leland Stanford"].waitForExistence(timeout: 2))
         XCTAssertFalse(app.staticTexts["X"].waitForExistence(timeout: 2))
@@ -221,7 +221,7 @@ final class OnboardingTests: XCTestCase { // swiftlint:disable:this type_body_le
         app.buttons["Consent View (Markdown)"].tap()
 
         XCTAssert(app.staticTexts["Consent"].waitForExistence(timeout: 2))
-        XCTAssert(app.staticTexts["This is a markdown example"].waitForExistence(timeout: 2))
+        XCTAssert(app.staticTexts["This is the first markdown example"].waitForExistence(timeout: 2))
 
         XCTAssertFalse(app.staticTexts["Leland Stanford"].waitForExistence(timeout: 2))
         XCTAssertFalse(app.staticTexts["X"].waitForExistence(timeout: 2))
@@ -263,11 +263,11 @@ final class OnboardingTests: XCTestCase { // swiftlint:disable:this type_body_le
 
         app.launch()
 
-        XCTAssert(app.buttons["Consent View (Markdown)"].waitForExistence(timeout: 2))
-        app.buttons["Consent View (Markdown)"].tap()
+        XCTAssert(app.buttons["First Consent View (Markdown)"].waitForExistence(timeout: 2))
+        app.buttons["First Consent View (Markdown)"].tap()
 
-        XCTAssert(app.staticTexts["Consent"].waitForExistence(timeout: 2))
-        XCTAssert(app.staticTexts["This is a markdown example"].waitForExistence(timeout: 2))
+        XCTAssert(app.staticTexts["First Consent"].waitForExistence(timeout: 2))
+        XCTAssert(app.staticTexts["This is the first markdown example"].waitForExistence(timeout: 2))
 
         XCTAssert(app.staticTexts["First Name"].waitForExistence(timeout: 2))
         try app.textFields["Enter your first name ..."].enter(value: "Leland")
@@ -347,7 +347,7 @@ final class OnboardingTests: XCTestCase { // swiftlint:disable:this type_body_le
         #endif
 
         // Check if PDF contains consent title, name, and markdown message
-        for searchString in ["Spezi Consent", "This is a markdown example", "Leland Stanford"] {
+        for searchString in ["Spezi Consent", "This is the first markdown example", "Leland Stanford"] {
             let predicate = NSPredicate(format: "label CONTAINS[c] %@", searchString)
             XCTAssert(fileView.otherElements.containing(predicate).firstMatch.waitForExistence(timeout: 2))
         }
@@ -434,8 +434,8 @@ final class OnboardingTests: XCTestCase { // swiftlint:disable:this type_body_le
     }
 
     private func hitConsentButton(_ app: XCUIApplication) {
-        if app.staticTexts["This is a markdown example"].isHittable {
-            app.staticTexts["This is a markdown example"].swipeUp()
+        if app.staticTexts["This is the first markdown example"].isHittable {
+            app.staticTexts["This is the first markdown example"].swipeUp()
         } else {
             print("Can not scroll down.")
         }
