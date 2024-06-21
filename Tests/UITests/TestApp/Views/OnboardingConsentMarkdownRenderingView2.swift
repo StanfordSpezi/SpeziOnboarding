@@ -12,12 +12,12 @@ import SpeziViews
 import SwiftUI
 
 
-struct OnboardingFirstConsentMarkdownRenderingView: View {
+struct OnboardingConsentMarkdownRenderingView2: View {
     @Environment(OnboardingNavigationPath.self) private var path
     @Environment(ExampleStandard.self) private var standard
     @State var exportedConsent: PDFDocument?
 
-    private var documentIdentifier = "FirstConsentDocument"
+    private var documentIdentifier = "SecondConsentDocument"
     
     var body: some View {
         VStack {
@@ -26,7 +26,7 @@ struct OnboardingFirstConsentMarkdownRenderingView: View {
                     .fill(Color.red)
                     .frame(width: 200, height: 200)
                     .overlay(
-                        Text("First Consent PDF rendering doesn't exist")
+                        Text("Second Consent PDF rendering doesn't exist")
                             .foregroundColor(.white)
                             .multilineTextAlignment(.center)
                             .padding()
@@ -36,7 +36,7 @@ struct OnboardingFirstConsentMarkdownRenderingView: View {
                     .fill(Color.green)
                     .frame(width: 200, height: 200)
                     .overlay(
-                        Text("First Consent PDF rendering exists")
+                        Text("Second Consent PDF rendering exists")
                             .foregroundColor(.white)
                             .multilineTextAlignment(.center)
                             .padding()
@@ -64,12 +64,12 @@ struct OnboardingFirstConsentMarkdownRenderingView: View {
 
 
 #if DEBUG
-struct OnboardingConsentMarkdownRenderingView_Previews: PreviewProvider {
+struct OnboardingSecondConsentMarkdownRenderingView_Previews: PreviewProvider {
     static var standard: OnboardingDataSource = .init()
     
     
     static var previews: some View {
-        OnboardingStack(startAtStep: OnboardingFirstConsentMarkdownRenderingView.self) {
+        OnboardingStack(startAtStep: OnboardingConsentMarkdownRenderingView2.self) {
             for onboardingView in OnboardingFlow.previewSimulatorViews {
                 onboardingView
                     .environment(standard)

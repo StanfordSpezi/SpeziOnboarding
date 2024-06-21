@@ -11,21 +11,21 @@ import SpeziViews
 import SwiftUI
 
 
-struct OnboardingSecondConsentMarkdownTestView: View {
+struct OnboardingConsentMarkdownTestView1: View {
     @Environment(OnboardingNavigationPath.self) private var path
     
-    private var documentIdentifier = "SecondConsentDocument"
+    private var documentIdentifier = "FirstConsentDocument"
 
     
     var body: some View {
         OnboardingConsentView(
             markdown: {
-                Data("This is the second *markdown* **example**".utf8)
+                Data("This is the first *markdown* **example**".utf8)
             },
             action: {
                 path.nextStep()
             },
-            title: "Second Consent",
+            title: "First Consent",
             identifier: documentIdentifier,
             exportConfiguration: .init(paperSize: .dinA4, includingTimestamp: true)
         )
@@ -34,9 +34,9 @@ struct OnboardingSecondConsentMarkdownTestView: View {
 
 
 #if DEBUG
-struct OnboardingSecondConsentMarkdownTestView_Previews: PreviewProvider {
+struct OnboardingFirstConsentMarkdownTestView_Previews: PreviewProvider {
     static var previews: some View {
-        OnboardingStack(startAtStep: OnboardingSecondConsentMarkdownTestView.self) {
+        OnboardingStack(startAtStep: OnboardingConsentMarkdownTestView1.self) {
             for onboardingView in OnboardingFlow.previewSimulatorViews {
                 onboardingView
             }

@@ -23,12 +23,10 @@ actor ExampleStandard: Standard, EnvironmentAccessible {
 extension ExampleStandard: OnboardingConstraint {
     func store(consent: PDFDocument, identifier: String) async {
         await MainActor.run {
-            if(identifier == "FirstConsentDocument")
-            {
+
+            if identifier == "FirstConsentDocument" {
                 self.firstConsentData = consent
-            }
-            if(identifier == "SecondConsentDocument")
-            {
+            } else if identifier == "SecondConsentDocument" {
                 self.secondConsentData = consent
             }
         }
@@ -37,12 +35,9 @@ extension ExampleStandard: OnboardingConstraint {
     
     func loadConsentDocument(identifier: String) async throws -> PDFDocument? {
         
-        if(identifier == "FirstConsentDocument")
-        {
+        if identifier == "FirstConsentDocument" {
             return await self.firstConsentData
-        }
-        if(identifier == "SecondConsentDocument")
-        {
+        } else if identifier == "SecondConsentDocument" {
             return await self.secondConsentData
         }
         
