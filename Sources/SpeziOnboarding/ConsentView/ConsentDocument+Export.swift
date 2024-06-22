@@ -76,41 +76,40 @@ extension ConsentDocument {
         let pages = paginatedViews(markdown: markdownString)
 
         print("NumPages: \(pages.count)")
-        return await withCheckedContinuation { continuation in
-            guard let mutableData = CFDataCreateMutable(kCFAllocatorDefault, 0),
-                  let consumer = CGDataConsumer(data: mutableData),
-                  let pdf = CGContext(consumer: consumer, mediaBox: nil, nil) else {
-                continuation.resume(returning: nil)
-                return
-            }
-
-            for page in pages {
-                pdf.beginPDFPage(nil)
-               
-                let hostingController = UIHostingController(rootView: page)
-                 hostingController.view.frame = CGRect(origin: .zero, size: pageSize)
-
-                 let renderer = UIGraphicsImageRenderer(bounds: hostingController.view.bounds)
-                 let image = renderer.image { ctx in
-                     hostingController.view.drawHierarchy(in: hostingController.view.bounds, afterScreenUpdates: true)
-                 }
-
-                pdf.saveGState()
-
-                pdf.translateBy(x: 0, y: pageSize.height)
-                pdf.scaleBy(x: 1.0, y: -1.0)
-
-                hostingController.view.layer.render(in: pdf)
-
-                pdf.restoreGState()
-                 
-                
-                pdf.endPDFPage()
-            }
-
-            pdf.closePDF()
-            continuation.resume(returning: PDFDocument(data: mutableData as Data))
+    
+        guard let mutableData = CFDataCreateMutable(kCFAllocatorDefault, 0),
+                let consumer = CGDataConsumer(data: mutableData),
+                let pdf = CGContext(consumer: consumer, mediaBox: nil, nil) else {
+            
+            return nil;
         }
+
+        for page in pages {
+            pdf.beginPDFPage(nil)
+            
+            let hostingController = UIHostingController(rootView: page)
+                hostingController.view.frame = CGRect(origin: .zero, size: pageSize)
+
+                let renderer = UIGraphicsImageRenderer(bounds: hostingController.view.bounds)
+                let image = renderer.image { ctx in
+                    hostingController.view.drawHierarchy(in: hostingController.view.bounds, afterScreenUpdates: true)
+                }
+
+            pdf.saveGState()
+
+            pdf.translateBy(x: 0, y: pageSize.height)
+            pdf.scaleBy(x: 1.0, y: -1.0)
+
+            hostingController.view.layer.render(in: pdf)
+
+            pdf.restoreGState()
+                
+            
+            pdf.endPDFPage()
+        }
+
+        pdf.closePDF()
+        return PDFDocument(data: mutableData as Data); 
     }
     
     private func paginatedViews(markdown: AttributedString) -> [AnyView] 
