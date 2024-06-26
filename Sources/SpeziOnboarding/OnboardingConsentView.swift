@@ -21,6 +21,9 @@ import SwiftUI
 /// The `OnboardingConsentView` builds on top of the SpeziOnboarding ``ConsentDocument`` 
 /// by providing a more developer-friendly, convenient API with additional functionalities like the share consent option.
 ///
+/// If you want to use multiple `OnboardingConsentView`, you can provide each with an identifier (see below).
+/// The identifier allows to distinguish the consent forms in the `Standard`.
+///
 /// ```swift
 /// OnboardingConsentView(
 ///     markdown: {
@@ -30,6 +33,7 @@ import SwiftUI
 ///         // The action that should be performed once the user has provided their consent.
 ///     },
 ///     title: "Consent",   // Configure the title of the consent view
+///     identifier: "MyFirstConsentForm", // Specify a unique identifier for the consent form, helpful for distinguishing consent forms when storing.
 ///     exportConfiguration: .init(paperSize: .usLetter)   // Configure the properties of the exported consent form
 /// )
 /// ```
@@ -46,8 +50,9 @@ public struct OnboardingConsentView: View {
     private let markdown: () async -> Data
     private let action: () async -> Void
     private let title: LocalizedStringResource?
+    private let identifier: String
     private let exportConfiguration: ConsentDocument.ExportConfiguration
-    
+
     @Environment(OnboardingDataSource.self) private var onboardingDataSource
     @State private var viewState: ConsentViewState = .base(.idle)
     @State private var willShowShareSheet = false
@@ -90,7 +95,7 @@ public struct OnboardingConsentView: View {
                     if !willShowShareSheet {
                         Task { @MainActor in
                             /// Stores the finished PDF in the Spezi `Standard`.
-                            await onboardingDataSource.store(exportedConsentDocumented)
+                            await onboardingDataSource.store(exportedConsentDocumented, identifier: identifier)
                             await action()
                         }
                     } else {
@@ -166,17 +171,20 @@ public struct OnboardingConsentView: View {
     ///   - markdown: The markdown content provided as an UTF8 encoded `Data` instance that can be provided asynchronously.
     ///   - action: The action that should be performed once the consent is given.
     ///   - title: The title of the view displayed at the top. Can be `nil`, meaning no title is displayed.
+    ///   - identifier: A unique identifier or "name" for the consent form, helpful for distinguishing consent forms when storing in the `Standard`.
     ///   - exportConfiguration: Defines the properties of the exported consent form via ``ConsentDocument/ExportConfiguration``.
     public init(
         markdown: @escaping () async -> Data,
         action: @escaping () async -> Void,
         title: LocalizedStringResource? = LocalizationDefaults.consentFormTitle,
+        identifier: String = "DefaultConsentDocument",
         exportConfiguration: ConsentDocument.ExportConfiguration = .init()
     ) {
         self.markdown = markdown
         self.exportConfiguration = exportConfiguration
         self.title = title
         self.action = action
+        self.identifier = identifier
     }
 }
 

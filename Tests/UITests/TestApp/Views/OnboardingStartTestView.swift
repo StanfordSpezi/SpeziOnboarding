@@ -31,15 +31,27 @@ struct OnboardingStartTestView: View {
             }
 
             Button {
-                path.append(OnboardingConsentMarkdownTestView.self)
+                path.append(OnboardingConsentMarkdownTestView1.self)
             } label: {
-                Text("Consent View (Markdown)")
+                Text("First Consent View (Markdown)")
             }
             
             Button {
-                path.append(OnboardingConsentMarkdownRenderingView.self)
+                path.append(OnboardingConsentMarkdownRenderingView1.self)
             } label: {
-                Text("Rendered Consent View (Markdown)")
+                Text("First Rendered Consent View (Markdown)")
+            }
+            
+            Button {
+                path.append(OnboardingConsentMarkdownTestView2.self)
+            } label: {
+                Text("Second Consent View (Markdown)")
+            }
+            
+            Button {
+                path.append(OnboardingConsentMarkdownRenderingView2.self)
+            } label: {
+                Text("Second Rendered Consent View (Markdown)")
             }
 
             Button {
