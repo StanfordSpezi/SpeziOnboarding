@@ -16,14 +16,12 @@ import SwiftUI
 actor ExampleStandard: Standard, EnvironmentAccessible {
     @Published @MainActor var firstConsentData: PDFDocument = .init()
     @Published @MainActor var secondConsentData: PDFDocument = .init()
-
 }
 
 
 extension ExampleStandard: OnboardingConstraint {
     func store(consent: PDFDocument, identifier: String) async {
         await MainActor.run {
-
             if identifier == "FirstConsentDocument" {
                 self.firstConsentData = consent
             } else if identifier == "SecondConsentDocument" {
@@ -34,7 +32,6 @@ extension ExampleStandard: OnboardingConstraint {
     }
     
     func loadConsentDocument(identifier: String) async throws -> PDFDocument? {
-        
         if identifier == "FirstConsentDocument" {
             return await self.firstConsentData
         } else if identifier == "SecondConsentDocument" {
@@ -46,6 +43,4 @@ extension ExampleStandard: OnboardingConstraint {
         // is nil, and if so, displays an error.
         return nil
     }
-    
-
 }
