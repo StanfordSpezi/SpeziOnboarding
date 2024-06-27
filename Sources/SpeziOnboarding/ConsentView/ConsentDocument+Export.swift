@@ -68,11 +68,6 @@ extension ConsentDocument {
             options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace)
         )) ?? AttributedString(String(localized: "MARKDOWN_LOADING_ERROR", bundle: .module))
 
-        let pageSize = CGSize(
-            width: exportConfiguration.paperSize.dimensions.width,
-            height: exportConfiguration.paperSize.dimensions.height
-        )
-
         let pages = paginatedViews(markdown: markdownString)
 
         let paperSize = CGSize(
@@ -90,8 +85,6 @@ extension ConsentDocument {
             let renderer = ImageRenderer(content: page)
             
             renderer.render { _, context in
-                var box = CGRect(origin: .zero, size: paperSize)
-       
                 pdf.beginPDFPage(nil)
                 pdf.translateBy(x: 0, y: 0)
                 
@@ -121,9 +114,8 @@ extension ConsentDocument {
         Possible improvements:
             * The header height on the first page should not be hardcoded to 200, but calculated from 
             VStack consisting of export tag + title; if there is no export tag, the headerHeight can be smaller.
-            * The footerHeight could/should only be set for the last page. However, the algorithm then becomes more complicated: To know if we are on the last page, we check if headerHeight + footerHeight + textHeight <= pageHeight. If footerHeight is 0 we have more space for the text. If we then find out that we are actually 
-            on the last page, we would have to set footerHeight to 150 and thus we have less space for the text. Thus,
-            it could happen that know we are not on the last page anymore but need one extra page.
+            * The footerHeight could/should only be set for the last page. However, the algorithm then becomes more complicated: To know if we are on the last page, we check if headerHeight + footerHeight + textHeight <= pageHeight. If footerHeight is 0 we have more space for the text. 
+                If we then find out that we are actually  on the last page, we would have to set footerHeight to 150 and thus we have less space for the text. Thus, it could happen that know we are not on the last page anymore but need one extra page.
 
         Known problems:
             * If we assume headerHeight too small (e.g., 100), then truncation happens.
@@ -209,7 +201,6 @@ extension ConsentDocument {
         layoutManager.addTextContainer(textContainer)
         textStorage.addLayoutManager(layoutManager)
 
-        var accumulatedHeight: CGFloat = 0
         let maximumRange = layoutManager.glyphRange(for: textContainer)
      
         currentPage = AttributedString(textStorage.attributedSubstring(from: maximumRange))
