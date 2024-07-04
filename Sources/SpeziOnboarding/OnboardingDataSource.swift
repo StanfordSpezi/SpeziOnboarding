@@ -34,18 +34,30 @@ import SwiftUI
 /// }
 /// ```
 public class OnboardingDataSource: Module, EnvironmentAccessible {
-    @StandardActor var standard: any OnboardingConstraint
+    @StandardActor var standard: any Standard
     
     
     public init() { }
+
+    public func configure() {
+        // swiftlint:disable:next all
+        guard standard is any OnboardingConstraint || standard is any ConsentConstraint else {
+            fatalError("A \(type(of: standard).self) must conform to `ConsentConstraint` to process signed consent documents.")
+        }
+    }
     
     
     /// Adds a new exported consent form represented as `PDFDocument` to the ``OnboardingDataSource``.
     ///
     /// - Parameter consent: The exported consent form represented as `PDFDocument` that should be added.
-    public func store(_ consent: PDFDocument, identifier: String) async {
-        Task { @MainActor in
-            await standard.store(consent: consent, identifier: identifier)
+    /// - Parameter identifier: A 'String' identifying the consent form as specified in OnboardingConsentView.                
+    public func store(_ consent: PDFDocument, identifier: String) async throws {
+        if let consentConstraint = standard as? any ConsentConstraint {
+            try await consentConstraint.store(consent: consent, identifier: identifier)
+        } else if let onboardingConstraint = standard as? any OnboardingConstraint {
+            await onboardingConstraint.store(consent: consent)
+        } else {
+            fatalError("A \(type(of: standard).self) must conform to `ConsentConstraint` to process signed consent documents.")
         }
     }
 }

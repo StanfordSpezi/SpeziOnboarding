@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import SpeziViews
 import SwiftUI
 
 
@@ -23,7 +24,14 @@ import SwiftUI
 ///
 /// If you want to use multiple `OnboardingConsentView`, you can provide each with an identifier (see below).
 /// The identifier allows to distinguish the consent forms in the `Standard`.
-///
+/// Any identifier is a string. We recommend storing and grouping consent document identifiers in an enum:
+/// ```swift
+/// enum ConsentDocumentIdentifier {
+///     static let first = "firstConsentDocument"
+///     static let second = "secondConsentDocument"
+/// }
+/// ```
+
 /// ```swift
 /// OnboardingConsentView(
 ///     markdown: {
@@ -33,7 +41,8 @@ import SwiftUI
 ///         // The action that should be performed once the user has provided their consent.
 ///     },
 ///     title: "Consent",   // Configure the title of the consent view
-///     identifier: "MyFirstConsentForm", // Specify a unique identifier for the consent form, helpful for distinguishing consent forms when storing.
+///     identifier: ConsentDocumentIdentifier.first, // Specify a unique identifier for the consent form, preferably using strings
+///                                                  // bundled in an enum (see above). Only relevant if more than one OnboardingConsentView is needed.
 ///     exportConfiguration: .init(paperSize: .usLetter)   // Configure the properties of the exported consent form
 /// )
 /// ```
@@ -46,7 +55,6 @@ public struct OnboardingConsentView: View {
         }
     }
     
-    
     private let markdown: () async -> Data
     private let action: () async -> Void
     private let title: LocalizedStringResource?
@@ -57,9 +65,10 @@ public struct OnboardingConsentView: View {
     @State private var viewState: ConsentViewState = .base(.idle)
     @State private var willShowShareSheet = false
     @State private var showShareSheet = false
+    @State private var waitingForStorage = false
     
     
-    public var body: some View {
+    public var body: some View {        
         ScrollViewReader { proxy in // swiftlint:disable:this closure_body_length
             OnboardingView(
                 titleView: {
@@ -90,13 +99,40 @@ public struct OnboardingConsentView: View {
                 }
             )
             .scrollDisabled($viewState.signing.wrappedValue)
+            .overlay(
+                    Group {
+                        if viewState == .storing {
+                            ZStack {
+                                Color(UIColor.systemBackground)
+                                    .opacity(0.5)
+                                    .edgesIgnoringSafeArea(.all)
+                                
+                                ProgressView()
+                            }
+                        }
+                    }
+                )
             .onChange(of: viewState) {
                 if case .exported(let exportedConsentDocumented) = viewState {
                     if !willShowShareSheet {
-                        Task { @MainActor in
-                            /// Stores the finished PDF in the Spezi `Standard`.
-                            await onboardingDataSource.store(exportedConsentDocumented, identifier: identifier)
-                            await action()
+                        viewState = .storing
+                        Task {
+                            do {
+                                /// Stores the finished PDF in the Spezi `Standard`.
+                                try await onboardingDataSource.store(
+                                    exportedConsentDocumented,
+                                    identifier: identifier
+                                )
+
+                                await action()
+                                viewState = .stored
+
+                            } catch {
+                                waitingForStorage = false
+                                // In case of error, go back to previous state.
+                                viewState = .exported(document: exportedConsentDocumented)
+                                viewState = .base(.error(AnyLocalizedError(error: error)))
+                            }
                         }
                     } else {
                         showShareSheet = true
@@ -146,6 +182,7 @@ public struct OnboardingConsentView: View {
                     showShareSheet = false
                 }
             }
+            
             // `NSSharingServicePicker` doesn't provide a completion handler as `UIActivityViewController` does,
             // therefore necessitating the deletion of the temporary file on disappearing.
             .onDisappear {
@@ -177,7 +214,7 @@ public struct OnboardingConsentView: View {
         markdown: @escaping () async -> Data,
         action: @escaping () async -> Void,
         title: LocalizedStringResource? = LocalizationDefaults.consentFormTitle,
-        identifier: String = "DefaultConsentDocument",
+        identifier: String = "ConsentDocument",
         exportConfiguration: ConsentDocument.ExportConfiguration = .init()
     ) {
         self.markdown = markdown

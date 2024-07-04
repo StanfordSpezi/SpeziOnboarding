@@ -162,49 +162,13 @@ final class OnboardingTests: XCTestCase { // swiftlint:disable:this type_body_le
     func testOnboardingConsentMarkdown() throws {
         let app = XCUIApplication()
         app.launch()
-
+        
         // Test that the consent view can render markdown
-        XCTAssert(app.buttons["First Consent View (Markdown)"].waitForExistence(timeout: 2))
-        app.buttons["First Consent View (Markdown)"].tap()
+        XCTAssert(app.buttons["Consent View (Markdown)"].waitForExistence(timeout: 2))
+        app.buttons["Consent View (Markdown)"].tap()
 
-        XCTAssert(app.staticTexts["First Consent"].waitForExistence(timeout: 2))
-        XCTAssert(app.staticTexts["This is the first markdown example"].waitForExistence(timeout: 2))
-
-        XCTAssertFalse(app.staticTexts["Leland Stanford"].waitForExistence(timeout: 2))
-        XCTAssertFalse(app.staticTexts["X"].waitForExistence(timeout: 2))
-
-        hitConsentButton(app)
-
-        #if targetEnvironment(simulator) && (arch(i386) || arch(x86_64))
-            throw XCTSkip("PKCanvas view-related tests are currently skipped on Intel-based iOS simulators due to a metal bug on the simulator.")
-        #endif
-
-        XCTAssert(app.staticTexts["First Name"].waitForExistence(timeout: 2))
-        try app.textFields["Enter your first name ..."].enter(value: "Leland")
-
-        XCTAssert(app.staticTexts["Last Name"].waitForExistence(timeout: 2))
-        try app.textFields["Enter your last name ..."].enter(value: "Stanford")
-
-        hitConsentButton(app)
-
-        XCTAssert(app.staticTexts["Name: Leland Stanford"].waitForExistence(timeout: 2))
-
-        #if !os(macOS)
-        app.staticTexts["Name: Leland Stanford"].swipeRight()
-
-        XCTAssert(app.buttons["Undo"].waitForExistence(timeout: 2))
-        app.buttons["Undo"].tap()
-
-        XCTAssert(app.scrollViews["Signature Field"].waitForExistence(timeout: 2))
-        app.scrollViews["Signature Field"].swipeRight()
-        #else
-        XCTAssert(app.textFields["Signature Field"].waitForExistence(timeout: 2))
-        try app.textFields["Signature Field"].enter(value: "Leland Stanford")
-        #endif
-
-        hitConsentButton(app)
-
-        XCTAssert(app.staticTexts["First Consent PDF rendering exists"].waitForExistence(timeout: 2))
+        try testConsentViewOnboardingFlow(app: app, consentTitle: "First Consent", markdownText: "This is the first markdown example")
+        try testConsentViewOnboardingFlow(app: app, consentTitle: "Second Consent", markdownText: "This is the second markdown example")
     }
 
     func testOnboardingConsentMarkdownRendering() throws {
@@ -212,8 +176,8 @@ final class OnboardingTests: XCTestCase { // swiftlint:disable:this type_body_le
         app.launch()
 
         // Test that the consent view is not exported
-        XCTAssert(app.buttons["First Rendered Consent View (Markdown)"].waitForExistence(timeout: 2))
-        app.buttons["First Rendered Consent View (Markdown)"].tap()
+        XCTAssert(app.buttons["Rendered Consent View (Markdown)"].waitForExistence(timeout: 2))
+        app.buttons["Rendered Consent View (Markdown)"].tap()
 
         XCTAssert(app.staticTexts["First Consent PDF rendering doesn't exist"].waitForExistence(timeout: 2))
 
@@ -222,8 +186,8 @@ final class OnboardingTests: XCTestCase { // swiftlint:disable:this type_body_le
         app.buttons["Back"].tap()
 
         // Go through markdown consent form and check rendering
-        XCTAssert(app.buttons["First Consent View (Markdown)"].waitForExistence(timeout: 2))
-        app.buttons["First Consent View (Markdown)"].tap()
+        XCTAssert(app.buttons["Consent View (Markdown)"].waitForExistence(timeout: 2))
+        app.buttons["Consent View (Markdown)"].tap()
 
         XCTAssert(app.staticTexts["First Consent"].waitForExistence(timeout: 2))
         XCTAssert(app.staticTexts["This is the first markdown example"].waitForExistence(timeout: 2))
@@ -268,8 +232,8 @@ final class OnboardingTests: XCTestCase { // swiftlint:disable:this type_body_le
 
         app.launch()
 
-        XCTAssert(app.buttons["First Consent View (Markdown)"].waitForExistence(timeout: 2))
-        app.buttons["First Consent View (Markdown)"].tap()
+        XCTAssert(app.buttons["Consent View (Markdown)"].waitForExistence(timeout: 2))
+        app.buttons["Consent View (Markdown)"].tap()
 
         XCTAssert(app.staticTexts["First Consent"].waitForExistence(timeout: 2))
         XCTAssert(app.staticTexts["This is the first markdown example"].waitForExistence(timeout: 2))
@@ -407,14 +371,11 @@ final class OnboardingTests: XCTestCase { // swiftlint:disable:this type_body_le
         let app = XCUIApplication()
         app.launch()
 
-        XCTAssert(app.buttons["Second Rendered Consent View (Markdown)"].waitForExistence(timeout: 2))
-        app.buttons["Second Rendered Consent View (Markdown)"].tap()
+        XCTAssert(app.buttons["Consent View (Markdown)"].waitForExistence(timeout: 2))
+        app.buttons["Consent View (Markdown)"].tap()
 
-        // Check if on consent export page
-        XCTAssert(app.staticTexts["Second Consent PDF rendering doesn't exist"].waitForExistence(timeout: 2))
-
-        XCTAssert(app.buttons["Next"].waitForExistence(timeout: 2))
-        app.buttons["Next"].tap()
+        try testConsentViewOnboardingFlow(app: app, consentTitle: "First Consent", markdownText: "This is the first markdown example")
+        try testConsentViewOnboardingFlow(app: app, consentTitle: "Second Consent", markdownText: "This is the second markdown example")
 
         XCTAssert(app.buttons["Next"].waitForExistence(timeout: 2))
         app.buttons["Next"].tap()
@@ -441,7 +402,8 @@ final class OnboardingTests: XCTestCase { // swiftlint:disable:this type_body_le
     private func hitConsentButton(_ app: XCUIApplication) {
         if app.staticTexts["This is the first markdown example"].isHittable {
             app.staticTexts["This is the first markdown example"].swipeUp()
-        } else {
+        }
+        else {
             print("Can not scroll down.")
         }
         XCTAssert(app.buttons["I Consent"].waitForExistence(timeout: 2))
@@ -455,14 +417,11 @@ final class OnboardingTests: XCTestCase { // swiftlint:disable:this type_body_le
             app.buttons["Show Conditional View"].tap()
         }
 
-        XCTAssert(app.buttons["Second Rendered Consent View (Markdown)"].waitForExistence(timeout: 2))
-        app.buttons["Second Rendered Consent View (Markdown)"].tap()
+        XCTAssert(app.buttons["Consent View (Markdown)"].waitForExistence(timeout: 2))
+        app.buttons["Consent View (Markdown)"].tap()
 
-        // Check if on consent export page
-        XCTAssert(app.staticTexts["Second Consent PDF rendering doesn't exist"].waitForExistence(timeout: 2))
-
-        XCTAssert(app.buttons["Next"].waitForExistence(timeout: 2))
-        app.buttons["Next"].tap()
+        try testConsentViewOnboardingFlow(app: app, consentTitle: "First Consent", markdownText: "This is the first markdown example")
+        try testConsentViewOnboardingFlow(app: app, consentTitle: "Second Consent", markdownText: "This is the second markdown example")
 
         XCTAssert(app.buttons["Next"].waitForExistence(timeout: 2))
         app.buttons["Next"].tap()

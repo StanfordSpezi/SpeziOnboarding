@@ -10,6 +10,7 @@ import PDFKit
 import Spezi
 import SpeziOnboarding
 import SwiftUI
+import SpeziViews
 
 
 /// An example Standard used for the configuration.
@@ -19,22 +20,25 @@ actor ExampleStandard: Standard, EnvironmentAccessible {
 }
 
 
-extension ExampleStandard: OnboardingConstraint {
-    func store(consent: PDFDocument, identifier: String) async {
-        await MainActor.run {
-            if identifier == "FirstConsentDocument" {
+extension ExampleStandard: ConsentConstraint {
+    func store(consent: PDFDocument, identifier: String) async throws {
+
+        try await MainActor.run {
+            if identifier == ConsentDocumentIdentifier.first {
                 self.firstConsentData = consent
-            } else if identifier == "SecondConsentDocument" {
+            } else if identifier == ConsentDocumentIdentifier.second {
                 self.secondConsentData = consent
+            } else {
+                throw ConsentStoreError.invalidIdentifier("Invalid Identifier \(identifier)")
             }
         }
         try? await Task.sleep(for: .seconds(0.5))
     }
     
     func loadConsentDocument(identifier: String) async throws -> PDFDocument? {
-        if identifier == "FirstConsentDocument" {
+        if identifier == ConsentDocumentIdentifier.first {
             return await self.firstConsentData
-        } else if identifier == "SecondConsentDocument" {
+        } else if identifier == ConsentDocumentIdentifier.second {
             return await self.secondConsentData
         }
         

@@ -23,10 +23,27 @@ struct OnboardingTestsView: View {
             )
             OnboardingWelcomeTestView()
             OnboardingSequentialTestView()
-            OnboardingConsentMarkdownTestView1()
-            OnboardingConsentMarkdownRenderingView1()
-            OnboardingConsentMarkdownTestView2()
-            OnboardingConsentMarkdownRenderingView2()
+
+            OnboardingConsentMarkdownTestView(
+                consentTitle: "First Consent",
+                consentText: "This is the first *markdown* **example**",
+                documentIdentifier: ConsentDocumentIdentifier.first
+            )
+            OnboardingConsentMarkdownRenderingView(
+                consentTitle: "First Consent",
+                documentIdentifier: ConsentDocumentIdentifier.first
+            )
+
+            OnboardingConsentMarkdownTestView(
+                consentTitle: "Second Consent",
+                consentText: "This is the second *markdown* **example**",
+                documentIdentifier: ConsentDocumentIdentifier.second
+            ).onboardingIdentifier("consent2")
+            OnboardingConsentMarkdownRenderingView(
+                consentTitle: "Second Consent",
+                documentIdentifier: ConsentDocumentIdentifier.second
+            ).onboardingIdentifier("consent_rendering2")
+
             OnboardingTestViewNotIdentifiable(text: "Leland").onboardingIdentifier("a")
             OnboardingTestViewNotIdentifiable(text: "Stanford").onboardingIdentifier("b")
             OnboardingCustomToggleTestView(showConditionalView: $showConditionalView)
