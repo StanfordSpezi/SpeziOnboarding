@@ -10,10 +10,10 @@ import Foundation
 
 // Error that can occur if ``OnboardingConsentView`` calls store in ExampleStandard
 // with an identifier which is not in ``ConsentDocumentIdentifier``
-enum ConsentStoreError: Error {
+public enum ConsentStoreError: Error {
     case invalidIdentifier(String)
     
     public var errorDescription: String? {
-        "Invalid identifier";
+        "Invalid identifier"
     }
 }

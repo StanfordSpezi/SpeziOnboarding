@@ -10,7 +10,6 @@ import PDFKit
 import Spezi
 import SpeziOnboarding
 import SwiftUI
-import SpeziViews
 
 
 /// An example Standard used for the configuration.
@@ -22,7 +21,6 @@ actor ExampleStandard: Standard, EnvironmentAccessible {
 
 extension ExampleStandard: ConsentConstraint {
     func store(consent: PDFDocument, identifier: String) async throws {
-
         try await MainActor.run {
             if identifier == ConsentDocumentIdentifier.first {
                 self.firstConsentData = consent

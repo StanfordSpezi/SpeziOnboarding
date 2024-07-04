@@ -68,7 +68,7 @@ public struct OnboardingConsentView: View {
     @State private var waitingForStorage = false
     
     
-    public var body: some View {        
+    public var body: some View {
         ScrollViewReader { proxy in // swiftlint:disable:this closure_body_length
             OnboardingView(
                 titleView: {
@@ -126,7 +126,6 @@ public struct OnboardingConsentView: View {
 
                                 await action()
                                 viewState = .stored
-
                             } catch {
                                 waitingForStorage = false
                                 // In case of error, go back to previous state.

@@ -402,8 +402,7 @@ final class OnboardingTests: XCTestCase { // swiftlint:disable:this type_body_le
     private func hitConsentButton(_ app: XCUIApplication) {
         if app.staticTexts["This is the first markdown example"].isHittable {
             app.staticTexts["This is the first markdown example"].swipeUp()
-        }
-        else {
+        } else {
             print("Can not scroll down.")
         }
         XCTAssert(app.buttons["I Consent"].waitForExistence(timeout: 2))

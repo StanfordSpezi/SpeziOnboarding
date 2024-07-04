@@ -32,6 +32,6 @@ public protocol OnboardingConstraint: Standard {
         Storing consent documents without an identifier is deprecated.
         Please use ConsentConstraint.store(consent: PDFDocument, identifier: String) instead.
         """
-    ) 
+    )
     func store(consent: PDFDocument) async
 }
