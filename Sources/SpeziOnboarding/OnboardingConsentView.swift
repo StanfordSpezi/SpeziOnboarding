@@ -6,10 +6,13 @@
 // SPDX-License-Identifier: MIT
 //
 
+#if os(macOS)
+import AppKit
+#endif
+
 import Foundation
 import SpeziViews
 import SwiftUI
-
 
 /// Onboarding view to display markdown-based consent documents that can be signed and exported.
 ///
@@ -103,9 +106,14 @@ public struct OnboardingConsentView: View {
                     Group {
                         if viewState == .storing {
                             ZStack {
-                                Color(UIColor.systemBackground)
+                                #if !os(macOS)
+                                    Color(uiColor: UIColor.systemBackground)
                                     .opacity(0.5)
-                                    .edgesIgnoringSafeArea(.all)
+                                #else
+                                    Color(nsColor: NSColor.windowBackgroundColor)
+                                    .opacity(0.5)
+                                #endif
+                                    
                                 
                                 ProgressView()
                             }
