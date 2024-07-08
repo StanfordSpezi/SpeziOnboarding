@@ -402,6 +402,8 @@ final class OnboardingTests: XCTestCase { // swiftlint:disable:this type_body_le
     private func hitConsentButton(_ app: XCUIApplication) {
         if app.staticTexts["This is the first markdown example"].isHittable {
             app.staticTexts["This is the first markdown example"].swipeUp()
+        } else if app.staticTexts["This is the second markdown example"].isHittable {
+            app.staticTexts["This is the second markdown example"].swipeUp()
         } else {
             print("Can not scroll down.")
         }
@@ -446,6 +448,8 @@ final class OnboardingTests: XCTestCase { // swiftlint:disable:this type_body_le
     func testIdentifiableViews() throws {
         let app = XCUIApplication()
         app.launch()
+
+        XCTAssert(app.buttons["Onboarding Identifiable View"].waitForExistence(timeout: 2))
         app.buttons["Onboarding Identifiable View"].tap()
 
         XCTAssert(app.staticTexts["ID: 1"].waitForExistence(timeout: 2))
