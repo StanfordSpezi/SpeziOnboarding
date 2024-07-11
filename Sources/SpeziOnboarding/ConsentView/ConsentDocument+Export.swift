@@ -96,7 +96,6 @@ extension ConsentDocument {
         let personName = name.formatted(.name(style: .long))
 
         #if !os(macOS)
-        
         let group = PDFGroup(
             allowsBreaks: false,
             backgroundImage: PDFImage(image: blackInkSignatureImage),
@@ -119,7 +118,7 @@ extension ConsentDocument {
         let signaturePrefixFont = NSFont.preferredFont(forTextStyle: .title2)
         let nameFont = NSFont.preferredFont(forTextStyle: .subheadline)
         let signatureColor = NSColor.secondaryLabelColor
-        let signaturePrefix = "X " + personName
+        let signaturePrefix = "X " + signature
         #endif
         
         group.set(font: signaturePrefixFont)

@@ -12,8 +12,8 @@
 		2F61BDCB29DDE76D00D71D33 /* SpeziOnboardingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F61BDCA29DDE76D00D71D33 /* SpeziOnboardingTests.swift */; };
 		2F6D139A28F5F386007C25D6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2F6D139928F5F386007C25D6 /* Assets.xcassets */; };
 		2FA7382C290ADFAA007ACEB9 /* TestApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FA7382B290ADFAA007ACEB9 /* TestApp.swift */; };
-		61D77B542BC83F0100E3165F /* OnboardingCustomToggleTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61D77B532BC83F0100E3165F /* OnboardingCustomToggleTestView.swift */; };
 		61040A1D2BAFA2F600EDD4EC /* OnboardingIdentifiableTestViewCustom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61040A1B2BAFA2F600EDD4EC /* OnboardingIdentifiableTestViewCustom.swift */; };
+		61D77B542BC83F0100E3165F /* OnboardingCustomToggleTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61D77B532BC83F0100E3165F /* OnboardingCustomToggleTestView.swift */; };
 		61F1697E2BCA888600D1622B /* OnboardingTestViewNotIdentifiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61F1697D2BCA888600D1622B /* OnboardingTestViewNotIdentifiable.swift */; };
 		970D444B2A6F031200756FE2 /* OnboardingConsentMarkdownTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 970D444A2A6F031200756FE2 /* OnboardingConsentMarkdownTestView.swift */; };
 		970D444F2A6F048A00756FE2 /* OnboardingWelcomeTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 970D444E2A6F048A00756FE2 /* OnboardingWelcomeTestView.swift */; };
@@ -49,8 +49,8 @@
 		2F6D13AC28F5F386007C25D6 /* TestAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TestAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2FA7382B290ADFAA007ACEB9 /* TestApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestApp.swift; sourceTree = "<group>"; };
 		2FB0758A299DDB9000C0B37F /* TestApp.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = TestApp.xctestplan; sourceTree = "<group>"; };
-		61D77B532BC83F0100E3165F /* OnboardingCustomToggleTestView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingCustomToggleTestView.swift; sourceTree = "<group>"; };
 		61040A1B2BAFA2F600EDD4EC /* OnboardingIdentifiableTestViewCustom.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingIdentifiableTestViewCustom.swift; sourceTree = "<group>"; };
+		61D77B532BC83F0100E3165F /* OnboardingCustomToggleTestView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingCustomToggleTestView.swift; sourceTree = "<group>"; };
 		61F1697D2BCA888600D1622B /* OnboardingTestViewNotIdentifiable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingTestViewNotIdentifiable.swift; sourceTree = "<group>"; };
 		970D444A2A6F031200756FE2 /* OnboardingConsentMarkdownTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingConsentMarkdownTestView.swift; sourceTree = "<group>"; };
 		970D444E2A6F048A00756FE2 /* OnboardingWelcomeTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingWelcomeTestView.swift; sourceTree = "<group>"; };
@@ -458,10 +458,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "";
-				DEVELOPMENT_TEAM = 637867499T;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				ENABLE_TESTING_SEARCH_PATHS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -477,6 +477,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = edu.stanford.spezi.onboarding.testapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
