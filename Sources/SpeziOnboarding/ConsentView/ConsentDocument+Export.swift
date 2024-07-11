@@ -9,15 +9,16 @@
 import PDFKit
 import PencilKit
 import SwiftUI
+import TPPDF
 
 /// Extension of `ConsentDocument` enabling the export of the signed consent page.
 extension ConsentDocument {
-#if !os(macOS)
+    #if !os(macOS)
     /// As the `PKDrawing.image()` function automatically converts the ink color dependent on the used color scheme (light or dark mode),
     /// force the ink used in the `UIImage` of the `PKDrawing` to always be black by adjusting the signature ink according to the color scheme.
     private var blackInkSignatureImage: UIImage {
         var updatedDrawing = PKDrawing()
-        
+    
         for stroke in signature.strokes {
             let blackStroke = PKStroke(
                 ink: PKInk(stroke.ink.inkType, color: colorScheme == .light ? .black : .white),
@@ -25,228 +26,163 @@ extension ConsentDocument {
                 transform: stroke.transform,
                 mask: stroke.mask
             )
-            
+
             updatedDrawing.strokes.append(blackStroke)
         }
-        
-#if os(iOS)
+
+        #if os(iOS)
         let scale = UIScreen.main.scale
-#else
+        #else
         let scale = 3.0 // retina scale is default
-#endif
-        
+        #endif
+
         return updatedDrawing.image(
             from: .init(x: 0, y: 0, width: signatureSize.width, height: signatureSize.height),
             scale: scale
         )
     }
-#endif
+    #endif
     
-    /// Creates a representation of the consent form that is ready to be exported via the SwiftUI `ImageRenderer`.
+    /// Generates a `PDFAttributedText` containing the timestamp of when the PDF was exported.
+    ///
+    /// - Returns: A TPPDF `PDFAttributedText` representation of the export time stamp.
+    func exportTimeStamp() -> PDFAttributedText {
+        let stampText = String(localized: "EXPORTED_TAG", bundle: .module) + ": " +
+                DateFormatter.localizedString(from: Date(), dateStyle: .medium, timeStyle: .short) + "\n\n\n\n"
+
+        #if !os(macOS)
+        let font = UIFont.preferredFont(forTextStyle: .caption1)
+        #else
+        let font = NSFont.preferredFont(forTextStyle: .caption1)
+        #endif
+        
+        let attributedTitle = NSMutableAttributedString(
+            string: stampText,
+            attributes: [
+                NSAttributedString.Key.font: font
+            ]
+        )
+        
+        return PDFAttributedText(text: attributedTitle)
+    }
+    
+    /// Converts the header text (i.e., document title) to a PDFAttributedText, which can be
+    /// added to the exported PDFDocument.
+    ///
+    /// - Returns: A TPPDF `PDFAttributedText` representation of the document title.
+    func exportHeader() -> PDFAttributedText {
+        #if !os(macOS)
+        let largeTitleFont = UIFont.preferredFont(forTextStyle: .largeTitle)
+        let boldLargeTitleFont = UIFont.boldSystemFont(ofSize: largeTitleFont.pointSize)
+        #else
+        let largeTitleFont = NSFont.preferredFont(forTextStyle: .largeTitle)
+        let boldLargeTitleFont = NSFont.boldSystemFont(ofSize: largeTitleFont.pointSize)
+        #endif
+
+        let attributedTitle = NSMutableAttributedString(
+            string: exportConfiguration.consentTitle.localizedString() + "\n\n",
+            attributes: [
+                NSAttributedString.Key.font: boldLargeTitleFont
+            ]
+        )
+        
+        return PDFAttributedText(text: attributedTitle)
+    }
+    /// Exports the signature to a `PDFGroup` which can be added to the exported PDFDocument.
+    /// The signature group will contain a prefix ("X"), the name of the signee as well as the signature image.
+    ///
+    /// - Returns: A TPPDF `PDFAttributedText` representation of the export time stamp.
+    func exportSignature() -> PDFGroup {
+        let personName = name.formatted(.name(style: .long))
+
+        #if !os(macOS)
+        
+        let group = PDFGroup(
+            allowsBreaks: false,
+            backgroundImage: PDFImage(image: blackInkSignatureImage),
+            padding: EdgeInsets(top: 50, left: 50, bottom: 0, right: 100)
+        )
+        
+        let signaturePrefixFont = UIFont.preferredFont(forTextStyle: .title2)
+        let nameFont = UIFont.preferredFont(forTextStyle: .subheadline)
+        let signatureColor = UIColor.secondaryLabel
+        let signaturePrefix = "X"
+        #else
+        // On macOS, we do not have a "drawn" signature, hence do
+        // not set a backgroundImage for the PDFGroup.
+        // Instead, we render the person name.
+        let group = PDFGroup(
+            allowsBreaks: false,
+            padding: EdgeInsets(top: 50, left: 50, bottom: 0, right: 100)
+        )
+        
+        let signaturePrefixFont = NSFont.preferredFont(forTextStyle: .title2)
+        let nameFont = NSFont.preferredFont(forTextStyle: .subheadline)
+        let signatureColor = NSColor.secondaryLabelColor
+        let signaturePrefix = "X " + personName
+        #endif
+        
+        group.set(font: signaturePrefixFont)
+        group.set(textColor: signatureColor)
+        group.add(PDFGroupContainer.left, text: signaturePrefix)
+    
+        group.addLineSeparator(style: PDFLineStyle(color: .black))
+        
+        group.set(font: nameFont)
+        group.add(PDFGroupContainer.left, text: personName)
+        return group
+    }
+    
+    /// Returns a  `TPPDF.PDFPageFormat` which corresponds to Spezi's `ExportConfiguration.PaperSize`.
     ///
     /// - Parameters:
-    ///   - markdown: The markdown consent content as an `AttributedString`.
-    ///
-    /// - Returns: A SwiftUI `View` representation of the consent content and signature.
-    ///
-    /// - Note: This function avoids the use of asynchronous operations.
-    /// Asynchronous tasks are incompatible with SwiftUI's `ImageRenderer`,
-    /// which expects all rendering processes to be synchronous.
+    ///   - paperSize: The paperSize of an ExportConfiguration.
+    /// - Returns: A TPPDF `PDFPageFormat` according to the `ExportConfiguration.PaperSize`.
+    func getPDFFormat(paperSize: ExportConfiguration.PaperSize) -> PDFPageFormat {
+        switch paperSize {
+        case .dinA4:
+            return PDFPageFormat.a4
+        case .usLetter:
+            return PDFPageFormat.usLetter
+        }
+    }
     
-    
-    /// Exports the signed consent form as a `PDFDocument` via the SwiftUI `ImageRenderer`.
-    ///
+    /// Exports the signed consent form as a `PDFKit.PDFDocument`.
+    /// The PDF generated by TPPDF and then converted to a TPDFKit.PDFDocument.
     /// Renders the `PDFDocument` according to the specified ``ConsentDocument/ExportConfiguration``.
     ///
     /// - Returns: The exported consent form in PDF format as a PDFKit `PDFDocument`
     @MainActor
-    func export() async -> PDFDocument? {
-        let markdown = await asyncMarkdown()
+    func export() async -> PDFKit.PDFDocument? {
+        // swiftlint:disable:all
 
+        let markdown = await asyncMarkdown()
         let markdownString = (try? AttributedString(
             markdown: markdown,
             options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace)
         )) ?? AttributedString(String(localized: "MARKDOWN_LOADING_ERROR", bundle: .module))
-
-        let pages = paginatedViews(markdown: markdownString)
-
-        let paperSize = CGSize(
-            width: exportConfiguration.paperSize.dimensions.width,
-            height: exportConfiguration.paperSize.dimensions.height
-        )
-
-        guard let mutableData = CFDataCreateMutable(kCFAllocatorDefault, 0),
-                let consumer = CGDataConsumer(data: mutableData),
-                let pdf = CGContext(consumer: consumer, mediaBox: nil, nil) else {
+        
+        let document = TPPDF.PDFDocument(format: getPDFFormat(paperSize: exportConfiguration.paperSize))
+        
+        if exportConfiguration.includingTimestamp {
+            document.add(.contentRight, attributedTextObject: exportTimeStamp())
+        }
+        
+        document.add(.contentCenter, attributedTextObject: exportHeader())
+        document.add(attributedText: NSAttributedString(markdownString))
+        document.add(group: exportSignature())
+        
+        // Convert TPPDF.PDFDocument to PDFKit.PDFDocument
+        let generator = PDFGenerator(document: document)
+        
+        if let data = try? generator.generateData() {
+            if let pdfKitDocument = PDFKit.PDFDocument(data: data) {
+                return pdfKitDocument
+            } else {
+                return nil
+            }
+        } else {
             return nil
         }
-
-        for page in pages {
-            let renderer = ImageRenderer(content: page)
-            
-            renderer.render { _, context in
-                pdf.beginPDFPage(nil)
-                pdf.translateBy(x: 0, y: 0)
-                
-                context(pdf)
-                
-                pdf.endPDFPage()
-            }
-        }
-
-        pdf.closePDF()
-        return PDFDocument(data: mutableData as Data)
-    }
-    
-    private func paginatedViews(markdown: AttributedString) -> [AnyView] {
-        /*
-        This algorithm splits the consent document consisting of title, text and signature
-        across multiple pages, if titleHeight + signatureHeight + textHeight is larger than 1 page. 
-        
-        Let header = title, and footer = signature.
-        
-        The algorithm ensures that headerHeight + footerHeight + textHeight <= pageHeight.
-        headerHeight is set to 200 on the first page, and to 50 on all subsequent pages (as we do not have a title anymore).
-        footerHeight is always constant at 150 on each page, even if there is no footer, because we need the footerHeight
-        to determine if we are actually on the last page (check improvements below).
-        Tested for 1, 2 and 3 pages for dinA4 and usLetter size documents.
-
-        Possible improvements:
-            * The header height on the first page should not be hardcoded to 200, but calculated from 
-            VStack consisting of export tag + title; if there is no export tag, the headerHeight can be smaller.
-            * The footerHeight could/should only be set for the last page. However, the algorithm then becomes more complicated: To know if we are on the last page, we check if headerHeight + footerHeight + textHeight <= pageHeight. If footerHeight is 0 we have more space for the text. 
-                If we then find out that we are actually  on the last page, we would have to set footerHeight to 150 and thus we have less space for the text. Thus, it could happen that know we are not on the last page anymore but need one extra page.
-
-        Known problems:
-            * If we assume headerHeight too small (e.g., 100), then truncation happens.
-        */
-        var pages = [AnyView]()
-        var remainingMarkdown = markdown
-        let pageSize = CGSize(width: exportConfiguration.paperSize.dimensions.width, height: exportConfiguration.paperSize.dimensions.height)
-        // Maximum header height on the first page, i.e., size of
-        // the VStack containing the export tag + title.
-        // Better calculate this instead of hardcoding.
-        let headerHeightFirstPage: CGFloat = 200
-        // Header height on all subsequent pages. Should come from exportConfiguration.
-        let headerHeightOtherPages: CGFloat = 50
-        let footerHeight: CGFloat = 150
-        var headerHeight = headerHeightFirstPage
-
-        while !remainingMarkdown.unicodeScalars.isEmpty {
-            let (currentPageContent, nextPageContent) =
-                split(markdown: remainingMarkdown, pageSize: pageSize, headerHeight: headerHeight, footerHeight: footerHeight)
-            
-            // In the first iteration, headerHeight was headerHeightFirstPage.
-            // In all subsequent iterations, we only need headerHeightOtherPages.
-            // Hence, more text fits on the page.
-            headerHeight = headerHeightOtherPages
-
-            let currentPage = AnyView(
-                VStack {
-                    if pages.isEmpty {  // First page
-                        renderTitle(headerHeight: headerHeight)
-                    } else {
-                        // If we are not on the first page, we add a spacing of headerHeight,
-                        // which should now be set to "headerHeightOtherPages".
-                        VStack {
-                        }.padding(.top, headerHeight)
-                    }
-
-                    Text(currentPageContent)
-                        .padding()
-
-                    Spacer()
-
-                    if nextPageContent.unicodeScalars.isEmpty {  // Last page
-                        renderSignature(footerHeight: footerHeight)
-                    }
-                }
-                .frame(width: pageSize.width, height: pageSize.height)
-            )
-            pages.append(currentPage)
-            remainingMarkdown = nextPageContent
-        }
-        return pages
-    }
-
-    private func split(
-        markdown: AttributedString,
-        pageSize: CGSize,
-        headerHeight: CGFloat,
-        footerHeight: CGFloat
-    ) -> (AttributedString, AttributedString) {
-        // This algorithm determines at which index to split the text, if textHeight + headerHeight + footerHeight > pageSize.
-        // The algorithm returns the text that still fits on the current page,
-        // and the remaining text which needs to be placed on subsequent page(s).
-        // If remaining == 0, this means we have reached the last page, as all remaining text
-        // can fit on the current page.
-
-        // The algorithm works by creating a virtual text storage container with width = pageSize.width
-        // and height = pageSize.height - footerHeight - headerHeight.
-        // We can then ask "how much text fits in this virtual text storage container" by checking it's
-        // glyphRange. The glyphRange tells us how many characters of the given text fit into the text container.
-        // Specifically, glyphRange is exactly the index AFTER the last word (not character) that STILL FITS on the page.
-        // We can then split the text as follows:
-        // let index = container.glyphRange // Index after last word which still fits on the page.
-        // currentPage = markdown[0:index]
-        // remaining = markdown[index:]
-
-        let contentHeight = pageSize.height - headerHeight - footerHeight
-        var currentPage = AttributedString()
-        var remaining = markdown
-
-        let textStorage = NSTextStorage(attributedString: NSAttributedString(markdown))
-        let layoutManager = NSLayoutManager()
-        let textContainer = NSTextContainer(size: CGSize(width: pageSize.width, height: contentHeight))
-        layoutManager.addTextContainer(textContainer)
-        textStorage.addLayoutManager(layoutManager)
-
-        let maximumRange = layoutManager.glyphRange(for: textContainer)
-     
-        currentPage = AttributedString(textStorage.attributedSubstring(from: maximumRange))
-        remaining = AttributedString(
-                textStorage.attributedSubstring(
-                        from: NSRange(
-                            location: maximumRange.length,
-                            length: textStorage.length - maximumRange.length
-                        )
-                    )
-                )
-
-        return (currentPage, remaining)
-    }
-    
-    // Creates a View for the title, which can then be rendered during PDF export.
-    private func renderTitle(headerHeight: CGFloat) -> some View {
-        VStack {
-            if exportConfiguration.includingTimestamp {
-                HStack {
-                    Spacer()
-                    Text("EXPORTED_TAG", bundle: .module) + Text(verbatim: ": "
-                        + DateFormatter.localizedString(from: Date(), dateStyle: .medium, timeStyle: .short))
-                }
-                .font(.caption)
-                .padding()
-            }
-            OnboardingTitleView(title: exportConfiguration.consentTitle)
-        }
-        .padding()
-    }
-
-    // Creates a View for the signature, which can then be rendered during PDF export.
-    private func renderSignature(footerHeight: CGFloat) -> some View {
-        ZStack(alignment: .bottomLeading) {
-            SignatureViewBackground(name: name, backgroundColor: .clear)
-            
-            #if !os(macOS)
-            Image(uiImage: blackInkSignatureImage)
-            #else
-            Text(signature)
-                .padding(.bottom, 32)
-                .padding(.leading, 46)
-                .font(.custom("Snell Roundhand", size: 24))
-            #endif
-        }
-        .padding(.bottom, footerHeight)
     }
 }
