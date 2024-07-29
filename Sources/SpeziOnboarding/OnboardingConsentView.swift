@@ -34,7 +34,7 @@ import SwiftUI
 ///     static let second = "secondConsentDocument"
 /// }
 /// ```
-
+///
 /// ```swift
 /// OnboardingConsentView(
 ///     markdown: {
@@ -63,13 +63,15 @@ public struct OnboardingConsentView: View {
     private let title: LocalizedStringResource?
     private let identifier: String
     private let exportConfiguration: ConsentDocument.ExportConfiguration
+    private var backButtonHidden: Bool {
+        viewState == .storing || (viewState == .export && !willShowShareSheet)
+    }
 
     @Environment(OnboardingDataSource.self) private var onboardingDataSource
     @State private var viewState: ConsentViewState = .base(.idle)
     @State private var willShowShareSheet = false
     @State private var showShareSheet = false
-    @State private var waitingForStorage = false
-    
+
     
     public var body: some View {
         ScrollViewReader { proxy in // swiftlint:disable:this closure_body_length
@@ -90,36 +92,24 @@ public struct OnboardingConsentView: View {
                     .padding(.bottom)
                 },
                 actionView: {
-                    OnboardingActionsView(
-                        LocalizedStringResource("CONSENT_ACTION", bundle: .atURL(from: .module)),
+                    AsyncButton(
                         action: {
                             viewState = .export
+                        },
+                        label: {
+                            Text("CONSENT_ACTION", bundle: .module)
+                                .frame(maxWidth: .infinity, minHeight: 38)
+                                .processingOverlay(isProcessing: viewState == .storing || (viewState == .export && !willShowShareSheet))
                         }
                     )
+                        .buttonStyle(.borderedProminent)
                         .disabled(!actionButtonsEnabled)
                         .animation(.easeInOut, value: actionButtonsEnabled)
                         .id("ActionButton")
                 }
             )
             .scrollDisabled($viewState.signing.wrappedValue)
-            .overlay(
-                    Group {
-                        if viewState == .storing {
-                            ZStack {
-                                #if !os(macOS)
-                                    Color(uiColor: UIColor.systemBackground)
-                                    .opacity(0.5)
-                                #else
-                                    Color(nsColor: NSColor.windowBackgroundColor)
-                                    .opacity(0.5)
-                                #endif
-                                    
-                                
-                                ProgressView()
-                            }
-                        }
-                    }
-                )
+            .navigationBarBackButtonHidden(backButtonHidden)
             .onChange(of: viewState) {
                 if case .exported(let exportedConsentDocumented) = viewState {
                     if !willShowShareSheet {
@@ -133,11 +123,9 @@ public struct OnboardingConsentView: View {
                                 )
 
                                 await action()
-                                viewState = .stored
+                                viewState = .base(.idle)
                             } catch {
-                                waitingForStorage = false
                                 // In case of error, go back to previous state.
-                                viewState = .exported(document: exportedConsentDocumented)
                                 viewState = .base(.error(AnyLocalizedError(error: error)))
                             }
                         }
@@ -151,18 +139,29 @@ public struct OnboardingConsentView: View {
         }
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
-                    Button(action: {
-                        viewState = .export
-                        willShowShareSheet = true
-                    }) {
-                        Label {
-                            Text("CONSENT_SHARE", bundle: .module)
-                        } icon: {
-                            Image(systemName: "square.and.arrow.up")
-                                .accessibilityHidden(true)
+                    Button(
+                        action: {
+                            viewState = .export
+                            willShowShareSheet = true
+                        },
+                        label: {
+                            if willShowShareSheet {
+                                HStack {
+                                    Spacer()
+                                    ProgressView()
+                                    Spacer()
+                                }
+                            } else {
+                                Label {
+                                    Text("CONSENT_SHARE", bundle: .module)
+                                } icon: {
+                                    Image(systemName: "square.and.arrow.up")
+                                        .accessibilityHidden(true)
+                                }
+                            }
                         }
-                    }
-                        .disabled(!actionButtonsEnabled)
+                    )
+                        .disabled(!actionButtonsEnabled || willShowShareSheet)
                 }
             }
             .sheet(isPresented: $showShareSheet) {
@@ -204,7 +203,7 @@ public struct OnboardingConsentView: View {
     
     private var actionButtonsEnabled: Bool {
         switch viewState {
-        case .signing, .signed, .export, .exported: true
+        case .signing, .signed, .exported: true
         default: false
         }
     }

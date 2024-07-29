@@ -38,11 +38,13 @@ struct OnboardingTestsView: View {
                 consentTitle: "Second Consent",
                 consentText: "This is the second *markdown* **example**",
                 documentIdentifier: ConsentDocumentIdentifier.second
-            ).onboardingIdentifier("consent2")
+            )
+                .onboardingIdentifier(ConsentDocumentIdentifier.second)
             OnboardingConsentMarkdownRenderingView(
                 consentTitle: "Second Consent",
                 documentIdentifier: ConsentDocumentIdentifier.second
-            ).onboardingIdentifier("consent_rendering2")
+            )
+                .onboardingIdentifier("\(ConsentDocumentIdentifier.second)_rendering")
 
             OnboardingTestViewNotIdentifiable(text: "Leland").onboardingIdentifier("a")
             OnboardingTestViewNotIdentifiable(text: "Stanford").onboardingIdentifier("b")

@@ -13,8 +13,8 @@ import SwiftUI
 
 
 struct OnboardingConsentMarkdownRenderingView: View {
-    var consentTitle: String
-    var documentIdentifier: String
+    let consentTitle: String
+    let documentIdentifier: String
 
     @Environment(OnboardingNavigationPath.self) private var path
     @Environment(ExampleStandard.self) private var standard

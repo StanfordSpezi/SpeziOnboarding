@@ -9,11 +9,17 @@
 import Foundation
 
 // Error that can occur if ``OnboardingConsentView`` calls store in ExampleStandard
-// with an identifier which is not in ``ConsentDocumentIdentifier``
-public enum ConsentStoreError: Error {
+// with an identifier which is not in ``ConsentDocumentIdentifier``.
+enum ConsentStoreError: LocalizedError {
     case invalidIdentifier(String)
     
-    public var errorDescription: String? {
-        "Invalid identifier"
+    var errorDescription: String? {
+        switch self {
+        case .invalidIdentifier:
+            String(
+                localized: "Unknown document identifier provided in the OnboardingConsentView.",
+                comment: "Error thrown if a document identifier was passed to OnboardingConsentView, which is unknown to the Standard."
+            )
+        }
     }
 }

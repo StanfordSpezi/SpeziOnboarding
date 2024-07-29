@@ -37,6 +37,4 @@ public enum ConsentViewState: Equatable {
     case exported(document: PDFDocument)
     /// The `storing` state indicates that the ``ConsentDocument`` is currently being stored to the Standard.
     case storing
-    /// The `stored` state indicates that the ``ConsentDocument`` is was stored to the Standard.
-    case stored
 }

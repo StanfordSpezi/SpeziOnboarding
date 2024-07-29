@@ -39,13 +39,12 @@ public class OnboardingDataSource: Module, EnvironmentAccessible {
     
     public init() { }
 
+
     public func configure() {
-        // swiftlint:disable:next all
         guard standard is any OnboardingConstraint || standard is any ConsentConstraint else {
             fatalError("A \(type(of: standard).self) must conform to `ConsentConstraint` to process signed consent documents.")
         }
     }
-    
     
     /// Adds a new exported consent form represented as `PDFDocument` to the ``OnboardingDataSource``.
     ///

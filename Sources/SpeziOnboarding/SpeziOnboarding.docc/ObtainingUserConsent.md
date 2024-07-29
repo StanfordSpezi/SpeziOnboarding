@@ -61,7 +61,8 @@ OnboardingConsentView(
     },
     identifier: ConsentDocumentIdentifier.first, // Specify an optional unique identifier for the consent form, helpful for distinguishing consent forms when storing.
     exportConfiguration: .init(paperSize: .usLetter)   // Configure the properties of the exported consent form
-).onboardingIdentifier("first_consent")
+)
+    .onboardingIdentifier(ConsentDocumentIdentifier.first) // Set an identifier for the view, to distinguish it from other views of the same type.
 
 OnboardingConsentView(
     markdown: {
@@ -72,7 +73,8 @@ OnboardingConsentView(
     },
     identifier: ConsentDocumentIdentifier.second, // Specify an optional unique identifier for the consent form, helpful for distinguishing consent forms when storing.
     exportConfiguration: .init(paperSize: .usLetter)   // Configure the properties of the exported consent form
-).onboardingIdentifier("second_consent")
+)
+    .onboardingIdentifier(ConsentDocumentIdentifier.second) // Set an identifier for the view, to distinguish it from other views of the same type.
 ```
 
 ## Topics
