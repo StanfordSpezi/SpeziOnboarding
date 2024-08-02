@@ -57,7 +57,10 @@ public struct ConsentDocument: View {
     #endif
     @State var signatureSize: CGSize = .zero
     @Binding private var viewState: ConsentViewState
-    
+    @State private var checked: [String: Bool] = [:]
+    @State private var markdownStrings: [String] = []
+    @State public var cleanedMarkdownData: Data?
+    @State public var checkboxSnapshot: UIImage?
     
     private var nameView: some View {
         VStack {
@@ -90,6 +93,69 @@ public struct ConsentDocument: View {
             Divider()
         }
     }
+    
+    private func extractMarkdownCB() async -> (cleanedMarkdown: String, checkboxes: [String]) {
+        let data = await asyncMarkdown()
+        let dataString = String(data: data, encoding: .utf8)!
+        
+        var result = [String]()
+        var start: String.Index? = nil
+        var cleanedMarkdown = ""
+        var isInBracket = false
+
+        for (index, char) in dataString.enumerated() {
+            let currentIndex = dataString.index(dataString.startIndex, offsetBy: index)
+            
+            if char == "[" {
+                start = currentIndex
+                isInBracket = true
+            } else if char == "]", let start = start {
+                let end = currentIndex
+                let subInd = dataString.index(after: start)
+                let substring = String(dataString[subInd..<end])
+                result.append(substring)
+                isInBracket = false
+            } else if !isInBracket {
+                cleanedMarkdown.append(char)
+            }
+        }
+        
+        return (cleanedMarkdown, result)
+    }
+    
+    private var checkboxesView: some View {
+        VStack {
+            Grid(horizontalSpacing: 15) {
+                ForEach(markdownStrings, id: \.self) { markdownString in
+                    GridRow {
+                        Text(markdownString)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        Button(action: {
+                            withAnimation {
+                                checked[markdownString]?.toggle()
+                            }
+                        }) {
+                            Image(systemName: checked[markdownString] == true ? "checkmark.square.fill" : "xmark.square.fill")
+                                .foregroundColor(checked[markdownString] == true ? .green : .red)
+                        }
+                    }
+                    Divider()
+                        .gridCellUnsizedAxes(.horizontal)
+                }
+            }
+        }
+        .onAppear {
+            Task {
+                let (cleanedMarkdown, checkboxes) = await extractMarkdownCB()
+                cleanedMarkdownData = Data(cleanedMarkdown.utf8)
+                markdownStrings = checkboxes
+                for string in markdownStrings {
+                    checked[string] = false
+                }
+            }
+        }
+    }
+
     
     private var nameInputView: some View {
         Grid(horizontalSpacing: 15) {
@@ -134,7 +200,11 @@ public struct ConsentDocument: View {
     
     public var body: some View {
         VStack {
-            MarkdownView(asyncMarkdown: asyncMarkdown, state: $viewState.base)
+            if let cleanedMarkdownData = cleanedMarkdownData {
+                MarkdownView(asyncMarkdown: {cleanedMarkdownData}, state: $viewState.base)
+                    .padding(.bottom, 15)
+            }
+            checkboxesView
             Spacer()
             Group {
                 nameView
@@ -151,6 +221,10 @@ public struct ConsentDocument: View {
             .animation(.easeInOut, value: viewState == .namesEntered)
             .onChange(of: viewState) {
                 if case .export = viewState {
+                    let renderer = ImageRenderer(content: checkboxesView)
+                    if let uiImage = renderer.uiImage {
+                        checkboxSnapshot = uiImage
+                    }
                     Task {
                         guard let exportedConsent = await export() else {
                             viewState = .base(.error(Error.memoryAllocationError))

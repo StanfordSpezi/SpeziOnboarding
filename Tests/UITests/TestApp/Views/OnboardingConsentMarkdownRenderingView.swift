@@ -10,13 +10,13 @@ import PDFKit
 import SpeziOnboarding
 import SpeziViews
 import SwiftUI
-
+import QuickLook
 
 struct OnboardingConsentMarkdownRenderingView: View {
     @Environment(OnboardingNavigationPath.self) private var path
     @Environment(ExampleStandard.self) private var standard
     @State var exportedConsent: PDFDocument?
-    
+    @State var pdfURL: URL?
     
     var body: some View {
         VStack {
@@ -41,6 +41,15 @@ struct OnboardingConsentMarkdownRenderingView: View {
                             .padding()
                     )
             }
+            Button("PDF preview") {
+                if let document = exportedConsent, let data = document.dataRepresentation() {
+                    let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent("consent.pdf")
+                    try? data.write(to: tempURL)
+                    pdfURL = tempURL
+                }
+            }
+            .quickLookPreview($pdfURL)
+            .buttonStyle(.borderedProminent)
              
             Button {
                 path.nextStep()

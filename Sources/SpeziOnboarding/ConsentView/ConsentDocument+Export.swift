@@ -72,6 +72,10 @@ extension ConsentDocument {
             Text(markdown)
                 .padding()
             
+            if checkboxSnapshot != nil {
+                Image(uiImage: checkboxSnapshot!)
+            }
+            
             Spacer()
             
             ZStack(alignment: .bottomLeading) {
@@ -101,7 +105,10 @@ extension ConsentDocument {
     /// - Returns: The exported consent form in PDF format as a PDFKit `PDFDocument`
     @MainActor
     func export() async -> PDFDocument? {
-        let markdown = await asyncMarkdown()
+        var markdown = await asyncMarkdown()
+        if cleanedMarkdownData != nil {
+            markdown = cleanedMarkdownData!
+        }
         
         let markdownString = (try? AttributedString(
             markdown: markdown,

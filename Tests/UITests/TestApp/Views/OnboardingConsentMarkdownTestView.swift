@@ -18,7 +18,7 @@ struct OnboardingConsentMarkdownTestView: View {
     var body: some View {
         OnboardingConsentView(
             markdown: {
-                Data("This is a *markdown* **example**".utf8)
+                Data("This is a *markdown* **example** [May we contact you for future studies?]".utf8)
             },
             action: {
                 path.nextStep()
