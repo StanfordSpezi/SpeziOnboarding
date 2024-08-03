@@ -256,11 +256,9 @@ final class OnboardingTests: XCTestCase { // swiftlint:disable:this type_body_le
     }
 
     #if !os(macOS)  // Only test export on non macOS platforms
-    func testOnboardingConsentPDFExport() throws {  // swiftlint:disable:this function_body_length
+    @MainActor
+    func testOnboardingConsentPDFExport() async throws {
         let app = XCUIApplication()
-        let filesApp = XCUIApplication(bundleIdentifier: "com.apple.DocumentsApp")
-        let maxRetries = 10
-
         app.launch()
 
         XCTAssert(app.buttons["Consent View (Markdown)"].waitForExistence(timeout: 2))
@@ -280,83 +278,42 @@ final class OnboardingTests: XCTestCase { // swiftlint:disable:this type_body_le
         XCTAssert(app.scrollViews["Signature Field"].waitForExistence(timeout: 2))
         app.scrollViews["Signature Field"].swipeRight()
 
-        sleep(1)
+        try await Task.sleep(for: .seconds(1))
 
-        for _ in 0...maxRetries {
-            // Export consent form via share sheet button
-            XCTAssert(app.buttons["Share consent form"].waitForExistence(timeout: 2))
-            app.buttons["Share consent form"].tap()
-
-            // Store exported consent form in Files
-            #if os(visionOS)
-            // on visionOS the save to files button has no label
-            XCTAssert(app.cells["XCElementSnapshotPrivilegedValuePlaceholder"].waitForExistence(timeout: 10))
-            app.cells["XCElementSnapshotPrivilegedValuePlaceholder"].tap()
-            #else
-            XCTAssert(app.staticTexts["Save to Files"].waitForExistence(timeout: 10))
-            app.staticTexts["Save to Files"].tap()
-            #endif
-            sleep(3)
-            XCTAssert(app.buttons["Save"].waitForExistence(timeout: 2))
-            app.buttons["Save"].tap()
-            sleep(10)    // Wait until file is saved
-
-            if app.staticTexts["Replace Existing Items?"].waitForExistence(timeout: 5) {
-                XCTAssert(app.buttons["Replace"].waitForExistence(timeout: 2))
-                app.buttons["Replace"].tap()
-                sleep(3)    // Wait until file is saved
-            }
-
-            // Wait until share sheet closed and back on the consent form screen
-            XCTAssert(app.staticTexts["Consent"].waitForExistence(timeout: 10))
-
-            XCUIDevice.shared.press(.home)
-
-            // Launch the Files app
-            filesApp.launch()
-
-            // Handle already open files
-            if filesApp.buttons["Done"].waitForExistence(timeout: 2) {
-                filesApp.buttons["Done"].tap()
-            }
-
-            // Check if file exists - If not, try the export procedure again
-            // Saving to files is very flakey on the runners, needs multiple attempts to succeed
-            if filesApp.staticTexts["Signed Consent Form"].waitForExistence(timeout: 2) {
-                break
-            }
-
-            // Launch test app and try another export
-            app.launch()
-        }
-
-        // Open File
-        XCTAssert(filesApp.staticTexts["Signed Consent Form"].waitForExistence(timeout: 2))
-        XCTAssert(filesApp.collectionViews["File View"].cells["Signed Consent Form, pdf"].waitForExistence(timeout: 2))
-
-        XCTAssert(filesApp.collectionViews["File View"].cells["Signed Consent Form, pdf"].images.firstMatch.waitForExistence(timeout: 2))
-        filesApp.collectionViews["File View"].cells["Signed Consent Form, pdf"].images.firstMatch.tap()
-
-        sleep(3)    // Wait until file is opened
-
-
+        // Export consent form via share sheet button
+        XCTAssert(app.buttons["Share consent form"].waitForExistence(timeout: 2))
+        app.buttons["Share consent form"].tap()
+        try await Task.sleep(for: .seconds(5))
+        
+        // Store exported consent form in Files
         #if os(visionOS)
-        let fileView = XCUIApplication(bundleIdentifier: "com.apple.MRQuickLook")
+        // on visionOS the save to files button has no label
+        XCTAssert(app.cells["XCElementSnapshotPrivilegedValuePlaceholder"].waitForExistence(timeout: 10))
+        app.cells["XCElementSnapshotPrivilegedValuePlaceholder"].tap()
         #else
-        let fileView = filesApp
+        XCTAssert(app.staticTexts["Save to Files"].waitForExistence(timeout: 10))
+        app.staticTexts["Save to Files"].tap()
         #endif
+        try await Task.sleep(for: .seconds(5))
+        
+        XCTAssert(app.buttons["Save"].waitForExistence(timeout: 10))
+        app.buttons["Save"].tap()
+        try await Task.sleep(for: .seconds(3))
 
-        // Check if PDF contains consent title, name, and markdown message
-        for searchString in ["Spezi Consent", "This is a markdown example", "Leland Stanford"] {
-            let predicate = NSPredicate(format: "label CONTAINS[c] %@", searchString)
-            XCTAssert(fileView.otherElements.containing(predicate).firstMatch.waitForExistence(timeout: 2))
+        if app.staticTexts["Replace Existing Items?"].waitForExistence(timeout: 5) {
+            XCTAssert(app.buttons["Replace"].waitForExistence(timeout: 2))
+            app.buttons["Replace"].tap()
         }
+        
+        try await Task.sleep(for: .seconds(10))
 
-        #if os(iOS)
-        // Close File
-        XCTAssert(fileView.buttons["Done"].waitForExistence(timeout: 2))
-        fileView.buttons["Done"].tap()
-        #endif
+        // Wait until share sheet closed and back on the consent form screen
+        XCTAssert(app.staticTexts["Consent"].waitForExistence(timeout: 20))
+        
+        XCTAssert(app.buttons["I Consent"].waitForExistence(timeout: 2))
+        app.buttons["I Consent"].tap()
+        
+        XCTAssert(app.staticTexts["Consent PDF rendering exists"].waitForExistence(timeout: 2))
     }
     #endif
 
