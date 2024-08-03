@@ -285,35 +285,15 @@ final class OnboardingTests: XCTestCase { // swiftlint:disable:this type_body_le
         app.buttons["Share consent form"].tap()
         try await Task.sleep(for: .seconds(5))
         
-        // Store exported consent form in Files
+        // Store exported consent form in Files.
+        // We stop here as don't want to test the iOS Files Sheet behavior as it changes across iOS Versions and
+        // Apple doesn't have a great API to test UI tests for share sheets ...
         #if os(visionOS)
         // on visionOS the save to files button has no label
         XCTAssert(app.cells["XCElementSnapshotPrivilegedValuePlaceholder"].waitForExistence(timeout: 10))
-        app.cells["XCElementSnapshotPrivilegedValuePlaceholder"].tap()
         #else
         XCTAssert(app.staticTexts["Save to Files"].waitForExistence(timeout: 10))
-        app.staticTexts["Save to Files"].tap()
         #endif
-        try await Task.sleep(for: .seconds(5))
-        
-        XCTAssert(app.buttons["Save"].waitForExistence(timeout: 10))
-        app.buttons["Save"].tap()
-        try await Task.sleep(for: .seconds(3))
-
-        if app.staticTexts["Replace Existing Items?"].waitForExistence(timeout: 5) {
-            XCTAssert(app.buttons["Replace"].waitForExistence(timeout: 2))
-            app.buttons["Replace"].tap()
-        }
-        
-        try await Task.sleep(for: .seconds(10))
-
-        // Wait until share sheet closed and back on the consent form screen
-        XCTAssert(app.staticTexts["Consent"].waitForExistence(timeout: 20))
-        
-        XCTAssert(app.buttons["I Consent"].waitForExistence(timeout: 2))
-        app.buttons["I Consent"].tap()
-        
-        XCTAssert(app.staticTexts["Consent PDF rendering exists"].waitForExistence(timeout: 2))
     }
     #endif
 
