@@ -75,62 +75,32 @@ jobs:
   buildandtestuitests_ios:
     name: Build and Test UI Tests iOS
     uses: StanfordSpezi/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
-    strategy:
-      matrix:
-        include:
-          - buildConfig: Debug
-            resultBundle: TestApp-iOS.xcresult
-            artifactname: TestApp-iOS.xcresult
-          - buildConfig: Release
-            resultBundle: TestApp-iOS-Release.xcresult
-            artifactname: TestApp-iOS-Release.xcresult
     with:
       runsonlabels: '["macOS", "self-hosted"]'
       path: 'Tests/UITests'
       scheme: TestApp
-      buildConfig: ${{ matrix.buildConfig }}
-      resultBundle: ${{ matrix.resultBundle }}
-      artifactname: ${{ matrix.artifactname }}
+      resultBundle: TestApp-iOS.xcresult
+      artifactname: TestApp-iOS.xcresult
   buildandtestuitests_ipad:
     name: Build and Test UI Tests iPadOS
     uses: StanfordSpezi/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
-    strategy:
-      matrix:
-        include:
-          - buildConfig: Debug
-            resultBundle: TestApp-iPad.xcresult
-            artifactname: TestApp-iPad.xcresult
-          - buildConfig: Release
-            resultBundle: TestApp-iPad-Release.xcresult
-            artifactname: TestApp-iPad-Release.xcresult
     with:
       runsonlabels: '["macOS", "self-hosted"]'
       path: 'Tests/UITests'
       scheme: TestApp
       destination: 'platform=iOS Simulator,name=iPad Pro 11-inch (M4)'
-      buildConfig: ${{ matrix.buildConfig }}
-      resultBundle: ${{ matrix.resultBundle }}
-      artifactname: ${{ matrix.artifactname }}
+      resultBundle: TestApp-iPad.xcresult
+      artifactname: TestApp-iPad.xcresult
   buildandtestuitests_visionos:
     name: Build and Test UI Tests visionOS
     uses: StanfordSpezi/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
-    strategy:
-      matrix:
-        include:
-          - buildConfig: Debug
-            resultBundle: TestApp-visionOS.xcresult
-            artifactname: TestApp-visionOS.xcresult
-          - buildConfig: Release
-            resultBundle: TestApp-visionOS-Release.xcresult
-            artifactname: TestApp-visionOS-Release.xcresult
     with:
       runsonlabels: '["macOS", "self-hosted"]'
       path: 'Tests/UITests'
       scheme: TestApp
       destination: 'platform=visionOS Simulator,name=Apple Vision Pro'
-      buildConfig: ${{ matrix.buildConfig }}
-      resultBundle: ${{ matrix.resultBundle }}
-      artifactname: ${{ matrix.artifactname }}
+      resultBundle: TestApp-visionOS.xcresult
+      artifactname: TestApp-visionOS.xcresult
   uploadcoveragereport:
     name: Upload Coverage Report
     needs: [buildandtest_ios, buildandtest_visionos, buildandtest_macos, buildandtestuitests_ios, buildandtestuitests_ipad, buildandtestuitests_visionos]
