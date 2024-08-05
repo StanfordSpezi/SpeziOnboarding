@@ -1,3 +1,11 @@
+//
+// This source file is part of the Stanford Spezi open-source project
+//
+// SPDX-FileCopyrightText: 2022 Stanford University and the project authors (see CONTRIBUTORS.md)
+//
+// SPDX-License-Identifier: MIT
+//
+
 import PDFKit
 
 /// A type representing an exported `ConsentDocument`. It holds the exported `PDFDocument` and the corresponding `ConsentDocumentIdentifier`.
@@ -24,7 +32,7 @@ public actor ConsentDocumentExport {
         }
     }
     
-    
+
     /// Creates a `ConsentDocumentExport`, which holds an exported PDF and the corresponding `ConsentDocumentIdentifier`.
     /// - Parameters:
     ///   - documentIdentfier: A unique `ConsentDocumentIdentifier` identifying the exported `ConsentDocument`.

@@ -1,8 +1,9 @@
 //
-//  File.swift
-//  
+// This source file is part of the Stanford Spezi open-source project
 //
-//  Created by Patrick Langer on 03.08.2024.
+// SPDX-FileCopyrightText: 2022 Stanford University and the project authors (see CONTRIBUTORS.md)
+//
+// SPDX-License-Identifier: MIT
 //
 
 import Foundation
@@ -16,7 +17,7 @@ public struct ConsentDocumentIdentifier: Identifiable, Sendable, Equatable {
         identifier
     }
     
-    
+
     /// Creates a `ConsentDocumentIdentifier` from a String.
     /// - Parameters:
     ///   - identifier: A string which acts as unique identifier for a document and should be unique among different instances of `ConsentDocumentIdentifier`.
