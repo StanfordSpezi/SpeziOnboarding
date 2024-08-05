@@ -48,8 +48,7 @@ public class OnboardingDataSource: Module, EnvironmentAccessible {
     
     /// Adds a new exported consent form represented as `PDFDocument` to the ``OnboardingDataSource``.
     ///
-    /// - Parameter consent: The exported consent form represented as `PDFDocument` that should be added.
-    /// - Parameter identifier: A 'String' identifying the consent form as specified in OnboardingConsentView.                
+    /// - Parameter consent: The exported consent form represented as `ConsentDocumentExport` that should be added.
     public func store(_ consent: ConsentDocumentExport) async throws {
         if let consentConstraint = standard as? any ConsentConstraint {
             try await consentConstraint.store(consent: consent)
