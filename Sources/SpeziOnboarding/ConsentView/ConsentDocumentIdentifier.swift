@@ -16,6 +16,7 @@ public struct ConsentDocumentIdentifier: Identifiable, Sendable, Equatable {
         identifier
     }
     
+    
     /// Creates a `ConsentDocumentIdentifier` from a String.
     /// - Parameters:
     ///   - identifier: A string which acts as unique identifier for a document and should be unique among different instances of `ConsentDocumentIdentifier`.

@@ -24,6 +24,7 @@ public actor ConsentDocumentExport {
         }
     }
     
+    
     /// Creates a `ConsentDocumentExport`, which holds an exported PDF and the corresponding `ConsentDocumentIdentifier`.
     /// - Parameters:
     ///   - documentIdentfier: A unique `ConsentDocumentIdentifier` identifying the exported `ConsentDocument`.
