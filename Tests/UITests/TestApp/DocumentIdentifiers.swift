@@ -7,9 +7,10 @@
 //
 
 import Foundation
+import SpeziOnboarding
 
 // An enum to hold identifier strings to identify two separate consent documents.
-enum ConsentDocumentIdentifier {
-    static let first = "firstConsentDocument"
-    static let second = "secondConsentDocument"
+enum DocumentIdentifiers {
+    static let first = ConsentDocumentIdentifier("firstConsentDocument")
+    static let second = ConsentDocumentIdentifier("secondConsentDocument")
 }

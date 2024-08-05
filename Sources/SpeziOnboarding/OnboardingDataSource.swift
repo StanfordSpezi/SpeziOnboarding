@@ -50,11 +50,16 @@ public class OnboardingDataSource: Module, EnvironmentAccessible {
     ///
     /// - Parameter consent: The exported consent form represented as `PDFDocument` that should be added.
     /// - Parameter identifier: A 'String' identifying the consent form as specified in OnboardingConsentView.                
-    public func store(_ consent: PDFDocument, identifier: String) async throws {
+    public func store(_ consent: ConsentDocumentExport) async throws {
         if let consentConstraint = standard as? any ConsentConstraint {
-            try await consentConstraint.store(consent: consent, identifier: identifier)
+            try await consentConstraint.store(consent: consent)
         } else if let onboardingConstraint = standard as? any OnboardingConstraint {
-            await onboardingConstraint.store(consent: consent)
+            // OnboardingConstraint expects the PDF to be definitely exported, so we
+            // use async property 'pdf' of `ConsentDocumentExport` to retrieve the exported PDF,
+            // and then pass it to the `OnboardingConstraint`.
+            if let pdf = await consent.pdf {
+                await onboardingConstraint.store(consent: pdf)
+            }
         } else {
             fatalError("A \(type(of: standard).self) must conform to `ConsentConstraint` to process signed consent documents.")
         }

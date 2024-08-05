@@ -28,8 +28,8 @@
 		97C6AF7F2ACC94450060155B /* OnboardingFlow+PreviewSimulator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97C6AF7E2ACC94450060155B /* OnboardingFlow+PreviewSimulator.swift */; };
 		C4DF245D2C369D76009328B0 /* OnboardingConsentMarkdownTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4DF245B2C369D76009328B0 /* OnboardingConsentMarkdownTestView.swift */; };
 		C4DF245E2C369D76009328B0 /* OnboardingConsentMarkdownRenderingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4DF245C2C369D76009328B0 /* OnboardingConsentMarkdownRenderingView.swift */; };
-		C4DF24602C36BFCA009328B0 /* ConsentDocumentIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4DF245F2C36BFCA009328B0 /* ConsentDocumentIdentifier.swift */; };
 		C4DF24622C36DDF8009328B0 /* ConsentStoreError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4DF24612C36DDF8009328B0 /* ConsentStoreError.swift */; };
+		C4F9AC322C5E5D3C0076BC5B /* DocumentIdentifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4F9AC312C5E5D3C0076BC5B /* DocumentIdentifiers.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -66,8 +66,8 @@
 		97C6AF7E2ACC94450060155B /* OnboardingFlow+PreviewSimulator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OnboardingFlow+PreviewSimulator.swift"; sourceTree = "<group>"; };
 		C4DF245B2C369D76009328B0 /* OnboardingConsentMarkdownTestView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingConsentMarkdownTestView.swift; sourceTree = "<group>"; };
 		C4DF245C2C369D76009328B0 /* OnboardingConsentMarkdownRenderingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingConsentMarkdownRenderingView.swift; sourceTree = "<group>"; };
-		C4DF245F2C36BFCA009328B0 /* ConsentDocumentIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsentDocumentIdentifier.swift; sourceTree = "<group>"; };
 		C4DF24612C36DDF8009328B0 /* ConsentStoreError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsentStoreError.swift; sourceTree = "<group>"; };
+		C4F9AC312C5E5D3C0076BC5B /* DocumentIdentifiers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DocumentIdentifiers.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -118,9 +118,9 @@
 				2FA7382B290ADFAA007ACEB9 /* TestApp.swift */,
 				97C6AF782ACC88270060155B /* TestAppDelegate.swift */,
 				97C6AF762ACC86B70060155B /* ExampleStandard.swift */,
+				C4F9AC312C5E5D3C0076BC5B /* DocumentIdentifiers.swift */,
 				2F61BDC829DD3CC000D71D33 /* OnboardingTestsView.swift */,
 				2F6D139928F5F386007C25D6 /* Assets.xcassets */,
-				C4DF245F2C36BFCA009328B0 /* ConsentDocumentIdentifier.swift */,
 				C4DF24612C36DDF8009328B0 /* ConsentStoreError.swift */,
 			);
 			path = TestApp;
@@ -304,12 +304,12 @@
 				61F1697E2BCA888600D1622B /* OnboardingTestViewNotIdentifiable.swift in Sources */,
 				970D44552A6F119600756FE2 /* OnboardingConditionalTestView.swift in Sources */,
 				97C6AF772ACC86B70060155B /* ExampleStandard.swift in Sources */,
-				C4DF24602C36BFCA009328B0 /* ConsentDocumentIdentifier.swift in Sources */,
 				970D44532A6F0B1900756FE2 /* OnboardingStartTestView.swift in Sources */,
 				970D44512A6F04ED00756FE2 /* OnboardingSequentialTestView.swift in Sources */,
 				C4DF24622C36DDF8009328B0 /* ConsentStoreError.swift in Sources */,
 				61D77B542BC83F0100E3165F /* OnboardingCustomToggleTestView.swift in Sources */,
 				97A8FF2C2A74449F008CD91A /* OnboardingCustomTestView1.swift in Sources */,
+				C4F9AC322C5E5D3C0076BC5B /* DocumentIdentifiers.swift in Sources */,
 				2FA7382C290ADFAA007ACEB9 /* TestApp.swift in Sources */,
 				97A8FF2E2A7444FC008CD91A /* OnboardingCustomTestView2.swift in Sources */,
 				2F61BDC929DD3CC000D71D33 /* OnboardingTestsView.swift in Sources */,

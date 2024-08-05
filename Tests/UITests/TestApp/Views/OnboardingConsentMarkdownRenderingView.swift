@@ -14,7 +14,7 @@ import SwiftUI
 
 struct OnboardingConsentMarkdownRenderingView: View {
     let consentTitle: String
-    let documentIdentifier: String
+    let documentIdentifier: ConsentDocumentIdentifier
 
     @Environment(OnboardingNavigationPath.self) private var path
     @Environment(ExampleStandard.self) private var standard
@@ -58,8 +58,12 @@ struct OnboardingConsentMarkdownRenderingView: View {
             #endif
             .task {
                 self.exportedConsent = try? await standard.loadConsentDocument(identifier: documentIdentifier)
+                let consentDocumentExport = ConsentDocumentExport(
+                    documentIdentifier: documentIdentifier,
+                    cachedPDF: .init()
+                )
                 // Reset OnboardingDataSource
-                try? await standard.store(consent: .init(), identifier: documentIdentifier)
+                try? await standard.store(consent: consentDocumentExport)
             }
     }
 }

@@ -20,23 +20,30 @@ actor ExampleStandard: Standard, EnvironmentAccessible {
 
 
 extension ExampleStandard: ConsentConstraint {
-    func store(consent: PDFDocument, identifier: String) async throws {
+    // Example of an async function using MainActor and Task
+    func store(consent: ConsentDocumentExport) async throws {
+        // Extract data outside of the MainActor.run block
+        let documentIdentifier = await consent.documentIdentifier
+        let pdf = await consent.pdf
+        
+        // Perform operations on the main actor
         try await MainActor.run {
-            if identifier == ConsentDocumentIdentifier.first {
-                self.firstConsentData = consent
-            } else if identifier == ConsentDocumentIdentifier.second {
-                self.secondConsentData = consent
+            if documentIdentifier == DocumentIdentifiers.first {
+                self.firstConsentData = pdf ?? .init()
+            } else if documentIdentifier == DocumentIdentifiers.second {
+                self.secondConsentData = pdf ?? .init()
             } else {
-                throw ConsentStoreError.invalidIdentifier("Invalid Identifier \(identifier)")
+                throw ConsentStoreError.invalidIdentifier("Invalid Identifier \(documentIdentifier.id)")
             }
         }
+        
         try? await Task.sleep(for: .seconds(0.5))
     }
     
-    func loadConsentDocument(identifier: String) async throws -> PDFDocument? {
-        if identifier == ConsentDocumentIdentifier.first {
+    func loadConsentDocument(identifier: ConsentDocumentIdentifier) async throws -> PDFDocument? {
+        if identifier == DocumentIdentifiers.first {
             return await self.firstConsentData
-        } else if identifier == ConsentDocumentIdentifier.second {
+        } else if identifier == DocumentIdentifiers.second {
             return await self.secondConsentData
         }
         
