@@ -8,38 +8,31 @@
 
 import PDFKit
 
-/// A type representing an exported `ConsentDocument`. It holds the exported `PDFDocument` and the corresponding `ConsentDocumentIdentifier`.
+/// A type representing an exported `ConsentDocument`. It holds the exported `PDFDocument` and the corresponding document identifier String.
 public actor ConsentDocumentExport {
-    private var cachedPDF: PDFDocument?
+    private var cachedPDF: PDFDocument
     
     /// An unique identifier for the exported `ConsentDocument`.
     /// Corresponds to the identifier which was passed  when creating the `ConsentDocument` using an `OnboardingConsentView`.
-    public let documentIdentifier: ConsentDocumentIdentifier
+    public let documentIdentifier: String
     /// The `PDFDocument` exported from a `ConsentDocument`.
     /// This property is asynchronous and accesing it potentially triggers the export of the PDF from the underlying `ConsentDocument`,
     /// if the `ConsentDocument` has not been previously exported or the `PDFDocument` was not cached.
-    public var pdf: PDFDocument? {
+    /// For now, we always require a PDF to be cached to create a ConsentDocumentExport. In the future, we might change this to lazy-PDF loading.
+    public var pdf: PDFDocument {
         get async {
-            if cachedPDF == nil {
-                // Lazy generate PDF.
-                // This would possibly require to have an instance of ConsentDocument somwhere.
-                // cachedPdf = await consentDocument.export()
-                // For now, return nil.
-                return nil
-            }
-            
-            return cachedPDF
+            cachedPDF
         }
     }
     
 
-    /// Creates a `ConsentDocumentExport`, which holds an exported PDF and the corresponding `ConsentDocumentIdentifier`.
+    /// Creates a `ConsentDocumentExport`, which holds an exported PDF and the corresponding document identifier string.
     /// - Parameters:
-    ///   - documentIdentfier: A unique `ConsentDocumentIdentifier` identifying the exported `ConsentDocument`.
-    ///   - cachedPDF: A `PDFDocument` representing exported from a `ConsentDocument`. Optional parameter which will be stored internally and is accessible via the async property `ConsentDocumentExport.pdf`.
-    public init(
-        documentIdentifier: ConsentDocumentIdentifier,
-        cachedPDF: PDFDocument? = nil
+    ///   - documentIdentfier: A unique String identifying the exported `ConsentDocument`.
+    ///   - cachedPDF: A `PDFDocument` exported from a `ConsentDocument`.
+    init(
+        documentIdentifier: String,
+        cachedPDF: PDFDocument
     ) {
         self.documentIdentifier = documentIdentifier
         self.cachedPDF = cachedPDF

@@ -14,7 +14,7 @@ import SwiftUI
 struct OnboardingConsentMarkdownTestView: View {
     let consentTitle: String
     let consentText: String
-    let documentIdentifier: ConsentDocumentIdentifier
+    let documentIdentifier: String
 
     @Environment(OnboardingNavigationPath.self) private var path
     

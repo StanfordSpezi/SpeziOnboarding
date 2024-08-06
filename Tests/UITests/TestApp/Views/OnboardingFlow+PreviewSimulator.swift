@@ -32,12 +32,12 @@ enum OnboardingFlow {
                 consentText: "This is the second *markdown* **example**",
                 documentIdentifier: DocumentIdentifiers.second
             )
-                .onboardingIdentifier(DocumentIdentifiers.second.id),
+                .onboardingIdentifier(DocumentIdentifiers.second),
             OnboardingConsentMarkdownRenderingView(
                 consentTitle: "Consent Document",
                 documentIdentifier: DocumentIdentifiers.second
             )
-                .onboardingIdentifier("\(DocumentIdentifiers.second.id)_rendering"),
+                .onboardingIdentifier("\(DocumentIdentifiers.second)_rendering"),
 
             OnboardingCustomTestView1(exampleArgument: "test"),
             OnboardingCustomTestView2(),

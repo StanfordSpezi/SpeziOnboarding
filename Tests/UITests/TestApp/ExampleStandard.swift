@@ -33,14 +33,24 @@ extension ExampleStandard: ConsentConstraint {
             } else if documentIdentifier == DocumentIdentifiers.second {
                 self.secondConsentData = pdf ?? .init()
             } else {
-                throw ConsentStoreError.invalidIdentifier("Invalid Identifier \(documentIdentifier.id)")
+                throw ConsentStoreError.invalidIdentifier("Invalid Identifier \(documentIdentifier)")
             }
         }
         
         try? await Task.sleep(for: .seconds(0.5))
     }
     
-    func loadConsentDocument(identifier: ConsentDocumentIdentifier) async throws -> PDFDocument? {
+    func resetDocument(identifier: String) async throws {
+        await MainActor.run {
+            if identifier == DocumentIdentifiers.first {
+                firstConsentData = .init()
+            } else if identifier == DocumentIdentifiers.second {
+                secondConsentData = .init()
+            }
+        }
+    }
+    
+    func loadConsentDocument(identifier: String) async throws -> PDFDocument? {
         if identifier == DocumentIdentifiers.first {
             return await self.firstConsentData
         } else if identifier == DocumentIdentifiers.second {

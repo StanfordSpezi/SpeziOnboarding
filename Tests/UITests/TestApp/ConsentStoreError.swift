@@ -9,7 +9,7 @@
 import Foundation
 
 // Error that can occur if ``OnboardingConsentView`` calls store in ExampleStandard
-// with an identifier which is not in ``ConsentDocumentIdentifier``.
+// with an identifier which is not in ``DocumentIdentifiers``.
 enum ConsentStoreError: LocalizedError {
     case invalidIdentifier(String)
     

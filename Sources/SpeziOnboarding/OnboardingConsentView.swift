@@ -30,8 +30,8 @@ import SwiftUI
 /// Any identifier is a string. We recommend storing and grouping consent document identifiers in an enum:
 /// ```swift
 /// enum DocumentIdentifiers {
-///     static let first = ConsentDocumentIdentifier("firstConsentDocument")
-///     static let second = ConsentDocumentIdentifier("secondConsentDocument")
+///     static let first = "firstConsentDocument"
+///     static let second = "secondConsentDocument"
 /// }
 /// ```
 ///
@@ -44,8 +44,8 @@ import SwiftUI
 ///         // The action that should be performed once the user has provided their consent.
 ///     },
 ///     title: "Consent",   // Configure the title of the consent view
-///     identifier: DocumentIdentifiers.first, // Specify a unique identifier of type ``ConsentDocumentIdentifier``, preferably
-///                                                  // bundled in an enum (see above). Only relevant if more than one OnboardingConsentView is needed.
+///     identifier: DocumentIdentifiers.first, // Specify a unique identifier String, preferably bundled
+///                                            // in an enum (see above). Only relevant if more than one OnboardingConsentView is needed.
 ///     exportConfiguration: .init(paperSize: .usLetter)   // Configure the properties of the exported consent form
 /// )
 /// ```
@@ -61,7 +61,7 @@ public struct OnboardingConsentView: View {
     private let markdown: () async -> Data
     private let action: () async -> Void
     private let title: LocalizedStringResource?
-    private let identifier: ConsentDocumentIdentifier
+    private let identifier: String
     private let exportConfiguration: ConsentDocument.ExportConfiguration
     private var backButtonHidden: Bool {
         viewState == .storing || (viewState == .export && !willShowShareSheet)
@@ -116,15 +116,8 @@ public struct OnboardingConsentView: View {
                         viewState = .storing
                         Task {
                             do {
-                                let documentExport = ConsentDocumentExport(
-                                    documentIdentifier: identifier,
-                                    cachedPDF: exportedConsentDocumented
-                                )
-                                
                                 /// Stores the finished PDF in the Spezi `Standard`.
-                                try await onboardingDataSource.store(
-                                   documentExport
-                                )
+                                try await onboardingDataSource.store(exportedConsentDocumented, identifier: identifier)
 
                                 await action()
                                 viewState = .base(.idle)
@@ -224,7 +217,7 @@ public struct OnboardingConsentView: View {
         markdown: @escaping () async -> Data,
         action: @escaping () async -> Void,
         title: LocalizedStringResource? = LocalizationDefaults.consentFormTitle,
-        identifier: ConsentDocumentIdentifier = ConsentDocumentIdentifier("ConsentDocument"),
+        identifier: String = "ConsentDocument",
         exportConfiguration: ConsentDocument.ExportConfiguration = .init()
     ) {
         self.markdown = markdown
