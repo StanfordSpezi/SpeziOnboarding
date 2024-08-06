@@ -57,9 +57,7 @@ public struct OnboardingConsentView: View {
             LocalizedStringResource("CONSENT_VIEW_TITLE", bundle: .atURL(from: .module))
         }
     }
-    
-    public static let defaultDocumentIdentifier = "ConsentDocument"
-    
+        
     private let markdown: () async -> Data
     private let action: () async -> Void
     private let title: LocalizedStringResource?
@@ -219,7 +217,7 @@ public struct OnboardingConsentView: View {
         markdown: @escaping () async -> Data,
         action: @escaping () async -> Void,
         title: LocalizedStringResource? = LocalizationDefaults.consentFormTitle,
-        identifier: String = defaultDocumentIdentifier,
+        identifier: String = ConsentDocumentExport.Defaults.documentIdentifier,
         exportConfiguration: ConsentDocument.ExportConfiguration = .init()
     ) {
         self.markdown = markdown

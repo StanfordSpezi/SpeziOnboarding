@@ -10,6 +10,13 @@ import PDFKit
 
 /// A type representing an exported `ConsentDocument`. It holds the exported `PDFDocument` and the corresponding document identifier String.
 public actor ConsentDocumentExport {
+    /// Provides default values for fields related to the `ConsentDocumentExport`.
+    public enum Defaults {
+        /// Default value for a document identifier.
+        /// This identifier will be used as default value if no identifier is provided.
+        public static let documentIdentifier = "ConsentDocument"
+    }
+
     private var cachedPDF: PDFDocument
     
     /// An unique identifier for the exported `ConsentDocument`.
