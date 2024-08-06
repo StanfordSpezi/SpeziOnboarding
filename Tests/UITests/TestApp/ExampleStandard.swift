@@ -29,9 +29,9 @@ extension ExampleStandard: ConsentConstraint {
         // Perform operations on the main actor
         try await MainActor.run {
             if documentIdentifier == DocumentIdentifiers.first {
-                self.firstConsentData = pdf ?? .init()
+                self.firstConsentData = pdf
             } else if documentIdentifier == DocumentIdentifiers.second {
-                self.secondConsentData = pdf ?? .init()
+                self.secondConsentData = pdf
             } else {
                 throw ConsentStoreError.invalidIdentifier("Invalid Identifier \(documentIdentifier)")
             }
