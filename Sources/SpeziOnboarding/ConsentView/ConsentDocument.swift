@@ -12,7 +12,6 @@ import SpeziPersonalInfo
 import SpeziViews
 import SwiftUI
 
-
 /// Display markdown-based consent documents that can be signed and exported.
 ///
 /// Allows the display markdown-based consent documents that can be signed using a family and given name and a hand drawn signature.
@@ -58,9 +57,14 @@ public struct ConsentDocument: View {
     @State var signatureSize: CGSize = .zero
     @Binding private var viewState: ConsentViewState
     @State private var checked: [String: Bool] = [:]
-    @State private var markdownStrings: [String] = []
-    @State public var cleanedMarkdownData: Data?
     @State public var checkboxSnapshot: UIImage?
+    @State public var allElements = [MarkdownElement]()
+    
+    public enum MarkdownElement: Hashable {
+        case signature(String)
+        case checkbox(String)
+        case text(String)
+    }
     
     private var nameView: some View {
         VStack {
@@ -93,69 +97,84 @@ public struct ConsentDocument: View {
             Divider()
         }
     }
-    
-    private func extractMarkdownCB() async -> (cleanedMarkdown: String, checkboxes: [String]) {
+
+    private func extractMarkdownCB() async -> ([MarkdownElement]) {
         let data = await asyncMarkdown()
         let dataString = String(data: data, encoding: .utf8)!
-        
-        var result = [String]()
-        var start: String.Index? = nil
-        var cleanedMarkdown = ""
-        var isInBracket = false
 
-        for (index, char) in dataString.enumerated() {
-            let currentIndex = dataString.index(dataString.startIndex, offsetBy: index)
-            
-            if char == "[" {
-                start = currentIndex
-                isInBracket = true
-            } else if char == "]", let start = start {
-                let end = currentIndex
-                let subInd = dataString.index(after: start)
-                let substring = String(dataString[subInd..<end])
-                result.append(substring)
-                isInBracket = false
-            } else if !isInBracket {
-                cleanedMarkdown.append(char)
+        var elements = [MarkdownElement]()
+        
+        var textBeforeCB = ""
+        
+        
+        var lines = dataString.split(separator: "\n", omittingEmptySubsequences: false)
+        print(lines)
+        
+        for line in lines {
+            print("plain line: "+line)
+            var trimmedLine = line.trimmingCharacters(in: .whitespaces)
+            print("trimmed line: "+trimmedLine)
+            if trimmedLine.hasPrefix("- [ ]") {
+              
+                if !textBeforeCB.isEmpty {
+                    print("currentText:")
+                    print(textBeforeCB)
+                    elements.append(.text(textBeforeCB))
+                    print(elements)
+                    textBeforeCB = ""
+                }
+                
+                var textCB = trimmedLine.dropFirst(5).trimmingCharacters(in: .whitespaces)
+                print("task:")
+                print(textCB)
+                elements.append(.checkbox(textCB))
+            } else {
+                textBeforeCB += line + "\n"
             }
         }
+        if !textBeforeCB.isEmpty {
+            elements.append(.text(textBeforeCB))
+        }
         
-        return (cleanedMarkdown, result)
+        return elements
     }
     
-    private var checkboxesView: some View {
-        VStack {
-            Grid(horizontalSpacing: 15) {
-                ForEach(markdownStrings, id: \.self) { markdownString in
-                    GridRow {
-                        Text(markdownString)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                        Button(action: {
+    struct CheckBoxView: View {
+        @Binding var isChecked: Bool
+        let question: String
+
+        var body: some View {
+            VStack {
+                HStack {
+                    Text(question)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    Menu {
+                        Button("Yes") {
                             withAnimation {
-                                checked[markdownString]?.toggle()
+                                
+                                isChecked = true
                             }
-                        }) {
-                            Image(systemName: checked[markdownString] == true ? "checkmark.square.fill" : "xmark.square.fill")
-                                .foregroundColor(checked[markdownString] == true ? .green : .red)
                         }
+                        Button("No") {
+                            withAnimation {
+                                isChecked = false
+                            }
+                        }
+                    } label: {
+                        Text(isChecked ? "Yes" : "No")
+                            .font(.system(size: 17))
+                            .padding(5)
+                            .background(Color.blue)
+                            .foregroundColor(.white)
+                            .cornerRadius(5)
                     }
-                    Divider()
-                        .gridCellUnsizedAxes(.horizontal)
+                    
                 }
-            }
-        }
-        .onAppear {
-            Task {
-                let (cleanedMarkdown, checkboxes) = await extractMarkdownCB()
-                cleanedMarkdownData = Data(cleanedMarkdown.utf8)
-                markdownStrings = checkboxes
-                for string in markdownStrings {
-                    checked[string] = false
-                }
+                Divider()
+                    .gridCellUnsizedAxes(.horizontal)
             }
         }
     }
-
     
     private var nameInputView: some View {
         Grid(horizontalSpacing: 15) {
@@ -197,14 +216,31 @@ public struct ConsentDocument: View {
                 }
             }
     }
-    
     public var body: some View {
         VStack {
-            if let cleanedMarkdownData = cleanedMarkdownData {
-                MarkdownView(asyncMarkdown: {cleanedMarkdownData}, state: $viewState.base)
-                    .padding(.bottom, 15)
+            ScrollView {
+                ForEach(allElements, id: \.self) { element in
+                    switch element {
+                    case .text(let text):
+                        if let data = text.data(using: .utf8) {
+                            MarkdownView(asyncMarkdown: {data}, state: $viewState.base)
+                        }
+                    case .checkbox(let question):
+                        if let isChecked = checked[question] {
+                            CheckBoxView(
+                                isChecked: Binding(
+                                    get: {self.checked[question,default:false]},
+                                    
+                                    set: {self.checked[question] = $0}
+                                ),
+                                question: question
+                            )
+                        }
+                    case .signature:
+                        signatureView
+                    }
+                }
             }
-            checkboxesView
             Spacer()
             Group {
                 nameView
@@ -215,46 +251,55 @@ public struct ConsentDocument: View {
                     signatureView
                 }
             }
-                .frame(maxWidth: Self.maxWidthDrawing) // Limit the max view size so it fits on the PDF
+            .frame(maxWidth: Self.maxWidthDrawing) // Limit the max view size so it fits on the PDF
         }
-            .transition(.opacity)
-            .animation(.easeInOut, value: viewState == .namesEntered)
-            .onChange(of: viewState) {
-                if case .export = viewState {
-                    let renderer = ImageRenderer(content: checkboxesView)
-                    if let uiImage = renderer.uiImage {
-                        checkboxSnapshot = uiImage
-                    }
-                    Task {
-                        guard let exportedConsent = await export() else {
-                            viewState = .base(.error(Error.memoryAllocationError))
-                            return
+        .transition(.opacity)
+                    .animation(.easeInOut, value: viewState == .namesEntered)
+                    .onChange(of: viewState) {
+                        if case .export = viewState {
+                            print(checked)
+//                            let renderer = ImageRenderer(content: checkboxesView)
+//                            if let uiImage = renderer.uiImage {
+//                                checkboxSnapshot = uiImage
+//                            }
+//                            Task {
+//                                guard let exportedConsent = await export() else {
+//                                    viewState = .base(.error(Error.memoryAllocationError))
+//                                    return
+//                                }
+//                                viewState = .exported(document: exportedConsent)
+//                            }
+                        } else if case .base(let baseViewState) = viewState,
+                                  case .idle = baseViewState {
+                            // Reset view state to correct one after handling an error view state via `.viewStateAlert()`
+                            #if !os(macOS)
+                            let isSignatureEmpty = signature.strokes.isEmpty
+                            #else
+                            let isSignatureEmpty = signature.isEmpty
+                            #endif
+                            
+                            if !isSignatureEmpty {
+                                viewState = .signed
+                            } else if !(name.givenName?.isEmpty ?? true) || !(name.familyName?.isEmpty ?? true) {
+                                viewState = .namesEntered
+                            }
                         }
-                        viewState = .exported(document: exportedConsent)
                     }
-                } else if case .base(let baseViewState) = viewState,
-                          case .idle = baseViewState {
-                    // Reset view state to correct one after handling an error view state via `.viewStateAlert()`
-                    #if !os(macOS)
-                    let isSignatureEmpty = signature.strokes.isEmpty
-                    #else
-                    let isSignatureEmpty = signature.isEmpty
-                    #endif
-                    
-                    if !isSignatureEmpty {
-                        viewState = .signed
-                    } else if !(name.givenName?.isEmpty ?? true) || !(name.familyName?.isEmpty ?? true) {
-                        viewState = .namesEntered
-                    }
+                        .viewStateAlert(state: $viewState.base)
+        .onAppear {
+            Task {
+                let elements = await extractMarkdownCB()
+                allElements = elements
+                for case let .checkbox(question) in elements {
+                    checked[question] = false
                 }
             }
-                .viewStateAlert(state: $viewState.base)
+        }
     }
-    
+
     private var inputFieldsDisabled: Bool {
         viewState == .base(.processing) || viewState == .export
     }
-    
     
     /// Creates a `ConsentDocument` which renders a consent document with a markdown view.
     ///
@@ -262,7 +307,7 @@ public struct ConsentDocument: View {
     /// This is especially useful for exporting the consent form as well as error management.
     /// - Parameters:
     ///   - markdown: The markdown content provided as an UTF8 encoded `Data` instance that can be provided asynchronously.
-    ///   - viewState: A `Binding` to observe the ``ConsentViewState`` of the ``ConsentDocument``. 
+    ///   - viewState: A `Binding` to observe the ``ConsentViewState`` of the ``ConsentDocument``.
     ///   - givenNameTitle: The localization to use for the given (first) name field.
     ///   - givenNamePlaceholder: The localization to use for the given name field placeholder.
     ///   - familyNameTitle: The localization to use for the family (last) name field.
