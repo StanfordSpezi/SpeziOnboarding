@@ -332,8 +332,30 @@ final class OnboardingTests: XCTestCase { // swiftlint:disable:this type_body_le
             filesApp.navigationBars.buttons["Done"].tap()
         }
 
-        // Check if file exists - If not, try the export procedure again
-        XCTAssert(filesApp.staticTexts["Signed Consent Form"].waitForExistence(timeout: 2))
+        // If the file already shows up in the Recents view, we are good.
+        // Otherwise navigate to "On My iPhone"/"On My iPad"/"On My Apple Vision Pro" view
+        if !filesApp.staticTexts["Signed Consent Form"].waitForExistence(timeout: 2) {
+#if os(visionOS)
+            XCTAssertTrue(filesApp.staticTexts["On My Apple Vision Pro"].waitForExistence(timeout: 2.0))
+            filesApp.staticTexts["On My Apple Vision Pro"].tap()
+            XCTAssertTrue(filesApp.navigationBars.staticTexts["On My Apple Vision Pro"].waitForExistence(timeout: 2.0))
+#else
+            // The recents view in the files app is a bit buggy, check if the file is on the "On My iPhone"/"On My iPad" view
+            if filesApp.navigationBars.buttons["Show Sidebar"].exists {
+                // we are running on iPad!
+                filesApp.navigationBars.buttons["Show Sidebar"].tap()
+                XCTAssertTrue(filesApp.staticTexts["On My iPad"].waitForExistence(timeout: 2.0))
+                filesApp.staticTexts["On My iPad"].tap()
+                XCTAssertTrue(filesApp.navigationBars.staticTexts["On My iPad"].waitForExistence(timeout: 2.0))
+            } else { // otherwise assume iPhone
+                XCTAssertTrue(filesApp.tabBars.buttons["Browse"].exists)
+                filesApp.tabBars.buttons["Browse"].tap()
+                XCTAssertTrue(filesApp.navigationBars.staticTexts["On My iPhone"].waitForExistence(timeout: 2.0))
+            }
+#endif
+
+            XCTAssert(filesApp.staticTexts["Signed Consent Form"].waitForExistence(timeout: 2.0))
+        }
         XCTAssert(filesApp.collectionViews["File View"].cells["Signed Consent Form, pdf"].exists)
 
         XCTAssert(filesApp.collectionViews["File View"].cells["Signed Consent Form, pdf"].images.firstMatch.exists)
@@ -341,7 +363,7 @@ final class OnboardingTests: XCTestCase { // swiftlint:disable:this type_body_le
 
         #if os(visionOS)
         let fileView = XCUIApplication(bundleIdentifier: "com.apple.MRQuickLook")
-        fileView.wait(for: .runningForeground, timeout: 5.0)
+        XCTAssertTrue(fileView.wait(for: .runningForeground, timeout: 5.0))
         #else
         let fileView = filesApp
 
