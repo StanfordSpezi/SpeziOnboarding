@@ -353,18 +353,23 @@ final class OnboardingTests: XCTestCase { // swiftlint:disable:this type_body_le
             filesApp.staticTexts["On My Apple Vision Pro"].tap()
             XCTAssertTrue(filesApp.navigationBars.staticTexts["On My Apple Vision Pro"].waitForExistence(timeout: 2.0))
 #else
-            // The recents view in the files app is a bit buggy, check if the file is on the "On My iPhone"/"On My iPad" view
-            if filesApp.navigationBars.buttons["Show Sidebar"].exists {
-                // we are running on iPad!
-                // TODO: this doesn't apply to iPadOS 18
+            if filesApp.navigationBars.buttons["Show Sidebar"].exists && !filesApp.buttons["Browse"].exists {
+                // we are running on iPad which is not iOS 18!
                 filesApp.navigationBars.buttons["Show Sidebar"].tap()
                 XCTAssertTrue(filesApp.staticTexts["On My iPad"].waitForExistence(timeout: 2.0))
                 filesApp.staticTexts["On My iPad"].tap()
                 XCTAssertTrue(filesApp.navigationBars.staticTexts["On My iPad"].waitForExistence(timeout: 2.0))
-            } else { // otherwise assume iPhone
-                XCTAssertTrue(filesApp.tabBars.buttons["Browse"].exists)
+            }
+
+            if filesApp.tabBars.buttons["Browse"].exists { // iPhone
                 filesApp.tabBars.buttons["Browse"].tap()
                 XCTAssertTrue(filesApp.navigationBars.staticTexts["On My iPhone"].waitForExistence(timeout: 2.0))
+            } else { // iPad
+                if !filesApp.navigationBars.staticTexts["On My iPad"].exists { // we aren't already in browse
+                    XCTAssertTrue(filesApp.buttons["Browse"].exists)
+                    filesApp.buttons["Browse"].tap()
+                    XCTAssertTrue(filesApp.navigationBars.staticTexts["On My iPad"].waitForExistence(timeout: 2.0))
+                }
             }
 #endif
 
