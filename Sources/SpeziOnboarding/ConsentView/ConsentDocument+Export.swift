@@ -54,6 +54,7 @@ extension ConsentDocument {
     /// - Note: This function avoids the use of asynchronous operations.
     /// Asynchronous tasks are incompatible with SwiftUI's `ImageRenderer`,
     /// which expects all rendering processes to be synchronous.
+    @MainActor
     private func exportBody(markdown: AttributedString) -> some View {
         VStack {
             if exportConfiguration.includingTimestamp {
