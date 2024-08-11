@@ -13,7 +13,7 @@ extension XCUIApplication {
         if staticTexts["This is a markdown example"].isHittable {
             staticTexts["This is a markdown example"].swipeUp()
         } else {
-            print("Can not scroll down.") // TODO: what?
+            print("Can not scroll down.")
         }
         XCTAssert(buttons["I Consent"].waitForExistence(timeout: 2))
         buttons["I Consent"].tap()
@@ -32,7 +32,7 @@ extension XCUIApplication {
         // Check if on consent export page
         XCTAssert(staticTexts["Consent PDF rendering doesn't exist"].waitForExistence(timeout: 2))
 
-        XCTAssert(buttons["Next"].waitForExistence(timeout: 2))
+        XCTAssert(buttons["Next"].exists)
         buttons["Next"].tap()
 
         XCTAssert(buttons["Next"].waitForExistence(timeout: 2))
@@ -48,7 +48,7 @@ extension XCUIApplication {
             // Check if on conditional test view
             XCTAssert(staticTexts["Conditional Test View"].waitForExistence(timeout: 2))
 
-            XCTAssert(buttons["Next"].waitForExistence(timeout: 2))
+            XCTAssert(buttons["Next"].exists)
             buttons["Next"].tap()
         }
 
