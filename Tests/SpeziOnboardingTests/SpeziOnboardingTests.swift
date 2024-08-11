@@ -17,6 +17,14 @@ final class SpeziOnboardingTests: XCTestCase {
     }
 
     @MainActor
+    func testAnyViewIssue() throws {
+        let view = Text("Hello World")
+            .onboardingIdentifier("Custom Identifier")
+
+        XCTAssertFalse((view as Any) is AnyView)
+    }
+
+    @MainActor
     func testOnboardingIdentifierModifier() throws {
         let stack = OnboardingStack {
             Text("Hello World")

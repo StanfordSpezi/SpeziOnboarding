@@ -11,6 +11,7 @@ import XCTestExtensions
 
 
 final class OnboardingTests: XCTestCase { // swiftlint:disable:this type_body_length
+    @MainActor
     func testOverallOnboardingFlow() throws {
         let app = XCUIApplication()
         app.launch()
@@ -65,7 +66,7 @@ final class OnboardingTests: XCTestCase { // swiftlint:disable:this type_body_le
         try app.textFields["Signature Field"].enter(value: "Leland Stanford")
         #endif
 
-        hitConsentButton(app)
+        app.hitConsentButton()
 
         // Check if the consent export was successful
         XCTAssert(app.staticTexts["Consent PDF rendering exists"].waitForExistence(timeout: 2))
@@ -88,6 +89,7 @@ final class OnboardingTests: XCTestCase { // swiftlint:disable:this type_body_le
         XCTAssert(app.staticTexts["Onboarding complete"].waitForExistence(timeout: 2))
     }
 
+    @MainActor
     func testOnboardingWelcomeView() throws {
         let app = XCUIApplication()
         app.launch()
@@ -117,6 +119,7 @@ final class OnboardingTests: XCTestCase { // swiftlint:disable:this type_body_le
         XCTAssert(app.staticTexts["And you should pay close attention ..."].waitForExistence(timeout: 2))
     }
 
+    @MainActor
     func testSequentialOnboarding() throws {
         let app = XCUIApplication()
         app.launch()
@@ -154,6 +157,7 @@ final class OnboardingTests: XCTestCase { // swiftlint:disable:this type_body_le
         XCTAssert(app.staticTexts["Consent"].waitForExistence(timeout: 2))
     }
 
+    @MainActor
     func testOnboardingConsentMarkdown() throws {
         let app = XCUIApplication()
         app.launch()
@@ -168,7 +172,7 @@ final class OnboardingTests: XCTestCase { // swiftlint:disable:this type_body_le
         XCTAssertFalse(app.staticTexts["Leland Stanford"].waitForExistence(timeout: 2))
         XCTAssertFalse(app.staticTexts["X"].waitForExistence(timeout: 2))
 
-        hitConsentButton(app)
+        app.hitConsentButton()
 
         #if targetEnvironment(simulator) && (arch(i386) || arch(x86_64))
             throw XCTSkip("PKCanvas view-related tests are currently skipped on Intel-based iOS simulators due to a metal bug on the simulator.")
@@ -180,7 +184,7 @@ final class OnboardingTests: XCTestCase { // swiftlint:disable:this type_body_le
         XCTAssert(app.staticTexts["Last Name"].waitForExistence(timeout: 2))
         try app.textFields["Enter your last name ..."].enter(value: "Stanford")
 
-        hitConsentButton(app)
+        app.hitConsentButton()
 
         XCTAssert(app.staticTexts["Name: Leland Stanford"].waitForExistence(timeout: 2))
 
@@ -197,11 +201,12 @@ final class OnboardingTests: XCTestCase { // swiftlint:disable:this type_body_le
         try app.textFields["Signature Field"].enter(value: "Leland Stanford")
         #endif
 
-        hitConsentButton(app)
+        app.hitConsentButton()
 
         XCTAssert(app.staticTexts["Consent PDF rendering exists"].waitForExistence(timeout: 2))
     }
 
+    @MainActor
     func testOnboardingConsentMarkdownRendering() throws {
         let app = XCUIApplication()
         app.launch()
@@ -226,7 +231,7 @@ final class OnboardingTests: XCTestCase { // swiftlint:disable:this type_body_le
         XCTAssertFalse(app.staticTexts["Leland Stanford"].waitForExistence(timeout: 2))
         XCTAssertFalse(app.staticTexts["X"].waitForExistence(timeout: 2))
 
-        hitConsentButton(app)
+        app.hitConsentButton()
 
         #if targetEnvironment(simulator) && (arch(i386) || arch(x86_64))
             throw XCTSkip("PKCanvas view-related tests are currently skipped on Intel-based iOS simulators due to a metal bug on the simulator.")
@@ -238,7 +243,7 @@ final class OnboardingTests: XCTestCase { // swiftlint:disable:this type_body_le
         XCTAssert(app.staticTexts["Last Name"].waitForExistence(timeout: 2))
         try app.textFields["Enter your last name ..."].enter(value: "Stanford")
 
-        hitConsentButton(app)
+        app.hitConsentButton()
 
         XCTAssert(app.staticTexts["Name: Leland Stanford"].waitForExistence(timeout: 2))
 
@@ -250,12 +255,13 @@ final class OnboardingTests: XCTestCase { // swiftlint:disable:this type_body_le
         try app.textFields["Signature Field"].enter(value: "Leland Stanford")
         #endif
 
-        hitConsentButton(app)
+        app.hitConsentButton()
 
         XCTAssert(app.staticTexts["Consent PDF rendering exists"].waitForExistence(timeout: 2))
     }
 
     #if !os(macOS)  // Only test export on non macOS platforms
+    @MainActor
     func testOnboardingConsentPDFExport() throws {  // swiftlint:disable:this function_body_length
         let app = XCUIApplication()
         let filesApp = XCUIApplication(bundleIdentifier: "com.apple.DocumentsApp")
@@ -337,6 +343,7 @@ final class OnboardingTests: XCTestCase { // swiftlint:disable:this type_body_le
         XCTAssert(filesApp.collectionViews["File View"].cells["Signed Consent Form, pdf"].images.firstMatch.waitForExistence(timeout: 2))
         filesApp.collectionViews["File View"].cells["Signed Consent Form, pdf"].images.firstMatch.tap()
 
+        // TODO: sleeps?
         sleep(3)    // Wait until file is opened
 
 
@@ -360,6 +367,7 @@ final class OnboardingTests: XCTestCase { // swiftlint:disable:this type_body_le
     }
     #endif
 
+    @MainActor
     func testOnboardingCustomViews() throws {
         let app = XCUIApplication()
         app.launch()
@@ -384,20 +392,23 @@ final class OnboardingTests: XCTestCase { // swiftlint:disable:this type_body_le
         XCTAssert(app.staticTexts["Spezi UI Tests"].waitForExistence(timeout: 2))
     }
 
+    @MainActor
     func testDynamicOnboardingFlow1() throws {
         let app = XCUIApplication()
         app.launch()
 
-        try dynamicOnboardingFlow(app: app, showConditionalView: false)
+        try app.dynamicOnboardingFlow(showConditionalView: false)
     }
 
+    @MainActor
     func testDynamicOnboardingFlow2() throws {
         let app = XCUIApplication()
         app.launch()
 
-        try dynamicOnboardingFlow(app: app, showConditionalView: true)
+        try app.dynamicOnboardingFlow(showConditionalView: true)
     }
 
+    @MainActor
     func testDynamicOnboardingFlow3() throws {
         let app = XCUIApplication()
         app.launch()
@@ -433,53 +444,7 @@ final class OnboardingTests: XCTestCase { // swiftlint:disable:this type_body_le
         XCTAssert(app.staticTexts["Onboarding complete"].waitForExistence(timeout: 2))
     }
 
-    private func hitConsentButton(_ app: XCUIApplication) {
-        if app.staticTexts["This is a markdown example"].isHittable {
-            app.staticTexts["This is a markdown example"].swipeUp()
-        } else {
-            print("Can not scroll down.")
-        }
-        XCTAssert(app.buttons["I Consent"].waitForExistence(timeout: 2))
-        app.buttons["I Consent"].tap()
-    }
-
-    private func dynamicOnboardingFlow(app: XCUIApplication, showConditionalView: Bool) throws {
-        // Dynamically show onboarding views
-        if showConditionalView {
-            XCTAssert(app.buttons["Show Conditional View"].waitForExistence(timeout: 2))
-            app.buttons["Show Conditional View"].tap()
-        }
-
-        XCTAssert(app.buttons["Rendered Consent View (Markdown)"].waitForExistence(timeout: 2))
-        app.buttons["Rendered Consent View (Markdown)"].tap()
-
-        // Check if on consent export page
-        XCTAssert(app.staticTexts["Consent PDF rendering doesn't exist"].waitForExistence(timeout: 2))
-
-        XCTAssert(app.buttons["Next"].waitForExistence(timeout: 2))
-        app.buttons["Next"].tap()
-
-        XCTAssert(app.buttons["Next"].waitForExistence(timeout: 2))
-        app.buttons["Next"].tap()
-
-        XCTAssert(app.buttons["Next"].waitForExistence(timeout: 2))
-        app.buttons["Next"].tap()
-
-        XCTAssert(app.buttons["Next"].waitForExistence(timeout: 2))
-        app.buttons["Next"].tap()
-
-        if showConditionalView {
-            // Check if on conditional test view
-            XCTAssert(app.staticTexts["Conditional Test View"].waitForExistence(timeout: 2))
-
-            XCTAssert(app.buttons["Next"].waitForExistence(timeout: 2))
-            app.buttons["Next"].tap()
-        }
-
-        // Check if on final page
-        XCTAssert(app.staticTexts["Onboarding complete"].waitForExistence(timeout: 2))
-    }
-
+    @MainActor
     func testIdentifiableViews() throws {
         let app = XCUIApplication()
         app.launch()
