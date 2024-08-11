@@ -11,6 +11,11 @@ import XCTestExtensions
 
 
 final class OnboardingTests: XCTestCase { // swiftlint:disable:this type_body_length
+    override func setUp() {
+        continueAfterFailure = false
+    }
+
+
     @MainActor
     func testOverallOnboardingFlow() throws {
         let app = XCUIApplication()
@@ -303,14 +308,22 @@ final class OnboardingTests: XCTestCase { // swiftlint:disable:this type_body_le
         // Store exported consent form in Files
 #if os(visionOS)
         // on visionOS the save to files button has no label
-        XCTAssert(app.cells["XCElementSnapshotPrivilegedValuePlaceholder"].waitForExistence(timeout: 10))
-        app.cells["XCElementSnapshotPrivilegedValuePlaceholder"].tap()
+        if #available(visionOS 2.0, *) {
+            XCTAssert(app.cells["Save to Files"].waitForExistence(timeout: 10))
+            app.cells["Save to Files"].tap()
+        } else {
+            XCTAssert(app.cells["XCElementSnapshotPrivilegedValuePlaceholder"].waitForExistence(timeout: 10))
+            app.cells["XCElementSnapshotPrivilegedValuePlaceholder"].tap()
+        }
 #else
         XCTAssert(app.staticTexts["Save to Files"].waitForExistence(timeout: 10))
         app.staticTexts["Save to Files"].tap()
 #endif
 
         XCTAssert(app.navigationBars.buttons["Save"].waitForExistence(timeout: 5))
+        if !app.navigationBars.buttons["Save"].isEnabled {
+            throw XCTSkip("You currently cannot save anything in the files app in Xcode 16-based simulator.")
+        }
         app.navigationBars.buttons["Save"].tap()
 
         if app.staticTexts["Replace Existing Items?"].waitForExistence(timeout: 2.0) {
@@ -343,6 +356,7 @@ final class OnboardingTests: XCTestCase { // swiftlint:disable:this type_body_le
             // The recents view in the files app is a bit buggy, check if the file is on the "On My iPhone"/"On My iPad" view
             if filesApp.navigationBars.buttons["Show Sidebar"].exists {
                 // we are running on iPad!
+                // TODO: this doesn't apply to iPadOS 18
                 filesApp.navigationBars.buttons["Show Sidebar"].tap()
                 XCTAssertTrue(filesApp.staticTexts["On My iPad"].waitForExistence(timeout: 2.0))
                 filesApp.staticTexts["On My iPad"].tap()
@@ -487,3 +501,5 @@ final class OnboardingTests: XCTestCase { // swiftlint:disable:this type_body_le
         XCTAssert(app.staticTexts["Welcome"].waitForExistence(timeout: 2))
     }
 }
+
+// swiftlint:disable:this file_length
