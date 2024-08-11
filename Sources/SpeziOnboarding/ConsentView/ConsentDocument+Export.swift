@@ -16,7 +16,7 @@ extension ConsentDocument {
     #if !os(macOS)
     /// As the `PKDrawing.image()` function automatically converts the ink color dependent on the used color scheme (light or dark mode),
     /// force the ink used in the `UIImage` of the `PKDrawing` to always be black by adjusting the signature ink according to the color scheme.
-    private var blackInkSignatureImage: UIImage {
+    @MainActor private var blackInkSignatureImage: UIImage {
         var updatedDrawing = PKDrawing()
         
         for stroke in signature.strokes {
