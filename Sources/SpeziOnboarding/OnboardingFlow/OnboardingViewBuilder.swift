@@ -14,7 +14,7 @@ import SwiftUI
 @resultBuilder
 public enum OnboardingViewBuilder {
     /// If declared, provides contextual type information for statement expressions to translate them into partial results.
-    public static func buildExpression(_ expression: any View) -> [any View] {
+    public static func buildExpression<V: View>(_ expression: V) -> [any View] {
         [expression]
     }
 

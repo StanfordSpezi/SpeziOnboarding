@@ -43,9 +43,8 @@ public class OnboardingDataSource: Module, EnvironmentAccessible {
     /// Adds a new exported consent form represented as `PDFDocument` to the ``OnboardingDataSource``.
     ///
     /// - Parameter consent: The exported consent form represented as `PDFDocument` that should be added.
+    @MainActor
     public func store(_ consent: PDFDocument) async {
-        Task { @MainActor in
-            await standard.store(consent: consent)
-        }
+        await standard.store(consent: consent)
     }
 }
