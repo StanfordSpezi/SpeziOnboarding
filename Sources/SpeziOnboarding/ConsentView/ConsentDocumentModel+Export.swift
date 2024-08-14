@@ -113,7 +113,7 @@ extension ConsentDocumentModel {
     ///     - personName: A string containing the name of the person who signed the document.
     /// - Returns: A TPPDF `PDFAttributedText` representation of the export time stamp.
     @MainActor
-    private func exportSignature(personName: String) -> PDFGroup {
+    private func exportSignature(personName: String, signature: String) -> PDFGroup {
         // On macOS, we do not have a "drawn" signature, hence do
         // not set a backgroundImage for the PDFGroup.
         // Instead, we render the person name.
@@ -211,13 +211,13 @@ extension ConsentDocumentModel {
     ///     - personName: A string containing the name of the person who signed the document.
     /// - Returns: The exported consent form in PDF format as a PDFKit `PDFDocument`
     @MainActor
-    public func export(personName: String) async -> PDFKit.PDFDocument? {
+    public func export(personName: String, signature: String) async -> PDFKit.PDFDocument? {
         let exportTimeStamp = exportConfiguration.includingTimestamp ? exportTimeStamp() : nil
         let header = exportHeader()
         let pdfTextContent = await exportDocumentContent()
-        let signature = exportSignature(personName: personName)
+        let signature = exportSignature(personName: personName, signature: signature)
             
-        return await exportDocument(
+        return await createDocument(
             header: header,
             pdfTextContent: pdfTextContent,
             signatureFooter: signature,

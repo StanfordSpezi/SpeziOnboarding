@@ -57,7 +57,7 @@ extension ConsentDocument {
             personName: personName, signatureImage: blackInkSignatureImage
         )
         #else
-        return await viewModel.export(personName: personName)
+        return await viewModel.export(personName: personName, signature: signature)
         #endif
     }
 }

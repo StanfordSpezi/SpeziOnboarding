@@ -57,7 +57,7 @@ final class SpeziOnboardingTests: XCTestCase {
         let bundle = Bundle.module  // Access the test bundle
         var resourceName = "known_good_pdf"
         #if os(macOS)
-        resourceName = "known_good_pdf_macos"
+        resourceName = "known_good_pdf_mac_os"
         #elseif os(visionOS)
         resourceName = "known_good_pdf_vision_os"
         #endif
@@ -74,17 +74,13 @@ final class SpeziOnboardingTests: XCTestCase {
         
         #if !os(macOS)
         if let pdf = await viewModel.export(personName: "Leland Stanford", signatureImage: .init()) {
-            let fileManager = FileManager.default
-            let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
-            let saveURL = documentsURL.appendingPathComponent("exported.pdf")
-            try savePDFDocument(pdf, to: saveURL)
             XCTAssert(comparePDFDocuments(pdf1: pdf, pdf2: knownGoodPdf))
         } else {
             XCTFail("Failed to export PDF from ConsentDocumentModel.")
         }
         #else
-        if let pdf = await viewModel.export(personName: "Leland Stanford") {
-            XCTAssert(comparePDFDocuments(doc1: pdf, doc2: knownGoodPdf))
+        if let pdf = await viewModel.export(personName: "Leland Stanford", signature: "Stanford") {
+            XCTAssert(comparePDFDocuments(pdf1: pdf, pdf2: knownGoodPdf))
         } else {
             XCTFail("Failed to export PDF from ConsentDocumentModel.")
         }
@@ -115,14 +111,4 @@ final class SpeziOnboardingTests: XCTestCase {
         // If all pages are identical, the documents are equal
         return true
     }
-
-    func savePDFDocument(_ pdfDocument: PDFDocument, to fileURL: URL) throws {
-    guard let pdfData = pdfDocument.dataRepresentation() else {
-        throw NSError(domain: "PDFSaveError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to get PDF data"])
-    }
-    
-    try pdfData.write(to: fileURL)
-    print("PDF saved successfully at: \(fileURL.path)")
-}
-
 }
