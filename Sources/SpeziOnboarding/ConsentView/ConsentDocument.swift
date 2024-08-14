@@ -41,12 +41,12 @@ public struct ConsentDocument: View {
     /// The maximum width such that the drawing canvas fits onto the PDF.
     static let maxWidthDrawing: CGFloat = 550
 
-    let asyncMarkdown: () async -> Data
     private let givenNameTitle: LocalizedStringResource
     private let givenNamePlaceholder: LocalizedStringResource
     private let familyNameTitle: LocalizedStringResource
     private let familyNamePlaceholder: LocalizedStringResource
-    let exportConfiguration: ExportConfiguration
+    
+    let viewModel: ConsentDocumentViewModel
     
     @Environment(\.colorScheme) var colorScheme
     @State var name = PersonNameComponents()
@@ -134,7 +134,7 @@ public struct ConsentDocument: View {
     
     public var body: some View {
         VStack {
-            MarkdownView(asyncMarkdown: asyncMarkdown, state: $viewState.base)
+            MarkdownView(asyncMarkdown: viewModel.asyncMarkdown, state: $viewState.base)
             Spacer()
             Group {
                 nameView
@@ -203,13 +203,16 @@ public struct ConsentDocument: View {
         familyNamePlaceholder: LocalizedStringResource = LocalizationDefaults.familyNamePlaceholder,
         exportConfiguration: ExportConfiguration = .init()
     ) {
-        self.asyncMarkdown = markdown
         self._viewState = viewState
         self.givenNameTitle = givenNameTitle
         self.givenNamePlaceholder = givenNamePlaceholder
         self.familyNameTitle = familyNameTitle
         self.familyNamePlaceholder = familyNamePlaceholder
-        self.exportConfiguration = exportConfiguration
+        
+        self.viewModel = ConsentDocumentViewModel(
+            markdown: markdown,
+            exportConfiguration: exportConfiguration
+        )
     }
 }
 
