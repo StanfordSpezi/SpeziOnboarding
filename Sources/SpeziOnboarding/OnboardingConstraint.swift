@@ -16,5 +16,6 @@ public protocol OnboardingConstraint: Standard {
     /// Adds a new exported consent form represented as `PDFDocument` to the `Standard` conforming to ``OnboardingConstraint``.
     /// 
     /// - Parameter consent: The exported consent form represented as `PDFDocument` that should be added.
+    @MainActor
     func store(consent: PDFDocument) async
 }

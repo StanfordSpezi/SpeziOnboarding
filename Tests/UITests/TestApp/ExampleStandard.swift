@@ -14,19 +14,19 @@ import SwiftUI
 
 /// An example Standard used for the configuration.
 actor ExampleStandard: Standard, EnvironmentAccessible {
-    @Published @MainActor var consentData: PDFDocument = .init()
+    @MainActor private(set) var consentData: PDFDocument = .init()
 }
 
 
 extension ExampleStandard: OnboardingConstraint {
+    @MainActor
     func store(consent: PDFDocument) async {
-        await MainActor.run {
-            self.consentData = consent
-        }
+        self.consentData = consent
         try? await Task.sleep(for: .seconds(0.5))
     }
-    
+
+    @MainActor
     func loadConsent() async throws -> PDFDocument {
-        await self.consentData
+        self.consentData
     }
 }
