@@ -21,14 +21,18 @@ struct OnboardingStepIdentifier: Hashable, Codable {
     /// - Parameters:
     ///   - view: The view used to initialize the identifier.
     ///   - custom: A flag indicating whether the step is custom.
+    @MainActor
     init<V: View>(view: V, custom: Bool = false) {
         self.custom = custom
         var hasher = Hasher()
         if let identifiable = view as? any Identifiable {
             let id = identifiable.id
             hasher.combine(id)
+        } else if let identifiable = view as? any OnboardingIdentifiable {
+            let id = identifiable.id
+            hasher.combine(id)
         } else {
-            hasher.combine(String(describing: type(of: view)))
+            hasher.combine(String(describing: type(of: view as Any)))
         }
         self.identifierHash = hasher.finalize()
     }
