@@ -23,7 +23,15 @@ import Spezi
 public protocol OnboardingConstraint: Standard {
     /// Adds a new exported consent form represented as `PDFDocument` to the `Standard` conforming to ``OnboardingConstraint``.
     /// 
-    /// - Parameter consent: The exported consent form represented as `PDFDocument` that should be added.
-    @MainActor
+    /// - Parameters:
+    ///     - consent: The exported consent form represented as `PDFDocument` that should be added.
+    @available(
+        *,
+        deprecated,
+        message: """
+        Storing consent documents without an identifier is deprecated.
+        Please use `ConsentConstraint.store(consent: PDFDocument, identifier: String)` instead.
+        """
+    )
     func store(consent: PDFDocument) async
 }
