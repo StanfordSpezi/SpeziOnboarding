@@ -438,5 +438,3 @@ final class OnboardingTests: XCTestCase { // swiftlint:disable:this type_body_le
         XCTAssert(app.staticTexts["Welcome"].waitForExistence(timeout: 2))
     }
 }
-
-// swiftlint:disable:this file_length
