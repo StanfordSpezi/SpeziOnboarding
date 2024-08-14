@@ -12,17 +12,23 @@ import SwiftUI
 
 
 struct OnboardingConsentMarkdownTestView: View {
+    let consentTitle: String
+    let consentText: String
+    let documentIdentifier: String
+
     @Environment(OnboardingNavigationPath.self) private var path
     
     
     var body: some View {
         OnboardingConsentView(
             markdown: {
-                Data("This is a *markdown* **example**".utf8)
+                Data(consentText.utf8)
             },
             action: {
                 path.nextStep()
             },
+            title: consentTitle.localized(),
+            identifier: documentIdentifier,
             exportConfiguration: .init(paperSize: .dinA4, includingTimestamp: true)
         )
     }
@@ -30,7 +36,7 @@ struct OnboardingConsentMarkdownTestView: View {
 
 
 #if DEBUG
-struct OnboardingConsentMarkdownTestView_Previews: PreviewProvider {
+struct OnboardingFirstConsentMarkdownTestView_Previews: PreviewProvider {
     static var previews: some View {
         OnboardingStack(startAtStep: OnboardingConsentMarkdownTestView.self) {
             for onboardingView in OnboardingFlow.previewSimulatorViews {
