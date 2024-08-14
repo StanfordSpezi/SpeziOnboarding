@@ -56,6 +56,9 @@ let package = Package(
             dependencies: [
                 .target(name: "SpeziOnboarding")
             ],
+            resources: [
+                .process("Resources/")
+            ],
             swiftSettings: [
                 swiftConcurrency
             ],

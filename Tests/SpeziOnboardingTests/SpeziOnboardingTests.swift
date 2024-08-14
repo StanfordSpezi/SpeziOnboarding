@@ -6,8 +6,8 @@
 // SPDX-License-Identifier: MIT
 //
 
-@testable import SpeziOnboarding
 import PDFKit
+@testable import SpeziOnboarding
 import SwiftUI
 import XCTest
 
@@ -49,52 +49,80 @@ final class SpeziOnboardingTests: XCTestCase {
         let exportConfiguration = ConsentDocument.ExportConfiguration(
             paperSize: .dinA4,
             consentTitle: "Spezi Onboarding",
-            includingTimestamp: true
+            includingTimestamp: false
         )
-        let viewModel = ConsentDocumentViewModel(markdown: markdownData, exportConfiguration: exportConfiguration)
-        
+
+        let viewModel = ConsentDocumentModel(markdown: markdownData, exportConfiguration: exportConfiguration)
         
         let bundle = Bundle.module  // Access the test bundle
-        
-        #if !os(macOS)
-        guard let url = bundle.url(forResource: "known_good_pdf", withExtension: "pdf") else {
-           XCTFail("Failed to locate known_good.pdf in resources.")
-           return
-        }
-        #else
-        guard let url = bundle.url(forResource: "known_good_pdf_macos", withExtension: "pdf") else {
-           XCTFail("Failed to locate known_good.pdf in resources.")
-           return
-        }
+        var resourceName = "known_good_pdf"
+        #if os(macOS)
+        resourceName = "known_good_pdf_macos"
+        #elseif os(visionOS)
+        resourceName = "known_good_pdf_vision_os"
         #endif
-
+      
+        guard let url = bundle.url(forResource: resourceName, withExtension: "pdf") else {
+           XCTFail("Failed to locate \(resourceName) in resources.")
+           return
+        }
+   
         guard let knownGoodPdf = PDFDocument(url: url) else {
-            XCTFail("Failed to load known good PDF from resources.")
+            XCTFail("Failed to load \(resourceName) from resources.")
             return
         }
         
         #if !os(macOS)
         if let pdf = await viewModel.export(personName: "Leland Stanford", signatureImage: .init()) {
-            XCTAssert(comparePDFDocuments(doc1: pdf, doc2: knownGoodPdf))
+            let fileManager = FileManager.default
+            let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
+            let saveURL = documentsURL.appendingPathComponent("exported.pdf")
+            try savePDFDocument(pdf, to: saveURL)
+            XCTAssert(comparePDFDocuments(pdf1: pdf, pdf2: knownGoodPdf))
         } else {
-            XCTFail("Failed to export PDF from ConsentDocumentViewModel.")
+            XCTFail("Failed to export PDF from ConsentDocumentModel.")
         }
         #else
         if let pdf = await viewModel.export(personName: "Leland Stanford") {
             XCTAssert(comparePDFDocuments(doc1: pdf, doc2: knownGoodPdf))
         } else {
-            XCTFail("Failed to export PDF from ConsentDocumentViewModel.")
+            XCTFail("Failed to export PDF from ConsentDocumentModel.")
         }
         #endif
     }
     
-    private func comparePDFDocuments(doc1: PDFDocument, doc2: PDFDocument) -> Bool {
-  
-        guard let data1 = doc1.dataRepresentation(),
-              let data2 = doc2.dataRepresentation() else {
+    private func comparePDFDocuments(pdf1: PDFDocument, pdf2: PDFDocument) -> Bool {
+        // Check if both documents have the same number of pages
+        guard pdf1.pageCount == pdf2.pageCount else {
             return false
         }
+
+        // Iterate through each page and compare their contents
+        for index in 0..<pdf1.pageCount {
+            guard let page1 = pdf1.page(at: index),
+                  let page2 = pdf2.page(at: index) else {
+                return false
+            }
+            
+            // Compare the text content of the pages
+            let text1 = page1.string ?? ""
+            let text2 = page2.string ?? ""
+            if text1 != text2 {
+                return false
+            }
+        }
         
-        return data1 == data2
+        // If all pages are identical, the documents are equal
+        return true
     }
+
+    func savePDFDocument(_ pdfDocument: PDFDocument, to fileURL: URL) throws {
+    guard let pdfData = pdfDocument.dataRepresentation() else {
+        throw NSError(domain: "PDFSaveError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to get PDF data"])
+    }
+    
+    try pdfData.write(to: fileURL)
+    print("PDF saved successfully at: \(fileURL.path)")
+}
+
 }

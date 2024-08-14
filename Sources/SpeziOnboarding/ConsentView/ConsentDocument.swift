@@ -46,7 +46,7 @@ public struct ConsentDocument: View {
     private let familyNameTitle: LocalizedStringResource
     private let familyNamePlaceholder: LocalizedStringResource
     
-    let viewModel: ConsentDocumentViewModel
+    let viewModel: ConsentDocumentModel
     
     @Environment(\.colorScheme) var colorScheme
     @State var name = PersonNameComponents()
@@ -209,7 +209,7 @@ public struct ConsentDocument: View {
         self.familyNameTitle = familyNameTitle
         self.familyNamePlaceholder = familyNamePlaceholder
         
-        self.viewModel = ConsentDocumentViewModel(
+        self.viewModel = ConsentDocumentModel(
             markdown: markdown,
             exportConfiguration: exportConfiguration
         )

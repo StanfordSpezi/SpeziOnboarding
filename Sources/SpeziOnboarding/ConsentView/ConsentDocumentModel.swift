@@ -10,11 +10,11 @@ import Foundation
 import TPPDF
 
 /// A type holding all information required for exporting a PDF from a `ConsentDocumentVIew`, such as the PDF content (i.e., markdown string) and the ExportConfiguration.
-public struct ConsentDocumentViewModel {
+public struct ConsentDocumentModel {
     let asyncMarkdown: () async -> Data
     let exportConfiguration: ConsentDocument.ExportConfiguration
  
-    /// Creates a `ConsentDocumentViewModel` which holds information related to the PDF export of a `ConsentView`.
+    /// Creates a `ConsentDocumentModel` which holds information related to the PDF export of a `ConsentView`.
     ///
     /// - Parameters:
     ///     - markdown: Markdown string of the consent document.
