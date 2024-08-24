@@ -6,7 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
-import PDFKit
+@preconcurrency import PDFKit
 import Spezi
 import SwiftUI
 
@@ -49,12 +49,12 @@ public class OnboardingDataSource: Module, EnvironmentAccessible {
     /// Adds a new exported consent form represented as `PDFDocument` to the ``OnboardingDataSource``.
     ///
     /// - Parameter consent: The exported consent form represented as `ConsentDocumentExport` that should be added.
-    public func store(_ consent: PDFDocument, identifier: String = ConsentDocumentExport.Defaults.documentIdentifier) async throws {
+    public func store(_ consent: ConsentDocumentExport) async throws {
         if let consentConstraint = standard as? any ConsentConstraint {
-            let consentDocumentExport = ConsentDocumentExport(documentIdentifier: identifier, cachedPDF: consent)
-            try await consentConstraint.store(consent: consentDocumentExport)
+            try await consentConstraint.store(consent: consent)
         } else if let onboardingConstraint = standard as? any OnboardingConstraint {
-            await onboardingConstraint.store(consent: consent)
+            let pdf = await consent.pdf
+            await onboardingConstraint.store(consent: pdf)
         } else {
             fatalError("A \(type(of: standard).self) must conform to `ConsentConstraint` to process signed consent documents.")
         }

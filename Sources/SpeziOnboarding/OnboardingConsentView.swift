@@ -87,7 +87,8 @@ public struct OnboardingConsentView: View {
                     ConsentDocument(
                         markdown: markdown,
                         viewState: $viewState,
-                        exportConfiguration: exportConfiguration
+                        exportConfiguration: exportConfiguration,
+                        documentIdentifier: identifier
                     )
                     .padding(.bottom)
                 },
@@ -111,13 +112,13 @@ public struct OnboardingConsentView: View {
             .scrollDisabled($viewState.signing.wrappedValue)
             .navigationBarBackButtonHidden(backButtonHidden)
             .onChange(of: viewState) {
-                if case .exported(let exportedConsentDocumented) = viewState {
+                if case .exported(_, let export) = viewState {
                     if !willShowShareSheet {
                         viewState = .storing
                         Task {
                             do {
                                 /// Stores the finished PDF in the Spezi `Standard`.
-                                try await onboardingDataSource.store(exportedConsentDocumented, identifier: identifier)
+                                try await onboardingDataSource.store(export)
 
                                 await action()
                                 viewState = .base(.idle)
@@ -162,9 +163,9 @@ public struct OnboardingConsentView: View {
                 }
             }
             .sheet(isPresented: $showShareSheet) {
-                if case .exported(let exportedConsentDocumented) = viewState {
+                if case .exported(let document, _) = viewState {
                     #if !os(macOS)
-                    ShareSheet(sharedItem: exportedConsentDocumented)
+                    ShareSheet(sharedItem: document)
                         .presentationDetents([.medium])
                         .task {
                             willShowShareSheet = false

@@ -46,7 +46,7 @@ public struct ConsentDocument: View {
     private let familyNameTitle: LocalizedStringResource
     private let familyNamePlaceholder: LocalizedStringResource
     
-    let viewModel: ConsentDocumentModel
+    let documentExport: ConsentDocumentExport
     
     @Environment(\.colorScheme) var colorScheme
     @State var name = PersonNameComponents()
@@ -85,6 +85,7 @@ public struct ConsentDocument: View {
                         signature.removeAll()
                         #endif
                     }
+                    documentExport.name = name
                 }
             
             Divider()
@@ -129,12 +130,13 @@ public struct ConsentDocument: View {
                 } else {
                     viewState = .namesEntered
                 }
+                documentExport.signature = signature
             }
     }
     
     public var body: some View {
         VStack {
-            MarkdownView(asyncMarkdown: viewModel.asyncMarkdown, state: $viewState.base)
+            MarkdownView(asyncMarkdown: documentExport.asyncMarkdown, state: $viewState.base)
             Spacer()
             Group {
                 nameView
@@ -152,11 +154,13 @@ public struct ConsentDocument: View {
             .onChange(of: viewState) {
                 if case .export = viewState {
                     Task {
-                        guard let exportedConsent = await export() else {
+                        if let exportedConsent = await export() {
+                            documentExport.cachedPDF = exportedConsent
+                            viewState = .exported(document: exportedConsent, export: documentExport)
+                        } else {
                             viewState = .base(.error(Error.memoryAllocationError))
                             return
                         }
-                        viewState = .exported(document: exportedConsent)
                     }
                 } else if case .base(let baseViewState) = viewState,
                           case .idle = baseViewState {
@@ -194,6 +198,7 @@ public struct ConsentDocument: View {
     ///   - familyNameTitle: The localization to use for the family (last) name field.
     ///   - familyNamePlaceholder: The localization to use for the family name field placeholder.
     ///   - exportConfiguration: Defines the properties of the exported consent form via ``ConsentDocument/ExportConfiguration``.
+    ///   - identifier: A unique identifier or "name" for the consent form, helpful for distinguishing consent forms when storing in the `Standard`.
     public init(
         markdown: @escaping () async -> Data,
         viewState: Binding<ConsentViewState>,
@@ -201,7 +206,8 @@ public struct ConsentDocument: View {
         givenNamePlaceholder: LocalizedStringResource = LocalizationDefaults.givenNamePlaceholder,
         familyNameTitle: LocalizedStringResource = LocalizationDefaults.familyNameTitle,
         familyNamePlaceholder: LocalizedStringResource = LocalizationDefaults.familyNamePlaceholder,
-        exportConfiguration: ExportConfiguration = .init()
+        exportConfiguration: ExportConfiguration = .init(),
+        documentIdentifier: String = ConsentDocumentExport.Defaults.documentIdentifier
     ) {
         self._viewState = viewState
         self.givenNameTitle = givenNameTitle
@@ -209,10 +215,15 @@ public struct ConsentDocument: View {
         self.familyNameTitle = familyNameTitle
         self.familyNamePlaceholder = familyNamePlaceholder
         
-        self.viewModel = ConsentDocumentModel(
+        self.documentExport = ConsentDocumentExport(
             markdown: markdown,
-            exportConfiguration: exportConfiguration
+            exportConfiguration: exportConfiguration,
+            documentIdentifier: documentIdentifier
         )
+        // Set initial values for the name and signature.
+        // These will be updated once the name and signature change.
+        self.documentExport.name = name
+        self.documentExport.signature = signature
     }
 }
 

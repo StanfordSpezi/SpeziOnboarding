@@ -11,8 +11,8 @@ import PencilKit
 import SwiftUI
 import TPPDF
 
-/// Extension of `ConsentDocumentModel` enabling the export of the signed consent page.
-extension ConsentDocumentModel {
+/// Extension of `ConsentDocumentExport` enabling the export of the signed consent page.
+extension ConsentDocumentExport {
     /// Generates a `PDFAttributedText` containing the timestamp of the time at which the PDF was exported.
     ///
     /// - Returns: A TPPDF `PDFAttributedText` representation of the export time stamp.
@@ -83,7 +83,9 @@ extension ConsentDocumentModel {
     ///     - signatureImage: Signature drawn when signing the document.
     /// - Returns: A TPPDF `PDFAttributedText` representation of the export time stamp.
     @MainActor
-    private func exportSignature(personName: String, signatureImage: UIImage) -> PDFGroup {
+    private func exportSignature() -> PDFGroup {
+        let personName = name.formatted(.name(style: .long))
+
         let group = PDFGroup(
             allowsBreaks: false,
             backgroundImage: PDFImage(image: signatureImage),
@@ -113,7 +115,7 @@ extension ConsentDocumentModel {
     ///     - personName: A string containing the name of the person who signed the document.
     /// - Returns: A TPPDF `PDFAttributedText` representation of the export time stamp.
     @MainActor
-    private func exportSignature(personName: String, signature: String) -> PDFGroup {
+    private func exportSignature() -> PDFGroup {
         // On macOS, we do not have a "drawn" signature, hence do
         // not set a backgroundImage for the PDFGroup.
         // Instead, we render the person name.
@@ -134,7 +136,7 @@ extension ConsentDocumentModel {
         group.addLineSeparator(style: PDFLineStyle(color: .black))
         
         group.set(font: nameFont)
-        group.add(PDFGroupContainer.left, text: personName)
+        group.add(PDFGroupContainer.left, text: name)
         return group
     }
     #endif
@@ -189,11 +191,11 @@ extension ConsentDocumentModel {
     ///     - signatureImage: Signature drawn when signing the document.
     /// - Returns: The exported consent form in PDF format as a PDFKit `PDFDocument`
     @MainActor
-    public func export(personName: String, signatureImage: UIImage) async -> PDFKit.PDFDocument? {
+    public func export() async -> PDFKit.PDFDocument? {
         let exportTimeStamp = exportConfiguration.includingTimestamp ? exportTimeStamp() : nil
         let header = exportHeader()
         let pdfTextContent = await exportDocumentContent()
-        let signature = exportSignature(personName: personName, signatureImage: signatureImage)
+        let signature = exportSignature()
             
         return await createDocument(
             header: header,
