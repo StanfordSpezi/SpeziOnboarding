@@ -28,11 +28,15 @@ public final class ConsentDocumentExport: Equatable, Sendable {
     /// Corresponds to the identifier which was passed  when creating the `ConsentDocument` using an `OnboardingConsentView`.
     public let documentIdentifier: String
     
+    /// The name of the person which signed the document.
     public var name = PersonNameComponents()
     #if !os(macOS)
+    /// The signature of the signee as drawing.
     public var signature = PKDrawing()
+    /// The image generated from the signature drawing.
     public var signatureImage = UIImage()
     #else
+    /// The signature of the signee as string.
     public var signature = String()
     #endif
 
@@ -55,6 +59,7 @@ public final class ConsentDocumentExport: Equatable, Sendable {
     
     /// Creates a `ConsentDocumentExport`, which holds an exported PDF and the corresponding document identifier string.
     /// - Parameters:
+    ///   - markdown: The markdown text for the document, which is shown to the user.
     ///   - documentIdentfier: A unique String identifying the exported `ConsentDocument`.
     ///   - exportConfiguration: The `ExportConfiguration` holding the properties of the document.
     ///   - cachedPDF: A `PDFDocument` exported from a `ConsentDocument`.
