@@ -50,9 +50,9 @@ extension ConsentDocument {
     /// - Returns: The exported consent form in PDF format as a PDFKit `PDFDocument`
     @MainActor
     func export() async -> PDFKit.PDFDocument? {
-        #if !os(macOS)
         documentExport.signature = signature
         documentExport.name = name
+        #if !os(macOS)
         documentExport.signatureImage = blackInkSignatureImage
         return await documentExport.export()
         #else

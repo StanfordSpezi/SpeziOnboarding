@@ -42,49 +42,81 @@ final class SpeziOnboardingTests: XCTestCase {
     
     @MainActor
     func testPDFExport() async throws {
-        let markdownData = {
-            Data("This is a *markdown* **example**".utf8)
+        
+        let markdownDataFiles: [String] = ["markdown_data_one_page", "markdown_data_two_pages"]
+        let knownGoodPDFFiles: [String] = ["known_good_pdf_one_page", "known_good_pdf_two_pages"]
+        
+        for (markdownPath, knownGoodPDFPath) in zip(markdownDataFiles, knownGoodPDFFiles) {
+            let markdownData = {
+                self.loadMarkdownDataFromFile(path: markdownPath)
+            }
+            
+            let exportConfiguration = ConsentDocument.ExportConfiguration(
+                paperSize: .dinA4,
+                consentTitle: "Spezi Onboarding",
+                includingTimestamp: false
+            )
+            
+            let documentExport = ConsentDocumentExport(
+                markdown: markdownData,
+                exportConfiguration: exportConfiguration,
+                documentIdentifier:  ConsentDocumentExport.Defaults.documentIdentifier
+            )
+            documentExport.name = PersonNameComponents(givenName: "Leland", familyName: "Stanford")
+            
+            #if os(macOS)
+            let pdfPath = knownGoodPDFPath + "_mac_os"
+            #elseif os(visionOS)
+            let pdfPath = knownGoodPDFPath + "_vision_os"
+            #else
+            let pdfPath = knownGoodPDFPath + "_ios"
+            #endif
+            
+            let knownGoodPdf = loadPDFFromPath(path: pdfPath)
+            
+            #if !os(macOS)
+            documentExport.signature = .init()
+            #else
+            documentExport.signature = "Stanford"
+            #endif
+            
+            if let pdf = await documentExport.export() {
+                XCTAssert(comparePDFDocuments(pdf1: pdf, pdf2: knownGoodPdf))
+            } else {
+                XCTFail("Failed to export PDF from ConsentDocumentExport.")
+            }
+        }
+    }
+    
+    private func loadMarkdownDataFromFile(path: String) -> Data {
+        let bundle = Bundle.module  // Access the test bundle
+        guard let fileURL = bundle.url(forResource: path, withExtension: "md") else {
+            XCTFail("Failed to load \(path).md from resources.")
+            return Data()
         }
         
-        let exportConfiguration = ConsentDocument.ExportConfiguration(
-            paperSize: .dinA4,
-            consentTitle: "Spezi Onboarding",
-            includingTimestamp: false
-        )
-
-        let viewModel = ConsentDocumentModel(markdown: markdownData, exportConfiguration: exportConfiguration)
-        
+        // Load the content of the file into Data
+        var markdownData = Data()
+        do {
+            markdownData = try Data(contentsOf: fileURL)
+        } catch {
+            XCTFail("Failed to read \(path).md from resources: \(error.localizedDescription)")
+        }
+        return markdownData
+    }
+    
+    private func loadPDFFromPath(path: String) -> PDFDocument {
         let bundle = Bundle.module  // Access the test bundle
-        var resourceName = "known_good_pdf"
-        #if os(macOS)
-        resourceName = "known_good_pdf_mac_os"
-        #elseif os(visionOS)
-        resourceName = "known_good_pdf_vision_os"
-        #endif
-      
-        guard let url = bundle.url(forResource: resourceName, withExtension: "pdf") else {
-           XCTFail("Failed to locate \(resourceName) in resources.")
-           return
+        guard let url = bundle.url(forResource: path, withExtension: "pdf") else {
+            XCTFail("Failed to locate \(path) in resources.")
+            return .init()
         }
    
         guard let knownGoodPdf = PDFDocument(url: url) else {
-            XCTFail("Failed to load \(resourceName) from resources.")
-            return
+            XCTFail("Failed to load \(path) from resources.")
+            return .init()
         }
-        
-        #if !os(macOS)
-        if let pdf = await viewModel.export(personName: "Leland Stanford", signatureImage: .init()) {
-            XCTAssert(comparePDFDocuments(pdf1: pdf, pdf2: knownGoodPdf))
-        } else {
-            XCTFail("Failed to export PDF from ConsentDocumentModel.")
-        }
-        #else
-        if let pdf = await viewModel.export(personName: "Leland Stanford", signature: "Stanford") {
-            XCTAssert(comparePDFDocuments(pdf1: pdf, pdf2: knownGoodPdf))
-        } else {
-            XCTFail("Failed to export PDF from ConsentDocumentModel.")
-        }
-        #endif
+        return knownGoodPdf
     }
     
     private func comparePDFDocuments(pdf1: PDFDocument, pdf2: PDFDocument) -> Bool {
@@ -111,4 +143,5 @@ final class SpeziOnboardingTests: XCTestCase {
         // If all pages are identical, the documents are equal
         return true
     }
+    
 }
