@@ -178,7 +178,7 @@ public struct ConsentDocument: View {
     }
     
     private var inputFieldsDisabled: Bool {
-        viewState == .base(.processing) || viewState == .export
+        viewState == .base(.processing) || viewState == .export || viewState == .storing
     }
     
     

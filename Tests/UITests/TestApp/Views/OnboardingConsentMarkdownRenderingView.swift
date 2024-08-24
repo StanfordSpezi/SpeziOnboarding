@@ -13,10 +13,13 @@ import SwiftUI
 
 
 struct OnboardingConsentMarkdownRenderingView: View {
+    let consentTitle: String
+    let documentIdentifier: String
+
     @Environment(OnboardingNavigationPath.self) private var path
     @Environment(ExampleStandard.self) private var standard
     @State var exportedConsent: PDFDocument?
-    
+
     
     var body: some View {
         VStack {
@@ -25,7 +28,7 @@ struct OnboardingConsentMarkdownRenderingView: View {
                     .fill(Color.red)
                     .frame(width: 200, height: 200)
                     .overlay(
-                        Text("Consent PDF rendering doesn't exist")
+                        Text("\(consentTitle) PDF rendering doesn't exist")
                             .foregroundColor(.white)
                             .multilineTextAlignment(.center)
                             .padding()
@@ -35,7 +38,7 @@ struct OnboardingConsentMarkdownRenderingView: View {
                     .fill(Color.green)
                     .frame(width: 200, height: 200)
                     .overlay(
-                        Text("Consent PDF rendering exists")
+                        Text("\(consentTitle) PDF rendering exists")
                             .foregroundColor(.white)
                             .multilineTextAlignment(.center)
                             .padding()
@@ -54,9 +57,8 @@ struct OnboardingConsentMarkdownRenderingView: View {
             .navigationBarTitleDisplayMode(.inline)
             #endif
             .task {
-                self.exportedConsent = try? await standard.loadConsent()
-                // Reset OnboardingDataSource
-                await standard.store(consent: .init())
+                self.exportedConsent = try? await standard.loadConsentDocument(identifier: documentIdentifier)
+                try? await standard.resetDocument(identifier: documentIdentifier)
             }
     }
 }
@@ -65,7 +67,6 @@ struct OnboardingConsentMarkdownRenderingView: View {
 #if DEBUG
 struct OnboardingConsentMarkdownRenderingView_Previews: PreviewProvider {
     static var standard: OnboardingDataSource = .init()
-    
     
     static var previews: some View {
         OnboardingStack(startAtStep: OnboardingConsentMarkdownRenderingView.self) {

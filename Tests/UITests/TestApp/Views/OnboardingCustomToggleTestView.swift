@@ -14,16 +14,18 @@ struct OnboardingCustomToggleTestView: View {
     @Binding var showConditionalView: Bool
 
     var body: some View {
-        Button {
-            path.nextStep()
-        } label: {
-            Text("Next")
-        }
+        VStack(spacing: 12) {
+            Button {
+                path.nextStep()
+            } label: {
+                Text("Next")
+            }
 
-        /// We need to use a custom-built toggle as UI tests are very flakey when clicking on SwiftUI `Toggle`'s
-        CustomToggleView(
-            text: "Show Conditional View",
-            condition: $showConditionalView
-        )
+            /// We need to use a custom-built toggle as UI tests are very flakey when clicking on SwiftUI `Toggle`'s
+            CustomToggleView(
+                text: "Show Conditional View",
+                condition: $showConditionalView
+            )
+        }
     }
 }
