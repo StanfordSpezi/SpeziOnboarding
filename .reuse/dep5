@@ -1,0 +1,5 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+
+Files: Tests/SpeziOnboardingTests/Resources/*.pdf
+Copyright: 2024 Stanford University and the project authors (see CONTRIBUTORS.md)
+License: MIT

@@ -42,7 +42,6 @@ final class SpeziOnboardingTests: XCTestCase {
     
     @MainActor
     func testPDFExport() async throws {
-        
         let markdownDataFiles: [String] = ["markdown_data_one_page", "markdown_data_two_pages"]
         let knownGoodPDFFiles: [String] = ["known_good_pdf_one_page", "known_good_pdf_two_pages"]
         
@@ -60,7 +59,7 @@ final class SpeziOnboardingTests: XCTestCase {
             let documentExport = ConsentDocumentExport(
                 markdown: markdownData,
                 exportConfiguration: exportConfiguration,
-                documentIdentifier:  ConsentDocumentExport.Defaults.documentIdentifier
+                documentIdentifier: ConsentDocumentExport.Defaults.documentIdentifier
             )
             documentExport.name = PersonNameComponents(givenName: "Leland", familyName: "Stanford")
             
@@ -143,5 +142,4 @@ final class SpeziOnboardingTests: XCTestCase {
         // If all pages are identical, the documents are equal
         return true
     }
-    
 }
