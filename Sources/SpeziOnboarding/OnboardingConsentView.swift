@@ -179,7 +179,7 @@ public struct OnboardingConsentView: View {
             #if os(macOS)
             .onChange(of: showShareSheet) { _, isPresented in
                 if isPresented,
-                   case .exported(let exportedConsentDocumented) = viewState {
+                   case .exported(let exportedConsentDocumented, _) = viewState {
                     let shareSheet = ShareSheet(sharedItem: exportedConsentDocumented)
                     shareSheet.show()
 

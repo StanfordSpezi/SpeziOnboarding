@@ -56,7 +56,7 @@ extension ConsentDocument {
         documentExport.signatureImage = blackInkSignatureImage
         return await documentExport.export()
         #else
-        return await viewModel.export()
+        return await documentExport.export()
         #endif
     }
 }
