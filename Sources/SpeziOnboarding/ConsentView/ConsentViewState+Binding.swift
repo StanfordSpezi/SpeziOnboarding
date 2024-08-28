@@ -13,7 +13,7 @@ import SwiftUI
 /// Extension to SwiftUI `Binding`'s enabling easy access to individual states of the ``ConsentViewState``
 extension Binding where Value == ConsentViewState {
     /// Access to a `Binding` of the ``ConsentViewState/base(_:)`` view state
-    var base: Binding<SpeziViews.ViewState> {
+    @MainActor var base: Binding<SpeziViews.ViewState> {
         .init(
             get: {
                 if case let .base(value) = self.wrappedValue {
@@ -30,7 +30,7 @@ extension Binding where Value == ConsentViewState {
     }
     
     /// Access to a `Binding` of the ``ConsentViewState/signing`` view state
-    var signing: Binding<Bool> {
+    @MainActor var signing: Binding<Bool> {
         .init(
             get: {
                 if case .signing = self.wrappedValue {
