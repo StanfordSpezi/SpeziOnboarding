@@ -33,5 +33,5 @@ public protocol OnboardingConstraint: Standard {
         Please use `ConsentConstraint.store(consent: PDFDocument, identifier: String)` instead.
         """
     )
-    func store(consent: PDFDocument) async
+    func store(consent: sending PDFDocument) async
 }

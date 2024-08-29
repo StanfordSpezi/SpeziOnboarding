@@ -17,5 +17,5 @@ public protocol ConsentConstraint: Standard {
     /// 
     /// - Parameters:
     ///     - consent: The exported consent form represented as `ConsentDocumentExport` that should be added.            
-    func store(consent: ConsentDocumentExport) async throws
+    func store(consent: consuming sending ConsentDocumentExport) async throws
 }
