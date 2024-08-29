@@ -21,25 +21,28 @@ actor ExampleStandard: Standard, EnvironmentAccessible {
 
 extension ExampleStandard: ConsentConstraint {
     // Example of an async function using MainActor and Task
-    func store(consent: ConsentDocumentExport) async throws {
+    func store(consent: consuming sending ConsentDocumentExport) async throws {
         // Extract data outside of the MainActor.run block
-        let documentIdentifier = await consent.documentIdentifier
-        let pdf = await consent.pdf
-        
+        let documentIdentifier = consent.documentIdentifier
+        let pdf = await consent.consumePDF()
+
         // Perform operations on the main actor
-        try await MainActor.run {
-            if documentIdentifier == DocumentIdentifiers.first {
-                self.firstConsentData = pdf
-            } else if documentIdentifier == DocumentIdentifiers.second {
-                self.secondConsentData = pdf
-            } else {
-                throw ConsentStoreError.invalidIdentifier("Invalid Identifier \(documentIdentifier)")
-            }
-        }
-        
+        try await self.store(document: pdf, for: documentIdentifier)
+
         try? await Task.sleep(for: .seconds(0.5))
     }
-    
+
+    @MainActor
+    func store(document pdf: sending PDFDocument, for documentIdentifier: String) throws {
+        if documentIdentifier == DocumentIdentifiers.first {
+            self.firstConsentData = pdf
+        } else if documentIdentifier == DocumentIdentifiers.second {
+            self.secondConsentData = pdf
+        } else {
+            throw ConsentStoreError.invalidIdentifier("Invalid Identifier \(documentIdentifier)")
+        }
+    }
+
     func resetDocument(identifier: String) async throws {
         await MainActor.run {
             if identifier == DocumentIdentifiers.first {
@@ -49,12 +52,13 @@ extension ExampleStandard: ConsentConstraint {
             }
         }
     }
-    
+
+    @MainActor
     func loadConsentDocument(identifier: String) async throws -> PDFDocument? {
         if identifier == DocumentIdentifiers.first {
-            return await self.firstConsentData
+            return self.firstConsentData
         } else if identifier == DocumentIdentifiers.second {
-            return await self.secondConsentData
+            return self.secondConsentData
         }
         
         // In case an invalid identifier is provided, return nil.
