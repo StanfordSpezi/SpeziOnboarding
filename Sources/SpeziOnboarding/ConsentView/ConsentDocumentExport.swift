@@ -49,8 +49,9 @@ public struct ConsentDocumentExport: ~Copyable {
     /// - Note: For now, we always require a PDF to be cached to create a ConsentDocumentExport. In the future, we might change this to lazy-PDF loading.
     public consuming func consumePDF() async -> sending PDFDocument {
         // Something the compiler doesn't realize here is that we can send the `PDFDocument` because it is located in a non-Sendable, non-Copyable
-        // type and accessing it will consume the enclosing type. Therefore, the PDFDocument instance can only be accessed once
+        // type and accessing it will consume the enclosing type. Therefore, the PDFDocument instance can only be accessed once (even in async method)
         // and that is fully checked at compile time by the compiler :rocket:
+        // See similar discussion: https://forums.swift.org/t/swift-6-consume-optional-noncopyable-property-and-transfer-sending-it-out/72414/3
         nonisolated(unsafe) let cachedPDF = cachedPDF
         return cachedPDF
     }
