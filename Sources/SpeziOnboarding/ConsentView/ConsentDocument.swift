@@ -109,7 +109,7 @@ public struct ConsentDocument: View {
         }
     }
     
-    private var signatureView: some View {
+    @MainActor private var signatureView: some View {
         Group {
             #if !os(macOS)
             SignatureView(signature: $signature, isSigning: $viewState.signing, canvasSize: $signatureSize, name: name)
