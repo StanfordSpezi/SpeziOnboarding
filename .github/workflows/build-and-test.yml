@@ -18,7 +18,7 @@ on:
 jobs:
   buildandtest_ios:
     name: Build and Test Swift Package iOS
-    uses: StanfordSpezi/.github/.github/workflows/xcodebuild-or-fastlane.yml@lfs
+    uses: StanfordSpezi/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
     strategy:
       matrix:
         include:
@@ -37,7 +37,7 @@ jobs:
       artifactname: ${{ matrix.artifactname }}
   buildandtest_ios_latest:
     name: Build and Test Swift Package iOS Latest
-    uses: StanfordSpezi/.github/.github/workflows/xcodebuild-or-fastlane.yml@lfs
+    uses: StanfordSpezi/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
     with:
       runsonlabels: '["macOS", "self-hosted"]'
       checkout_lfs: true
@@ -48,7 +48,7 @@ jobs:
       artifactname: SpeziOnboarding-iOS-Latest.xcresult
   buildandtest_visionos:
     name: Build and Test Swift Package visionOS
-    uses: StanfordSpezi/.github/.github/workflows/xcodebuild-or-fastlane.yml@lfs
+    uses: StanfordSpezi/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
     strategy:
       matrix:
         include:
@@ -68,7 +68,7 @@ jobs:
       artifactname: ${{ matrix.artifactname }}
   buildandtest_macos:
     name: Build and Test Swift Package macOS
-    uses: StanfordSpezi/.github/.github/workflows/xcodebuild-or-fastlane.yml@lfs
+    uses: StanfordSpezi/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
     strategy:
       matrix:
         include:
@@ -88,7 +88,7 @@ jobs:
       artifactname: ${{ matrix.artifactname }}
   buildandtestuitests_ios:
     name: Build and Test UI Tests iOS
-    uses: StanfordSpezi/.github/.github/workflows/xcodebuild-or-fastlane.yml@lfs
+    uses: StanfordSpezi/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
     with:
       runsonlabels: '["macOS", "self-hosted"]'
       checkout_lfs: true
@@ -99,7 +99,7 @@ jobs:
       artifactname: ${{ matrix.artifactname }}
   buildandtestuitests_ios_latest:
     name: Build and Test UI Tests iOS Latest
-    uses: StanfordSpezi/.github/.github/workflows/xcodebuild-or-fastlane.yml@lfs
+    uses: StanfordSpezi/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
     with:
       runsonlabels: '["macOS", "self-hosted"]'
       checkout_lfs: true
@@ -111,7 +111,7 @@ jobs:
       artifactname: TestApp-iOS-Latest.xcresult
   buildandtestuitests_ipad:
     name: Build and Test UI Tests iPadOS
-    uses: StanfordSpezi/.github/.github/workflows/xcodebuild-or-fastlane.yml@lfs
+    uses: StanfordSpezi/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
     with:
       runsonlabels: '["macOS", "self-hosted"]'
       checkout_lfs: true
@@ -122,7 +122,7 @@ jobs:
       artifactname: TestApp-iPadOS.xcresult
   buildandtestuitests_visionos:
     name: Build and Test UI Tests visionOS
-    uses: StanfordSpezi/.github/.github/workflows/xcodebuild-or-fastlane.yml@lfs
+    uses: StanfordSpezi/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
     with:
       runsonlabels: '["macOS", "self-hosted"]'
       checkout_lfs: true
