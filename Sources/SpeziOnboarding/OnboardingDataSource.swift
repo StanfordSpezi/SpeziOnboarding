@@ -83,7 +83,7 @@ public class OnboardingDataSource: Module, EnvironmentAccessible {
         if let consentConstraint = standard as? any ConsentConstraint {
             try await consentConstraint.store(consent: consent)
         } else if let onboardingConstraint = standard as? any OnboardingConstraint {
-            let pdf = await consent.pdf
+            let pdf = try await consent.pdf
             await onboardingConstraint.store(consent: pdf)
         } else {
             fatalError("A \(type(of: standard).self) must conform to `ConsentConstraint` to process signed consent documents.")

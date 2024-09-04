@@ -79,7 +79,7 @@ final class SpeziOnboardingTests: XCTestCase {
             documentExport.signature = "Stanford"
             #endif
             
-            if let pdf = await documentExport.export() {
+            if let pdf = try? await documentExport.export() {
                 XCTAssert(comparePDFDocuments(pdf1: pdf, pdf2: knownGoodPdf))
             } else {
                 XCTFail("Failed to export PDF from ConsentDocumentExport.")

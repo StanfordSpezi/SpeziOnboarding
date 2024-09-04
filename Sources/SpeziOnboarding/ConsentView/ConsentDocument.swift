@@ -154,7 +154,7 @@ public struct ConsentDocument: View {
             .onChange(of: viewState) {
                 if case .export = viewState {
                     Task {
-                        guard let exportedConsent = await export() else {
+                        guard let exportedConsent = try? await export() else {
                             viewState = .base(.error(Error.memoryAllocationError))
                             return
                         }

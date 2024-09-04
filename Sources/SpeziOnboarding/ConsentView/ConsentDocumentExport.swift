@@ -45,14 +45,14 @@ public final class ConsentDocumentExport: Equatable, Sendable {
     /// if the `ConsentDocument` has not been previously exported or the `PDFDocument` was not cached.
     /// For now, we always require a PDF to be cached to create a ConsentDocumentExport. In the future, we might change this to lazy-PDF loading.
     @MainActor public var pdf: PDFDocument {
-        get async {
-            if let cached = cachedPDF {
-                return cached
-            } else {
-                cachedPDF = await export()
-                // If the export failed, return an empty document.
-                return cachedPDF ?? .init()
+        get async throws {
+            if let pdf = cachedPDF {
+                return pdf
             }
+            
+            let pdf = try await export()
+            cachedPDF = pdf
+            return pdf
         }
     }
     

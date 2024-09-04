@@ -158,7 +158,7 @@ extension ConsentDocumentExport {
         pdfTextContent: PDFAttributedText,
         signatureFooter: PDFGroup,
         exportTimeStamp: PDFAttributedText? = nil
-    ) async -> PDFKit.PDFDocument? {
+    ) async throws -> PDFKit.PDFDocument {
         let document = TPPDF.PDFDocument(format: exportConfiguration.getPDFPageFormat())
         
         if let exportStamp = exportTimeStamp {
@@ -172,15 +172,13 @@ extension ConsentDocumentExport {
         // Convert TPPDF.PDFDocument to PDFKit.PDFDocument
         let generator = PDFGenerator(document: document)
         
-        if let data = try? generator.generateData() {
-            if let pdfKitDocument = PDFKit.PDFDocument(data: data) {
-                return pdfKitDocument
-            } else {
-                return nil
-            }
-        } else {
-            return nil
+        let data = try generator.generateData()
+        
+        guard let pdfDocument = PDFKit.PDFDocument(data: data) else {
+            throw ConsentDocumentExportError.invalidPdfData("PDF data not compatible with PDFDocument")
         }
+       
+        return pdfDocument
     }
     
     #if !os(macOS)
@@ -193,13 +191,13 @@ extension ConsentDocumentExport {
     ///     - signatureImage: Signature drawn when signing the document.
     /// - Returns: The exported consent form in PDF format as a PDFKit `PDFDocument`
     @MainActor
-    public func export() async -> PDFKit.PDFDocument? {
+    public func export() async throws -> PDFKit.PDFDocument{
         let exportTimeStamp = exportConfiguration.includingTimestamp ? exportTimeStamp() : nil
         let header = exportHeader()
         let pdfTextContent = await exportDocumentContent()
         let signature = exportSignature()
             
-        return await createDocument(
+        return try await createDocument(
             header: header,
             pdfTextContent: pdfTextContent,
             signatureFooter: signature,
@@ -215,13 +213,13 @@ extension ConsentDocumentExport {
     ///     - personName: A string containing the name of the person who signed the document.
     /// - Returns: The exported consent form in PDF format as a PDFKit `PDFDocument`
     @MainActor
-    public func export() async -> PDFKit.PDFDocument? {
+    public func export() async throws -> PDFKit.PDFDocument {
         let exportTimeStamp = exportConfiguration.includingTimestamp ? exportTimeStamp() : nil
         let header = exportHeader()
         let pdfTextContent = await exportDocumentContent()
         let signature = exportSignature()
             
-        return await createDocument(
+        return try await createDocument(
             header: header,
             pdfTextContent: pdfTextContent,
             signatureFooter: signature,

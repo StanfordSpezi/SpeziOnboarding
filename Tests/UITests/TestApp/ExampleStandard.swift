@@ -24,7 +24,7 @@ extension ExampleStandard: ConsentConstraint {
     func store(consent: ConsentDocumentExport) async throws {
         // Extract data outside of the MainActor.run block
         let documentIdentifier = await consent.documentIdentifier
-        let pdf = await consent.pdf
+        let pdf = try await consent.pdf
         
         // Perform operations on the main actor
         try await MainActor.run {
