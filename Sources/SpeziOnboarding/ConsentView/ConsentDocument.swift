@@ -11,6 +11,7 @@ import PencilKit
 import SpeziPersonalInfo
 import SpeziViews
 import SwiftUI
+import SpeziValidation
 
 /// Display markdown-based consent documents that can be signed and exported.
 ///
@@ -56,13 +57,13 @@ public struct ConsentDocument: View {
     #endif
     @State var signatureSize: CGSize = .zero
     @Binding private var viewState: ConsentViewState
-    @State private var checked: [String: Bool] = [:]
+    public static var checked: [String: String] = [:]
     @State public var checkboxSnapshot: UIImage?
     @State public var allElements = [MarkdownElement]()
     
     public enum MarkdownElement: Hashable {
         case signature(String)
-        case checkbox(String)
+        case checkbox(String, [String])
         case text(String)
     }
     
@@ -98,24 +99,25 @@ public struct ConsentDocument: View {
         }
     }
 
-    private func extractMarkdownCB() async -> ([MarkdownElement]) {
+    private func extractMarkdownCB() async -> [MarkdownElement] {
         let data = await asyncMarkdown()
         let dataString = String(data: data, encoding: .utf8)!
 
         var elements = [MarkdownElement]()
-        
         var textBeforeCB = ""
-        
-        
-        var lines = dataString.split(separator: "\n", omittingEmptySubsequences: false)
+        var searchForOptions = false
+        var textCB = ""
+        var options: [String] = []
+
+        let lines = dataString.split(separator: "\n", omittingEmptySubsequences: false)
         print(lines)
-        
+
         for line in lines {
-            print("plain line: "+line)
-            var trimmedLine = line.trimmingCharacters(in: .whitespaces)
-            print("trimmed line: "+trimmedLine)
+            print("plain line: " + line)
+            let trimmedLine = line.trimmingCharacters(in: .whitespaces)
+            print("trimmed line: " + trimmedLine)
+
             if trimmedLine.hasPrefix("- [ ]") {
-              
                 if !textBeforeCB.isEmpty {
                     print("currentText:")
                     print(textBeforeCB)
@@ -123,55 +125,98 @@ public struct ConsentDocument: View {
                     print(elements)
                     textBeforeCB = ""
                 }
-                
-                var textCB = trimmedLine.dropFirst(5).trimmingCharacters(in: .whitespaces)
+
+                textCB = trimmedLine.dropFirst(5).trimmingCharacters(in: .whitespaces)
                 print("task:")
                 print(textCB)
-                elements.append(.checkbox(textCB))
+                searchForOptions = true
+
+            } else if searchForOptions {
+                print("search for options")
+
+                if trimmedLine.hasPrefix(">") {
+                    print("an option")
+                    let option = trimmedLine.dropFirst(1).trimmingCharacters(in: .whitespaces)
+                    options.append(option)
+
+                } else {
+                    searchForOptions = false
+
+                    if !options.isEmpty {
+                        elements.append(.checkbox(textCB, options))
+                        options = []
+                        textCB = ""
+                    } else {
+                        elements.append(.checkbox(textCB, ["Yes", "No"]))
+                        textCB = ""
+                    }
+
+                    textBeforeCB += line + "\n"
+                }
+
             } else {
+                searchForOptions = false
                 textBeforeCB += line + "\n"
             }
         }
+
         if !textBeforeCB.isEmpty {
             elements.append(.text(textBeforeCB))
         }
-        
+
         return elements
     }
+
     
     struct CheckBoxView: View {
-        @Binding var isChecked: Bool
         let question: String
-
+        let options: [String]
+        
+        @State private var elementSelected = "-"
+        @ValidationState private var validation
+        
         var body: some View {
             VStack {
                 HStack {
                     Text(question)
                         .frame(maxWidth: .infinity, alignment: .leading)
+                    
                     Menu {
-                        Button("Yes") {
-                            withAnimation {
-                                
-                                isChecked = true
-                            }
-                        }
-                        Button("No") {
-                            withAnimation {
-                                isChecked = false
+                        ForEach(options, id: \.self) { theElement in
+                            Button(theElement) {
+                                withAnimation {
+                                    elementSelected = theElement
+                                    ConsentDocument.checked[question] = theElement
+                                }
                             }
                         }
                     } label: {
-                        Text(isChecked ? "Yes" : "No")
+                        Text(elementSelected)
                             .font(.system(size: 17))
                             .padding(5)
                             .background(Color.blue)
                             .foregroundColor(.white)
                             .cornerRadius(5)
                     }
-                    
+                    .validate(elementSelected != "-", message: "Please select an option")
                 }
+                
+                if let firstValidationError = validation.allDisplayedValidationResults.first {
+                    Text(firstValidationError.message)
+                        .foregroundColor(.red)
+                        .font(.caption)
+                        .padding(.top, 4)
+                }
+
                 Divider()
                     .gridCellUnsizedAxes(.horizontal)
+            }
+            .receiveValidation(in: $validation)
+            .onChange(of: elementSelected) { _, _ in
+                validation.validateSubviews()
+            }
+            .onAppear {
+                validation.validateSubviews()
             }
         }
     }
@@ -217,30 +262,30 @@ public struct ConsentDocument: View {
             }
     }
     public var body: some View {
-        VStack {
-            ScrollView {
-                ForEach(allElements, id: \.self) { element in
-                    switch element {
-                    case .text(let text):
-                        if let data = text.data(using: .utf8) {
-                            MarkdownView(asyncMarkdown: {data}, state: $viewState.base)
-                        }
-                    case .checkbox(let question):
-                        if let isChecked = checked[question] {
-                            CheckBoxView(
-                                isChecked: Binding(
-                                    get: {self.checked[question,default:false]},
-                                    
-                                    set: {self.checked[question] = $0}
-                                ),
-                                question: question
-                            )
-                        }
-                    case .signature:
-                        signatureView
+        ScrollView {
+            ForEach(allElements, id: \.self) { element in
+                switch element {
+                case .text(let text):
+                    if let data = text.data(using: .utf8) {
+                        MarkdownView(asyncMarkdown: {data}, state: $viewState.base)
                     }
+                case .checkbox(let question, let options):
+                    CheckBoxView(
+                        question: question,
+                        options: options
+                    )
+                    .onAppear {
+                        if let selectedOption = ConsentDocument.checked[question] {
+                            ConsentDocument.checked[question] = selectedOption
+                        } else {
+                            ConsentDocument.checked[question] = "-"
+                        }
+                    }
+                case .signature:
+                    signatureView
                 }
             }
+        
             Spacer()
             Group {
                 nameView
@@ -257,7 +302,8 @@ public struct ConsentDocument: View {
                     .animation(.easeInOut, value: viewState == .namesEntered)
                     .onChange(of: viewState) {
                         if case .export = viewState {
-                            print(checked)
+                            
+//                            print(checked)
 //                            let renderer = ImageRenderer(content: checkboxesView)
 //                            if let uiImage = renderer.uiImage {
 //                                checkboxSnapshot = uiImage
@@ -290,8 +336,8 @@ public struct ConsentDocument: View {
             Task {
                 let elements = await extractMarkdownCB()
                 allElements = elements
-                for case let .checkbox(question) in elements {
-                    checked[question] = false
+                for case let .checkbox(question, options) in elements {
+                    ConsentDocument.checked[question] = "-"
                 }
             }
         }
