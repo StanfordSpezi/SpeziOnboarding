@@ -7,7 +7,3 @@ License: MIT
 Files: Tests/SpeziOnboardingTests/Resources/*.md
 Copyright: 2024 Stanford University and the project authors (see CONTRIBUTORS.md)
 License: MIT
-
-Files: Tests/SpeziOnboardingTests/.gitattributes
-Copyright: 2024 Stanford University and the project authors (see CONTRIBUTORS.md)
-License: MIT
