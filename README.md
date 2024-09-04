@@ -156,6 +156,14 @@ For more information, please refer to the [API documentation](https://swiftpacka
 The [Spezi Template Application](https://github.com/StanfordSpezi/SpeziTemplateApplication) provides a great starting point and example using the `SpeziOnboarding` module.
 
 
+## Running Tests Locally
+If you would like to clone this repo and run the unit and UI tests locally, please be aware that you need to have git lfs (large file storage) configured. The unit tests load some binary data (e.g., PDF files) at runtime, which are stored in the [test resources](Tests/SpeziOnboardingTests/Resources/) as git lfs tags. To install git lfs, please refer to the [official documentation](https://git-lfs.com/). Afterward set up git lfs for your user by executing the following command:
+```sh
+git lfs install
+``` 
+Now, you can clone the repo and the binary files should be checked out correctly.
+
+
 ## Contributing
 
 Contributions to this project are welcome. Please make sure to read the [contribution guidelines](https://github.com/StanfordSpezi/.github/blob/main/CONTRIBUTING.md) and the [contributor covenant code of conduct](https://github.com/StanfordSpezi/.github/blob/main/CODE_OF_CONDUCT.md) first.

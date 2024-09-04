@@ -30,6 +30,7 @@ jobs:
             resultBundle: SpeziOnboarding-iOS-Release.xcresult
     with:
       runsonlabels: '["macOS", "self-hosted"]'
+      checkout_lfs: true
       scheme: SpeziOnboarding
       buildConfig: ${{ matrix.buildConfig }}
       resultBundle: ${{ matrix.resultBundle }}
@@ -39,6 +40,7 @@ jobs:
     uses: StanfordSpezi/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
     with:
       runsonlabels: '["macOS", "self-hosted"]'
+      checkout_lfs: true
       scheme: SpeziOnboarding
       xcodeversion: latest
       swiftVersion: 6
@@ -58,6 +60,7 @@ jobs:
             resultBundle: SpeziOnboarding-visionOS-Release.xcresult
     with:
       runsonlabels: '["macOS", "self-hosted"]'
+      checkout_lfs: true
       scheme: SpeziOnboarding
       destination: 'platform=visionOS Simulator,name=Apple Vision Pro'
       buildConfig: ${{ matrix.buildConfig }}
@@ -77,6 +80,7 @@ jobs:
             resultBundle: SpeziOnboarding-macOS-Release.xcresult
     with:
       runsonlabels: '["macOS", "self-hosted"]'
+      checkout_lfs: true
       scheme: SpeziOnboarding
       destination: 'platform=macOS,arch=arm64'
       buildConfig: ${{ matrix.buildConfig }}
@@ -85,17 +89,9 @@ jobs:
   buildandtestuitests_ios:
     name: Build and Test UI Tests iOS
     uses: StanfordSpezi/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
-    strategy:
-      matrix:
-        include:
-          - buildConfig: Debug
-            resultBundle: TestApp-iOS.xcresult
-            artifactname: TestApp-iOS.xcresult
-          - buildConfig: Release
-            resultBundle: TestApp-iOS-Release.xcresult
-            artifactname: TestApp-iOS-Release.xcresult
     with:
       runsonlabels: '["macOS", "self-hosted"]'
+      checkout_lfs: true
       path: 'Tests/UITests'
       scheme: TestApp
       buildConfig: ${{ matrix.buildConfig }}
@@ -106,6 +102,7 @@ jobs:
     uses: StanfordSpezi/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
     with:
       runsonlabels: '["macOS", "self-hosted"]'
+      checkout_lfs: true
       path: Tests/UITests
       scheme: TestApp
       xcodeversion: latest
@@ -117,6 +114,7 @@ jobs:
     uses: StanfordSpezi/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
     with:
       runsonlabels: '["macOS", "self-hosted"]'
+      checkout_lfs: true
       path: 'Tests/UITests'
       scheme: TestApp
       destination: 'platform=iOS Simulator,name=iPad Pro 11-inch (M4)'
@@ -125,23 +123,14 @@ jobs:
   buildandtestuitests_visionos:
     name: Build and Test UI Tests visionOS
     uses: StanfordSpezi/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
-    strategy:
-      matrix:
-        include:
-          - buildConfig: Debug
-            resultBundle: TestApp-visionOS.xcresult
-            artifactname: TestApp-visionOS.xcresult
-          - buildConfig: Release
-            resultBundle: TestApp-visionOS-Release.xcresult
-            artifactname: TestApp-visionOS-Release.xcresult
     with:
       runsonlabels: '["macOS", "self-hosted"]'
+      checkout_lfs: true
       path: 'Tests/UITests'
       scheme: TestApp
       destination: 'platform=visionOS Simulator,name=Apple Vision Pro'
-      buildConfig: ${{ matrix.buildConfig }}
-      resultBundle: ${{ matrix.resultBundle }}
-      artifactname: ${{ matrix.artifactname }}
+      resultBundle: TestApp-visionOS.xcresult
+      artifactname: TestApp-visionOS.xcresult
   uploadcoveragereport:
     name: Upload Coverage Report
     needs: [buildandtest_ios, buildandtest_visionos, buildandtest_macos, buildandtestuitests_ios, buildandtestuitests_ipad, buildandtestuitests_visionos]
