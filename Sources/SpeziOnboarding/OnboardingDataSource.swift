@@ -56,7 +56,7 @@ public class OnboardingDataSource: Module, EnvironmentAccessible {
         deprecated,
         message: """
         Storing consent documents using an exported PDF and an identifier is deprecated.
-        Please store the consent document from the corresponding `ConsentDocumentExport`, 
+        Please store the consent document from the corresponding `ConsentDocumentExport`,
         by using `ConsentConstraint.store(_ consent: ConsentDocumentExport)` instead.
         """
     )
