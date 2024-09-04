@@ -191,7 +191,7 @@ extension ConsentDocumentExport {
     ///     - signatureImage: Signature drawn when signing the document.
     /// - Returns: The exported consent form in PDF format as a PDFKit `PDFDocument`
     @MainActor
-    public func export() async throws -> PDFKit.PDFDocument{
+    public func export() async throws -> PDFKit.PDFDocument {
         let exportTimeStamp = exportConfiguration.includingTimestamp ? exportTimeStamp() : nil
         let header = exportHeader()
         let pdfTextContent = await exportDocumentContent()
