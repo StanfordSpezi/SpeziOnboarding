@@ -56,7 +56,6 @@ let package = Package(
             dependencies: [
                 .product(name: "Spezi", package: "Spezi"),
                 .product(name: "SpeziViews", package: "SpeziViews"),
-                .product(name: "SpeziPersonalInfo", package: "SpeziViews"),
                 .product(name: "OrderedCollections", package: "swift-collections")
             ],
             swiftSettings: [

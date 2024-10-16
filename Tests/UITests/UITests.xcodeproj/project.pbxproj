@@ -26,6 +26,7 @@
 		97C6AF792ACC88270060155B /* TestAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97C6AF782ACC88270060155B /* TestAppDelegate.swift */; };
 		97C6AF7B2ACC89000060155B /* XCTestExtensions in Frameworks */ = {isa = PBXBuildFile; productRef = 97C6AF7A2ACC89000060155B /* XCTestExtensions */; };
 		97C6AF7F2ACC94450060155B /* OnboardingFlow+PreviewSimulator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97C6AF7E2ACC94450060155B /* OnboardingFlow+PreviewSimulator.swift */; };
+		9BFDA8112CC065920089565D /* SpeziConsent in Frameworks */ = {isa = PBXBuildFile; productRef = 9BFDA8102CC065920089565D /* SpeziConsent */; };
 		A950C9C02C68AFAD0052FA6D /* XCUIApplication+Onboarding.swift in Sources */ = {isa = PBXBuildFile; fileRef = A950C9BF2C68AFA80052FA6D /* XCUIApplication+Onboarding.swift */; };
 		C49959752C6C8C01008E5256 /* DocumentIdentifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = C49959732C6C8C01008E5256 /* DocumentIdentifiers.swift */; };
 		C49959762C6C8C01008E5256 /* ConsentStoreError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C49959742C6C8C01008E5256 /* ConsentStoreError.swift */; };
@@ -78,6 +79,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2F61BDC329DD02D600D71D33 /* SpeziOnboarding in Frameworks */,
+				9BFDA8112CC065920089565D /* SpeziConsent in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -191,6 +193,7 @@
 			name = TestApp;
 			packageProductDependencies = (
 				2F61BDC229DD02D600D71D33 /* SpeziOnboarding */,
+				9BFDA8102CC065920089565D /* SpeziConsent */,
 			);
 			productName = Example;
 			productReference = 2F6D139228F5F384007C25D6 /* TestApp.app */;
@@ -759,6 +762,10 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 97C6AF752ACC74080060155B /* XCRemoteSwiftPackageReference "XCTestExtensions" */;
 			productName = XCTestExtensions;
+		};
+		9BFDA8102CC065920089565D /* SpeziConsent */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SpeziConsent;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
