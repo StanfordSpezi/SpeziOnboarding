@@ -7,6 +7,7 @@
 //
 
 import Spezi
+import SpeziConsent
 import SpeziOnboarding
 
 

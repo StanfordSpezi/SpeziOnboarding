@@ -7,6 +7,7 @@
 //
 
 import PDFKit
+import SpeziConsent
 import SpeziOnboarding
 import SpeziViews
 import SwiftUI
