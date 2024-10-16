@@ -11,6 +11,7 @@ import AppKit
 #endif
 
 import Foundation
+import SpeziOnboarding
 import SpeziViews
 import SwiftUI
 
