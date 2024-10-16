@@ -145,23 +145,6 @@
         }
       }
     },
-    "ILLEGAL_ONBOARDING_STEP" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "SpeziOnboarding: Unerlaubter Schritt während des Onboardings"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "SpeziOnboarding: Illegal Onboarding Step"
-          }
-        }
-      }
-    },
     "MARKDOWN_LOADING_ERROR" : {
       "localizations" : {
         "de" : {
@@ -238,23 +221,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "First Name"
-          }
-        }
-      }
-    },
-    "SEQUENTIAL_ONBOARDING_NEXT" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nächster Schritt"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Next"
           }
         }
       }
