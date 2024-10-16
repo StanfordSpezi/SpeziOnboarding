@@ -30,7 +30,7 @@ jobs:
             resultBundle: SpeziOnboarding-iOS-Release.xcresult
     with:
       runsonlabels: '["macOS", "self-hosted"]'
-      scheme: SpeziOnboarding
+      scheme: SpeziOnboarding-Package
       buildConfig: ${{ matrix.buildConfig }}
       resultBundle: ${{ matrix.resultBundle }}
       artifactname: ${{ matrix.artifactname }}
@@ -39,7 +39,7 @@ jobs:
     uses: StanfordSpezi/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
     with:
       runsonlabels: '["macOS", "self-hosted"]'
-      scheme: SpeziOnboarding
+      scheme: SpeziOnboarding-Package
       xcodeversion: latest
       swiftVersion: 6
       resultBundle: SpeziOnboarding-iOS-Latest.xcresult
@@ -58,7 +58,7 @@ jobs:
             resultBundle: SpeziOnboarding-visionOS-Release.xcresult
     with:
       runsonlabels: '["macOS", "self-hosted"]'
-      scheme: SpeziOnboarding
+      scheme: SpeziOnboarding-Package
       destination: 'platform=visionOS Simulator,name=Apple Vision Pro'
       buildConfig: ${{ matrix.buildConfig }}
       resultBundle: ${{ matrix.resultBundle }}
@@ -77,7 +77,7 @@ jobs:
             resultBundle: SpeziOnboarding-macOS-Release.xcresult
     with:
       runsonlabels: '["macOS", "self-hosted"]'
-      scheme: SpeziOnboarding
+      scheme: SpeziOnboarding-Package
       destination: 'platform=macOS,arch=arm64'
       buildConfig: ${{ matrix.buildConfig }}
       resultBundle: ${{ matrix.resultBundle }}
