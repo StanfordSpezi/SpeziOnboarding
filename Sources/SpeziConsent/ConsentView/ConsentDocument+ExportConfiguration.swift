@@ -17,29 +17,39 @@ extension ConsentDocument {
         /// You can use the `dimensions` property to get the width and height of each paper size in points.
         ///
         /// - Note: The dimensions are calculated based on the standard DPI (dots per inch) of 72 for print.
-        public enum PaperSize {
-            /// Standard US Letter paper size.
-            case usLetter
-            /// Standard DIN A4 paper size.
-            case dinA4
-
+        public struct PaperSize {
+            let width: CGFloat
+            let height: CGFloat
             
-            /// Provides the dimensions of the paper in points.
-            ///
-            /// - Returns: A tuple containing the width and height of the paper in points.
-            var dimensions: (width: CGFloat, height: CGFloat) {
-                let pointsPerInch: CGFloat = 72.0
-
-                switch self {
-                case .usLetter:
-                    let widthInInches: CGFloat = 8.5
-                    let heightInInches: CGFloat = 11.0
-                    return (widthInInches * pointsPerInch, heightInInches * pointsPerInch)
-                case .dinA4:
-                    let widthInInches: CGFloat = 8.3
-                    let heightInInches: CGFloat = 11.7
-                    return (widthInInches * pointsPerInch, heightInInches * pointsPerInch)
-                }
+            /// Standard US Letter paper size.
+            public static var usLetter: PaperSize { usLetter() }
+            /// Standard DIN A4 paper size.
+            public static var dinA4: PaperSize { dinA4() }
+            
+            /// Standard US Letter paper size with variable resolution.
+            public static func usLetter(pointsPerInch: CGFloat = 72) -> PaperSize {
+                let widthInInches: CGFloat = 8.5
+                let heightInInches: CGFloat = 11.0
+                return .init(
+                    width: widthInInches * pointsPerInch,
+                    height: heightInInches * pointsPerInch
+                )
+            }
+            
+            /// Standard DIN A4 paper size with variable resolution.
+            public static func dinA4(pointsPerInch: CGFloat = 72) -> PaperSize {
+                let widthInInches: CGFloat = 8.3
+                let heightInInches: CGFloat = 11.7
+                return .init(
+                    width: widthInInches * pointsPerInch,
+                    height: heightInInches * pointsPerInch
+                )
+            }
+            
+            /// Create a custom paper size in points by points.
+            public init(width: CGFloat, height: CGFloat) {
+                self.width = width
+                self.height = height
             }
         }
         
