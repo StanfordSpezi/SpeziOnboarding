@@ -8,6 +8,7 @@
 
 import PDFKit
 import PencilKit
+import SpeziOnboarding
 import SwiftUI
 
 
@@ -111,8 +112,8 @@ extension ConsentDocument {
         
         let renderer = ImageRenderer(content: exportBody(markdown: markdownString))
         let paperSize = CGSize(
-            width: exportConfiguration.paperSize.dimensions.width,
-            height: exportConfiguration.paperSize.dimensions.height
+            width: exportConfiguration.paperSize.width,
+            height: exportConfiguration.paperSize.height
         )
         renderer.proposedSize = .init(paperSize)
         
