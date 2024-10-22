@@ -43,8 +43,7 @@ let package = Package(
                 .target(name: "SpeziOnboardingCore"),
                 .product(name: "Spezi", package: "Spezi"),
                 .product(name: "SpeziViews", package: "SpeziViews"),
-                .product(name: "SpeziPersonalInfo", package: "SpeziViews"),
-                .product(name: "OrderedCollections", package: "swift-collections")
+                .product(name: "SpeziPersonalInfo", package: "SpeziViews")
             ],
             swiftSettings: [
                 swiftConcurrency
@@ -69,7 +68,7 @@ let package = Package(
             name: "SpeziOnboardingCore",
             dependencies: [
                 .product(name: "Spezi", package: "Spezi"),
-                .product(name: "SpeziViews", package: "SpeziViews"),
+                .product(name: "SpeziViews", package: "SpeziViews")
             ],
             swiftSettings: [
                 swiftConcurrency

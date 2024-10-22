@@ -1,8 +1,9 @@
 //
-//  OnboardingView+Information.swift
-//  SpeziOnboarding
+// This source file is part of the Stanford Spezi open-source project
 //
-//  Created by Paul Kraft on 21.10.2024.
+// SPDX-FileCopyrightText: 2022 Stanford University and the project authors (see CONTRIBUTORS.md)
+//
+// SPDX-License-Identifier: MIT
 //
 
 import SpeziOnboardingCore
