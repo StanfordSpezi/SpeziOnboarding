@@ -40,7 +40,7 @@ let package = Package(
         .target(
             name: "SpeziConsent",
             dependencies: [
-                .target(name: "SpeziOnboarding"),
+                .target(name: "SpeziOnboardingCore"),
                 .product(name: "Spezi", package: "Spezi"),
                 .product(name: "SpeziViews", package: "SpeziViews"),
                 .product(name: "SpeziPersonalInfo", package: "SpeziViews"),
@@ -54,9 +54,22 @@ let package = Package(
         .target(
             name: "SpeziOnboarding",
             dependencies: [
+                .target(name: "SpeziConsent"),
+                .target(name: "SpeziOnboardingCore"),
                 .product(name: "Spezi", package: "Spezi"),
                 .product(name: "SpeziViews", package: "SpeziViews"),
                 .product(name: "OrderedCollections", package: "swift-collections")
+            ],
+            swiftSettings: [
+                swiftConcurrency
+            ],
+            plugins: [] + swiftLintPlugin()
+        ),
+        .target(
+            name: "SpeziOnboardingCore",
+            dependencies: [
+                .product(name: "Spezi", package: "Spezi"),
+                .product(name: "SpeziViews", package: "SpeziViews"),
             ],
             swiftSettings: [
                 swiftConcurrency

@@ -8,7 +8,7 @@
 
 import PDFKit
 import PencilKit
-import SpeziOnboarding
+import SpeziOnboardingCore
 import SwiftUI
 
 
