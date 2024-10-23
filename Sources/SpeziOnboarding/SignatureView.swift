@@ -35,7 +35,7 @@ public struct SignatureView: View {
     #else
     @Binding private var signature: String
     #endif
-    private let name: PersonNameComponents
+    private let name: PersonNameComponents // TODO: allow to just specify a string! additional initializer for name components!
     private let lineOffset: CGFloat
     
     
@@ -107,7 +107,7 @@ public struct SignatureView: View {
     ///   - canvasSize: The size of the canvas as a Binding.
     ///   - name: The name that is displayed under the signature line.
     ///   - lineOffset: Defines the distance of the signature line from the bottom of the view. The default value is 30.
-    init(
+    public init(
         signature: Binding<PKDrawing> = .constant(PKDrawing()),
         isSigning: Binding<Bool> = .constant(false),
         canvasSize: Binding<CGSize> = .constant(.zero),
@@ -126,7 +126,7 @@ public struct SignatureView: View {
     ///   - signature: A `Binding` containing the current text-based signature as a `String`.
     ///   - name: The name that is displayed under the signature line.
     ///   - lineOffset: Defines the distance of the signature line from the bottom of the view. The default value is 30.
-    init(
+    public init(
         signature: Binding<String> = .constant(String()),
         name: PersonNameComponents = PersonNameComponents(),
         lineOffset: CGFloat = 30
