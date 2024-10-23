@@ -13,6 +13,8 @@ import SwiftUI
 struct SignatureViewBackground: View {
     private let name: PersonNameComponents
     private let lineOffset: CGFloat
+    // TODO: add ability to show date!
+
     #if !os(macOS)
     private let backgroundColor: UIColor
     #else
