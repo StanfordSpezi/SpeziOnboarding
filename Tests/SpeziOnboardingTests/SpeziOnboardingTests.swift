@@ -142,4 +142,25 @@ final class SpeziOnboardingTests: XCTestCase {
         // If all pages are identical, the documents are equal
         return true
     }
+
+    func savePDF(fileName: String, pdfDocument: PDFDocument) -> Bool {
+    // Get the document directory path
+    let fileManager = FileManager.default
+    guard let documentsDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first else {
+        print("Could not find the documents directory.")
+        return false
+    }
+    
+    // Create the full file path
+    let filePath = documentsDirectory.appendingPathComponent("\(fileName).pdf")
+    
+    // Attempt to write the PDF document to the file path
+    if pdfDocument.write(to: filePath) {
+        print("PDF saved successfully at: \(filePath)")
+        return true
+    } else {
+        print("Failed to save PDF.")
+        return false
+    }
+}
 }

@@ -20,16 +20,10 @@ extension ConsentDocumentExport {
         let stampText = String(localized: "EXPORTED_TAG", bundle: .module) + ": " +
                 DateFormatter.localizedString(from: Date(), dateStyle: .medium, timeStyle: .short) + "\n\n\n\n"
 
-        #if !os(macOS)
-        let font = UIFont.preferredFont(forTextStyle: .caption1)
-        #else
-        let font = NSFont.preferredFont(forTextStyle: .caption1)
-        #endif
-        
         let attributedTitle = NSMutableAttributedString(
             string: stampText,
             attributes: [
-                NSAttributedString.Key.font: font
+                NSAttributedString.Key.font: exportConfiguration.fontSettings.headerExportTimeStampFont
             ]
         )
         
@@ -41,18 +35,10 @@ extension ConsentDocumentExport {
     ///
     /// - Returns: A TPPDF `PDFAttributedText` representation of the document title.
     private func exportHeader() -> PDFAttributedText {
-        #if !os(macOS)
-        let largeTitleFont = UIFont.preferredFont(forTextStyle: .largeTitle)
-        let boldLargeTitleFont = UIFont.boldSystemFont(ofSize: largeTitleFont.pointSize)
-        #else
-        let largeTitleFont = NSFont.preferredFont(forTextStyle: .largeTitle)
-        let boldLargeTitleFont = NSFont.boldSystemFont(ofSize: largeTitleFont.pointSize)
-        #endif
-
         let attributedTitle = NSMutableAttributedString(
             string: exportConfiguration.consentTitle.localizedString() + "\n\n",
             attributes: [
-                NSAttributedString.Key.font: boldLargeTitleFont
+                NSAttributedString.Key.font: exportConfiguration.fontSettings.headerTitleFont
             ]
         )
         
@@ -66,82 +52,52 @@ extension ConsentDocumentExport {
     @MainActor
     private func exportDocumentContent() async -> PDFAttributedText {
         let markdown = await asyncMarkdown()
-        let markdownString = (try? AttributedString(
+        var markdownString = (try? AttributedString(
             markdown: markdown,
             options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace)
         )) ?? AttributedString(String(localized: "MARKDOWN_LOADING_ERROR", bundle: .module))
         
+        markdownString.font = exportConfiguration.fontSettings.documentContentFont
+        
         return PDFAttributedText(text: NSAttributedString(markdownString))
     }
     
-    #if !os(macOS)
     /// Exports the signature to a `PDFGroup` which can be added to the exported PDFDocument.
     /// The signature group will contain a prefix ("X"), the name of the signee as well as the signature image.
     ///
-    /// - Parameters:
-    ///     - personName: A string containing the name of the person who signed the document.
-    ///     - signatureImage: Signature drawn when signing the document.
     /// - Returns: A TPPDF `PDFAttributedText` representation of the export time stamp.
     @MainActor
     private func exportSignature() -> PDFGroup {
         let personName = name.formatted(.name(style: .long))
-
+        
+        #if !os(macOS)
         let group = PDFGroup(
             allowsBreaks: false,
             backgroundImage: PDFImage(image: signatureImage),
             padding: EdgeInsets(top: 50, left: 50, bottom: 0, right: 100)
         )
-        
-        let signaturePrefixFont = UIFont.preferredFont(forTextStyle: .title2)
-        let nameFont = UIFont.preferredFont(forTextStyle: .subheadline)
-        let signatureColor = UIColor.secondaryLabel
         let signaturePrefix = "X"
-
-        group.set(font: signaturePrefixFont)
-        group.set(textColor: signatureColor)
-        group.add(PDFGroupContainer.left, text: signaturePrefix)
-    
-        group.addLineSeparator(style: PDFLineStyle(color: .black))
-        
-        group.set(font: nameFont)
-        group.add(PDFGroupContainer.left, text: personName)
-        return group
-    }
-    #else
-    /// Exports the signature to a `PDFGroup` which can be added to the exported PDFDocument.
-    /// The signature group will contain a prefix ("X"), the name of the signee as well as the signature image.
-    ///
-    /// - Parameters:
-    ///     - personName: A string containing the name of the person who signed the document.
-    /// - Returns: A TPPDF `PDFAttributedText` representation of the export time stamp.
-    @MainActor
-    private func exportSignature() -> PDFGroup {
-        let personName = name.formatted(.name(style: .long))
-
-        // On macOS, we do not have a "drawn" signature, hence do
+        #else
+        // On macOS, we do not have a "drawn" signature, hence we do
         // not set a backgroundImage for the PDFGroup.
         // Instead, we render the person name.
         let group = PDFGroup(
             allowsBreaks: false,
             padding: EdgeInsets(top: 50, left: 50, bottom: 0, right: 100)
         )
-        
-        let signaturePrefixFont = NSFont.preferredFont(forTextStyle: .title2)
-        let nameFont = NSFont.preferredFont(forTextStyle: .subheadline)
-        let signatureColor = NSColor.secondaryLabelColor
         let signaturePrefix = "X " + signature
-        
-        group.set(font: signaturePrefixFont)
-        group.set(textColor: signatureColor)
+        #endif
+
+        group.set(font: exportConfiguration.fontSettings.signaturePrefixFont)
         group.add(PDFGroupContainer.left, text: signaturePrefix)
     
         group.addLineSeparator(style: PDFLineStyle(color: .black))
         
-        group.set(font: nameFont)
+        group.set(font: exportConfiguration.fontSettings.signatureNameFont)
         group.add(PDFGroupContainer.left, text: personName)
         return group
     }
-    #endif
+   
     
     /// Creates a `PDFKit.PDFDocument` containing the header, content and signature from the exported `ConsentDocument`.
     /// An export time stamp can be added optionally.
@@ -177,18 +133,14 @@ extension ConsentDocumentExport {
         guard let pdfDocument = PDFKit.PDFDocument(data: data) else {
             throw ConsentDocumentExportError.invalidPdfData("PDF data not compatible with PDFDocument")
         }
-       
+
         return pdfDocument
     }
     
-    #if !os(macOS)
     /// Exports the signed consent form as a `PDFKit.PDFDocument`.
     /// The PDF generated by TPPDF and then converted to a TPDFKit.PDFDocument.
     /// Renders the `PDFDocument` according to the specified ``ConsentDocument/ExportConfiguration``.
     ///
-    /// - Parameters:
-    ///     - personName: A string containing the name of the person who signed the document.
-    ///     - signatureImage: Signature drawn when signing the document.
     /// - Returns: The exported consent form in PDF format as a PDFKit `PDFDocument`
     @MainActor
     public func export() async throws -> PDFKit.PDFDocument {
@@ -204,27 +156,4 @@ extension ConsentDocumentExport {
             exportTimeStamp: exportTimeStamp
         )
     }
-    #else
-    /// Exports the signed consent form as a `PDFKit.PDFDocument`.
-    /// The PDF generated by TPPDF and then converted to a TPDFKit.PDFDocument.
-    /// Renders the `PDFDocument` according to the specified ``ConsentDocument/ExportConfiguration``.
-    ///
-    /// - Parameters:
-    ///     - personName: A string containing the name of the person who signed the document.
-    /// - Returns: The exported consent form in PDF format as a PDFKit `PDFDocument`
-    @MainActor
-    public func export() async throws -> PDFKit.PDFDocument {
-        let exportTimeStamp = exportConfiguration.includingTimestamp ? exportTimeStamp() : nil
-        let header = exportHeader()
-        let pdfTextContent = await exportDocumentContent()
-        let signature = exportSignature()
-            
-        return try await createDocument(
-            header: header,
-            pdfTextContent: pdfTextContent,
-            signatureFooter: signature,
-            exportTimeStamp: exportTimeStamp
-        )
-    }
-    #endif
 }

@@ -154,13 +154,16 @@ public struct ConsentDocument: View {
             .onChange(of: viewState) {
                 if case .export = viewState {
                     Task {
-                        guard let exportedConsent = try? await export() else {
-                            viewState = .base(.error(Error.memoryAllocationError))
-                            return
+                        do {
+                            /// Stores the finished PDF in the Spezi `Standard`.
+                            let exportedConsent = try await export()
+                            
+                            documentExport.cachedPDF = exportedConsent
+                            viewState = .exported(document: exportedConsent, export: documentExport)
+                        } catch {
+                            // In case of error, go back to previous state.
+                            viewState = .base(.error(AnyLocalizedError(error: error)))
                         }
-
-                        documentExport.cachedPDF = exportedConsent
-                        viewState = .exported(document: exportedConsent, export: documentExport)
                     }
                 } else if case .base(let baseViewState) = viewState,
                           case .idle = baseViewState {
