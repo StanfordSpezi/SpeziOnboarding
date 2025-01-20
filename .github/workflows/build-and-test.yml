@@ -15,6 +15,10 @@ on:
   pull_request:
   workflow_dispatch:
 
+concurrency:
+  group: Build-and-Test-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   buildandtest_ios:
     name: Build and Test Swift Package iOS
