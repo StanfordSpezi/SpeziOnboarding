@@ -62,7 +62,7 @@ public final class OnboardingDataSource: Module, EnvironmentAccessible, @uncheck
         } else {
             // By down-casting to the protocol we avoid "seeing" the deprecation warning, allowing us to hide it from the compiler.
             // We need to call the deprecated symbols for backwards-compatibility.
-            await (self as DeprecationSuppression).storeInLegacyConstraint(for: standard, consent)
+            await (self as any DeprecationSuppression).storeInLegacyConstraint(for: standard, consent)
         }
     }
 }
