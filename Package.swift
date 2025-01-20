@@ -31,10 +31,10 @@ let package = Package(
         .library(name: "SpeziOnboarding", targets: ["SpeziOnboarding"])
     ],
     dependencies: [
-        .package(url: "https://github.com/StanfordSpezi/Spezi", from: "1.2.1"),
-        .package(url: "https://github.com/StanfordSpezi/SpeziViews", from: "1.3.1"),
-        .package(url: "https://github.com/apple/swift-collections.git", from: "1.1.0"),
-        .package(url: "https://github.com/techprimate/TPPDF", from: "2.6.0")
+        .package(url: "https://github.com/StanfordSpezi/Spezi.git", from: "1.8.0"),
+        .package(url: "https://github.com/StanfordSpezi/SpeziViews.git", from: "1.8.0"),
+        .package(url: "https://github.com/apple/swift-collections.git", from: "1.1.4"),
+        .package(url: "https://github.com/techprimate/TPPDF.git", from: "2.6.1")
     ] + swiftLintPackage(),
     targets: [
         .target(
@@ -47,7 +47,8 @@ let package = Package(
                 .product(name: "TPPDF", package: "TPPDF")
             ],
             swiftSettings: [
-                swiftConcurrency
+                swiftConcurrency,
+                .enableUpcomingFeature("ExistentialAny")
             ],
             plugins: [] + swiftLintPlugin()
         ),
@@ -60,7 +61,8 @@ let package = Package(
                 .process("Resources/")
             ],
             swiftSettings: [
-                swiftConcurrency
+                swiftConcurrency,
+                .enableUpcomingFeature("ExistentialAny")
             ],
             plugins: [] + swiftLintPlugin()
         )

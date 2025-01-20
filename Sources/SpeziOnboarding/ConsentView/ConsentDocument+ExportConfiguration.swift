@@ -12,13 +12,13 @@ import SwiftUI
 
 extension ConsentDocument {
     /// The ``ExportConfiguration`` enables developers to define the properties of the exported consent form.
-    public struct ExportConfiguration {
+    public struct ExportConfiguration: Sendable {
         /// Represents common paper sizes with their dimensions.
         ///
         /// You can use the `dimensions` property to get the width and height of each paper size in points.
         ///
         /// - Note: The dimensions are calculated based on the standard DPI (dots per inch) of 72 for print.
-        public enum PaperSize {
+        public enum PaperSize: Sendable {
             /// Standard US Letter paper size.
             case usLetter
             /// Standard DIN A4 paper size.
@@ -47,7 +47,7 @@ extension ConsentDocument {
         #if !os(macOS)
         /// The ``FontSettings`` store configuration of the fonts used to render the exported
         /// consent document, i.e., fonts for the content, title and signature.
-        public struct FontSettings {
+        public struct FontSettings: Sendable {
             /// The font of the name rendered below the signature line.
             public let signatureNameFont: UIFont
             /// The font of the prefix of the signature ("X" in most cases).
