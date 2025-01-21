@@ -126,7 +126,7 @@ extension ConsentDocument {
         let consentTitle: LocalizedStringResource
         let paperSize: PaperSize
         let includingTimestamp: Bool
-        nonisolated(unsafe) let fontSettings: FontSettings
+        let fontSettings: FontSettings
 
         
         /// Creates an `ExportConfiguration` specifying the properties of the exported consent form.
