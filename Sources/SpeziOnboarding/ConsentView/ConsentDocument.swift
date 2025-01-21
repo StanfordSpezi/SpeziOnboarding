@@ -46,7 +46,7 @@ public struct ConsentDocument: View {
     private let familyNameTitle: LocalizedStringResource
     private let familyNamePlaceholder: LocalizedStringResource
     
-    var documentExport: ConsentDocumentExport
+    let documentExport: ConsentDocumentExport
 
     @Environment(\.colorScheme) var colorScheme
     @State var name = PersonNameComponents()

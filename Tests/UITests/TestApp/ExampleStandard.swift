@@ -12,7 +12,7 @@ import SpeziOnboarding
 import SwiftUI
 
 
-/// An example Standard used for the configuration.
+/// An example `Standard` used for the configuration.
 actor ExampleStandard: Standard, EnvironmentAccessible {
     @MainActor var firstConsentData: PDFDocument = .init()
     @MainActor var secondConsentData: PDFDocument = .init()
@@ -23,12 +23,12 @@ extension ExampleStandard: ConsentConstraint {
     // Example of an async function using MainActor and Task
     func store(consent: consuming sending ConsentDocumentExport) async throws {
         let documentIdentifier = consent.documentIdentifier
-        let pdf = await consent.consumePDF()
+        let pdf = consent.consumePDF()
 
         // Perform operations on the main actor
         try await self.store(document: pdf, for: documentIdentifier)
 
-        try? await Task.sleep(for: .seconds(0.5))
+        try? await Task.sleep(for: .seconds(0.5))   // Simulates storage delay
     }
 
     @MainActor
