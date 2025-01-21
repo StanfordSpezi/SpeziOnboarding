@@ -15,7 +15,6 @@ struct OnboardingTestsView: View {
     @Binding var onboardingFlowComplete: Bool
     @State var showConditionalView = false
 
-
     var body: some View {
         OnboardingStack(onboardingFlowComplete: $onboardingFlowComplete) {
             OnboardingStartTestView(
@@ -29,6 +28,7 @@ struct OnboardingTestsView: View {
                 consentText: "This is the first *markdown* **example**",
                 documentIdentifier: DocumentIdentifiers.first
             )
+
             OnboardingConsentMarkdownRenderingView(
                 consentTitle: "First Consent",
                 documentIdentifier: DocumentIdentifiers.first

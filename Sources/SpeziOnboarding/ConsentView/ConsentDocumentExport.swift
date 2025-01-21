@@ -6,11 +6,13 @@
 // SPDX-License-Identifier: MIT
 //
 
-import PDFKit
+@preconcurrency import PDFKit
+import PencilKit
+import SwiftUI
 
 
 /// A type representing an exported `ConsentDocument`. It holds the exported `PDFDocument` and the corresponding document identifier String.
-public struct ConsentDocumentExport: ~Copyable {
+public class ConsentDocumentExport {
     /// Provides default values for fields related to the `ConsentDocumentExport`.
     public enum Defaults {
         /// Default value for a document identifier.
@@ -19,12 +21,26 @@ public struct ConsentDocumentExport: ~Copyable {
         public static let documentIdentifier = "ConsentDocument"
     }
 
-    private let cachedPDF: PDFDocument
+    let asyncMarkdown: () async -> Data
+    let exportConfiguration: ConsentDocument.ExportConfiguration
+    var cachedPDF: PDFDocument
 
     /// An unique identifier for the exported `ConsentDocument`.
     ///
     /// Corresponds to the identifier which was passed  when creating the `ConsentDocument` using an `OnboardingConsentView`.
     public let documentIdentifier: String
+
+    /// The name of the person which signed the document.
+    public var name = PersonNameComponents()
+    #if !os(macOS)
+    /// The signature of the signee as drawing.
+    public var signature = PKDrawing()
+    /// The image generated from the signature drawing.
+    public var signatureImage = UIImage()
+    #else
+    /// The signature of the signee as string.
+    public var signature = String()
+    #endif
 
 
     /// Creates a `ConsentDocumentExport`, which holds an exported PDF and the corresponding document identifier string.
@@ -32,9 +48,13 @@ public struct ConsentDocumentExport: ~Copyable {
     ///   - documentIdentifier: A unique String identifying the exported `ConsentDocument`.
     ///   - cachedPDF: A `PDFDocument` exported from a `ConsentDocument`.
     init(
+        markdown: @escaping () async -> Data,
+        exportConfiguration: ConsentDocument.ExportConfiguration,
         documentIdentifier: String,
-        cachedPDF: sending PDFDocument
+        cachedPDF: sending PDFDocument = .init()
     ) {
+        self.asyncMarkdown = markdown
+        self.exportConfiguration = exportConfiguration
         self.documentIdentifier = documentIdentifier
         self.cachedPDF = cachedPDF
     }

@@ -14,15 +14,14 @@ import SwiftUI
 
 /// An example Standard used for the configuration.
 actor ExampleStandard: Standard, EnvironmentAccessible {
-    @Published @MainActor var firstConsentData: PDFDocument = .init()
-    @Published @MainActor var secondConsentData: PDFDocument = .init()
+    @MainActor var firstConsentData: PDFDocument = .init()
+    @MainActor var secondConsentData: PDFDocument = .init()
 }
 
 
 extension ExampleStandard: ConsentConstraint {
     // Example of an async function using MainActor and Task
     func store(consent: consuming sending ConsentDocumentExport) async throws {
-        // Extract data outside of the MainActor.run block
         let documentIdentifier = consent.documentIdentifier
         let pdf = await consent.consumePDF()
 

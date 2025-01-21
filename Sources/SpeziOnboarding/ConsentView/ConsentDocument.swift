@@ -41,13 +41,13 @@ public struct ConsentDocument: View {
     /// The maximum width such that the drawing canvas fits onto the PDF.
     static let maxWidthDrawing: CGFloat = 550
 
-    let asyncMarkdown: () async -> Data
     private let givenNameTitle: LocalizedStringResource
     private let givenNamePlaceholder: LocalizedStringResource
     private let familyNameTitle: LocalizedStringResource
     private let familyNamePlaceholder: LocalizedStringResource
-    let exportConfiguration: ExportConfiguration
     
+    var documentExport: ConsentDocumentExport
+
     @Environment(\.colorScheme) var colorScheme
     @State var name = PersonNameComponents()
     #if !os(macOS)
@@ -66,7 +66,7 @@ public struct ConsentDocument: View {
                 #if !os(macOS)
                 nameInputView
                 #else
-                // Need to wrap the `NameFieldRow` from SpeziViews into a SwiftUI `Form, otherwise the Label is omitted
+                // Need to wrap the `NameFieldRow` from SpeziViews into a SwiftUI `Form`, otherwise the Label is omitted
                 Form {
                     nameInputView
                 }
@@ -85,6 +85,7 @@ public struct ConsentDocument: View {
                         signature.removeAll()
                         #endif
                     }
+                    documentExport.name = name
                 }
             
             Divider()
@@ -129,12 +130,13 @@ public struct ConsentDocument: View {
                 } else {
                     viewState = .namesEntered
                 }
+                documentExport.signature = signature
             }
     }
     
     public var body: some View {
         VStack {
-            MarkdownView(asyncMarkdown: asyncMarkdown, state: $viewState.base)
+            MarkdownView(asyncMarkdown: documentExport.asyncMarkdown, state: $viewState.base)
             Spacer()
             Group {
                 nameView
@@ -152,11 +154,16 @@ public struct ConsentDocument: View {
             .onChange(of: viewState) {
                 if case .export = viewState {
                     Task {
-                        guard let exportedConsent = await export() else {
-                            viewState = .base(.error(Error.memoryAllocationError))
-                            return
+                        do {
+                            /// Stores the finished PDF in the Spezi `Standard`.
+                            let exportedConsent = try await export()
+                            
+                            documentExport.cachedPDF = exportedConsent
+                            viewState = .exported(document: exportedConsent, export: documentExport)
+                        } catch {
+                            // In case of error, go back to previous state.
+                            viewState = .base(.error(AnyLocalizedError(error: error)))
                         }
-                        viewState = .exported(document: exportedConsent)
                     }
                 } else if case .base(let baseViewState) = viewState,
                           case .idle = baseViewState {
@@ -194,6 +201,7 @@ public struct ConsentDocument: View {
     ///   - familyNameTitle: The localization to use for the family (last) name field.
     ///   - familyNamePlaceholder: The localization to use for the family name field placeholder.
     ///   - exportConfiguration: Defines the properties of the exported consent form via ``ConsentDocument/ExportConfiguration``.
+    ///   - documentIdentifier: A unique identifier or "name" for the consent form, helpful for distinguishing consent forms when storing in the `Standard`.
     public init(
         markdown: @escaping () async -> Data,
         viewState: Binding<ConsentViewState>,
@@ -201,15 +209,24 @@ public struct ConsentDocument: View {
         givenNamePlaceholder: LocalizedStringResource = LocalizationDefaults.givenNamePlaceholder,
         familyNameTitle: LocalizedStringResource = LocalizationDefaults.familyNameTitle,
         familyNamePlaceholder: LocalizedStringResource = LocalizationDefaults.familyNamePlaceholder,
-        exportConfiguration: ExportConfiguration = .init()
+        exportConfiguration: ExportConfiguration = .init(),
+        documentIdentifier: String = ConsentDocumentExport.Defaults.documentIdentifier
     ) {
-        self.asyncMarkdown = markdown
         self._viewState = viewState
         self.givenNameTitle = givenNameTitle
         self.givenNamePlaceholder = givenNamePlaceholder
         self.familyNameTitle = familyNameTitle
         self.familyNamePlaceholder = familyNamePlaceholder
-        self.exportConfiguration = exportConfiguration
+        
+        self.documentExport = ConsentDocumentExport(
+            markdown: markdown,
+            exportConfiguration: exportConfiguration,
+            documentIdentifier: documentIdentifier
+        )
+        // Set initial values for the name and signature.
+        // These will be updated once the name and signature change.
+        self.documentExport.name = name
+        self.documentExport.signature = signature
     }
 }
 
