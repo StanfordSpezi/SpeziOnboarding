@@ -125,9 +125,9 @@ public struct OnboardingView<TitleView: View, ContentView: View, ActionView: Vie
     ///   - areas: The areas of the ``OnboardingView`` defined using ``OnboardingInformationView/Content`` instances..
     ///   - actionText: The localized text that should appear on the ``OnboardingView``'s primary button.
     ///   - action: The close that is called then the primary button is pressed.
-    public init( // swiftlint:disable:this function_default_parameter_at_end
+    public init(
         title: LocalizedStringResource,
-        subtitle: LocalizedStringResource? = nil,
+        subtitle: LocalizedStringResource? = nil, // swiftlint:disable:this function_default_parameter_at_end
         areas: [OnboardingInformationView.Content],
         actionText: LocalizedStringResource,
         action: @escaping () async throws -> Void
