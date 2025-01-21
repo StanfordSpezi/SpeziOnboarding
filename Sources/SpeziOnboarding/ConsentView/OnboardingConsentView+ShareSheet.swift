@@ -46,6 +46,7 @@ extension OnboardingConsentView {
         let sharedItem: PDFDocument
 
 
+        @MainActor
         func show() {
             // Note: Need to write down the PDF to storage as in-memory PDFs are not recognized properly
             let temporaryPath = FileManager.default.temporaryDirectory.appendingPathComponent(

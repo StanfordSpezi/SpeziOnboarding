@@ -69,23 +69,23 @@ extension ConsentDocument {
             ///   - headerTitleFont: The font used for the header title.
             ///   - headerExportTimeStampFont: The font used for the header timestamp.
             public init(
-                    signatureNameFont: UIFont,
-                    signaturePrefixFont: UIFont,
-                    documentContentFont: UIFont,
-                    headerTitleFont: UIFont,
-                    headerExportTimeStampFont: UIFont
-                ) {
-                    self.signatureNameFont = signatureNameFont
-                    self.signaturePrefixFont = signaturePrefixFont
-                    self.documentContentFont = documentContentFont
-                    self.headerTitleFont = headerTitleFont
-                    self.headerExportTimeStampFont = headerExportTimeStampFont
-                }
+                signatureNameFont: UIFont,
+                signaturePrefixFont: UIFont,
+                documentContentFont: UIFont,
+                headerTitleFont: UIFont,
+                headerExportTimeStampFont: UIFont
+            ) {
+                self.signatureNameFont = signatureNameFont
+                self.signaturePrefixFont = signaturePrefixFont
+                self.documentContentFont = documentContentFont
+                self.headerTitleFont = headerTitleFont
+                self.headerExportTimeStampFont = headerExportTimeStampFont
+            }
         }
         #else
         /// The ``FontSettings`` store configuration of the fonts used to render the exported
         /// consent document, i.e., fonts for the content, title and signature.
-        public struct FontSettings {
+        public struct FontSettings: @unchecked Sendable {
             /// The font of the name rendered below the signature line.
             public let signatureNameFont: NSFont
             /// The font of the prefix of the signature ("X" in most cases).
@@ -107,18 +107,18 @@ extension ConsentDocument {
             ///   - headerTitleFont: The font used for the header title.
             ///   - headerExportTimeStampFont: The font used for the header timestamp.
             public init(
-                    signatureNameFont: NSFont,
-                    signaturePrefixFont: NSFont,
-                    documentContentFont: NSFont,
-                    headerTitleFont: NSFont,
-                    headerExportTimeStampFont: NSFont
-                ) {
-                    self.signatureNameFont = signatureNameFont
-                    self.signaturePrefixFont = signaturePrefixFont
-                    self.documentContentFont = documentContentFont
-                    self.headerTitleFont = headerTitleFont
-                    self.headerExportTimeStampFont = headerExportTimeStampFont
-                }
+                signatureNameFont: NSFont,
+                signaturePrefixFont: NSFont,
+                documentContentFont: NSFont,
+                headerTitleFont: NSFont,
+                headerExportTimeStampFont: NSFont
+            ) {
+                self.signatureNameFont = signatureNameFont
+                self.signaturePrefixFont = signaturePrefixFont
+                self.documentContentFont = documentContentFont
+                self.headerTitleFont = headerTitleFont
+                self.headerExportTimeStampFont = headerExportTimeStampFont
+            }
         }
         #endif
 
@@ -127,7 +127,7 @@ extension ConsentDocument {
         let paperSize: PaperSize
         let includingTimestamp: Bool
         let fontSettings: FontSettings
-        
+
         
         /// Creates an `ExportConfiguration` specifying the properties of the exported consent form.
         /// - Parameters:

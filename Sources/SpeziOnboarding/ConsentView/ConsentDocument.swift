@@ -47,7 +47,7 @@ public struct ConsentDocument: View {
     private let familyNamePlaceholder: LocalizedStringResource
     
     let documentExport: ConsentDocumentExport
-    
+
     @Environment(\.colorScheme) var colorScheme
     @State var name = PersonNameComponents()
     #if !os(macOS)
@@ -66,7 +66,7 @@ public struct ConsentDocument: View {
                 #if !os(macOS)
                 nameInputView
                 #else
-                // Need to wrap the `NameFieldRow` from SpeziViews into a SwiftUI `Form, otherwise the Label is omitted
+                // Need to wrap the `NameFieldRow` from SpeziViews into a SwiftUI `Form`, otherwise the Label is omitted
                 Form {
                     nameInputView
                 }

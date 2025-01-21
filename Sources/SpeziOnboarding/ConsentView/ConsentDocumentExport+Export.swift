@@ -11,6 +11,7 @@ import PencilKit
 import SwiftUI
 import TPPDF
 
+
 /// Extension of `ConsentDocumentExport` enabling the export of the signed consent page.
 extension ConsentDocumentExport {
     /// Generates a `PDFAttributedText` containing the timestamp of the time at which the PDF was exported.

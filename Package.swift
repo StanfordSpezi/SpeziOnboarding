@@ -1,4 +1,4 @@
-// swift-tools-version:5.9
+// swift-tools-version:6.0
 
 //
 // This source file is part of the Stanford Spezi open-source project
@@ -10,13 +10,6 @@
 
 import class Foundation.ProcessInfo
 import PackageDescription
-
-
-#if swift(<6)
-let swiftConcurrency: SwiftSetting = .enableExperimentalFeature("StrictConcurrency")
-#else
-let swiftConcurrency: SwiftSetting = .enableUpcomingFeature("StrictConcurrency")
-#endif
 
 
 let package = Package(
@@ -47,7 +40,6 @@ let package = Package(
                 .product(name: "TPPDF", package: "TPPDF")
             ],
             swiftSettings: [
-                swiftConcurrency,
                 .enableUpcomingFeature("ExistentialAny")
             ],
             plugins: [] + swiftLintPlugin()
@@ -61,7 +53,6 @@ let package = Package(
                 .process("Resources/")
             ],
             swiftSettings: [
-                swiftConcurrency,
                 .enableUpcomingFeature("ExistentialAny")
             ],
             plugins: [] + swiftLintPlugin()
