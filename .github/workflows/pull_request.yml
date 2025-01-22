@@ -12,6 +12,10 @@ on:
   pull_request:
   workflow_dispatch:
 
+concurrency:
+  group: Pull-Request-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   reuse_action:
     name: REUSE Compliance Check

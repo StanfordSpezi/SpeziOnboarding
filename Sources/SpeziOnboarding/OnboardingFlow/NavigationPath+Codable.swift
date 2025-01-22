@@ -23,7 +23,7 @@ extension NavigationPath {
         
         /// Decodes the given `Decoder` instance into an `OnboardingStepIdentifier`.
         /// This involves decoding an unkeyed container, skipping the initial string, and then decoding the actual `OnboardingStepIdentifier`.
-        init(from decoder: Decoder) throws {
+        init(from decoder: any Decoder) throws {
             var container = try decoder.unkeyedContainer()
             
             // Type name within the navigation path that is not needed

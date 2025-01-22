@@ -7,6 +7,7 @@
 //
 
 import PencilKit
+import SpeziFoundation
 import SpeziViews
 import SwiftUI
 
@@ -49,8 +50,10 @@ public struct SignatureView: View {
                     .accessibilityLabel(Text("SIGNATURE_FIELD", bundle: .module))
                     .accessibilityAddTraits(.allowsDirectInteraction)
                     .onPreferenceChange(CanvasView.CanvasSizePreferenceKey.self) { size in
-                        // for some reason, the preference won't update on visionOS if placed in a parent view
-                        self.canvasSize = size
+                        runOrScheduleOnMainActor {
+                            // for some reason, the preference won't update on visionOS if placed in a parent view
+                            self.canvasSize = size
+                        }
                     }
                 #else
                 signatureTextField
