@@ -12,12 +12,8 @@ import TPPDF
 
 /// The ``ExportConfiguration`` enables developers to define the properties of the exported consent form.
 extension ConsentDocument.ExportConfiguration {
-    /// Returns a  `TPPDF.PDFPageFormat` which corresponds to Spezi's `ExportConfiguration.PaperSize`.
-    ///
-    /// - Parameters:
-    ///   - paperSize: The paperSize of an ExportConfiguration.
-    /// - Returns: A TPPDF `PDFPageFormat` according to the `ExportConfiguration.PaperSize`.
-    func getPDFPageFormat() -> PDFPageFormat {
+    ///  `TPPDF.PDFPageFormat` which corresponds to SpeziOnboarding's `ExportConfiguration.PaperSize`.
+    var pdfPageFormat: PDFPageFormat {
         switch paperSize {
         case .dinA4:
             return PDFPageFormat.a4

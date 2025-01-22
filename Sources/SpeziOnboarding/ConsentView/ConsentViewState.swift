@@ -33,7 +33,7 @@ public enum ConsentViewState: Equatable {
     /// The `exported` state indicates that the
     /// ``ConsentDocument`` has been successfully exported. The rendered `PDFDocument` can be found as the associated value of the state.
     ///
-    /// The export procedure (resulting in the ``ConsentViewState/exported(document:)`` state) can be triggered via setting the ``ConsentViewState/export`` state of the ``ConsentDocument``    .
+    /// The export procedure (resulting in the ``ConsentViewState/exported(document:export:)`` state) can be triggered via setting the ``ConsentViewState/export`` state of the ``ConsentDocument``    .
     case exported(document: PDFDocument, export: ConsentDocumentExport)
     /// The `storing` state indicates that the ``ConsentDocument`` is currently being stored to the Standard.
     case storing

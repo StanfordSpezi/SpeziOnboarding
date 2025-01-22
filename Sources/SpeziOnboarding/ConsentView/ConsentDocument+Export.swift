@@ -51,6 +51,7 @@ extension ConsentDocument {
     @MainActor
     func export() async throws -> PDFKit.PDFDocument {
         documentExport.signature = signature
+        documentExport.formattedSignatureDate = formattedConsentSignatureDate
         documentExport.name = name
         #if !os(macOS)
         documentExport.signatureImage = blackInkSignatureImage

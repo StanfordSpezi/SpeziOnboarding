@@ -90,12 +90,40 @@ extension ConsentDocumentExport {
         #endif
 
         group.set(font: exportConfiguration.fontSettings.signaturePrefixFont)
-        group.add(PDFGroupContainer.left, text: signaturePrefix)
+        group.add(.left, text: signaturePrefix)
     
         group.addLineSeparator(style: PDFLineStyle(color: .black))
-        
-        group.set(font: exportConfiguration.fontSettings.signatureNameFont)
-        group.add(PDFGroupContainer.left, text: personName)
+
+        // Add person name and date as the caption below the signature line
+        // Sadly a quite complex table is required to have the caption within one line
+        let table = PDFTable(rows: 1, columns: 2)
+        table.widths = [0.5, 0.5] // Two equal-width columns for left and right alignment
+        table.margin = .zero
+        table.padding = 0
+        table.style.outline = .none
+
+        let cellStyle = PDFTableCellStyle(
+            colors: (Color.clear, Color.black),
+            borders: .none,
+            font: exportConfiguration.fontSettings.signatureCaptionFont
+        )
+
+        // Add person name to the left cell
+        table[0, 0] = PDFTableCell(
+            content: try? .init(content: personName),
+            alignment: .left,
+            style: cellStyle
+        )
+
+        // Add formatted date to the right cell
+        table[0, 1] = PDFTableCell(
+            content: try? .init(content: formattedSignatureDate ?? ""),
+            alignment: .right,
+            style: cellStyle
+        )
+
+        group.add(.left, table: table)
+
         return group
     }
    
@@ -116,8 +144,8 @@ extension ConsentDocumentExport {
         signatureFooter: PDFGroup,
         exportTimeStamp: PDFAttributedText? = nil
     ) async throws -> PDFKit.PDFDocument {
-        let document = TPPDF.PDFDocument(format: exportConfiguration.getPDFPageFormat())
-        
+        let document = TPPDF.PDFDocument(format: exportConfiguration.pdfPageFormat)
+
         if let exportStamp = exportTimeStamp {
             document.add(.contentRight, attributedTextObject: exportStamp)
         }

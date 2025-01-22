@@ -41,6 +41,7 @@ public final class ConsentDocumentExport: Equatable {
     /// The signature of the signee as string.
     public var signature = String()
     #endif
+    public var formattedSignatureDate: String?
 
 
     /// Creates a `ConsentDocumentExport`, which holds an exported PDF and the corresponding document identifier string.

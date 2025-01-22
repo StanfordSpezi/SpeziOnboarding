@@ -46,7 +46,8 @@ import SwiftUI
 ///     title: "Consent",   // Configure the title of the consent view
 ///     identifier: DocumentIdentifiers.first, // Specify a unique identifier String, preferably bundled
 ///                                            // in an enum (see above). Only relevant if more than one OnboardingConsentView is needed.
-///     exportConfiguration: .init(paperSize: .usLetter)   // Configure the properties of the exported consent form
+///     exportConfiguration: .init(paperSize: .usLetter),   // Configure the properties of the exported consent form
+///     currentDateInSignature: true   // Indicates if the consent signature should include the current date
 /// )
 /// ```
 public struct OnboardingConsentView: View {
@@ -63,6 +64,7 @@ public struct OnboardingConsentView: View {
     private let title: LocalizedStringResource?
     private let identifier: String
     private let exportConfiguration: ConsentDocument.ExportConfiguration
+    private let currentDateInSignature: Bool
     private var backButtonHidden: Bool {
         viewState == .storing || (viewState == .export && !willShowShareSheet)
     }
@@ -88,7 +90,8 @@ public struct OnboardingConsentView: View {
                         markdown: markdown,
                         viewState: $viewState,
                         exportConfiguration: exportConfiguration,
-                        documentIdentifier: identifier
+                        documentIdentifier: identifier,
+                        consentSignatureDate: currentDateInSignature ? .now : nil
                     )
                     .padding(.bottom)
                 },
@@ -214,18 +217,21 @@ public struct OnboardingConsentView: View {
     ///   - title: The title of the view displayed at the top. Can be `nil`, meaning no title is displayed.
     ///   - identifier: A unique identifier or "name" for the consent form, helpful for distinguishing consent forms when storing in the `Standard`.
     ///   - exportConfiguration: Defines the properties of the exported consent form via ``ConsentDocument/ExportConfiguration``.
+    ///   - currentDateInSignature: Indicates if the consent document should include the current date in the signature field. Defaults to `true`.
     public init(
         markdown: @escaping () async -> Data,
         action: @escaping () async -> Void,
         title: LocalizedStringResource? = LocalizationDefaults.consentFormTitle,
         identifier: String = ConsentDocumentExport.Defaults.documentIdentifier,
-        exportConfiguration: ConsentDocument.ExportConfiguration = .init()
+        exportConfiguration: ConsentDocument.ExportConfiguration = .init(),
+        currentDateInSignature: Bool = true
     ) {
         self.markdown = markdown
         self.exportConfiguration = exportConfiguration
         self.title = title
         self.action = action
         self.identifier = identifier
+        self.currentDateInSignature = currentDateInSignature
     }
 }
 

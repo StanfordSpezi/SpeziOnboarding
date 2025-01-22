@@ -35,7 +35,7 @@ extension View {
     /// Assign a unique identifier to a `View` appearing in an `OnboardingStack`.
     ///
     /// A `ViewModifier` assigning an identifier to the `View` it is applied to.
-    /// When applying this modifier repeatedly, the outermost ``SwiftUI/View/onboardingIdentifier(_:)`` counts.
+    /// When applying this modifier repeatedly, the outermost ``SwiftUICore/View/onboardingIdentifier(_:)`` counts.
     ///
     /// - Note: This `ViewModifier` should only be used to identify `View`s of the same type within an ``OnboardingStack``.
     ///

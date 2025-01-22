@@ -45,6 +45,8 @@ struct SignatureViewBackground: View {
             Text(name)
                 .font(.subheadline)
                 .foregroundColor(.secondary)
+                .lineLimit(1) // Ensures the name is restricted to a single line
+                .truncationMode(.tail) // Truncate name at the end
                 .padding(.horizontal, 20)
                 .padding(.bottom, lineOffset - 18)
                 .accessibilityLabel(Text("SIGNATURE_NAME \(name)", bundle: .module))
@@ -56,6 +58,8 @@ struct SignatureViewBackground: View {
                 Text(formattedDate)
                     .font(.subheadline)
                     .foregroundColor(.secondary)
+                    .lineLimit(1) // Ensures the date is restricted to a single line
+                    .truncationMode(.middle) // Truncate date in the middle
                     .padding(.horizontal, 20)
                     .padding(.bottom, lineOffset - 18)
                     .accessibilityLabel(Text("SIGNATURE_DATE \(formattedDate)", bundle: .module))

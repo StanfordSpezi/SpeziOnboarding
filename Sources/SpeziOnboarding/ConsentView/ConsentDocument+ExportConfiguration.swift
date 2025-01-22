@@ -48,8 +48,8 @@ extension ConsentDocument {
         /// The ``FontSettings`` store configuration of the fonts used to render the exported
         /// consent document, i.e., fonts for the content, title and signature.
         public struct FontSettings: Sendable {
-            /// The font of the name rendered below the signature line.
-            public let signatureNameFont: UIFont
+            /// The font of the caption rendered below the signature line.
+            public let signatureCaptionFont: UIFont
             /// The font of the prefix of the signature ("X" in most cases).
             public let signaturePrefixFont: UIFont
             /// The font of the content of the document (i.e., the rendered markdown text)
@@ -63,19 +63,19 @@ extension ConsentDocument {
             /// Creates an instance`FontSettings` specifying the fonts of various components of the exported document
             ///
             /// - Parameters:
-            ///   - signatureNameFont: The font used for the signature name.
+            ///   - signatureCaptionFont: The font used for the signature caption.
             ///   - signaturePrefixFont: The font used for the signature prefix text.
             ///   - documentContentFont: The font used for the main content of the document.
             ///   - headerTitleFont: The font used for the header title.
             ///   - headerExportTimeStampFont: The font used for the header timestamp.
             public init(
-                signatureNameFont: UIFont,
+                signatureCaptionFont: UIFont,
                 signaturePrefixFont: UIFont,
                 documentContentFont: UIFont,
                 headerTitleFont: UIFont,
                 headerExportTimeStampFont: UIFont
             ) {
-                self.signatureNameFont = signatureNameFont
+                self.signatureCaptionFont = signatureCaptionFont
                 self.signaturePrefixFont = signaturePrefixFont
                 self.documentContentFont = documentContentFont
                 self.headerTitleFont = headerTitleFont
@@ -86,8 +86,8 @@ extension ConsentDocument {
         /// The ``FontSettings`` store configuration of the fonts used to render the exported
         /// consent document, i.e., fonts for the content, title and signature.
         public struct FontSettings: @unchecked Sendable {
-            /// The font of the name rendered below the signature line.
-            public let signatureNameFont: NSFont
+            /// The font of the caption rendered below the signature line.
+            public let signatureCaptionFont: NSFont
             /// The font of the prefix of the signature ("X" in most cases).
             public let signaturePrefixFont: NSFont
             /// The font of the content of the document (i.e., the rendered markdown text)
@@ -101,19 +101,19 @@ extension ConsentDocument {
             /// Creates an instance`FontSettings` specifying the fonts of various components of the exported document
             ///
             /// - Parameters:
-            ///   - signatureNameFont: The font used for the signature name.
+            ///   - signatureCaptionFont: The font used for the signature caption.
             ///   - signaturePrefixFont: The font used for the signature prefix text.
             ///   - documentContentFont: The font used for the main content of the document.
             ///   - headerTitleFont: The font used for the header title.
             ///   - headerExportTimeStampFont: The font used for the header timestamp.
             public init(
-                signatureNameFont: NSFont,
+                signatureCaptionFont: NSFont,
                 signaturePrefixFont: NSFont,
                 documentContentFont: NSFont,
                 headerTitleFont: NSFont,
                 headerExportTimeStampFont: NSFont
             ) {
-                self.signatureNameFont = signatureNameFont
+                self.signatureCaptionFont = signatureCaptionFont
                 self.signaturePrefixFont = signaturePrefixFont
                 self.documentContentFont = documentContentFont
                 self.headerTitleFont = headerTitleFont
@@ -134,6 +134,7 @@ extension ConsentDocument {
         ///   - paperSize: The page size of the exported form represented by ``ConsentDocument/ExportConfiguration/PaperSize``.
         ///   - consentTitle: The title of the exported consent form.
         ///   - includingTimestamp: Indicates if the exported form includes a timestamp.
+        ///   - fontSettings: Font settings for the exported form.
         public init(
             paperSize: PaperSize = .usLetter,
             consentTitle: LocalizedStringResource = LocalizationDefaults.exportedConsentFormTitle,

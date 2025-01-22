@@ -29,7 +29,8 @@ struct OnboardingConsentMarkdownTestView: View {
             },
             title: consentTitle.localized(),
             identifier: documentIdentifier,
-            exportConfiguration: .init(paperSize: .dinA4, includingTimestamp: true)
+            exportConfiguration: .init(paperSize: .dinA4, includingTimestamp: true),
+            currentDateInSignature: true
         )
     }
 }

@@ -37,8 +37,7 @@ public struct SignatureView: View {
     @Binding private var signature: String
     #endif
     private let name: PersonNameComponents
-    private let date: Date?
-    private let dateFormatter: DateFormatter
+    private let formattedDate: String?
     private let lineOffset: CGFloat
     
     
@@ -47,7 +46,7 @@ public struct SignatureView: View {
             ZStack(alignment: .bottomLeading) {
                 SignatureViewBackground(
                     name: name,
-                    formattedDate: { if let date { dateFormatter.string(from: date) } else { nil } }(),
+                    formattedDate: formattedDate,
                     lineOffset: lineOffset
                 )
 
@@ -115,26 +114,21 @@ public struct SignatureView: View {
     ///   - isSigning: A `Binding` indicating if the user is currently signing.
     ///   - canvasSize: The size of the canvas as a Binding.
     ///   - name: The name that is displayed under the signature line.
+    ///   - formattedDate: The formatted date that is displayed under the signature line.
     ///   - lineOffset: Defines the distance of the signature line from the bottom of the view. The default value is 30.
     public init(
         signature: Binding<PKDrawing> = .constant(PKDrawing()),
         isSigning: Binding<Bool> = .constant(false),
         canvasSize: Binding<CGSize> = .constant(.zero),
         name: PersonNameComponents = PersonNameComponents(),
-        date: Date? = nil,
-        dateFormatter: DateFormatter = {
-            let formatter = DateFormatter()
-            formatter.dateStyle = .short
-            return formatter
-        }(),
+        formattedDate: String? = nil,
         lineOffset: CGFloat = 30
     ) {
         self._signature = signature
         self._isSigning = isSigning
         self._canvasSize = canvasSize
         self.name = name
-        self.date = date
-        self.dateFormatter = dateFormatter
+        self.formattedDate = formattedDate
         self.lineOffset = lineOffset
     }
 
@@ -145,6 +139,7 @@ public struct SignatureView: View {
     ///   - canvasSize: The size of the canvas as a Binding.
     ///   - givenName: The given name that is displayed under the signature line.
     ///   - familyName: The family name that is displayed under the signature line.
+    ///   - formattedDate: The formatted date that is displayed under the signature line.
     ///   - lineOffset: Defines the distance of the signature line from the bottom of the view. The default value is 30.
     public init(
         signature: Binding<PKDrawing> = .constant(PKDrawing()),
@@ -152,12 +147,7 @@ public struct SignatureView: View {
         canvasSize: Binding<CGSize> = .constant(.zero),
         givenName: String = "",
         familyName: String = "",
-        date: Date? = nil,
-        dateFormatter: DateFormatter = {
-            let formatter = DateFormatter()
-            formatter.dateStyle = .short
-            return formatter
-        }(),
+        formattedDate: String? = nil,
         lineOffset: CGFloat = 30
     ) {
         self.init(
@@ -165,8 +155,7 @@ public struct SignatureView: View {
             isSigning: isSigning,
             canvasSize: canvasSize,
             name: .init(givenName: givenName, familyName: familyName),
-            date: date,
-            dateFormatter: dateFormatter,
+            formattedDate: formattedDate,
             lineOffset: lineOffset
         )
     }
@@ -175,22 +164,17 @@ public struct SignatureView: View {
     /// - Parameters:
     ///   - signature: A `Binding` containing the current text-based signature as a `String`.
     ///   - name: The name that is displayed under the signature line.
+    ///   - formattedDate: The formatted date that is displayed under the signature line.
     ///   - lineOffset: Defines the distance of the signature line from the bottom of the view. The default value is 30.
     public init(
         signature: Binding<String> = .constant(String()),
         name: PersonNameComponents = PersonNameComponents(),
-        date: Date? = nil,
-        dateFormatter: DateFormatter = {
-            let formatter = DateFormatter()
-            formatter.dateStyle = .short
-            return formatter
-        }(),
+        formattedDate: String? = nil,
         lineOffset: CGFloat = 30
     ) {
         self._signature = signature
-        self.name = names
-        self.date = date
-        self.dateFormatter = dateFormatter
+        self.name = name
+        self.formattedDate = formattedDate
         self.lineOffset = lineOffset
     }
 
@@ -199,24 +183,19 @@ public struct SignatureView: View {
     ///   - signature: A `Binding` containing the current text-based signature as a `String`.
     ///   - givenName: The given name that is displayed under the signature line.
     ///   - familyName: The family name that is displayed under the signature line.
+    ///   - formattedDate: The formatted date that is displayed under the signature line.
     ///   - lineOffset: Defines the distance of the signature line from the bottom of the view. The default value is 30.
     public init(
         signature: Binding<String> = .constant(String()),
         givenName: String = "",
         familyName: String = "",
-        date: Date? = nil,
-        dateFormatter: DateFormatter = {
-            let formatter = DateFormatter()
-            formatter.dateStyle = .short
-            return formatter
-        }(),
+        formattedDate: String? = nil,
         lineOffset: CGFloat = 30
     ) {
         self.init(
             signature: signature,
             name: .init(givenName: givenName, familyName: familyName),
-            date: date,
-            dateFormatter: dateFormatter,
+            formattedDate: formattedDate,
             lineOffset: lineOffset
         )
     }
@@ -240,19 +219,14 @@ public struct SignatureView: View {
 #Preview("Including PersonNameComponents and Date") {
     SignatureView(
         name: PersonNameComponents(givenName: "Leland", familyName: "Stanford"),
-        date: .now
+        formattedDate: "01/22/25"
     )
 }
 
 #Preview("Including PersonNameComponents and Date with custom format") {
     SignatureView(
         name: PersonNameComponents(givenName: "Leland", familyName: "Stanford"),
-        date: .now,
-        dateFormatter: {
-            let formatter = DateFormatter()
-            formatter.dateStyle = .medium
-            return formatter
-        }()
+        formattedDate: "01/22/25"
     )
 }
 #endif

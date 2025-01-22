@@ -19,9 +19,9 @@ import SwiftUI
 /// In addition, it enables the export of the signed form as a PDF document.
 ///
 /// To observe and control the current state of the `ConsentDocument`, the view requires passing down a ``ConsentViewState`` as a SwiftUI `Binding` in the
-/// ``init(markdown:viewState:givenNameTitle:givenNamePlaceholder:familyNameTitle:familyNamePlaceholder:exportConfiguration:)`` initializer.
+/// ``init(markdown:viewState:givenNameTitle:givenNamePlaceholder:familyNameTitle:familyNamePlaceholder:exportConfiguration:documentIdentifier:consentSignatureDate:consentSignatureDateFormatter:)`` initializer.
 /// This `Binding` can then be used to trigger the export of the consent form via setting the state to ``ConsentViewState/export``.
-/// After the rendering completes, the finished `PDFDocument` from Apple's PDFKit is accessible via the associated value of the view state in ``ConsentViewState/exported(document:)``.
+/// After the rendering completes, the finished `PDFDocument` from Apple's PDFKit is accessible via the associated value of the view state in ``ConsentViewState/exported(document:export:)``.
 /// Other possible states of the `ConsentDocument` are the SpeziViews `ViewState`'s accessible via the associated value in ``ConsentViewState/base(_:)``.
 /// In addition, the view provides information about the signing progress via the ``ConsentViewState/signing`` and ``ConsentViewState/signed`` states.
 ///
@@ -34,7 +34,8 @@ import SwiftUI
 ///         Data("This is a *markdown* **example**".utf8)
 ///     },
 ///     viewState: $state,
-///     exportConfiguration: .init(paperSize: .usLetter)   // Configure the properties of the exported consent form
+///     exportConfiguration: .init(paperSize: .usLetter),   // Configure the properties of the exported consent form
+///     consentSignatureDate: .now
 /// )
 /// ```
 public struct ConsentDocument: View {
@@ -45,7 +46,9 @@ public struct ConsentDocument: View {
     private let givenNamePlaceholder: LocalizedStringResource
     private let familyNameTitle: LocalizedStringResource
     private let familyNamePlaceholder: LocalizedStringResource
-    
+    private let consentSignatureDate: Date?
+    private let consentSignatureDateFormatter: DateFormatter
+
     let documentExport: ConsentDocumentExport
 
     @Environment(\.colorScheme) var colorScheme
@@ -85,7 +88,6 @@ public struct ConsentDocument: View {
                         signature.removeAll()
                         #endif
                     }
-                    documentExport.name = name
                 }
             
             Divider()
@@ -112,9 +114,19 @@ public struct ConsentDocument: View {
     @MainActor private var signatureView: some View {
         Group {
             #if !os(macOS)
-            SignatureView(signature: $signature, isSigning: $viewState.signing, canvasSize: $signatureSize, name: name)
+            SignatureView(
+                signature: $signature,
+                isSigning: $viewState.signing,
+                canvasSize: $signatureSize,
+                name: name,
+                formattedDate: formattedConsentSignatureDate
+            )
             #else
-            SignatureView(signature: $signature, name: name)
+            SignatureView(
+                signature: $signature,
+                name: name,
+                formattedDate: formattedConsentSignatureDate
+            )
             #endif
         }
             .padding(.vertical, 4)
@@ -130,7 +142,6 @@ public struct ConsentDocument: View {
                 } else {
                     viewState = .namesEntered
                 }
-                documentExport.signature = signature
             }
     }
     
@@ -187,7 +198,15 @@ public struct ConsentDocument: View {
     private var inputFieldsDisabled: Bool {
         viewState == .base(.processing) || viewState == .export || viewState == .storing
     }
-    
+
+    var formattedConsentSignatureDate: String? {
+        if let consentSignatureDate {
+            consentSignatureDateFormatter.string(from: consentSignatureDate)
+        } else {
+            nil
+        }
+    }
+
     
     /// Creates a `ConsentDocument` which renders a consent document with a markdown view.
     ///
@@ -202,6 +221,8 @@ public struct ConsentDocument: View {
     ///   - familyNamePlaceholder: The localization to use for the family name field placeholder.
     ///   - exportConfiguration: Defines the properties of the exported consent form via ``ConsentDocument/ExportConfiguration``.
     ///   - documentIdentifier: A unique identifier or "name" for the consent form, helpful for distinguishing consent forms when storing in the `Standard`.
+    ///   - consentSignatureDate: The date that is displayed under the signature line.
+    ///   - consentSignatureDateFormatter: The date formatter used to format the date that is displayed under the signature line.
     public init(
         markdown: @escaping () async -> Data,
         viewState: Binding<ConsentViewState>,
@@ -210,14 +231,22 @@ public struct ConsentDocument: View {
         familyNameTitle: LocalizedStringResource = LocalizationDefaults.familyNameTitle,
         familyNamePlaceholder: LocalizedStringResource = LocalizationDefaults.familyNamePlaceholder,
         exportConfiguration: ExportConfiguration = .init(),
-        documentIdentifier: String = ConsentDocumentExport.Defaults.documentIdentifier
+        documentIdentifier: String = ConsentDocumentExport.Defaults.documentIdentifier,
+        consentSignatureDate: Date? = nil,
+        consentSignatureDateFormatter: DateFormatter = {
+            let formatter = DateFormatter()
+            formatter.dateStyle = .short
+            return formatter
+        }()
     ) {
         self._viewState = viewState
         self.givenNameTitle = givenNameTitle
         self.givenNamePlaceholder = givenNamePlaceholder
         self.familyNameTitle = familyNameTitle
         self.familyNamePlaceholder = familyNamePlaceholder
-        
+        self.consentSignatureDate = consentSignatureDate
+        self.consentSignatureDateFormatter = consentSignatureDateFormatter
+
         self.documentExport = ConsentDocumentExport(
             markdown: markdown,
             exportConfiguration: exportConfiguration,
@@ -243,8 +272,8 @@ public struct ConsentDocument: View {
             },
             viewState: $viewState
         )
-        .navigationTitle(Text(verbatim: "Consent"))
-        .padding()
+            .navigationTitle(Text(verbatim: "Consent"))
+            .padding()
     }
 }
 #endif
