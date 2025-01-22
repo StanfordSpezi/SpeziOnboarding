@@ -65,15 +65,14 @@ struct OnboardingConsentMarkdownRenderingView: View {
 
 
 #if DEBUG
-struct OnboardingConsentMarkdownRenderingView_Previews: PreviewProvider {
-    static var standard: OnboardingDataSource = .init()
-    
-    static var previews: some View {
-        OnboardingStack(startAtStep: OnboardingConsentMarkdownRenderingView.self) {
-            for onboardingView in OnboardingFlow.previewSimulatorViews {
-                onboardingView
-                    .environment(standard)
-            }
+#Preview {
+    var standard: OnboardingDataSource = .init()
+
+
+    OnboardingStack(startAtStep: OnboardingConsentMarkdownRenderingView.self) {
+        for onboardingView in OnboardingFlow.previewSimulatorViews {
+            onboardingView
+                .environment(standard)
         }
     }
 }

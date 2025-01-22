@@ -30,12 +30,10 @@ struct OnboardingCustomTestView1: View {
 
 
 #if DEBUG
-struct OnboardingCustomTestView1_Previews: PreviewProvider {
-    static var previews: some View {
-        OnboardingStack(startAtStep: OnboardingCustomTestView1.self) {
-            for onboardingView in OnboardingFlow.previewSimulatorViews {
-                onboardingView
-            }
+#Preview {
+    OnboardingStack(startAtStep: OnboardingCustomTestView1.self) {
+        for onboardingView in OnboardingFlow.previewSimulatorViews {
+            onboardingView
         }
     }
 }

@@ -31,12 +31,10 @@ struct CustomToggleView: View {
 
 
 #if DEBUG
-struct CustomToggleView_Previews: PreviewProvider {
-    static var previews: some View {
-        CustomToggleView(
-            text: "Test toggle",
-            condition: .constant(false)
-        )
-    }
+#Preview {
+    CustomToggleView(
+        text: "Test toggle",
+        condition: .constant(false)
+    )
 }
 #endif

@@ -257,6 +257,9 @@
         }
       }
     },
+    "SIGNATURE_DATE %@" : {
+
+    },
     "SIGNATURE_FIELD" : {
       "localizations" : {
         "de" : {

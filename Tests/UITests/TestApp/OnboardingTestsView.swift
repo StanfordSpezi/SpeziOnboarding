@@ -59,9 +59,7 @@ struct OnboardingTestsView: View {
 
 
 #if DEBUG
-struct OnboardingTestsView_Previews: PreviewProvider {
-    static var previews: some View {
-        OnboardingTestsView(onboardingFlowComplete: .constant(false))
-    }
+#Preview {
+    OnboardingTestsView(onboardingFlowComplete: .constant(false))
 }
 #endif

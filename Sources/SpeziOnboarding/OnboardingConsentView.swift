@@ -231,18 +231,16 @@ public struct OnboardingConsentView: View {
 
 
 #if DEBUG
-struct OnboardingConsentView_Previews: PreviewProvider {
-    @State private static var viewState: ConsentViewState = .base(.idle)
-    
-    
-    static var previews: some View {
-        NavigationStack {
-            OnboardingConsentView(markdown: {
-                Data("This is a *markdown* **example**".utf8)
-            }, action: {
-                print("Next")
-            })
-        }
+#Preview {
+    @Previewable @State var viewState: ConsentViewState = .base(.idle)
+
+
+    NavigationStack {
+        OnboardingConsentView(markdown: {
+            Data("This is a *markdown* **example**".utf8)
+        }, action: {
+            print("Next")
+        })
     }
 }
 #endif

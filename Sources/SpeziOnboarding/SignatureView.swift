@@ -150,8 +150,8 @@ public struct SignatureView: View {
         signature: Binding<PKDrawing> = .constant(PKDrawing()),
         isSigning: Binding<Bool> = .constant(false),
         canvasSize: Binding<CGSize> = .constant(.zero),
-        givenName: String,
-        familyName: String,
+        givenName: String = "",
+        familyName: String = "",
         date: Date? = nil,
         dateFormatter: DateFormatter = {
             let formatter = DateFormatter()
@@ -202,8 +202,8 @@ public struct SignatureView: View {
     ///   - lineOffset: Defines the distance of the signature line from the bottom of the view. The default value is 30.
     public init(
         signature: Binding<String> = .constant(String()),
-        givenName: String,
-        familyName: String,
+        givenName: String = "",
+        familyName: String = "",
         date: Date? = nil,
         dateFormatter: DateFormatter = {
             let formatter = DateFormatter()
@@ -222,6 +222,7 @@ public struct SignatureView: View {
     }
     #endif
 }
+
 
 #if DEBUG
 #Preview("Base Signature View") {

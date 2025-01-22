@@ -36,12 +36,10 @@ struct OnboardingConsentMarkdownTestView: View {
 
 
 #if DEBUG
-struct OnboardingFirstConsentMarkdownTestView_Previews: PreviewProvider {
-    static var previews: some View {
-        OnboardingStack(startAtStep: OnboardingConsentMarkdownTestView.self) {
-            for onboardingView in OnboardingFlow.previewSimulatorViews {
-                onboardingView
-            }
+#Preview {
+    OnboardingStack(startAtStep: OnboardingConsentMarkdownTestView.self) {
+        for onboardingView in OnboardingFlow.previewSimulatorViews {
+            onboardingView
         }
     }
 }

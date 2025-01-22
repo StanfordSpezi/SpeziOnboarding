@@ -29,12 +29,10 @@ struct OnboardingTestViewNotIdentifiable: View {
 }
 
 #if DEBUG
-struct OnboardingTestViewNotIdentifiable_Previews: PreviewProvider {
-    static var previews: some View {
-        OnboardingStack(startAtStep: OnboardingTestViewNotIdentifiable.self) {
-            for onboardingView in OnboardingFlow.previewSimulatorViews {
-                onboardingView
-            }
+#Preview {
+    OnboardingStack(startAtStep: OnboardingTestViewNotIdentifiable.self) {
+        for onboardingView in OnboardingFlow.previewSimulatorViews {
+            onboardingView
         }
     }
 }
