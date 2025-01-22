@@ -265,8 +265,8 @@ public struct ConsentDocument: View {
             },
             viewState: $viewState
         )
-            .navigationTitle(Text(verbatim: "Consent"))
-            .padding()
+        .navigationTitle(Text(verbatim: "Consent"))
+        .padding()
     }
 }
 #endif
