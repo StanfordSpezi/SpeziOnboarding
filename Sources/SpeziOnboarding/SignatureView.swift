@@ -37,14 +37,20 @@ public struct SignatureView: View {
     @Binding private var signature: String
     #endif
     private let name: PersonNameComponents
+    private let date: Date?
+    private let dateFormatter: DateFormatter
     private let lineOffset: CGFloat
     
     
     public var body: some View {
         VStack {
             ZStack(alignment: .bottomLeading) {
-                SignatureViewBackground(name: name, lineOffset: lineOffset)
-                
+                SignatureViewBackground(
+                    name: name,
+                    formattedDate: { if let date { dateFormatter.string(from: date) } else { nil } }(),
+                    lineOffset: lineOffset
+                )
+
                 #if !os(macOS)
                 CanvasView(drawing: $signature, isDrawing: $isSigning, showToolPicker: .constant(false))
                     .accessibilityLabel(Text("SIGNATURE_FIELD", bundle: .module))
@@ -115,12 +121,20 @@ public struct SignatureView: View {
         isSigning: Binding<Bool> = .constant(false),
         canvasSize: Binding<CGSize> = .constant(.zero),
         name: PersonNameComponents = PersonNameComponents(),
+        date: Date? = nil,
+        dateFormatter: DateFormatter = {
+            let formatter = DateFormatter()
+            formatter.dateStyle = .short
+            return formatter
+        }(),
         lineOffset: CGFloat = 30
     ) {
         self._signature = signature
         self._isSigning = isSigning
         self._canvasSize = canvasSize
         self.name = name
+        self.date = date
+        self.dateFormatter = dateFormatter
         self.lineOffset = lineOffset
     }
 
@@ -138,13 +152,23 @@ public struct SignatureView: View {
         canvasSize: Binding<CGSize> = .constant(.zero),
         givenName: String,
         familyName: String,
+        date: Date? = nil,
+        dateFormatter: DateFormatter = {
+            let formatter = DateFormatter()
+            formatter.dateStyle = .short
+            return formatter
+        }(),
         lineOffset: CGFloat = 30
     ) {
-        self._signature = signature
-        self._isSigning = isSigning
-        self._canvasSize = canvasSize
-        self.name = .init(givenName: givenName, familyName: familyName)
-        self.lineOffset = lineOffset
+        self.init(
+            signature: signature,
+            isSigning: isSigning,
+            canvasSize: canvasSize,
+            name: .init(givenName: givenName, familyName: familyName),
+            date: date,
+            dateFormatter: dateFormatter,
+            lineOffset: lineOffset
+        )
     }
     #else
     /// Creates a new instance of an ``SignatureView``.
@@ -155,10 +179,18 @@ public struct SignatureView: View {
     public init(
         signature: Binding<String> = .constant(String()),
         name: PersonNameComponents = PersonNameComponents(),
+        date: Date? = nil,
+        dateFormatter: DateFormatter = {
+            let formatter = DateFormatter()
+            formatter.dateStyle = .short
+            return formatter
+        }(),
         lineOffset: CGFloat = 30
     ) {
         self._signature = signature
-        self.name = name
+        self.name = names
+        self.date = date
+        self.dateFormatter = dateFormatter
         self.lineOffset = lineOffset
     }
 
@@ -172,24 +204,54 @@ public struct SignatureView: View {
         signature: Binding<String> = .constant(String()),
         givenName: String,
         familyName: String,
+        date: Date? = nil,
+        dateFormatter: DateFormatter = {
+            let formatter = DateFormatter()
+            formatter.dateStyle = .short
+            return formatter
+        }(),
         lineOffset: CGFloat = 30
     ) {
-        self._signature = signature
-        self.name = .init(givenName: givenName, familyName: familyName)
-        self.lineOffset = lineOffset
+        self.init(
+            signature: signature,
+            name: .init(givenName: givenName, familyName: familyName),
+            date: date,
+            dateFormatter: dateFormatter,
+            lineOffset: lineOffset
+        )
     }
     #endif
 }
 
-
 #if DEBUG
-struct SignatureView_Previews: PreviewProvider {
-    static var previews: some View {
-        SignatureView()
+#Preview("Base Signature View") {
+    SignatureView()
+}
 
-        SignatureView(name: PersonNameComponents(givenName: "Leland", familyName: "Stanford"))
+#Preview("Including PersonNameComponents") {
+    SignatureView(name: PersonNameComponents(givenName: "Leland", familyName: "Stanford"))
+}
 
-        SignatureView(givenName: "Leland", familyName: "Stanford")
-    }
+#Preview("Including String-based names") {
+    SignatureView(givenName: "Leland", familyName: "Stanford")
+}
+
+#Preview("Including PersonNameComponents and Date") {
+    SignatureView(
+        name: PersonNameComponents(givenName: "Leland", familyName: "Stanford"),
+        date: .now
+    )
+}
+
+#Preview("Including PersonNameComponents and Date with custom format") {
+    SignatureView(
+        name: PersonNameComponents(givenName: "Leland", familyName: "Stanford"),
+        date: .now,
+        dateFormatter: {
+            let formatter = DateFormatter()
+            formatter.dateStyle = .medium
+            return formatter
+        }()
+    )
 }
 #endif
