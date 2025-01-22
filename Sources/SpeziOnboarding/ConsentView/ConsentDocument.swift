@@ -49,7 +49,9 @@ public struct ConsentDocument: View {
     private let consentSignatureDate: Date?
     private let consentSignatureDateFormatter: DateFormatter
 
-    let documentExport: ConsentDocumentExport
+    let markdown: () async -> Data
+    let exportConfiguration: ExportConfiguration
+    let documentIdentifier: String
 
     @Environment(\.colorScheme) var colorScheme
     @State var name = PersonNameComponents()
@@ -147,7 +149,7 @@ public struct ConsentDocument: View {
     
     public var body: some View {
         VStack {
-            MarkdownView(asyncMarkdown: documentExport.asyncMarkdown, state: $viewState.base)
+            MarkdownView(asyncMarkdown: markdown, state: $viewState.base)
             Spacer()
             Group {
                 nameView
@@ -166,11 +168,9 @@ public struct ConsentDocument: View {
                 if case .export = viewState {
                     Task {
                         do {
-                            /// Stores the finished PDF in the Spezi `Standard`.
+                            // Stores the finished PDF in the Spezi `Standard`.
                             let exportedConsent = try await export()
-                            
-                            documentExport.cachedPDF = exportedConsent
-                            viewState = .exported(document: exportedConsent, export: documentExport)
+                            viewState = .exported(document: exportedConsent)
                         } catch {
                             // In case of error, go back to previous state.
                             viewState = .base(.error(AnyLocalizedError(error: error)))
@@ -239,23 +239,16 @@ public struct ConsentDocument: View {
             return formatter
         }()
     ) {
+        self.markdown = markdown
         self._viewState = viewState
         self.givenNameTitle = givenNameTitle
         self.givenNamePlaceholder = givenNamePlaceholder
         self.familyNameTitle = familyNameTitle
         self.familyNamePlaceholder = familyNamePlaceholder
+        self.exportConfiguration = exportConfiguration
+        self.documentIdentifier = documentIdentifier
         self.consentSignatureDate = consentSignatureDate
         self.consentSignatureDateFormatter = consentSignatureDateFormatter
-
-        self.documentExport = ConsentDocumentExport(
-            markdown: markdown,
-            exportConfiguration: exportConfiguration,
-            documentIdentifier: documentIdentifier
-        )
-        // Set initial values for the name and signature.
-        // These will be updated once the name and signature change.
-        self.documentExport.name = name
-        self.documentExport.signature = signature
     }
 }
 

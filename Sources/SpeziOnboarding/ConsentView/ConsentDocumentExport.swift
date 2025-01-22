@@ -12,7 +12,7 @@ import SwiftUI
 
 
 /// A type representing an exported `ConsentDocument`. It holds the exported `PDFDocument` and the corresponding document identifier String.
-public final class ConsentDocumentExport: Equatable {
+public struct ConsentDocumentExport {
     /// Provides default values for fields related to the `ConsentDocumentExport`.
     public enum Defaults {
         /// Default value for a document identifier.
@@ -41,6 +41,7 @@ public final class ConsentDocumentExport: Equatable {
     /// The signature of the signee as string.
     public var signature = String()
     #endif
+    /// Formatted data displayed in the signature caption.
     public var formattedSignatureDate: String?
 
 
@@ -60,14 +61,6 @@ public final class ConsentDocumentExport: Equatable {
         self.exportConfiguration = exportConfiguration
         self.documentIdentifier = documentIdentifier
         self.cachedPDF = cachedPDF
-    }
-
-
-    public static func == (lhs: ConsentDocumentExport, rhs: ConsentDocumentExport) -> Bool {
-        lhs.documentIdentifier == rhs.documentIdentifier &&
-        lhs.name == rhs.name &&
-        lhs.signature == rhs.signature &&
-        lhs.cachedPDF == rhs.cachedPDF
     }
 
 

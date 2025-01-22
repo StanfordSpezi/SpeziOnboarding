@@ -39,9 +39,6 @@ let package = Package(
                 .product(name: "OrderedCollections", package: "swift-collections"),
                 .product(name: "TPPDF", package: "TPPDF")
             ],
-            swiftSettings: [
-                .enableUpcomingFeature("ExistentialAny")
-            ],
             plugins: [] + swiftLintPlugin()
         ),
         .testTarget(
@@ -51,9 +48,6 @@ let package = Package(
             ],
             resources: [
                 .process("Resources/")
-            ],
-            swiftSettings: [
-                .enableUpcomingFeature("ExistentialAny")
             ],
             plugins: [] + swiftLintPlugin()
         )

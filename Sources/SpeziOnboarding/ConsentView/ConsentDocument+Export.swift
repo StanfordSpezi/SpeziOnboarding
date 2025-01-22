@@ -49,15 +49,26 @@ extension ConsentDocument {
     ///
     /// - Returns: The exported consent form in PDF format as a PDFKit `PDFDocument`
     @MainActor
-    func export() async throws -> PDFKit.PDFDocument {
+    func export() async throws -> ConsentDocumentExport {
+        var documentExport = ConsentDocumentExport(
+            markdown: self.markdown,
+            exportConfiguration: self.exportConfiguration,
+            documentIdentifier: self.documentIdentifier
+        )
+        
         documentExport.signature = signature
         documentExport.formattedSignatureDate = formattedConsentSignatureDate
         documentExport.name = name
+        
         #if !os(macOS)
         documentExport.signatureImage = blackInkSignatureImage
-        return try await documentExport.export()
+        let pdf = try await documentExport.export()
         #else
-        return try await documentExport.export()
+        let pdf = try await documentExport.export()
         #endif
+
+        documentExport.cachedPDF = pdf
+
+        return documentExport
     }
 }

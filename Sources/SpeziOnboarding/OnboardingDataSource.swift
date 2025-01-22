@@ -12,7 +12,7 @@ import SwiftUI
 
 
 private protocol DeprecationSuppression {
-    func storeInLegacyConstraint(for standard: any Standard, _ consent: sending ConsentDocumentExport) async
+    func storeInLegacyConstraint(for standard: any Standard, _ consent: consuming sending ConsentDocumentExport) async
 }
 
 
@@ -87,7 +87,10 @@ public final class OnboardingDataSource: Module, EnvironmentAccessible, @uncheck
     /// - Parameters:
     ///   - consent: The exported consent form represented as `ConsentDocumentExport` that should be added.
     ///   - identifier: The document identifier for the exported consent document.
-    public func store(_ consent: sending ConsentDocumentExport, identifier: String = ConsentDocumentExport.Defaults.documentIdentifier) async throws {
+    public func store(
+        _ consent: consuming sending ConsentDocumentExport,
+        identifier: String = ConsentDocumentExport.Defaults.documentIdentifier
+    ) async throws {
         if let consentConstraint = standard as? any ConsentConstraint {
             try await consentConstraint.store(consent: consent)
         } else {
@@ -101,7 +104,7 @@ public final class OnboardingDataSource: Module, EnvironmentAccessible, @uncheck
 
 extension OnboardingDataSource: DeprecationSuppression {
     @available(*, deprecated, message: "Suppress deprecation warning.")
-    func storeInLegacyConstraint(for standard: any Standard, _ consent: sending ConsentDocumentExport) async {
+    func storeInLegacyConstraint(for standard: any Standard, _ consent: consuming sending ConsentDocumentExport) async {
         if let onboardingConstraint = standard as? any OnboardingConstraint {
             await onboardingConstraint.store(consent: consent.consumePDF())
         } else {

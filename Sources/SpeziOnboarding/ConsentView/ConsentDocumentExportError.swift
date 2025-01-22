@@ -8,10 +8,12 @@
 
 import Foundation
 
-// Error that can occur if PDF export fails in ``ConsentDocumentExport``.
+
+/// Error that can occur if PDF export fails in ``ConsentDocumentExport``.
 enum ConsentDocumentExportError: LocalizedError {
     case invalidPdfData(String)
-    
+
+
     var errorDescription: String? {
         switch self {
         case .invalidPdfData:

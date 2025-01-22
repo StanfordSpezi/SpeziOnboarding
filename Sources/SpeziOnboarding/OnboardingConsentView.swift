@@ -115,13 +115,13 @@ public struct OnboardingConsentView: View {
             .scrollDisabled($viewState.signing.wrappedValue)
             .navigationBarBackButtonHidden(backButtonHidden)
             .onChange(of: viewState) {
-                if case .exported(_, let export) = viewState {
+                if case .exported(let consentExport) = viewState {
                     if !willShowShareSheet {
                         viewState = .storing
                         Task {
                             do {
-                                /// Stores the finished PDF in the Spezi `Standard`.
-                                try await onboardingDataSource.store(export)
+                                // Stores the finished consent export in the Spezi `Standard`.
+                                try await onboardingDataSource.store(consentExport)
 
                                 await action()
                                 viewState = .base(.idle)
@@ -166,9 +166,9 @@ public struct OnboardingConsentView: View {
                 }
             }
             .sheet(isPresented: $showShareSheet) {
-                if case .exported(let document, _) = viewState {
+                if case .exported(let exportedConsent) = viewState {
                     #if !os(macOS)
-                    ShareSheet(sharedItem: document)
+                    ShareSheet(sharedItem: exportedConsent.consumePDF())
                         .presentationDetents([.medium])
                         .task {
                             willShowShareSheet = false
@@ -182,8 +182,8 @@ public struct OnboardingConsentView: View {
             #if os(macOS)
             .onChange(of: showShareSheet) { _, isPresented in
                 if isPresented,
-                   case .exported(let exportedConsentDocumented, _) = viewState {
-                    let shareSheet = ShareSheet(sharedItem: exportedConsentDocumented)
+                   case .exported(let exportedConsentDocument) = viewState {
+                    let shareSheet = ShareSheet(sharedItem: exportedConsentDocument.consumePDF())
                     shareSheet.show()
 
                     showShareSheet = false
