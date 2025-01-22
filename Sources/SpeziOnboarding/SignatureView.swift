@@ -36,7 +36,7 @@ public struct SignatureView: View {
     #else
     @Binding private var signature: String
     #endif
-    private let name: PersonNameComponents // TODO: allow to just specify a string! additional initializer for name components!
+    private let name: PersonNameComponents
     private let lineOffset: CGFloat
     
     
@@ -123,6 +123,29 @@ public struct SignatureView: View {
         self.name = name
         self.lineOffset = lineOffset
     }
+
+    /// Creates a new instance of an ``SignatureView``  with `String`-based name components.
+    /// - Parameters:
+    ///   - signature: A `Binding` containing the current signature as an `PKDrawing`.
+    ///   - isSigning: A `Binding` indicating if the user is currently signing.
+    ///   - canvasSize: The size of the canvas as a Binding.
+    ///   - givenName: The given name that is displayed under the signature line.
+    ///   - familyName: The family name that is displayed under the signature line.
+    ///   - lineOffset: Defines the distance of the signature line from the bottom of the view. The default value is 30.
+    public init(
+        signature: Binding<PKDrawing> = .constant(PKDrawing()),
+        isSigning: Binding<Bool> = .constant(false),
+        canvasSize: Binding<CGSize> = .constant(.zero),
+        givenName: String,
+        familyName: String,
+        lineOffset: CGFloat = 30
+    ) {
+        self._signature = signature
+        self._isSigning = isSigning
+        self._canvasSize = canvasSize
+        self.name = .init(givenName: givenName, familyName: familyName)
+        self.lineOffset = lineOffset
+    }
     #else
     /// Creates a new instance of an ``SignatureView``.
     /// - Parameters:
@@ -138,6 +161,23 @@ public struct SignatureView: View {
         self.name = name
         self.lineOffset = lineOffset
     }
+
+    /// Creates a new instance of an ``SignatureView`` with `String`-based name components.
+    /// - Parameters:
+    ///   - signature: A `Binding` containing the current text-based signature as a `String`.
+    ///   - givenName: The given name that is displayed under the signature line.
+    ///   - familyName: The family name that is displayed under the signature line.
+    ///   - lineOffset: Defines the distance of the signature line from the bottom of the view. The default value is 30.
+    public init(
+        signature: Binding<String> = .constant(String()),
+        givenName: String,
+        familyName: String,
+        lineOffset: CGFloat = 30
+    ) {
+        self._signature = signature
+        self.name = .init(givenName: givenName, familyName: familyName)
+        self.lineOffset = lineOffset
+    }
     #endif
 }
 
@@ -148,6 +188,8 @@ struct SignatureView_Previews: PreviewProvider {
         SignatureView()
 
         SignatureView(name: PersonNameComponents(givenName: "Leland", familyName: "Stanford"))
+
+        SignatureView(givenName: "Leland", familyName: "Stanford")
     }
 }
 #endif
