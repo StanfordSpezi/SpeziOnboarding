@@ -66,7 +66,7 @@ struct OnboardingConsentMarkdownRenderingView: View {
 
 #if DEBUG
 #Preview {
-    var standard: OnboardingDataSource = .init()
+    let standard: OnboardingDataSource = .init()
 
 
     OnboardingStack(startAtStep: OnboardingConsentMarkdownRenderingView.self) {
