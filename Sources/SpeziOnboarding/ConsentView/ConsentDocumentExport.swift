@@ -71,10 +71,10 @@ public struct ConsentDocumentExport {
     /// - Note: For now, we always require a PDF to be cached to create a `ConsentDocumentExport`. In the future, we might change this to lazy-PDF loading.
     public consuming func consumePDF() -> sending PDFDocument {
         // Accessing `cachedPDF` via `take()` ensures single consumption of the `PDFDocument` by transferring ownership
-        // from the enclosing class and leaving `nil` behind after the access. Though `ConsentDocumentExport` is a reference
+        // from the enclosing struct and leaving `nil` behind after the access. Though `ConsentDocumentExport` is a copyable
         // type, this manual ownership model guarantees the PDF is only used once, enabling safe cross-concurrency transfer.
         // The explicit `sending` return type reinforces transfer semantics, while `take()` enforces single-access at runtime.
-        // This pattern provides compiler-verifiable safety for the `PDFDocument` transfer despite the class's reference semantics.
+        // This pattern provides compiler-verifiable safety for the `PDFDocument` transfer despite the struct's reference semantics.
         //
         // See similar discussion: https://forums.swift.org/t/swift-6-consume-optional-noncopyable-property-and-transfer-sending-it-out/72414/3
         nonisolated(unsafe) let cachedPDF = cachedPDF.take() ?? .init()
