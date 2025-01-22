@@ -56,7 +56,7 @@ final class SpeziOnboardingTests: XCTestCase {
                 includingTimestamp: false
             )
             
-            let documentExport = ConsentDocumentExport(
+            var documentExport = ConsentDocumentExport(
                 markdown: markdownData,
                 exportConfiguration: exportConfiguration,
                 documentIdentifier: ConsentDocumentExport.Defaults.documentIdentifier
