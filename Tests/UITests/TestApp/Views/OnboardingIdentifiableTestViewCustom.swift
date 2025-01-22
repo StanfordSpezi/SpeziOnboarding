@@ -33,12 +33,10 @@ struct OnboardingIdentifiableTestViewCustom: View, Identifiable {
 }
 
 #if DEBUG
-struct OnboardingIdentifiableTestViewCustomView_Previews: PreviewProvider {
-    static var previews: some View {
-        OnboardingStack(startAtStep: OnboardingIdentifiableTestViewCustom.self) {
-            for onboardingView in OnboardingFlow.previewSimulatorViews {
-                onboardingView
-            }
+#Preview {
+    OnboardingStack(startAtStep: OnboardingIdentifiableTestViewCustom.self) {
+        for onboardingView in OnboardingFlow.previewSimulatorViews {
+            onboardingView
         }
     }
 }

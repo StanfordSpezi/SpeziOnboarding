@@ -232,21 +232,19 @@ public struct ConsentDocument: View {
 
 
 #if DEBUG
-struct ConsentDocument_Previews: PreviewProvider {
-    @State private static var viewState: ConsentViewState = .base(.idle)
-    
-    
-    static var previews: some View {
-        NavigationStack {
-            ConsentDocument(
-                markdown: {
-                    Data("This is a *markdown* **example**".utf8)
-                },
-                viewState: $viewState
-            )
-            .navigationTitle(Text(verbatim: "Consent"))
-            .padding()
-        }
+#Preview {
+    @Previewable @State var viewState: ConsentViewState = .base(.idle)
+
+
+    NavigationStack {
+        ConsentDocument(
+            markdown: {
+                Data("This is a *markdown* **example**".utf8)
+            },
+            viewState: $viewState
+        )
+        .navigationTitle(Text(verbatim: "Consent"))
+        .padding()
     }
 }
 #endif
