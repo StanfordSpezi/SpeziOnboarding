@@ -34,7 +34,7 @@ public enum ConsentViewState: Equatable {
     /// ``ConsentDocument`` has been successfully exported. The rendered `PDFDocument` can be found as the associated value of the state.
     ///
     /// The export procedure (resulting in the ``ConsentViewState/exported(document:export:)`` state) can be triggered via setting the ``ConsentViewState/export`` state of the ``ConsentDocument``    .
-    case exported(document: ConsentDocumentExport)
+    case exported(representation: ConsentDocumentExportRepresentation)
     /// The `storing` state indicates that the ``ConsentDocument`` is currently being stored to the Standard.
     case storing
 
@@ -46,7 +46,7 @@ public enum ConsentViewState: Equatable {
         case (.signing, .signing): true
         case (.signed, .signed): true
         case (.export, .export): true
-        case (.exported, .exported): true
+        case let (.exported(lhsValue), .exported(rhsValue)): lhsValue == rhsValue
         case (.storing, .storing): true
         default: false
         }

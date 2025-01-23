@@ -1,6 +1,9 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "Consent document could not be exported." : {
+
+    },
     "CONSENT_ACTION" : {
       "localizations" : {
         "de" : {
@@ -18,6 +21,7 @@
       }
     },
     "CONSENT_EXPORT_ERROR_DESCRIPTION" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -34,6 +38,7 @@
       }
     },
     "CONSENT_EXPORT_ERROR_FAILURE_REASON" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -50,6 +55,7 @@
       }
     },
     "CONSENT_EXPORT_ERROR_RECOVERY_SUGGESTION" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -241,6 +247,9 @@
         }
       }
     },
+    "Please try exporting the consent document again." : {
+
+    },
     "SEQUENTIAL_ONBOARDING_NEXT" : {
       "localizations" : {
         "de" : {
@@ -308,8 +317,8 @@
         }
       }
     },
-    "Unable to generate valid PDF document from PDF data." : {
-      "comment" : "Error thrown if we generated a PDF document using TPPDF,\nbut were unable to convert the generated data into a PDFDocument."
+    "The PDF generation from the consent document failed. " : {
+
     }
   },
   "version" : "1.0"

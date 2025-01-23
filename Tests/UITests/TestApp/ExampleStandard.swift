@@ -12,22 +12,25 @@ import SpeziOnboarding
 import SwiftUI
 
 
+// An enum to hold identifier strings to identify two separate consent documents.
+enum DocumentIdentifiers {
+    static let first = "firstConsentDocument"
+    static let second = "secondConsentDocument"
+}
+
+
 /// An example `Standard` used for the configuration.
 actor ExampleStandard: Standard, EnvironmentAccessible {
     @MainActor var firstConsentData: PDFDocument = .init()
     @MainActor var secondConsentData: PDFDocument = .init()
 }
 
-
 extension ExampleStandard: ConsentConstraint {
-    // Example of an async function using MainActor and Task
-    func store(consent: consuming sending ConsentDocumentExport) async throws {
+    func store(consent: consuming sending ConsentDocumentExportRepresentation) async throws {
         let documentIdentifier = consent.documentIdentifier
-        let pdf = consent.consumePDF()
-
-        // Perform operations on the main actor
+        let pdf = try consent.render()
+        
         try await self.store(document: pdf, for: documentIdentifier)
-
         try? await Task.sleep(for: .seconds(0.5))   // Simulates storage delay
     }
 
@@ -38,17 +41,16 @@ extension ExampleStandard: ConsentConstraint {
         } else if documentIdentifier == DocumentIdentifiers.second {
             self.secondConsentData = pdf
         } else {
-            throw ConsentStoreError.invalidIdentifier("Invalid Identifier \(documentIdentifier)")
+            preconditionFailure("Unexpected document identifier when persisting consent document: \(documentIdentifier)")
         }
     }
 
+    @MainActor
     func resetDocument(identifier: String) async throws {
-        await MainActor.run {
-            if identifier == DocumentIdentifiers.first {
-                firstConsentData = .init()
-            } else if identifier == DocumentIdentifiers.second {
-                secondConsentData = .init()
-            }
+        if identifier == DocumentIdentifiers.first {
+            firstConsentData = .init()
+        } else if identifier == DocumentIdentifiers.second {
+            secondConsentData = .init()
         }
     }
 

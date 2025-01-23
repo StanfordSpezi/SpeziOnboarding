@@ -8,17 +8,18 @@
 
 import Foundation
 import SwiftUI
+import TPPDF
 
 
-extension ConsentDocument {
-    /// The ``ExportConfiguration`` enables developers to define the properties of the exported consent form.
-    public struct ExportConfiguration: Sendable {
+extension ConsentDocumentExportRepresentation {
+    /// The ``Configuration`` enables developers to define the properties of the exported consent form.
+    public struct Configuration: Equatable, Sendable {
         /// Represents common paper sizes with their dimensions.
         ///
         /// You can use the `dimensions` property to get the width and height of each paper size in points.
         ///
         /// - Note: The dimensions are calculated based on the standard DPI (dots per inch) of 72 for print.
-        public enum PaperSize: Sendable {
+        public enum PaperSize: Equatable, Sendable {
             /// Standard US Letter paper size.
             case usLetter
             /// Standard DIN A4 paper size.
@@ -42,12 +43,20 @@ extension ConsentDocument {
                     return (widthInInches * pointsPerInch, heightInInches * pointsPerInch)
                 }
             }
+
+            ///  `TPPDF/PDFPageFormat` which corresponds to SpeziOnboarding's `PaperSize`.
+            var pdfPageFormat: PDFPageFormat {
+                switch self {
+                case .usLetter: .usLetter
+                case .dinA4: .a4
+                }
+            }
         }
         
         #if !os(macOS)
         /// The ``FontSettings`` store configuration of the fonts used to render the exported
         /// consent document, i.e., fonts for the content, title and signature.
-        public struct FontSettings: Sendable {
+        public struct FontSettings: Equatable, Sendable {
             /// The font of the caption rendered below the signature line.
             public let signatureCaptionFont: UIFont
             /// The font of the prefix of the signature ("X" in most cases).
@@ -85,7 +94,7 @@ extension ConsentDocument {
         #else
         /// The ``FontSettings`` store configuration of the fonts used to render the exported
         /// consent document, i.e., fonts for the content, title and signature.
-        public struct FontSettings: @unchecked Sendable {
+        public struct FontSettings: Equatable, @unchecked Sendable {
             /// The font of the caption rendered below the signature line.
             public let signatureCaptionFont: NSFont
             /// The font of the prefix of the signature ("X" in most cases).
@@ -130,6 +139,7 @@ extension ConsentDocument {
 
         
         /// Creates an `ExportConfiguration` specifying the properties of the exported consent form.
+        ///
         /// - Parameters:
         ///   - paperSize: The page size of the exported form represented by ``ConsentDocument/ExportConfiguration/PaperSize``.
         ///   - consentTitle: The title of the exported consent form.
@@ -137,9 +147,9 @@ extension ConsentDocument {
         ///   - fontSettings: Font settings for the exported form.
         public init(
             paperSize: PaperSize = .usLetter,
-            consentTitle: LocalizedStringResource = LocalizationDefaults.exportedConsentFormTitle,
+            consentTitle: LocalizedStringResource = ConsentDocument.LocalizationDefaults.exportedConsentFormTitle,
             includingTimestamp: Bool = true,
-            fontSettings: FontSettings = ExportConfiguration.Defaults.defaultExportFontSettings
+            fontSettings: FontSettings = Configuration.Defaults.defaultExportFontSettings
         ) {
             self.paperSize = paperSize
             self.consentTitle = consentTitle

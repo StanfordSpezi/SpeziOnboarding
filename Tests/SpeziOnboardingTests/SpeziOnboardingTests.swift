@@ -50,19 +50,33 @@ final class SpeziOnboardingTests: XCTestCase {
                 self.loadMarkdownDataFromFile(path: markdownPath)
             }
             
-            let exportConfiguration = ConsentDocument.ExportConfiguration(
+            let exportConfiguration = ConsentDocumentExportRepresentation.Configuration(
                 paperSize: .dinA4,
                 consentTitle: "Spezi Onboarding",
                 includingTimestamp: false
             )
-            
-            var documentExport = ConsentDocumentExport(
-                markdown: markdownData,
-                exportConfiguration: exportConfiguration,
-                documentIdentifier: ConsentDocumentExport.Defaults.documentIdentifier
+
+            #if !os(macOS)
+            let documentExport = ConsentDocumentExportRepresentation(
+                markdown: markdownData(),
+                signature: .init(),
+                signatureImage: .init(),
+                name: PersonNameComponents(givenName: "Leland", familyName: "Stanford"),
+                formattedSignatureDate: "01/23/25",
+                documentIdentifier: ConsentDocumentExportRepresentation.Defaults.documentIdentifier,
+                configuration: exportConfiguration
             )
-            documentExport.name = PersonNameComponents(givenName: "Leland", familyName: "Stanford")
-            
+            #else
+            let documentExport = ConsentDocumentExportRepresentation(
+                markdown: markdownData(),
+                signature: "Stanford",
+                name: PersonNameComponents(givenName: "Leland", familyName: "Stanford"),
+                formattedSignatureDate: "01/23/25",
+                documentIdentifier: ConsentDocumentExportRepresentation.Defaults.documentIdentifier,
+                configuration: exportConfiguration
+            )
+            #endif
+
             #if os(macOS)
             let pdfPath = knownGoodPDFPath + "_mac_os"
             #elseif os(visionOS)
@@ -73,17 +87,8 @@ final class SpeziOnboardingTests: XCTestCase {
             
             let knownGoodPdf = loadPDFFromPath(path: pdfPath)
             
-            #if !os(macOS)
-            documentExport.signature = .init()
-            #else
-            documentExport.signature = "Stanford"
-            #endif
-            
-            if let pdf = try? await documentExport.export() {
-                XCTAssert(comparePDFDocuments(pdf1: pdf, pdf2: knownGoodPdf))
-            } else {
-                XCTFail("Failed to export PDF from ConsentDocumentExport.")
-            }
+            let pdf = try documentExport.render()
+            XCTAssert(comparePDFDocuments(pdf1: pdf, pdf2: knownGoodPdf))
         }
     }
     

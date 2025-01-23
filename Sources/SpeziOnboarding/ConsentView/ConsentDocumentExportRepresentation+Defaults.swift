@@ -10,7 +10,7 @@ import Foundation
 import SwiftUI
 
 
-extension ConsentDocument.ExportConfiguration {
+extension ConsentDocumentExportRepresentation.Configuration {
     /// Provides default values for fields related to the `ConsentDocumentExportConfiguration`.
     public enum Defaults {
         #if !os(macOS)

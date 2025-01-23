@@ -11,6 +11,7 @@ import AppKit
 #endif
 
 import Foundation
+import PDFKit
 import SpeziViews
 import SwiftUI
 
@@ -63,7 +64,7 @@ public struct OnboardingConsentView: View {
     private let action: () async -> Void
     private let title: LocalizedStringResource?
     private let identifier: String
-    private let exportConfiguration: ConsentDocument.ExportConfiguration
+    private let exportConfiguration: ConsentDocumentExportRepresentation.Configuration
     private let currentDateInSignature: Bool
     private var backButtonHidden: Bool {
         viewState == .storing || (viewState == .export && !willShowShareSheet)
@@ -120,7 +121,7 @@ public struct OnboardingConsentView: View {
                         viewState = .storing
                         Task {
                             do {
-                                // Stores the finished consent export in the Spezi `Standard`.
+                                // Stores the finished consent export representation in the Spezi `Standard`.
                                 try await onboardingDataSource.store(consentExport)
 
                                 await action()
@@ -167,13 +168,21 @@ public struct OnboardingConsentView: View {
             }
             .sheet(isPresented: $showShareSheet) {
                 if case .exported(let exportedConsent) = viewState {
-                    #if !os(macOS)
-                    ShareSheet(sharedItem: exportedConsent.consumePDF())
-                        .presentationDetents([.medium])
-                        .task {
-                            willShowShareSheet = false
-                        }
-                    #endif
+                    if let consentPdf = try? exportedConsent.render() {
+                        #if !os(macOS)
+                        ShareSheet(sharedItem: consentPdf)
+                            .presentationDetents([.medium])
+                            .task {
+                                willShowShareSheet = false
+                            }
+                        #endif
+                    } else {
+                        ProgressView()
+                            .padding()
+                            .task {
+                                viewState = .base(.error(Error.consentExportError))
+                            }
+                    }
                 } else {
                     ProgressView()
                         .padding()
@@ -222,8 +231,8 @@ public struct OnboardingConsentView: View {
         markdown: @escaping () async -> Data,
         action: @escaping () async -> Void,
         title: LocalizedStringResource? = LocalizationDefaults.consentFormTitle,
-        identifier: String = ConsentDocumentExport.Defaults.documentIdentifier,
-        exportConfiguration: ConsentDocument.ExportConfiguration = .init(),
+        identifier: String = ConsentDocumentExportRepresentation.Defaults.documentIdentifier,
+        exportConfiguration: ConsentDocumentExportRepresentation.Configuration = .init(),
         currentDateInSignature: Bool = true
     ) {
         self.markdown = markdown

@@ -50,7 +50,7 @@ public struct ConsentDocument: View {
     private let consentSignatureDateFormatter: DateFormatter
 
     let markdown: () async -> Data
-    let exportConfiguration: ExportConfiguration
+    let exportConfiguration: ConsentDocumentExportRepresentation.Configuration
     let documentIdentifier: String
 
     @Environment(\.colorScheme) var colorScheme
@@ -167,14 +167,10 @@ public struct ConsentDocument: View {
             .onChange(of: viewState) {
                 if case .export = viewState {
                     Task {
-                        do {
-                            // Stores the finished PDF in the Spezi `Standard`.
-                            let exportedConsent = try await export()
-                            viewState = .exported(document: exportedConsent)
-                        } catch {
-                            // In case of error, go back to previous state.
-                            viewState = .base(.error(AnyLocalizedError(error: error)))
-                        }
+                        // Captures the current state of the document and transforms it to the `ConsentDocumentExportRepresentation`
+                        viewState = .exported(
+                            representation: await self.exportRepresentation
+                        )
                     }
                 } else if case .base(let baseViewState) = viewState,
                           case .idle = baseViewState {
@@ -230,8 +226,8 @@ public struct ConsentDocument: View {
         givenNamePlaceholder: LocalizedStringResource = LocalizationDefaults.givenNamePlaceholder,
         familyNameTitle: LocalizedStringResource = LocalizationDefaults.familyNameTitle,
         familyNamePlaceholder: LocalizedStringResource = LocalizationDefaults.familyNamePlaceholder,
-        exportConfiguration: ExportConfiguration = .init(),
-        documentIdentifier: String = ConsentDocumentExport.Defaults.documentIdentifier,
+        exportConfiguration: ConsentDocumentExportRepresentation.Configuration = .init(),
+        documentIdentifier: String = ConsentDocumentExportRepresentation.Defaults.documentIdentifier,
         consentSignatureDate: Date? = nil,
         consentSignatureDateFormatter: DateFormatter = {
             let formatter = DateFormatter()
