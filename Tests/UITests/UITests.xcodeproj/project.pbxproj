@@ -88,6 +88,28 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		10BD9F752D439C6700E9282B /* Consent */ = {
+			isa = PBXGroup;
+			children = (
+				C49959772C6C8C1F008E5256 /* OnboardingConsentMarkdownRenderingView.swift */,
+				C49959782C6C8C1F008E5256 /* OnboardingConsentMarkdownTestView.swift */,
+			);
+			path = Consent;
+			sourceTree = "<group>";
+		};
+		10BD9F762D439C8800E9282B /* OnboardingFlow */ = {
+			isa = PBXGroup;
+			children = (
+				97A8FF2B2A74449F008CD91A /* OnboardingCustomTestView1.swift */,
+				97A8FF2D2A7444FC008CD91A /* OnboardingCustomTestView2.swift */,
+				970D44542A6F119600756FE2 /* OnboardingConditionalTestView.swift */,
+				61D77B532BC83F0100E3165F /* OnboardingCustomToggleTestView.swift */,
+				61040A1B2BAFA2F600EDD4EC /* OnboardingIdentifiableTestViewCustom.swift */,
+				61F1697D2BCA888600D1622B /* OnboardingTestViewNotIdentifiable.swift */,
+			);
+			path = OnboardingFlow;
+			sourceTree = "<group>";
+		};
 		2F6D138928F5F384007C25D6 = {
 			isa = PBXGroup;
 			children = (
@@ -141,19 +163,12 @@
 		970D44472A6F02E800756FE2 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				C49959772C6C8C1F008E5256 /* OnboardingConsentMarkdownRenderingView.swift */,
-				C49959782C6C8C1F008E5256 /* OnboardingConsentMarkdownTestView.swift */,
-				61D77B532BC83F0100E3165F /* OnboardingCustomToggleTestView.swift */,
-				61040A1B2BAFA2F600EDD4EC /* OnboardingIdentifiableTestViewCustom.swift */,
+				10BD9F762D439C8800E9282B /* OnboardingFlow */,
+				10BD9F752D439C6700E9282B /* Consent */,
 				97A8FF2F2A74606A008CD91A /* Helpers */,
 				970D44522A6F0B1900756FE2 /* OnboardingStartTestView.swift */,
 				970D444E2A6F048A00756FE2 /* OnboardingWelcomeTestView.swift */,
 				970D44502A6F04ED00756FE2 /* OnboardingSequentialTestView.swift */,
-				97A8FF2B2A74449F008CD91A /* OnboardingCustomTestView1.swift */,
-				97A8FF2D2A7444FC008CD91A /* OnboardingCustomTestView2.swift */,
-				970D44542A6F119600756FE2 /* OnboardingConditionalTestView.swift */,
-				97C6AF7E2ACC94450060155B /* OnboardingFlow+PreviewSimulator.swift */,
-				61F1697D2BCA888600D1622B /* OnboardingTestViewNotIdentifiable.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -162,6 +177,7 @@
 			isa = PBXGroup;
 			children = (
 				97A8FF302A74607F008CD91A /* CustomToggleView.swift */,
+				97C6AF7E2ACC94450060155B /* OnboardingFlow+PreviewSimulator.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";

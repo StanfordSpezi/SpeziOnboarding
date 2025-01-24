@@ -21,7 +21,7 @@ struct OnboardingCustomToggleTestView: View {
                 Text("Next")
             }
 
-            /// We need to use a custom-built toggle as UI tests are very flakey when clicking on SwiftUI `Toggle`'s
+            // We need to use a custom-built toggle as UI tests are very flakey when clicking on SwiftUI `Toggle`'s
             CustomToggleView(
                 text: "Show Conditional View",
                 condition: $showConditionalView
