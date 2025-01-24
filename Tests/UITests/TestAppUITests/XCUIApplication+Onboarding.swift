@@ -34,7 +34,7 @@ extension XCUIApplication {
         // Check if on consent export page
         XCTAssert(staticTexts["First Consent PDF rendering doesn't exist"].waitForExistence(timeout: 2))
 
-        XCTAssert(buttons["Next"].exists)
+        XCTAssert(buttons["Next"].waitForExistence(timeout: 2))
         buttons["Next"].tap()
 
         try consentViewOnboardingFlow(consentTitle: "Second Consent", markdownText: "This is the second markdown example")
@@ -52,7 +52,7 @@ extension XCUIApplication {
             // Check if on conditional test view
             XCTAssert(staticTexts["Conditional Test View"].waitForExistence(timeout: 2))
 
-            XCTAssert(buttons["Next"].exists)
+            XCTAssert(buttons["Next"].waitForExistence(timeout: 2))
             buttons["Next"].tap()
         }
 
@@ -62,16 +62,16 @@ extension XCUIApplication {
     
     func consentViewOnboardingFlow(consentTitle: String, markdownText: String) throws {
         XCTAssert(staticTexts[consentTitle].waitForExistence(timeout: 2))
-        XCTAssert(staticTexts[markdownText].exists)
+        XCTAssert(staticTexts[markdownText].waitForExistence(timeout: 2))
 
         #if targetEnvironment(simulator) && (arch(i386) || arch(x86_64))
             throw XCTSkip("PKCanvas view-related tests are currently skipped on Intel-based iOS simulators due to a metal bug on the simulator.")
         #endif
 
-        XCTAssert(staticTexts["First Name"].exists)
+        XCTAssert(staticTexts["First Name"].waitForExistence(timeout: 2))
         try textFields["Enter your first name ..."].enter(value: "Leland")
 
-        XCTAssert(staticTexts["Last Name"].exists)
+        XCTAssert(staticTexts["Last Name"].waitForExistence(timeout: 2))
         try textFields["Enter your last name ..."].enter(value: "Stanford")
         
         hitConsentButton()
@@ -85,10 +85,10 @@ extension XCUIApplication {
         XCTAssertTrue(buttons["Undo"].isEnabled)
         buttons["Undo"].tap()
 
-        XCTAssert(scrollViews["Signature Field"].exists)
+        XCTAssert(scrollViews["Signature Field"].waitForExistence(timeout: 2))
         scrollViews["Signature Field"].swipeRight()
         #else
-        XCTAssert(textFields["Signature Field"].exists)
+        XCTAssert(textFields["Signature Field"].waitForExistence(timeout: 2))
         try textFields["Signature Field"].enter(value: "Leland Stanford")
         #endif
 
