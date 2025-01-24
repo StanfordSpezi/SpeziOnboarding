@@ -13,12 +13,14 @@ import SwiftUI
 
 /// Configuration for the Spezi Onboarding module.
 ///
-/// Make sure that your standard in your Spezi Application conforms to the ``OnboardingConstraint``
+/// Make sure that the `Standard` in your Spezi Application conforms to the ``ConsentConstraint``
 /// protocol to store exported consent forms.
 /// ```swift
-/// actor ExampleStandard: Standard, OnboardingConstraint {
-///    func store(consent: Data) {
-///        ...
+/// actor ExampleStandard: Standard, ConsentConstraint {
+///    func store(consent: consuming sending ConsentDocumentExportRepresentation) async throws
+///        let pdf = try consent.render()
+///        let documentIdentifier = consent.documentIdentifier
+///        // ...
 ///    }
 /// }
 /// ```
@@ -33,22 +35,19 @@ import SwiftUI
 ///     }
 /// }
 /// ```
-public final class OnboardingDataSource: Module, EnvironmentAccessible, @unchecked Sendable {
+public final class OnboardingDataSource: Module, EnvironmentAccessible {
     @StandardActor var standard: any ConsentConstraint
 
     
     public init() { }
 
 
-    /// Adds a new exported consent form represented as `PDFDocument` to the ``OnboardingDataSource``.
+    /// Adds a new exported consent form representation ``ConsentDocumentExportRepresentation`` to the ``OnboardingDataSource``.
     ///
     /// - Parameters:
-    ///   - consent: The exported consent form represented as `ConsentDocumentExportRepresentation` that should be added.
-    ///   - identifier: The document identifier for the exported consent document.
-    public func store(
-        _ consent: consuming sending ConsentDocumentExportRepresentation,
-        identifier: String = ConsentDocumentExportRepresentation.Defaults.documentIdentifier
-    ) async throws {
+    ///   - consent: The exported consent form represented as ``ConsentDocumentExportRepresentation`` that should be added.
+    @MainActor
+    public func store(_ consent: consuming sending ConsentDocumentExportRepresentation) async throws {
         try await standard.store(consent: consent)
     }
 }

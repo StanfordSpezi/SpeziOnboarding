@@ -11,8 +11,13 @@ import SwiftUI
 
 
 extension ConsentDocumentExportRepresentation.Configuration {
-    /// Provides default values for fields related to the `ConsentDocumentExportConfiguration`.
+    /// Provides default values for fields related to the ``ConsentDocumentExportRepresentation/Configuration``.
     public enum Defaults {
+        /// Default value for a document identifier.
+        ///
+        /// This identifier will be used as default value if no identifier is provided.
+        public static let documentIdentifier = "ConsentDocument"
+        
         #if !os(macOS)
         /// Default export font settings with fixed font sizes, ensuring a consistent appearance across platforms.
         ///

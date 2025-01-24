@@ -21,7 +21,7 @@ import SwiftUI
 /// signed using a family and given name and a hand drawn signature.
 ///
 /// Furthermore, the view includes an export functionality, enabling users to share and store the signed consent form.
-/// The exported consent form is automatically stored in the Spezi `Standard`, requiring the `Standard` to conform to the ``OnboardingConstraint``.
+/// The exported consent form is automatically stored in the Spezi `Standard`, requiring the `Standard` to conform to the ``ConsentConstraint``.
 ///
 /// The `OnboardingConsentView` builds on top of the SpeziOnboarding ``ConsentDocument`` 
 /// by providing a more developer-friendly, convenient API with additional functionalities like the share consent option.
@@ -119,7 +119,7 @@ public struct OnboardingConsentView: View {
                 if case .exported(let consentExport) = viewState {
                     if !willShowShareSheet {
                         viewState = .storing
-                        Task {
+                        Task { @MainActor in
                             do {
                                 // Stores the finished consent export representation in the Spezi `Standard`.
                                 try await onboardingDataSource.store(consentExport)
@@ -191,11 +191,15 @@ public struct OnboardingConsentView: View {
             #if os(macOS)
             .onChange(of: showShareSheet) { _, isPresented in
                 if isPresented,
-                   case .exported(let exportedConsentDocument) = viewState {
-                    let shareSheet = ShareSheet(sharedItem: exportedConsentDocument.consumePDF())
-                    shareSheet.show()
+                   case .exported(let exportedConsent) = viewState {
+                    if let consentPdf = try? exportedConsent.render() {
+                        let shareSheet = ShareSheet(sharedItem: consentPdf)
+                        shareSheet.show()
 
-                    showShareSheet = false
+                        showShareSheet = false
+                    } else {
+                        viewState = .base(.error(Error.consentExportError))
+                    }
                 }
             }
             
@@ -225,13 +229,13 @@ public struct OnboardingConsentView: View {
     ///   - action: The action that should be performed once the consent is given.
     ///   - title: The title of the view displayed at the top. Can be `nil`, meaning no title is displayed.
     ///   - identifier: A unique identifier or "name" for the consent form, helpful for distinguishing consent forms when storing in the `Standard`.
-    ///   - exportConfiguration: Defines the properties of the exported consent form via ``ConsentDocument/ExportConfiguration``.
+    ///   - exportConfiguration: Defines the properties of the exported consent form via ``ConsentDocumentExportRepresentation/Configuration``.
     ///   - currentDateInSignature: Indicates if the consent document should include the current date in the signature field. Defaults to `true`.
     public init(
         markdown: @escaping () async -> Data,
         action: @escaping () async -> Void,
         title: LocalizedStringResource? = LocalizationDefaults.consentFormTitle,
-        identifier: String = ConsentDocumentExportRepresentation.Defaults.documentIdentifier,
+        identifier: String = ConsentDocumentExportRepresentation.Configuration.Defaults.documentIdentifier,
         exportConfiguration: ConsentDocumentExportRepresentation.Configuration = .init(),
         currentDateInSignature: Bool = true
     ) {

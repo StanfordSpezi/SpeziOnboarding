@@ -60,11 +60,11 @@ extension ConsentDocumentExportRepresentation {
     /// Exports the signature as a `PDFGroup`, including the prefix ("X"), the name of the signee, the date, as well as the signature image.
     private var renderedSignature: PDFGroup {
         let personName = name.formatted(.name(style: .long))
-        
+
         #if !os(macOS)
         let group = PDFGroup(
             allowsBreaks: false,
-            backgroundImage: PDFImage(image: signatureImage),
+            backgroundImage: PDFImage(image: signature),
             padding: EdgeInsets(top: 50, left: 50, bottom: 0, right: 100)
         )
         let signaturePrefix = "X"

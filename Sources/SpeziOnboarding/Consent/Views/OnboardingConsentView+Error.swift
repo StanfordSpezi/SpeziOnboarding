@@ -15,21 +15,21 @@ extension OnboardingConsentView {
         case consentExportError
 
 
-        public var errorDescription: String? {
+        var errorDescription: String? {
             switch self {
             case .consentExportError:
                 String(localized: LocalizedStringResource("Consent document could not be exported.", bundle: .atURL(from: .module)))
             }
         }
 
-        public var recoverySuggestion: String? {
+        var recoverySuggestion: String? {
             switch self {
             case .consentExportError:
                 String(localized: LocalizedStringResource("Please try exporting the consent document again.", bundle: .atURL(from: .module)))
             }
         }
 
-        public var failureReason: String? {
+        var failureReason: String? {
             switch self {
             case .consentExportError:
                 String(localized: LocalizedStringResource("The PDF generation from the consent document failed. ", bundle: .atURL(from: .module)))

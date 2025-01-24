@@ -11,11 +11,11 @@ import PDFKit
 import Spezi
 
 
-/// A Constraint which all `Standard` instances must conform to when using the `OnboardingConsentView`.
+/// A constraint which all `Standard` instances must conform to when using the `OnboardingConsentView`.
 public protocol ConsentConstraint: Standard {
     /// Adds a new exported consent form represented as `PDFDocument` to the `Standard` conforming to ``ConsentConstraint``.
     /// 
     /// - Parameters:
-    ///     - consent: The exported consent form represented as `ConsentDocumentExportRepresentation` that should be added.            
+    ///     - consent: The exported consent form represented as ``ConsentDocumentExportRepresentation`` that should be added.            
     func store(consent: consuming sending ConsentDocumentExportRepresentation) async throws
 }

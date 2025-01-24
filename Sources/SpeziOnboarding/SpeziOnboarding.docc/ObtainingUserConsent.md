@@ -85,3 +85,11 @@ OnboardingConsentView(
 ### Views
 
 - ``OnboardingConsentView``
+- ``ConsentDocument``
+- ``SignatureView``
+
+### Export
+
+- ``ConsentViewState``
+- ``ConsentDocumentExportRepresentation``
+- ``ConsentConstraint``

@@ -20,10 +20,13 @@ import SwiftUI
 ///
 /// To observe and control the current state of the `ConsentDocument`, the view requires passing down a ``ConsentViewState`` as a SwiftUI `Binding` in the
 /// ``init(markdown:viewState:givenNameTitle:givenNamePlaceholder:familyNameTitle:familyNamePlaceholder:exportConfiguration:documentIdentifier:consentSignatureDate:consentSignatureDateFormatter:)`` initializer.
-/// This `Binding` can then be used to trigger the export of the consent form via setting the state to ``ConsentViewState/export``.
-/// After the rendering completes, the finished `PDFDocument` from Apple's PDFKit is accessible via the associated value of the view state in ``ConsentViewState/exported(document:export:)``.
+///
+/// This `Binding` can then be used to trigger the creation of the export representation of the consent form via setting the state to ``ConsentViewState/export``.
+/// After the export representation completes, the ``ConsentDocumentExportRepresentation`` is accessible via the associated value of the view state in ``ConsentViewState/exported(representation:)``.
+/// The ``ConsentDocumentExportRepresentation`` can then be rendered to a PDF via ``ConsentDocumentExportRepresentation/render()``.
 /// Other possible states of the `ConsentDocument` are the SpeziViews `ViewState`'s accessible via the associated value in ``ConsentViewState/base(_:)``.
-/// In addition, the view provides information about the signing progress via the ``ConsentViewState/signing`` and ``ConsentViewState/signed`` states.
+/// In addition, the view provides information about the signing progress via the ``ConsentViewState/signing`` and ``ConsentViewState/signed`` states,
+/// as well as the ``ConsentViewState/storing`` state that indicates the current storage process via the ``ConsentConstraint``.
 ///
 /// ```swift
 /// // Enables observing the view state of the consent document
@@ -113,7 +116,7 @@ public struct ConsentDocument: View {
         }
     }
     
-    @MainActor private var signatureView: some View {
+    private var signatureView: some View {
         Group {
             #if !os(macOS)
             SignatureView(
@@ -215,7 +218,7 @@ public struct ConsentDocument: View {
     ///   - givenNamePlaceholder: The localization to use for the given name field placeholder.
     ///   - familyNameTitle: The localization to use for the family (last) name field.
     ///   - familyNamePlaceholder: The localization to use for the family name field placeholder.
-    ///   - exportConfiguration: Defines the properties of the exported consent form via ``ConsentDocument/ExportConfiguration``.
+    ///   - exportConfiguration: Defines the properties of the exported consent form via ``ConsentDocumentExportRepresentation/Configuration``.
     ///   - documentIdentifier: A unique identifier or "name" for the consent form, helpful for distinguishing consent forms when storing in the `Standard`.
     ///   - consentSignatureDate: The date that is displayed under the signature line.
     ///   - consentSignatureDateFormatter: The date formatter used to format the date that is displayed under the signature line.
@@ -227,7 +230,7 @@ public struct ConsentDocument: View {
         familyNameTitle: LocalizedStringResource = LocalizationDefaults.familyNameTitle,
         familyNamePlaceholder: LocalizedStringResource = LocalizationDefaults.familyNamePlaceholder,
         exportConfiguration: ConsentDocumentExportRepresentation.Configuration = .init(),
-        documentIdentifier: String = ConsentDocumentExportRepresentation.Defaults.documentIdentifier,
+        documentIdentifier: String = ConsentDocumentExportRepresentation.Configuration.Defaults.documentIdentifier,
         consentSignatureDate: Date? = nil,
         consentSignatureDateFormatter: DateFormatter = {
             let formatter = DateFormatter()
