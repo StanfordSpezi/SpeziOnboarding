@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		106D8B662D45761600D7637A /* ConsentDocumentIdentifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 106D8B652D45760C00D7637A /* ConsentDocumentIdentifiers.swift */; };
+		106D8B682D45851500D7637A /* OnboardingConsentFinishedRenderedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 106D8B672D45851500D7637A /* OnboardingConsentFinishedRenderedView.swift */; };
 		2F61BDC329DD02D600D71D33 /* SpeziOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = 2F61BDC229DD02D600D71D33 /* SpeziOnboarding */; };
 		2F61BDC929DD3CC000D71D33 /* OnboardingTestsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F61BDC829DD3CC000D71D33 /* OnboardingTestsView.swift */; };
 		2F61BDCB29DDE76D00D71D33 /* SpeziOnboardingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F61BDCA29DDE76D00D71D33 /* SpeziOnboardingTests.swift */; };
@@ -28,8 +29,7 @@
 		97C6AF7B2ACC89000060155B /* XCTestExtensions in Frameworks */ = {isa = PBXBuildFile; productRef = 97C6AF7A2ACC89000060155B /* XCTestExtensions */; };
 		97C6AF7F2ACC94450060155B /* OnboardingFlow+PreviewSimulator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97C6AF7E2ACC94450060155B /* OnboardingFlow+PreviewSimulator.swift */; };
 		A950C9C02C68AFAD0052FA6D /* XCUIApplication+Onboarding.swift in Sources */ = {isa = PBXBuildFile; fileRef = A950C9BF2C68AFA80052FA6D /* XCUIApplication+Onboarding.swift */; };
-		C49959792C6C8C1F008E5256 /* OnboardingConsentMarkdownFinishedRenderedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C49959772C6C8C1F008E5256 /* OnboardingConsentMarkdownFinishedRenderedView.swift */; };
-		C499597A2C6C8C1F008E5256 /* OnboardingConsentMarkdownTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C49959782C6C8C1F008E5256 /* OnboardingConsentMarkdownTestView.swift */; };
+		C499597A2C6C8C1F008E5256 /* OnboardingConsentTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C49959782C6C8C1F008E5256 /* OnboardingConsentTestView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,6 +44,7 @@
 
 /* Begin PBXFileReference section */
 		106D8B652D45760C00D7637A /* ConsentDocumentIdentifiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsentDocumentIdentifiers.swift; sourceTree = "<group>"; };
+		106D8B672D45851500D7637A /* OnboardingConsentFinishedRenderedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingConsentFinishedRenderedView.swift; sourceTree = "<group>"; };
 		2F61BDC129DD023E00D71D33 /* SpeziOnboarding */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = SpeziOnboarding; path = ../..; sourceTree = "<group>"; };
 		2F61BDC829DD3CC000D71D33 /* OnboardingTestsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingTestsView.swift; sourceTree = "<group>"; };
 		2F61BDCA29DDE76D00D71D33 /* SpeziOnboardingTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpeziOnboardingTests.swift; sourceTree = "<group>"; };
@@ -66,8 +67,7 @@
 		97C6AF782ACC88270060155B /* TestAppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestAppDelegate.swift; sourceTree = "<group>"; };
 		97C6AF7E2ACC94450060155B /* OnboardingFlow+PreviewSimulator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OnboardingFlow+PreviewSimulator.swift"; sourceTree = "<group>"; };
 		A950C9BF2C68AFA80052FA6D /* XCUIApplication+Onboarding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIApplication+Onboarding.swift"; sourceTree = "<group>"; };
-		C49959772C6C8C1F008E5256 /* OnboardingConsentMarkdownFinishedRenderedView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingConsentMarkdownFinishedRenderedView.swift; sourceTree = "<group>"; };
-		C49959782C6C8C1F008E5256 /* OnboardingConsentMarkdownTestView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingConsentMarkdownTestView.swift; sourceTree = "<group>"; };
+		C49959782C6C8C1F008E5256 /* OnboardingConsentTestView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingConsentTestView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -93,9 +93,9 @@
 		10BD9F752D439C6700E9282B /* Consent */ = {
 			isa = PBXGroup;
 			children = (
+				C49959782C6C8C1F008E5256 /* OnboardingConsentTestView.swift */,
+				106D8B672D45851500D7637A /* OnboardingConsentFinishedRenderedView.swift */,
 				106D8B652D45760C00D7637A /* ConsentDocumentIdentifiers.swift */,
-				C49959772C6C8C1F008E5256 /* OnboardingConsentMarkdownFinishedRenderedView.swift */,
-				C49959782C6C8C1F008E5256 /* OnboardingConsentMarkdownTestView.swift */,
 			);
 			path = Consent;
 			sourceTree = "<group>";
@@ -319,10 +319,9 @@
 				97C6AF792ACC88270060155B /* TestAppDelegate.swift in Sources */,
 				61F1697E2BCA888600D1622B /* OnboardingTestViewNotIdentifiable.swift in Sources */,
 				106D8B662D45761600D7637A /* ConsentDocumentIdentifiers.swift in Sources */,
-				C499597A2C6C8C1F008E5256 /* OnboardingConsentMarkdownTestView.swift in Sources */,
+				C499597A2C6C8C1F008E5256 /* OnboardingConsentTestView.swift in Sources */,
 				970D44552A6F119600756FE2 /* OnboardingConditionalTestView.swift in Sources */,
 				97C6AF772ACC86B70060155B /* ExampleStandard.swift in Sources */,
-				C49959792C6C8C1F008E5256 /* OnboardingConsentMarkdownFinishedRenderedView.swift in Sources */,
 				970D44532A6F0B1900756FE2 /* OnboardingStartTestView.swift in Sources */,
 				970D44512A6F04ED00756FE2 /* OnboardingSequentialTestView.swift in Sources */,
 				61D77B542BC83F0100E3165F /* OnboardingCustomToggleTestView.swift in Sources */,
@@ -331,6 +330,7 @@
 				97A8FF2E2A7444FC008CD91A /* OnboardingCustomTestView2.swift in Sources */,
 				2F61BDC929DD3CC000D71D33 /* OnboardingTestsView.swift in Sources */,
 				61040A1D2BAFA2F600EDD4EC /* OnboardingIdentifiableTestViewCustom.swift in Sources */,
+				106D8B682D45851500D7637A /* OnboardingConsentFinishedRenderedView.swift in Sources */,
 				97C6AF7F2ACC94450060155B /* OnboardingFlow+PreviewSimulator.swift in Sources */,
 				970D444F2A6F048A00756FE2 /* OnboardingWelcomeTestView.swift in Sources */,
 				97A8FF312A74607F008CD91A /* CustomToggleView.swift in Sources */,

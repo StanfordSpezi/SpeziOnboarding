@@ -24,24 +24,24 @@ struct OnboardingTestsView: View {
             OnboardingWelcomeTestView()
             OnboardingSequentialTestView()
 
-            OnboardingConsentMarkdownTestView(
+            OnboardingConsentTestView(
                 consentTitle: "First Consent",
                 consentText: "This is the first *markdown* **example**",
                 documentIdentifier: ConsentDocumentIdentifiers.first
             )
 
-            OnboardingConsentMarkdownFinishedRenderedView(
+            OnboardingConsentFinishedRenderedView(
                 consentTitle: "First Consent",
                 documentIdentifier: ConsentDocumentIdentifiers.first
             )
 
-            OnboardingConsentMarkdownTestView(
+            OnboardingConsentTestView(
                 consentTitle: "Second Consent",
                 consentText: "This is the second *markdown* **example**",
                 documentIdentifier: ConsentDocumentIdentifiers.second
             )
                 .onboardingIdentifier(ConsentDocumentIdentifiers.second)
-            OnboardingConsentMarkdownFinishedRenderedView(
+            OnboardingConsentFinishedRenderedView(
                 consentTitle: "Second Consent",
                 documentIdentifier: ConsentDocumentIdentifiers.second
             )
