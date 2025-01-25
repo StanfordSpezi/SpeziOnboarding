@@ -13,14 +13,9 @@ import SwiftUI
 
 /// Represents a to-be-exported ``ConsentDocument``.
 ///
-/// It holds all the content necessary to export the ``ConsentDocument`` as a `PDFDocument` and the corresponding identifier String in ``ConsentDocumentExportRepresentation/documentIdentifier``.
+/// It holds all the content necessary to export the ``ConsentDocument`` as a `PDFDocument`.
 /// Using ``ConsentDocumentExportRepresentation/render()`` performs the rendering of the ``ConsentDocument`` as a PDF.
 public struct ConsentDocumentExportRepresentation: Equatable {
-    /// An unique identifier for the exported ``ConsentDocument``.
-    ///
-    /// Corresponds to the identifier which was passed  when creating the ``ConsentDocument`` using an ``OnboardingConsentView``.
-    public let documentIdentifier: String
-
     let configuration: Configuration
     let markdown: Data
     #if !os(macOS)
@@ -40,21 +35,18 @@ public struct ConsentDocumentExportRepresentation: Equatable {
     ///   - signature: The rendered signature image of the consent document.
     ///   - name: The name components of the signature.
     ///   - formattedSignatureDate: The performed `String`-based signature date.
-    ///   - documentIdentifier: A unique `String` identifying the ``ConsentDocumentExportRepresentation`` upon export.
     ///   - exportConfiguration: Holds configuration properties of the to-be-exported document.
     init(
         markdown: Data,
         signature: UIImage,
         name: PersonNameComponents,
         formattedSignatureDate: String?,
-        documentIdentifier: String,
         configuration: Configuration
     ) {
         self.markdown = markdown
         self.name = name
         self.signature = signature
         self.formattedSignatureDate = formattedSignatureDate
-        self.documentIdentifier = documentIdentifier
         self.configuration = configuration
     }
     #else
@@ -65,21 +57,18 @@ public struct ConsentDocumentExportRepresentation: Equatable {
     ///   - signature: The `String`-based signature of the consent document.
     ///   - name: The name components of the signature.
     ///   - formattedSignatureDate: The performed `String`-based signature date.
-    ///   - documentIdentifier: A unique `String` identifying the ``ConsentDocumentExportRepresentation`` upon export.
     ///   - exportConfiguration: Holds configuration properties of the to-be-exported document.
     init(
         markdown: Data,
         signature: String,
         name: PersonNameComponents,
         formattedSignatureDate: String?,
-        documentIdentifier: String,
         configuration: Configuration
     ) {
         self.markdown = markdown
         self.name = name
         self.signature = signature
         self.formattedSignatureDate = formattedSignatureDate
-        self.documentIdentifier = documentIdentifier
         self.configuration = configuration
     }
     #endif

@@ -57,7 +57,6 @@ extension View {
     ///     }
     /// }
     /// ```
-    @MainActor
     public func onboardingIdentifier<ID: Hashable>(_ identifier: ID) -> ModifiedContent<Self, _OnboardingIdentifiableViewModifier<ID>> {
         // For some reason, we need to explicitly spell the return type, otherwise the type will be `AnyView`.
         // Not sure how that happens, but it does with Xcode 16 toolchain.

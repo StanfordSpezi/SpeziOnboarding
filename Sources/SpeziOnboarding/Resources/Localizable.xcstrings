@@ -2,7 +2,14 @@
   "sourceLanguage" : "en",
   "strings" : {
     "Consent document could not be exported." : {
-
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einwilligung konnte nicht exportiert werden."
+          }
+        }
+      }
     },
     "CONSENT_ACTION" : {
       "localizations" : {
@@ -16,57 +23,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "I Consent"
-          }
-        }
-      }
-    },
-    "CONSENT_EXPORT_ERROR_DESCRIPTION" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Die unterschriebene Einwilligung konnte nicht exportiert werden."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Failed to export the signed consent form."
-          }
-        }
-      }
-    },
-    "CONSENT_EXPORT_ERROR_FAILURE_REASON" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Der Speicherplatz für das Exportieren der Einwilligung konnte nicht reserviert werden."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The system wasn't able to reserve the necessary memory for rendering the consent form."
-          }
-        }
-      }
-    },
-    "CONSENT_EXPORT_ERROR_RECOVERY_SUGGESTION" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bitte versuche es erneut oder starte die Applikation neu."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Please try again or restart the application."
           }
         }
       }
@@ -248,7 +204,14 @@
       }
     },
     "Please try exporting the consent document again." : {
-
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bitte versucht das Dokument erneut zu exportieren."
+          }
+        }
+      }
     },
     "SEQUENTIAL_ONBOARDING_NEXT" : {
       "localizations" : {
@@ -267,7 +230,20 @@
       }
     },
     "SIGNATURE_DATE %@" : {
-
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unterschrift Datum %@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Signature date %@"
+          }
+        }
+      }
     },
     "SIGNATURE_FIELD" : {
       "localizations" : {
@@ -318,7 +294,14 @@
       }
     },
     "The PDF generation from the consent document failed. " : {
-
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der PDF export des Einwilligungsdokuments ist fehlgeschlagen."
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

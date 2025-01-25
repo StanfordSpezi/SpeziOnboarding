@@ -49,7 +49,6 @@ struct SpeziOnboardingTests {
             signature: .init(),
             name: PersonNameComponents(givenName: "Leland", familyName: "Stanford"),
             formattedSignatureDate: "01/23/25",
-            documentIdentifier: ConsentDocumentExportRepresentation.Configuration.Defaults.documentIdentifier,
             configuration: exportConfiguration
         )
         #else
@@ -58,7 +57,6 @@ struct SpeziOnboardingTests {
             signature: "Stanford",
             name: PersonNameComponents(givenName: "Leland", familyName: "Stanford"),
             formattedSignatureDate: "01/23/25",
-            documentIdentifier: ConsentDocumentExportRepresentation.Configuration.Defaults.documentIdentifier,
             configuration: exportConfiguration
         )
         #endif

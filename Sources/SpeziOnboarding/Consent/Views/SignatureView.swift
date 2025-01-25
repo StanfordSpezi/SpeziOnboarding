@@ -81,7 +81,7 @@ public struct SignatureView: View {
         }
             #if !os(macOS)
             .onChange(of: isSigning) {
-                Task { @MainActor in
+                runOrScheduleOnMainActor {
                     canUndo = undoManager?.canUndo ?? false
                 }
             }

@@ -20,24 +20,24 @@ enum OnboardingFlow {
             OnboardingConsentMarkdownTestView(
                 consentTitle: "Consent Document",
                 consentText: "This is the first *markdown* **example**",
-                documentIdentifier: DocumentIdentifiers.first
+                documentIdentifier: ConsentDocumentIdentifiers.first
             ),
-            OnboardingConsentMarkdownRenderingView(
+            OnboardingConsentMarkdownFinishedRenderedView(
                 consentTitle: "Consent Document",
-                documentIdentifier: DocumentIdentifiers.first
+                documentIdentifier: ConsentDocumentIdentifiers.first
             ),
 
             OnboardingConsentMarkdownTestView(
                 consentTitle: "Consent Document",
                 consentText: "This is the second *markdown* **example**",
-                documentIdentifier: DocumentIdentifiers.second
+                documentIdentifier: ConsentDocumentIdentifiers.second
             )
-                .onboardingIdentifier(DocumentIdentifiers.second),
-            OnboardingConsentMarkdownRenderingView(
+                .onboardingIdentifier(ConsentDocumentIdentifiers.second),
+            OnboardingConsentMarkdownFinishedRenderedView(
                 consentTitle: "Consent Document",
-                documentIdentifier: DocumentIdentifiers.second
+                documentIdentifier: ConsentDocumentIdentifiers.second
             )
-                .onboardingIdentifier("\(DocumentIdentifiers.second)_rendering"),
+                .onboardingIdentifier("\(ConsentDocumentIdentifiers.second)_rendering"),
 
             OnboardingCustomTestView1(exampleArgument: "test"),
             OnboardingCustomTestView2(),

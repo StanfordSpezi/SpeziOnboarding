@@ -12,8 +12,6 @@ import SpeziOnboarding
 
 class TestAppDelegate: SpeziAppDelegate {
     override var configuration: Configuration {
-        Configuration(standard: ExampleStandard()) {
-            OnboardingDataSource()
-        }
+        Configuration(standard: ExampleStandard()) {}
     }
 }

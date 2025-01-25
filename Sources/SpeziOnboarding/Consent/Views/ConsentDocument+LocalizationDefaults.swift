@@ -22,8 +22,5 @@ extension ConsentDocument {
         public static let familyNameTitle = LocalizedStringResource("NAME_FIELD_FAMILY_NAME_TITLE", bundle: .atURL(from: .module))
         /// Default localized placeholder for the family name field of the consent form in the ``ConsentDocument``.
         public static let familyNamePlaceholder = LocalizedStringResource("NAME_FIELD_FAMILY_NAME_PLACEHOLDER", bundle: .atURL(from: .module))
-        
-        /// Default localized value for the title of the exported consent form.
-        public static let exportedConsentFormTitle = LocalizedStringResource("CONSENT_TITLE", bundle: .atURL(from: .module))
     }
 }

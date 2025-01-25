@@ -27,25 +27,25 @@ struct OnboardingTestsView: View {
             OnboardingConsentMarkdownTestView(
                 consentTitle: "First Consent",
                 consentText: "This is the first *markdown* **example**",
-                documentIdentifier: DocumentIdentifiers.first
+                documentIdentifier: ConsentDocumentIdentifiers.first
             )
 
-            OnboardingConsentMarkdownRenderingView(
+            OnboardingConsentMarkdownFinishedRenderedView(
                 consentTitle: "First Consent",
-                documentIdentifier: DocumentIdentifiers.first
+                documentIdentifier: ConsentDocumentIdentifiers.first
             )
 
             OnboardingConsentMarkdownTestView(
                 consentTitle: "Second Consent",
                 consentText: "This is the second *markdown* **example**",
-                documentIdentifier: DocumentIdentifiers.second
+                documentIdentifier: ConsentDocumentIdentifiers.second
             )
-                .onboardingIdentifier(DocumentIdentifiers.second)
-            OnboardingConsentMarkdownRenderingView(
+                .onboardingIdentifier(ConsentDocumentIdentifiers.second)
+            OnboardingConsentMarkdownFinishedRenderedView(
                 consentTitle: "Second Consent",
-                documentIdentifier: DocumentIdentifiers.second
+                documentIdentifier: ConsentDocumentIdentifiers.second
             )
-                .onboardingIdentifier("\(DocumentIdentifiers.second)_rendering")
+                .onboardingIdentifier("\(ConsentDocumentIdentifiers.second)_rendering")
 
             OnboardingTestViewNotIdentifiable(text: "Leland").onboardingIdentifier("a")
             OnboardingTestViewNotIdentifiable(text: "Stanford").onboardingIdentifier("b")

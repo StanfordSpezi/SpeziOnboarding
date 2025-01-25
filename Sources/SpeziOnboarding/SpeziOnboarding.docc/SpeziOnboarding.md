@@ -184,8 +184,3 @@ struct ConsentViewExample: View {
 - ``ConsentDocument``
 - ``ConsentViewState``
 - ``SignatureView``
-
-### Data Flow
-
-- ``OnboardingDataSource``
-- ``ConsentConstraint``

@@ -13,11 +13,9 @@ import SwiftUI
 extension ConsentDocumentExportRepresentation.Configuration {
     /// Provides default values for fields related to the ``ConsentDocumentExportRepresentation/Configuration``.
     public enum Defaults {
-        /// Default value for a document identifier.
-        ///
-        /// This identifier will be used as default value if no identifier is provided.
-        public static let documentIdentifier = "ConsentDocument"
-        
+        /// Default localized value for the title of the exported consent form.
+        public static let exportedConsentFormTitle = LocalizedStringResource("CONSENT_TITLE", bundle: .atURL(from: .module))
+
         #if !os(macOS)
         /// Default export font settings with fixed font sizes, ensuring a consistent appearance across platforms.
         ///

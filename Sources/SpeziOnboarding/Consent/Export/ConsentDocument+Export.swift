@@ -22,7 +22,6 @@ extension ConsentDocument {
                 signature: signatureImage,
                 name: self.name,
                 formattedSignatureDate: self.formattedConsentSignatureDate,
-                documentIdentifier: self.documentIdentifier,
                 configuration: self.exportConfiguration
             )
             #else
@@ -31,7 +30,6 @@ extension ConsentDocument {
                 signature: self.signature,
                 name: self.name,
                 formattedSignatureDate: self.formattedConsentSignatureDate,
-                documentIdentifier: self.documentIdentifier,
                 configuration: self.exportConfiguration
             )
             #endif

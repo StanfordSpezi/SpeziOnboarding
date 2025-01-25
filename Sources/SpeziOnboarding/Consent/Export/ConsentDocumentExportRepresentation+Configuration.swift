@@ -131,7 +131,7 @@ extension ConsentDocumentExportRepresentation {
         }
         #endif
 
-           
+
         let consentTitle: LocalizedStringResource
         let paperSize: PaperSize
         let includingTimestamp: Bool
@@ -147,7 +147,7 @@ extension ConsentDocumentExportRepresentation {
         ///   - fontSettings: Font settings for the exported form.
         public init(
             paperSize: PaperSize = .usLetter,
-            consentTitle: LocalizedStringResource = ConsentDocument.LocalizationDefaults.exportedConsentFormTitle,
+            consentTitle: LocalizedStringResource = Configuration.Defaults.exportedConsentFormTitle,
             includingTimestamp: Bool = true,
             fontSettings: FontSettings = Configuration.Defaults.defaultExportFontSettings
         ) {

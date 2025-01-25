@@ -12,6 +12,8 @@ import AppKit
 
 import Foundation
 import PDFKit
+import Spezi
+import SpeziFoundation
 import SpeziViews
 import SwiftUI
 
@@ -21,32 +23,21 @@ import SwiftUI
 /// signed using a family and given name and a hand drawn signature.
 ///
 /// Furthermore, the view includes an export functionality, enabling users to share and store the signed consent form.
-/// The exported consent form is automatically stored in the Spezi `Standard`, requiring the `Standard` to conform to the ``ConsentConstraint``.
+/// The exported consent form PDF is received via the `action` closure on the ``OnboardingConsentView/init(markdown:action:title:currentDateInSignature:exportConfiguration:)``.
 ///
 /// The `OnboardingConsentView` builds on top of the SpeziOnboarding ``ConsentDocument`` 
 /// by providing a more developer-friendly, convenient API with additional functionalities like the share consent option.
-///
-/// If you want to use multiple `OnboardingConsentView`, you can provide each with an identifier (see below).
-/// The identifier allows to distinguish the consent forms in the `Standard`.
-/// Any identifier is a string. We recommend storing and grouping consent document identifiers in an enum:
-/// ```swift
-/// enum DocumentIdentifiers {
-///     static let first = "firstConsentDocument"
-///     static let second = "secondConsentDocument"
-/// }
-/// ```
 ///
 /// ```swift
 /// OnboardingConsentView(
 ///     markdown: {
 ///         Data("This is a *markdown* **example**".utf8)
 ///     },
-///     action: {
+///     action: { exportedConsentPdf in
 ///         // The action that should be performed once the user has provided their consent.
+///         // Closure receives the exported consent PDF to persist or upload it.
 ///     },
 ///     title: "Consent",   // Configure the title of the consent view
-///     identifier: DocumentIdentifiers.first, // Specify a unique identifier String, preferably bundled
-///                                            // in an enum (see above). Only relevant if more than one OnboardingConsentView is needed.
 ///     exportConfiguration: .init(paperSize: .usLetter),   // Configure the properties of the exported consent form
 ///     currentDateInSignature: true   // Indicates if the consent signature should include the current date
 /// )
@@ -61,16 +52,14 @@ public struct OnboardingConsentView: View {
     }
         
     private let markdown: () async -> Data
-    private let action: () async -> Void
+    private let action: (_ document: PDFDocument) async throws -> Void
     private let title: LocalizedStringResource?
-    private let identifier: String
-    private let exportConfiguration: ConsentDocumentExportRepresentation.Configuration
     private let currentDateInSignature: Bool
+    private let exportConfiguration: ConsentDocumentExportRepresentation.Configuration
     private var backButtonHidden: Bool {
         viewState == .storing || (viewState == .export && !willShowShareSheet)
     }
-
-    @Environment(OnboardingDataSource.self) private var onboardingDataSource
+    
     @State private var viewState: ConsentViewState = .base(.idle)
     @State private var willShowShareSheet = false
     @State private var showShareSheet = false
@@ -91,7 +80,6 @@ public struct OnboardingConsentView: View {
                         markdown: markdown,
                         viewState: $viewState,
                         exportConfiguration: exportConfiguration,
-                        documentIdentifier: identifier,
                         consentSignatureDate: currentDateInSignature ? .now : nil
                     )
                     .padding(.bottom)
@@ -119,12 +107,11 @@ public struct OnboardingConsentView: View {
                 if case .exported(let consentExport) = viewState {
                     if !willShowShareSheet {
                         viewState = .storing
-                        Task { @MainActor in
-                            do {
-                                // Stores the finished consent export representation in the Spezi `Standard`.
-                                try await onboardingDataSource.store(consentExport)
 
-                                await action()
+                        Task {
+                            do {
+                                // Calls the passed `action` closure with the rendered consent PDF.
+                                try await action(consentExport.render())
                                 viewState = .base(.idle)
                             } catch {
                                 // In case of error, go back to previous state.
@@ -226,25 +213,22 @@ public struct OnboardingConsentView: View {
     /// Creates an `OnboardingConsentView` which provides a convenient onboarding view for visualizing, signing, and exporting a consent form.
     /// - Parameters:
     ///   - markdown: The markdown content provided as an UTF8 encoded `Data` instance that can be provided asynchronously.
-    ///   - action: The action that should be performed once the consent is given.
+    ///   - action: The action that should be performed once the consent is given. Action is called with the exported consent document as a parameter.
     ///   - title: The title of the view displayed at the top. Can be `nil`, meaning no title is displayed.
-    ///   - identifier: A unique identifier or "name" for the consent form, helpful for distinguishing consent forms when storing in the `Standard`.
-    ///   - exportConfiguration: Defines the properties of the exported consent form via ``ConsentDocumentExportRepresentation/Configuration``.
     ///   - currentDateInSignature: Indicates if the consent document should include the current date in the signature field. Defaults to `true`.
+    ///   - exportConfiguration: Defines the properties of the exported consent form via ``ConsentDocumentExportRepresentation/Configuration``.
     public init(
         markdown: @escaping () async -> Data,
-        action: @escaping () async -> Void,
+        action: @escaping (_ document: PDFDocument) async throws -> Void,
         title: LocalizedStringResource? = LocalizationDefaults.consentFormTitle,
-        identifier: String = ConsentDocumentExportRepresentation.Configuration.Defaults.documentIdentifier,
-        exportConfiguration: ConsentDocumentExportRepresentation.Configuration = .init(),
-        currentDateInSignature: Bool = true
+        currentDateInSignature: Bool = true,
+        exportConfiguration: ConsentDocumentExportRepresentation.Configuration = .init()
     ) {
         self.markdown = markdown
-        self.exportConfiguration = exportConfiguration
-        self.title = title
         self.action = action
-        self.identifier = identifier
+        self.title = title
         self.currentDateInSignature = currentDateInSignature
+        self.exportConfiguration = exportConfiguration
     }
 }
 
@@ -257,7 +241,7 @@ public struct OnboardingConsentView: View {
     NavigationStack {
         OnboardingConsentView(markdown: {
             Data("This is a *markdown* **example**".utf8)
-        }, action: {
+        }, action: { _ in
             print("Next")
         })
     }
