@@ -12,7 +12,7 @@ import SpeziViews
 import SwiftUI
 
 
-struct OnboardingConsentMarkdownFinishedRenderedView: View {
+struct OnboardingConsentFinishedRenderedView: View {
     let consentTitle: String
     let documentIdentifier: ConsentDocumentIdentifiers
 
@@ -71,7 +71,7 @@ struct OnboardingConsentMarkdownFinishedRenderedView: View {
 
 #if DEBUG
 #Preview {
-    OnboardingStack(startAtStep: OnboardingConsentMarkdownFinishedRenderedView.self) {
+    OnboardingStack(startAtStep: OnboardingConsentFinishedRenderedView.self) {
         for onboardingView in OnboardingFlow.previewSimulatorViews {
             onboardingView
         }
