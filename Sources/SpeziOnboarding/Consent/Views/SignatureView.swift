@@ -80,10 +80,8 @@ public struct SignatureView: View {
             #endif
         }
             #if !os(macOS)
-            .onChange(of: isSigning) {
-                runOrScheduleOnMainActor {
-                    canUndo = undoManager?.canUndo ?? false
-                }
+            .onChange(of: undoManager?.canUndo) { _, canUndo in
+                self.canUndo = canUndo ?? false
             }
             .transition(.opacity)
             .animation(.easeInOut, value: canUndo)

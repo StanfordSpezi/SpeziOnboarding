@@ -39,18 +39,4 @@ public enum ConsentViewState: Equatable {
     case exported(representation: ConsentDocumentExportRepresentation)
     /// The `storing` state indicates that the ``ConsentDocument`` is currently being stored to the Standard.
     case storing
-
-
-    public static func == (lhs: ConsentViewState, rhs: ConsentViewState) -> Bool {
-        switch (lhs, rhs) {
-        case let (.base(lhsValue), .base(rhsValue)): lhsValue == rhsValue
-        case (.namesEntered, .namesEntered): true
-        case (.signing, .signing): true
-        case (.signed, .signed): true
-        case (.export, .export): true
-        case let (.exported(lhsValue), .exported(rhsValue)): lhsValue == rhsValue
-        case (.storing, .storing): true
-        default: false
-        }
-    }
 }

@@ -56,9 +56,6 @@ public struct OnboardingConsentView: View {
     private let title: LocalizedStringResource?
     private let currentDateInSignature: Bool
     private let exportConfiguration: ConsentDocumentExportRepresentation.Configuration
-    private var backButtonHidden: Bool {
-        viewState == .storing || (viewState == .export && !willShowShareSheet)
-    }
     
     @State private var viewState: ConsentViewState = .base(.idle)
     @State private var willShowShareSheet = false
@@ -201,7 +198,11 @@ public struct OnboardingConsentView: View {
             }
             #endif
     }
-    
+
+    private var backButtonHidden: Bool {
+        viewState == .storing || (viewState == .export && !willShowShareSheet)
+    }
+
     private var actionButtonsEnabled: Bool {
         switch viewState {
         case .signing, .signed, .exported: true
