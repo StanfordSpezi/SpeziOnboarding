@@ -13,7 +13,6 @@ import AppKit
 import Foundation
 import PDFKit
 import Spezi
-import SpeziFoundation
 import SpeziViews
 import SwiftUI
 
@@ -52,7 +51,7 @@ public struct OnboardingConsentView: View {
     }
         
     private let markdown: () async -> Data
-    private let action: (_ document: PDFDocument) async throws -> Void
+    private let action: @MainActor (_ document: PDFDocument) async throws -> Void
     private let title: LocalizedStringResource?
     private let currentDateInSignature: Bool
     private let exportConfiguration: ConsentDocumentExportRepresentation.Configuration
@@ -84,35 +83,38 @@ public struct OnboardingConsentView: View {
                 actionView: {
                     Button(
                         action: {
-                            viewState = .export
+                            withAnimation(.easeOut(duration: 0.2)) {
+                                viewState = .export     // Triggers the export process
+                            }
                         },
                         label: {
                             Text("CONSENT_ACTION", bundle: .module)
                                 .frame(maxWidth: .infinity, minHeight: 38)
-                                .processingOverlay(isProcessing: viewState == .storing || (viewState == .export && !willShowShareSheet))
+                                .processingOverlay(isProcessing: backButtonHidden)
                         }
                     )
                         .buttonStyle(.borderedProminent)
                         .disabled(!actionButtonsEnabled)
-                        .animation(.easeInOut, value: actionButtonsEnabled)
+                        .animation(.easeInOut(duration: 0.2), value: actionButtonsEnabled)
                         .id("ActionButton")
                 }
             )
             .scrollDisabled($viewState.signing.wrappedValue)
             .navigationBarBackButtonHidden(backButtonHidden)
-            .onChange(of: viewState) {
+            .task(id: viewState) {
                 if case .exported(let consentExport) = viewState {
                     if !willShowShareSheet {
-                        viewState = .storing
+                        do {
+                            // Pass the rendered consent form to the `action` closure
+                            try await action(consentExport.render())
 
-                        Task {
-                            do {
-                                // Calls the passed `action` closure with the rendered consent PDF.
-                                try await action(consentExport.render())
-                                viewState = .base(.idle)
-                            } catch {
+                            withAnimation(.easeIn(duration: 0.2)) {
+                                self.viewState = .base(.idle)
+                            }
+                        } catch {
+                            withAnimation(.easeIn(duration: 0.2)) {
                                 // In case of error, go back to previous state.
-                                viewState = .base(.error(AnyLocalizedError(error: error)))
+                                self.viewState = .base(.error(AnyLocalizedError(error: error)))
                             }
                         }
                     } else {
@@ -159,6 +161,11 @@ public struct OnboardingConsentView: View {
                             .task {
                                 willShowShareSheet = false
                             }
+                            .onDisappear {
+                                withAnimation(.easeIn(duration: 0.2)) {
+                                    self.viewState = .base(.idle)
+                                }
+                            }
                         #endif
                     } else {
                         ProgressView()
@@ -170,6 +177,12 @@ public struct OnboardingConsentView: View {
                 } else {
                     ProgressView()
                         .padding()
+                        .task {
+                            // This is required as only the "Markup" action from the ShareSheet misses to dismiss the share sheet again
+                            if !willShowShareSheet {
+                                showShareSheet = false
+                            }
+                        }
                 }
             }
             #if os(macOS)
@@ -200,12 +213,17 @@ public struct OnboardingConsentView: View {
     }
 
     private var backButtonHidden: Bool {
-        viewState == .storing || (viewState == .export && !willShowShareSheet)
+        let exportStates = switch viewState {
+        case .export, .exported: true
+        default: false
+        }
+        
+        return exportStates && !willShowShareSheet
     }
 
     private var actionButtonsEnabled: Bool {
         switch viewState {
-        case .signing, .signed, .exported: true
+        case .signing, .signed: true
         default: false
         }
     }
@@ -220,7 +238,7 @@ public struct OnboardingConsentView: View {
     ///   - exportConfiguration: Defines the properties of the exported consent form via ``ConsentDocumentExportRepresentation/Configuration``.
     public init(
         markdown: @escaping () async -> Data,
-        action: @escaping (_ document: PDFDocument) async throws -> Void,
+        action: @escaping @MainActor (_ document: PDFDocument) async throws -> Void,
         title: LocalizedStringResource? = LocalizationDefaults.consentFormTitle,
         currentDateInSignature: Bool = true,
         exportConfiguration: ConsentDocumentExportRepresentation.Configuration = .init()

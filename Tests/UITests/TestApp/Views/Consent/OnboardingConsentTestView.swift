@@ -32,6 +32,9 @@ struct OnboardingConsentTestView: View {
                 case .second: standard.secondConsentDocument = exportedConsent
                 }
 
+                // Simulate storage / upload delay of consent form
+                try await Task.sleep(until: .now + .seconds(0.5))
+
                 // Navigates to the next onboarding step
                 path.nextStep()
             },

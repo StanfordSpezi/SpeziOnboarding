@@ -80,11 +80,13 @@ public struct ConsentDocument: View {
                 #endif
             }
                 .disabled(inputFieldsDisabled)
-                .onChange(of: name) {
+                .onChange(of: name) { _, name in
                     if !(name.givenName?.isEmpty ?? true) && !(name.familyName?.isEmpty ?? true) {
                         viewState = .namesEntered
                     } else {
-                        viewState = .base(.idle)
+                        withAnimation(.easeIn(duration: 0.2)) {
+                            viewState = .base(.idle)
+                        }
                         // Reset all strokes if name fields are not complete anymore
                         #if !os(macOS)
                         signature.strokes.removeAll()
@@ -135,7 +137,7 @@ public struct ConsentDocument: View {
         }
             .padding(.vertical, 4)
             .disabled(inputFieldsDisabled)
-            .onChange(of: signature) {
+            .onChange(of: signature) { _, signature in
                 #if !os(macOS)
                 let isSignatureEmpty = signature.strokes.isEmpty
                 #else
@@ -144,7 +146,11 @@ public struct ConsentDocument: View {
                 if !(isSignatureEmpty || (name.givenName?.isEmpty ?? true) || (name.familyName?.isEmpty ?? true)) {
                     viewState = .signed
                 } else {
-                    viewState = .namesEntered
+                    if (name.givenName?.isEmpty ?? true) || (name.familyName?.isEmpty ?? true) {
+                        viewState = .base(.idle)    // Hide signature view if names not complete anymore
+                    } else {
+                        viewState = .namesEntered
+                    }
                 }
             }
     }
@@ -166,14 +172,12 @@ public struct ConsentDocument: View {
         }
             .transition(.opacity)
             .animation(.easeInOut, value: viewState == .namesEntered)
-            .onChange(of: viewState) {
+            .task(id: viewState) {
                 if case .export = viewState {
-                    Task {
-                        // Captures the current state of the document and transforms it to the `ConsentDocumentExportRepresentation`
-                        viewState = .exported(
-                            representation: await self.exportRepresentation
-                        )
-                    }
+                    // Captures the current state of the document and transforms it to the `ConsentDocumentExportRepresentation`
+                    self.viewState = .exported(
+                        representation: await self.exportRepresentation
+                    )
                 } else if case .base(let baseViewState) = viewState,
                           case .idle = baseViewState {
                     // Reset view state to correct one after handling an error view state via `.viewStateAlert()`
@@ -182,11 +186,11 @@ public struct ConsentDocument: View {
                     #else
                     let isSignatureEmpty = signature.isEmpty
                     #endif
-                    
+
                     if !isSignatureEmpty {
-                        viewState = .signed
-                    } else if !(name.givenName?.isEmpty ?? true) || !(name.familyName?.isEmpty ?? true) {
-                        viewState = .namesEntered
+                        self.viewState = .signed
+                    } else if !(name.givenName?.isEmpty ?? true) && !(name.familyName?.isEmpty ?? true) {
+                        self.viewState = .namesEntered
                     }
                 }
             }
@@ -194,7 +198,10 @@ public struct ConsentDocument: View {
     }
     
     private var inputFieldsDisabled: Bool {
-        viewState == .base(.processing) || viewState == .export || viewState == .storing
+        switch viewState {
+        case .base(.processing), .export, .exported: true
+        default: false
+        }
     }
 
     var formattedConsentSignatureDate: String? {

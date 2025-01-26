@@ -79,14 +79,23 @@ extension XCUIApplication {
         XCTAssert(staticTexts["Name: Leland Stanford"].waitForExistence(timeout: 2))
 
         #if !os(macOS)
+        XCTAssert(buttons["Undo"].waitForExistence(timeout: 2.0))
+        XCTAssertFalse(buttons["Undo"].isEnabled)
+
         staticTexts["Name: Leland Stanford"].swipeRight()
 
         XCTAssert(buttons["Undo"].waitForExistence(timeout: 2.0))
         XCTAssertTrue(buttons["Undo"].isEnabled)
         buttons["Undo"].tap()
 
+        XCTAssert(buttons["Undo"].waitForExistence(timeout: 2.0))
+        XCTAssertFalse(buttons["Undo"].isEnabled)
+
         XCTAssert(scrollViews["Signature Field"].waitForExistence(timeout: 2))
         scrollViews["Signature Field"].swipeRight()
+
+        XCTAssert(buttons["Undo"].waitForExistence(timeout: 2.0))
+        XCTAssertTrue(buttons["Undo"].isEnabled)
         #else
         XCTAssert(textFields["Signature Field"].waitForExistence(timeout: 2))
         try textFields["Signature Field"].enter(value: "Leland Stanford")
