@@ -11,7 +11,6 @@ import Foundation
 
 extension OnboardingConsentView {
     enum Error: LocalizedError {
-        /// Indicates that the local model file is not found.
         case consentExportError
 
 

@@ -18,15 +18,15 @@ import SwiftUI
 /// Allows the display markdown-based consent documents that can be signed using a family and given name and a hand drawn signature.
 /// In addition, it enables the export of the signed form as a PDF document.
 ///
-/// To observe and control the current state of the `ConsentDocument`, the view requires passing down a ``ConsentViewState`` as a SwiftUI `Binding` in the
+/// To observe and control the current state of the ``ConsentDocument``, the `View` requires passing down a ``ConsentViewState`` as a SwiftUI `Binding` in the
 /// ``init(markdown:viewState:givenNameTitle:givenNamePlaceholder:familyNameTitle:familyNamePlaceholder:exportConfiguration:consentSignatureDate:consentSignatureDateFormatter:)`` initializer.
 ///
 /// This `Binding` can then be used to trigger the creation of the export representation of the consent form via setting the state to ``ConsentViewState/export``.
 /// After the export representation completes, the ``ConsentDocumentExportRepresentation`` is accessible via the associated value of the view state in ``ConsentViewState/exported(representation:)``.
 /// The ``ConsentDocumentExportRepresentation`` can then be rendered to a PDF via ``ConsentDocumentExportRepresentation/render()``.
-/// Other possible states of the `ConsentDocument` are the SpeziViews `ViewState`'s accessible via the associated value in ``ConsentViewState/base(_:)``.
-/// In addition, the view provides information about the signing progress via the ``ConsentViewState/signing`` and ``ConsentViewState/signed`` states,
-/// as well as the ``ConsentViewState/storing`` state that indicates the current storage process of the exported document.
+///
+/// Other possible states of the ``ConsentDocument`` are the SpeziViews `ViewState`'s accessible via the associated value in ``ConsentViewState/base(_:)``.
+/// In addition, the view provides information about the signing progress via the ``ConsentViewState/signing`` and ``ConsentViewState/signed`` states.
 ///
 /// ```swift
 /// // Enables observing the view state of the consent document

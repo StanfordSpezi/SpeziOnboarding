@@ -11,7 +11,7 @@ import SpeziViews
 import SwiftUI
 
 
-/// The `ConsentViewState` indicates in what state the ``ConsentDocument`` currently is.
+/// The ``ConsentViewState`` indicates in what state the ``ConsentDocument`` currently is.
 ///
 /// It can be used to observe and control the behavior of the ``ConsentDocument``, especially in regards
 /// to the export functionality.

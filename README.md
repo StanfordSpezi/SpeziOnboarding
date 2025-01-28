@@ -126,7 +126,7 @@ struct SequentialOnboardingViewExample: View {
 
 The [`OnboardingConsentView`](https://swiftpackageindex.com/stanfordspezi/spezionboarding/documentation/spezionboarding/onboardingconsentview) can be used to allow your users to read and agree to a document, e.g., a consent document for a research study or a terms and conditions document for an app. The document can be signed using a family and given name and a hand-drawn signature. The signed consent form can then be exported and shared as a PDF file.
 
-The following example demonstrates how the [`OnboardingConsentView`](https://swiftpackageindex.com/stanfordspezi/spezionboarding/documentation/spezionboarding/onboardingconsentview) shown above is constructed by providing markdown content encoded as a [UTF8](https://www.swift.org/blog/utf8-string/) [`Data`](https://developer.apple.com/documentation/foundation/data) instance (which may be provided asynchronously), an action that should be performed once the consent has been given, as well as a configuration defining the properties of the exported consent form.
+The following example demonstrates how the [`OnboardingConsentView`](https://swiftpackageindex.com/stanfordspezi/spezionboarding/documentation/spezionboarding/onboardingconsentview) shown above is constructed by providing markdown content encoded as a [UTF8](https://www.swift.org/blog/utf8-string/) [`Data`](https://developer.apple.com/documentation/foundation/data) instance (which may be provided asynchronously), an action that should be performed once the consent has been given (which receives the exported consent form as a PDF), as well as a configuration defining the properties of the exported consent form.
 
 ```swift
 import SpeziOnboarding
@@ -139,8 +139,9 @@ struct ConsentViewExample: View {
             markdown: {
                 Data("This is a *markdown* **example**".utf8)
             },
-            action: {
-                // Action to perform once the user has given their consent
+            action: { exportedConsentPdf in
+                // Action to perform once the user has given their consent.
+                // Closure receives the exported consent PDF to persist or upload it.
             },
             exportConfiguration: .init(paperSize: .usLetter),    // Configure the properties of the exported consent form
             currentDateInSignature: true   // Indicates if the consent signature should include the current date.

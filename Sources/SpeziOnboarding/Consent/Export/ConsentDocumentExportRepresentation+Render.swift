@@ -12,7 +12,7 @@ import SwiftUI
 import TPPDF
 
 
-/// Extension of `ConsentDocumentExportRepresentation` enabling the export of the signed consent page.
+/// Extension of ``ConsentDocumentExportRepresentation`` enabling the export of the signed consent page as a PDF.
 extension ConsentDocumentExportRepresentation {
     /// Generates a `PDFAttributedText` containing the timestamp of the time at which the PDF was exported.
     private var renderedTimeStamp: PDFAttributedText? {

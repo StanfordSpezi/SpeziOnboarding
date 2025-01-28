@@ -18,17 +18,18 @@ The ``OnboardingConsentView`` can allow users to read and agree to a document, e
 
 @Image(source: "ConsentView.png")
 
-The following example demonstrates how the ``OnboardingConsentView`` shown above is constructed by providing a header, markdown content encoded as a [UTF8](https://www.swift.org/blog/utf8-string/) [`Data`](https://developer.apple.com/documentation/foundation/data) instance (which may be provided asynchronously), and an action that should be performed once the consent has been given.
+The following example demonstrates how the ``OnboardingConsentView`` shown above is constructed by providing a header, markdown content encoded as a [UTF8](https://www.swift.org/blog/utf8-string/) [`Data`](https://developer.apple.com/documentation/foundation/data) instance (which may be provided asynchronously), an action that should be performed once the consent has been given (which receives the exported consent form as a PDF), as well as a configuration defining the properties of the exported consent form.
 
 ```swift
 OnboardingConsentView(
     markdown: {
         Data("This is a *markdown* **example**".utf8)
     },
-    action: {
-        // Action to perform once the user has given their consent
+    action: { exportedConsentPdf in
+        // Action to perform once the user has given their consent.
+        // Closure receives the exported consent PDF to persist or upload it.
     },
-    identifier: "MyFirstConsentForm", // Specify an optional unique identifier for the consent form, helpful for distinguishing consent forms when storing.
+    title: "Consent",   // Configure the title of the consent view
     exportConfiguration: .init(paperSize: .usLetter),   // Configure the properties of the exported consent form.
     currentDateInSignature: true   // Indicates if the consent signature should include the current date.
 )
@@ -37,47 +38,28 @@ OnboardingConsentView(
 ### Using multiple consent forms
 
 If you want to show multiple consent documents to the user, that need to be signed separately, you can add multiple instances of ``OnboardingConsentView``.
-In that case, it is important that you provide each instance with an unique document identifier String, to distinguish the two consent documents when they are stored. Consider the example code below.
+If used within the ``OnboardingStack``, it is important to specify a unique `View/onboardingIdentifier(:identifier)` for each ``OnboardingConsentView``.
 
-First, define an enum which holds a document identifier String for each of the two (or more) documents. We recommend using an enum to hold the
-identifier strings to avoid having to write them explicitly throughout your App (e.g., in the ``OnboardingConsentView`` and the Spezi `Standard`).
 
 ```swift
-enum DocumentIdentifiers {
-    static let first = "firstConsentDocument"
-    static let second = "secondConsentDocument"
+OnboardingStack {
+    OnboardingConsentView(
+        markdown: { Data("This is a *markdown* **example**".utf8) },
+        action: { firstConsentPdf in
+            // Store or share the first signed consent form.
+            // Use the `OnboardingNavigationPath` from the SwiftUI `@Environment` to navigate to the next `OnboardingConsentView`.
+        }
+    )
+        .onboardingIdentifier("firstConsentView") // Set an identifier (String) for the `View`, to distinguish it from other `View`s of the same type.
+
+    OnboardingConsentView(
+        markdown: { Data("This is a *markdown* **example**".utf8) },
+        action: { secondConsentPdf in
+            // Store or share the second signed consent form.
+        }
+    )
+        .onboardingIdentifier("secondConsentView"), // Set an identifier for the `View`, to distinguish it from other `View`s of the same type.
 }
-```
-
-Next, use the identifier to instantiate two consent views with separate documents.
-Note, that you will also have to set the "onboardingIdentifier", so that Spezi can distinguish the views. We recommend that you simply reuse your document identifier for the onboardingIdentifier.
-
-```swift
-OnboardingConsentView(
-    markdown: {
-        Data("This is a *markdown* **example**".utf8)
-    },
-    action: {
-        // Action to perform once the user has given their consent
-    },
-    identifier: DocumentIdentifiers.first, // Specify an optional unique identifier for the consent form, helpful for distinguishing consent forms when storing.
-    exportConfiguration: .init(paperSize: .usLetter),   // Configure the properties of the exported consent form.
-    currentDateInSignature: true   // Indicates if the consent signature should include the current date.
-)
-    .onboardingIdentifier(DocumentIdentifiers.first) // Set an identifier (String) for the view, to distinguish it from other views of the same type.
-
-OnboardingConsentView(
-    markdown: {
-        Data("This is a *markdown* **example**".utf8)
-    },
-    action: {
-        // Action to perform once the user has given their consent
-    },
-    identifier: DocumentIdentifiers.second, // Specify an optional unique identifier for the consent form, helpful for distinguishing consent forms when storing.
-    exportConfiguration: .init(paperSize: .usLetter),   // Configure the properties of the exported consent form.
-    currentDateInSignature: false   // Indicates if the consent signature should include the current date.
-)
-    .onboardingIdentifier(DocumentIdentifiers.second), // Set an identifier for the view, to distinguish it from other views of the same type.
 ```
 
 ## Topics

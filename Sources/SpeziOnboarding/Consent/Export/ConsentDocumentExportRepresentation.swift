@@ -6,8 +6,6 @@
 // SPDX-License-Identifier: MIT
 //
 
-@preconcurrency import PDFKit
-import PencilKit
 import SwiftUI
 
 

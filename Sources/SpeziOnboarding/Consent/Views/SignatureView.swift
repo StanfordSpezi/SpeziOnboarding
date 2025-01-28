@@ -23,7 +23,8 @@ import SwiftUI
 /// SignatureView(
 ///     signature: $signature,
 ///     isSigning: $isSigning,
-///     name: name
+///     name: name,
+///     formattedDate: "01/23/25"
 /// )
 /// ```
 public struct SignatureView: View {

@@ -11,6 +11,7 @@ import PencilKit
 import SwiftUI
 import TPPDF
 
+
 /// Extension of `ConsentDocument` enabling the export of the signed consent page.
 extension ConsentDocument {
     /// Creates the export representation of the ``ConsentDocument`` including all necessary content.

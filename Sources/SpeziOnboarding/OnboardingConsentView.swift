@@ -18,13 +18,13 @@ import SwiftUI
 
 /// Onboarding view to display markdown-based consent documents that can be signed and exported.
 ///
-/// The `OnboardingConsentView` provides a convenient onboarding view for the display of markdown-based documents that can be
+/// The ``OnboardingConsentView`` provides a convenient onboarding `View` for the display of markdown-based documents that can be
 /// signed using a family and given name and a hand drawn signature.
 ///
-/// Furthermore, the view includes an export functionality, enabling users to share and store the signed consent form.
+/// Furthermore, the `View` includes an export functionality, enabling users to share and store the signed consent form.
 /// The exported consent form PDF is received via the `action` closure on the ``OnboardingConsentView/init(markdown:action:title:currentDateInSignature:exportConfiguration:)``.
 ///
-/// The `OnboardingConsentView` builds on top of the SpeziOnboarding ``ConsentDocument`` 
+/// The ``OnboardingConsentView`` builds on top of the SpeziOnboarding ``ConsentDocument``
 /// by providing a more developer-friendly, convenient API with additional functionalities like the share consent option.
 ///
 /// ```swift
@@ -51,7 +51,7 @@ public struct OnboardingConsentView: View {
     }
         
     private let markdown: () async -> Data
-    private let action: @MainActor (_ document: PDFDocument) async throws -> Void
+    private let action: (_ document: PDFDocument) async throws -> Void
     private let title: LocalizedStringResource?
     private let currentDateInSignature: Bool
     private let exportConfiguration: ConsentDocumentExportRepresentation.Configuration
@@ -106,7 +106,8 @@ public struct OnboardingConsentView: View {
                     if !willShowShareSheet {
                         do {
                             // Pass the rendered consent form to the `action` closure
-                            try await action(consentExport.render())
+                            nonisolated(unsafe) let pdf = try consentExport.render()
+                            try await action(pdf)
 
                             withAnimation(.easeIn(duration: 0.2)) {
                                 self.viewState = .base(.idle)
@@ -163,7 +164,7 @@ public struct OnboardingConsentView: View {
                             }
                             .onDisappear {
                                 withAnimation(.easeIn(duration: 0.2)) {
-                                    self.viewState = .base(.idle)
+                                    self.viewState = .signed
                                 }
                             }
                         #endif
@@ -193,13 +194,17 @@ public struct OnboardingConsentView: View {
                         let shareSheet = ShareSheet(sharedItem: consentPdf)
                         shareSheet.show()
 
+                        willShowShareSheet = false
                         showShareSheet = false
+
+                        withAnimation(.easeIn(duration: 0.2)) {
+                            self.viewState = .signed
+                        }
                     } else {
                         viewState = .base(.error(Error.consentExportError))
                     }
                 }
             }
-            
             // `NSSharingServicePicker` doesn't provide a completion handler as `UIActivityViewController` does,
             // therefore necessitating the deletion of the temporary file on disappearing.
             .onDisappear {
@@ -238,7 +243,7 @@ public struct OnboardingConsentView: View {
     ///   - exportConfiguration: Defines the properties of the exported consent form via ``ConsentDocumentExportRepresentation/Configuration``.
     public init(
         markdown: @escaping () async -> Data,
-        action: @escaping @MainActor (_ document: PDFDocument) async throws -> Void,
+        action: @escaping (_ document: PDFDocument) async throws -> Void,
         title: LocalizedStringResource? = LocalizationDefaults.consentFormTitle,
         currentDateInSignature: Bool = true,
         exportConfiguration: ConsentDocumentExportRepresentation.Configuration = .init()
