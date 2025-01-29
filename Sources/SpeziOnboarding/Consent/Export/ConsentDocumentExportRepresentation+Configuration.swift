@@ -8,17 +8,18 @@
 
 import Foundation
 import SwiftUI
+import TPPDF
 
 
-extension ConsentDocument {
-    /// The ``ExportConfiguration`` enables developers to define the properties of the exported consent form.
-    public struct ExportConfiguration: Sendable {
+extension ConsentDocumentExportRepresentation {
+    /// The ``Configuration`` enables developers to define the properties of the exported consent form.
+    public struct Configuration: Equatable, Sendable {
         /// Represents common paper sizes with their dimensions.
         ///
         /// You can use the `dimensions` property to get the width and height of each paper size in points.
         ///
         /// - Note: The dimensions are calculated based on the standard DPI (dots per inch) of 72 for print.
-        public enum PaperSize: Sendable {
+        public enum PaperSize: Equatable, Sendable {
             /// Standard US Letter paper size.
             case usLetter
             /// Standard DIN A4 paper size.
@@ -42,14 +43,22 @@ extension ConsentDocument {
                     return (widthInInches * pointsPerInch, heightInInches * pointsPerInch)
                 }
             }
+
+            ///  `TPPDF/PDFPageFormat` which corresponds to SpeziOnboarding's `PaperSize`.
+            var pdfPageFormat: PDFPageFormat {
+                switch self {
+                case .usLetter: .usLetter
+                case .dinA4: .a4
+                }
+            }
         }
         
         #if !os(macOS)
         /// The ``FontSettings`` store configuration of the fonts used to render the exported
         /// consent document, i.e., fonts for the content, title and signature.
-        public struct FontSettings: Sendable {
-            /// The font of the name rendered below the signature line.
-            public let signatureNameFont: UIFont
+        public struct FontSettings: Equatable, Sendable {
+            /// The font of the caption rendered below the signature line.
+            public let signatureCaptionFont: UIFont
             /// The font of the prefix of the signature ("X" in most cases).
             public let signaturePrefixFont: UIFont
             /// The font of the content of the document (i.e., the rendered markdown text)
@@ -63,19 +72,19 @@ extension ConsentDocument {
             /// Creates an instance`FontSettings` specifying the fonts of various components of the exported document
             ///
             /// - Parameters:
-            ///   - signatureNameFont: The font used for the signature name.
+            ///   - signatureCaptionFont: The font used for the signature caption.
             ///   - signaturePrefixFont: The font used for the signature prefix text.
             ///   - documentContentFont: The font used for the main content of the document.
             ///   - headerTitleFont: The font used for the header title.
             ///   - headerExportTimeStampFont: The font used for the header timestamp.
             public init(
-                signatureNameFont: UIFont,
+                signatureCaptionFont: UIFont,
                 signaturePrefixFont: UIFont,
                 documentContentFont: UIFont,
                 headerTitleFont: UIFont,
                 headerExportTimeStampFont: UIFont
             ) {
-                self.signatureNameFont = signatureNameFont
+                self.signatureCaptionFont = signatureCaptionFont
                 self.signaturePrefixFont = signaturePrefixFont
                 self.documentContentFont = documentContentFont
                 self.headerTitleFont = headerTitleFont
@@ -85,9 +94,9 @@ extension ConsentDocument {
         #else
         /// The ``FontSettings`` store configuration of the fonts used to render the exported
         /// consent document, i.e., fonts for the content, title and signature.
-        public struct FontSettings: @unchecked Sendable {
-            /// The font of the name rendered below the signature line.
-            public let signatureNameFont: NSFont
+        public struct FontSettings: Equatable, @unchecked Sendable {
+            /// The font of the caption rendered below the signature line.
+            public let signatureCaptionFont: NSFont
             /// The font of the prefix of the signature ("X" in most cases).
             public let signaturePrefixFont: NSFont
             /// The font of the content of the document (i.e., the rendered markdown text)
@@ -101,19 +110,19 @@ extension ConsentDocument {
             /// Creates an instance`FontSettings` specifying the fonts of various components of the exported document
             ///
             /// - Parameters:
-            ///   - signatureNameFont: The font used for the signature name.
+            ///   - signatureCaptionFont: The font used for the signature caption.
             ///   - signaturePrefixFont: The font used for the signature prefix text.
             ///   - documentContentFont: The font used for the main content of the document.
             ///   - headerTitleFont: The font used for the header title.
             ///   - headerExportTimeStampFont: The font used for the header timestamp.
             public init(
-                signatureNameFont: NSFont,
+                signatureCaptionFont: NSFont,
                 signaturePrefixFont: NSFont,
                 documentContentFont: NSFont,
                 headerTitleFont: NSFont,
                 headerExportTimeStampFont: NSFont
             ) {
-                self.signatureNameFont = signatureNameFont
+                self.signatureCaptionFont = signatureCaptionFont
                 self.signaturePrefixFont = signaturePrefixFont
                 self.documentContentFont = documentContentFont
                 self.headerTitleFont = headerTitleFont
@@ -122,23 +131,25 @@ extension ConsentDocument {
         }
         #endif
 
-           
+
         let consentTitle: LocalizedStringResource
         let paperSize: PaperSize
         let includingTimestamp: Bool
         let fontSettings: FontSettings
 
         
-        /// Creates an `ExportConfiguration` specifying the properties of the exported consent form.
+        /// Creates an ``ConsentDocumentExportRepresentation/Configuration`` specifying the properties of the exported consent form.
+        ///
         /// - Parameters:
-        ///   - paperSize: The page size of the exported form represented by ``ConsentDocument/ExportConfiguration/PaperSize``.
+        ///   - paperSize: The page size of the exported form represented by ``ConsentDocumentExportRepresentation/Configuration/PaperSize``.
         ///   - consentTitle: The title of the exported consent form.
         ///   - includingTimestamp: Indicates if the exported form includes a timestamp.
+        ///   - fontSettings: Font settings for the exported form.
         public init(
             paperSize: PaperSize = .usLetter,
-            consentTitle: LocalizedStringResource = LocalizationDefaults.exportedConsentFormTitle,
+            consentTitle: LocalizedStringResource = Configuration.Defaults.exportedConsentFormTitle,
             includingTimestamp: Bool = true,
-            fontSettings: FontSettings = ExportConfiguration.Defaults.defaultExportFontSettings
+            fontSettings: FontSettings = Configuration.Defaults.defaultExportFontSettings
         ) {
             self.paperSize = paperSize
             self.consentTitle = consentTitle

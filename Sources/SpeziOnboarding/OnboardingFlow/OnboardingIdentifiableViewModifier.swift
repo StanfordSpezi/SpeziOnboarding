@@ -35,7 +35,7 @@ extension View {
     /// Assign a unique identifier to a `View` appearing in an `OnboardingStack`.
     ///
     /// A `ViewModifier` assigning an identifier to the `View` it is applied to.
-    /// When applying this modifier repeatedly, the outermost ``SwiftUI/View/onboardingIdentifier(_:)`` counts.
+    /// When applying this modifier repeatedly, the outermost ``SwiftUICore/View/onboardingIdentifier(_:)`` counts.
     ///
     /// - Note: This `ViewModifier` should only be used to identify `View`s of the same type within an ``OnboardingStack``.
     ///
@@ -57,7 +57,6 @@ extension View {
     ///     }
     /// }
     /// ```
-    @MainActor
     public func onboardingIdentifier<ID: Hashable>(_ identifier: ID) -> ModifiedContent<Self, _OnboardingIdentifiableViewModifier<ID>> {
         // For some reason, we need to explicitly spell the return type, otherwise the type will be `AnyView`.
         // Not sure how that happens, but it does with Xcode 16 toolchain.

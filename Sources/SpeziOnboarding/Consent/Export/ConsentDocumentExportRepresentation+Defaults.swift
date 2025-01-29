@@ -10,16 +10,19 @@ import Foundation
 import SwiftUI
 
 
-extension ConsentDocument.ExportConfiguration {
-    /// Provides default values for fields related to the `ConsentDocumentExportConfiguration`.
+extension ConsentDocumentExportRepresentation.Configuration {
+    /// Provides default values for fields related to the ``ConsentDocumentExportRepresentation/Configuration``.
     public enum Defaults {
+        /// Default localized value for the title of the exported consent form.
+        public static let exportedConsentFormTitle = LocalizedStringResource("CONSENT_TITLE", bundle: .atURL(from: .module))
+
         #if !os(macOS)
         /// Default export font settings with fixed font sizes, ensuring a consistent appearance across platforms.
         ///
         /// This configuration uses `systemFont` and `boldSystemFont` with absolute font sizes to achieve uniform font sizes
         /// on different operating systems such as macOS, iOS, and visionOS.
         public static let defaultExportFontSettings = FontSettings(
-            signatureNameFont: UIFont.systemFont(ofSize: 10),
+            signatureCaptionFont: UIFont.systemFont(ofSize: 10),
             signaturePrefixFont: UIFont.boldSystemFont(ofSize: 12),
             documentContentFont: UIFont.systemFont(ofSize: 12),
             headerTitleFont: UIFont.boldSystemFont(ofSize: 28),
@@ -30,7 +33,7 @@ extension ConsentDocument.ExportConfiguration {
         /// the font sizes might change according to the system settings, potentially leading to varying exported PDF documents
         /// on devices with different system settings (e.g., larger default font size).
         public static let defaultSystemDefaultFontSettings = FontSettings(
-            signatureNameFont: UIFont.preferredFont(forTextStyle: .subheadline),
+            signatureCaptionFont: UIFont.preferredFont(forTextStyle: .subheadline),
             signaturePrefixFont: UIFont.preferredFont(forTextStyle: .title2),
             documentContentFont: UIFont.preferredFont(forTextStyle: .body),
             headerTitleFont: UIFont.boldSystemFont(ofSize: UIFont.preferredFont(forTextStyle: .largeTitle).pointSize),
@@ -42,7 +45,7 @@ extension ConsentDocument.ExportConfiguration {
         /// This configuration uses `systemFont` and `boldSystemFont` with absolute font sizes to achieve uniform font sizes
         /// on different operating systems such as macOS, iOS, and visionOS.
         public static let defaultExportFontSettings = FontSettings(
-            signatureNameFont: NSFont.systemFont(ofSize: 10),
+            signatureCaptionFont: NSFont.systemFont(ofSize: 10),
             signaturePrefixFont: NSFont.boldSystemFont(ofSize: 12),
             documentContentFont: NSFont.systemFont(ofSize: 12),
             headerTitleFont: NSFont.boldSystemFont(ofSize: 28),
@@ -53,7 +56,7 @@ extension ConsentDocument.ExportConfiguration {
         /// the font sizes might change according to the system settings, potentially leading to varying exported PDF documents
         /// on devices with different system settings (e.g., larger default font size).
         public static let defaultSystemDefaultFontSettings = FontSettings(
-            signatureNameFont: NSFont.preferredFont(forTextStyle: .subheadline),
+            signatureCaptionFont: NSFont.preferredFont(forTextStyle: .subheadline),
             signaturePrefixFont: NSFont.preferredFont(forTextStyle: .title2),
             documentContentFont: NSFont.preferredFont(forTextStyle: .body),
             headerTitleFont: NSFont.boldSystemFont(ofSize: NSFont.preferredFont(forTextStyle: .largeTitle).pointSize),

@@ -52,7 +52,7 @@ import SwiftUI
 ///
 /// ### Identifying Onboarding Views
 ///
-/// Apply the ``SwiftUI/View/onboardingIdentifier(_:)`` modifier to clearly identify a view in the `OnboardingStack`.
+/// Apply the ``SwiftUICore/View/onboardingIdentifier(_:)`` modifier to clearly identify a view in the `OnboardingStack`.
 /// This is particularly useful in scenarios where multiple instances of the same view type might appear in the stack.
 ///
 /// ```swift
@@ -71,7 +71,7 @@ import SwiftUI
 /// }
 /// ```
 ///
-/// - Note: When the ``SwiftUI/View/onboardingIdentifier(_:)`` modifier is applied multiple times to the same view, the outermost identifier takes precedence.
+/// - Note: When the ``SwiftUICore/View/onboardingIdentifier(_:)`` modifier is applied multiple times to the same view, the outermost identifier takes precedence.
 public struct OnboardingStack: View {
     @State var onboardingNavigationPath: OnboardingNavigationPath
     private let collection: _OnboardingFlowViewCollection

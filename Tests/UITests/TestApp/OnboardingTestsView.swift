@@ -15,6 +15,7 @@ struct OnboardingTestsView: View {
     @Binding var onboardingFlowComplete: Bool
     @State var showConditionalView = false
 
+
     var body: some View {
         OnboardingStack(onboardingFlowComplete: $onboardingFlowComplete) {
             OnboardingStartTestView(
@@ -23,28 +24,28 @@ struct OnboardingTestsView: View {
             OnboardingWelcomeTestView()
             OnboardingSequentialTestView()
 
-            OnboardingConsentMarkdownTestView(
+            OnboardingConsentTestView(
                 consentTitle: "First Consent",
                 consentText: "This is the first *markdown* **example**",
-                documentIdentifier: DocumentIdentifiers.first
+                documentIdentifier: ConsentDocumentIdentifiers.first
             )
 
-            OnboardingConsentMarkdownRenderingView(
+            OnboardingConsentFinishedRenderedView(
                 consentTitle: "First Consent",
-                documentIdentifier: DocumentIdentifiers.first
+                documentIdentifier: ConsentDocumentIdentifiers.first
             )
 
-            OnboardingConsentMarkdownTestView(
+            OnboardingConsentTestView(
                 consentTitle: "Second Consent",
                 consentText: "This is the second *markdown* **example**",
-                documentIdentifier: DocumentIdentifiers.second
+                documentIdentifier: ConsentDocumentIdentifiers.second
             )
-                .onboardingIdentifier(DocumentIdentifiers.second)
-            OnboardingConsentMarkdownRenderingView(
+                .onboardingIdentifier(ConsentDocumentIdentifiers.second)
+            OnboardingConsentFinishedRenderedView(
                 consentTitle: "Second Consent",
-                documentIdentifier: DocumentIdentifiers.second
+                documentIdentifier: ConsentDocumentIdentifiers.second
             )
-                .onboardingIdentifier("\(DocumentIdentifiers.second)_rendering")
+                .onboardingIdentifier("\(ConsentDocumentIdentifiers.second)_rendering")
 
             OnboardingTestViewNotIdentifiable(text: "Leland").onboardingIdentifier("a")
             OnboardingTestViewNotIdentifiable(text: "Stanford").onboardingIdentifier("b")
@@ -59,9 +60,7 @@ struct OnboardingTestsView: View {
 
 
 #if DEBUG
-struct OnboardingTestsView_Previews: PreviewProvider {
-    static var previews: some View {
-        OnboardingTestsView(onboardingFlowComplete: .constant(false))
-    }
+#Preview {
+    OnboardingTestsView(onboardingFlowComplete: .constant(false))
 }
 #endif

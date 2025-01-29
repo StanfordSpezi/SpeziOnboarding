@@ -17,27 +17,27 @@ enum OnboardingFlow {
             OnboardingWelcomeTestView(),
             OnboardingSequentialTestView(),
 
-            OnboardingConsentMarkdownTestView(
+            OnboardingConsentTestView(
                 consentTitle: "Consent Document",
                 consentText: "This is the first *markdown* **example**",
-                documentIdentifier: DocumentIdentifiers.first
+                documentIdentifier: ConsentDocumentIdentifiers.first
             ),
-            OnboardingConsentMarkdownRenderingView(
+            OnboardingConsentFinishedRenderedView(
                 consentTitle: "Consent Document",
-                documentIdentifier: DocumentIdentifiers.first
+                documentIdentifier: ConsentDocumentIdentifiers.first
             ),
 
-            OnboardingConsentMarkdownTestView(
+            OnboardingConsentTestView(
                 consentTitle: "Consent Document",
                 consentText: "This is the second *markdown* **example**",
-                documentIdentifier: DocumentIdentifiers.second
+                documentIdentifier: ConsentDocumentIdentifiers.second
             )
-                .onboardingIdentifier(DocumentIdentifiers.second),
-            OnboardingConsentMarkdownRenderingView(
+                .onboardingIdentifier(ConsentDocumentIdentifiers.second),
+            OnboardingConsentFinishedRenderedView(
                 consentTitle: "Consent Document",
-                documentIdentifier: DocumentIdentifiers.second
+                documentIdentifier: ConsentDocumentIdentifiers.second
             )
-                .onboardingIdentifier("\(DocumentIdentifiers.second)_rendering"),
+                .onboardingIdentifier("\(ConsentDocumentIdentifiers.second)_rendering"),
 
             OnboardingCustomTestView1(exampleArgument: "test"),
             OnboardingCustomTestView2(),

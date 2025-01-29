@@ -6,12 +6,8 @@
 // SPDX-License-Identifier: MIT
 //
 
-import Spezi
-import SpeziOnboarding
-
-
-class TestAppDelegate: SpeziAppDelegate {
-    override var configuration: Configuration {
-        Configuration(standard: ExampleStandard()) {}
-    }
+/// Example identifiers to uniquely identify two exported consent documents.
+enum ConsentDocumentIdentifiers {
+    case first
+    case second
 }

@@ -210,10 +210,30 @@ public struct OnboardingView<TitleView: View, ContentView: View, ActionView: Vie
 
 #if DEBUG
 #Preview {
+    let mock: [OnboardingInformationView.Content] =
+        [
+            OnboardingInformationView.Content(
+                icon: Image(systemName: "pc"),
+                title: String("PC"),
+                description: String("This is a PC. And we can write a lot about PCs in a section like this. A very long text!")
+            ),
+            OnboardingInformationView.Content(
+                icon: Image(systemName: "desktopcomputer"),
+                title: String("Mac"),
+                description: String("This is an iMac")
+            ),
+            OnboardingInformationView.Content(
+                icon: Image(systemName: "laptopcomputer"),
+                title: String("MacBook"),
+                description: String("This is a MacBook")
+            )
+        ]
+
+
     OnboardingView(
         title: String("Title"),
         subtitle: String("Subtitle"),
-        areas: AreasView_Previews.mock,
+        areas: mock,
         actionText: String("Primary Button")
     ) {
         print("Primary!")

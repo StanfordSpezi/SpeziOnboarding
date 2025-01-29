@@ -223,13 +223,13 @@ final class OnboardingTests: XCTestCase {
         // Check if on custom test view 1
         XCTAssert(app.staticTexts["Custom Test View 1: Hello Spezi!"].waitForExistence(timeout: 2))
 
-        XCTAssert(app.buttons["Next"].exists)
+        XCTAssert(app.buttons["Next"].waitForExistence(timeout: 2))
         app.buttons["Next"].tap()
 
         // Check if on custom test view 2
         XCTAssert(app.staticTexts["Custom Test View 2"].waitForExistence(timeout: 2))
 
-        XCTAssert(app.buttons["Next"].exists)
+        XCTAssert(app.buttons["Next"].waitForExistence(timeout: 2))
         app.buttons["Next"].tap()
 
         // Check if on welcome onboarding view
@@ -279,12 +279,12 @@ final class OnboardingTests: XCTestCase {
         XCTAssert(app.buttons["Show Conditional View"].waitForExistence(timeout: 2))
         app.buttons["Show Conditional View"].tap()
 
-        XCTAssert(app.buttons["Next"].exists)
+        XCTAssert(app.buttons["Next"].waitForExistence(timeout: 2))
         app.buttons["Next"].tap()
 
         // Check if on conditional test view
         XCTAssert(app.staticTexts["Conditional Test View"].waitForExistence(timeout: 2))
-        XCTAssert(app.buttons["Next"].exists)
+        XCTAssert(app.buttons["Next"].waitForExistence(timeout: 2))
         app.buttons["Next"].tap()
 
         // Check if on final page
@@ -301,9 +301,11 @@ final class OnboardingTests: XCTestCase {
         app.buttons["Onboarding Identifiable View"].tap()
 
         XCTAssert(app.staticTexts["ID: 1"].waitForExistence(timeout: 2))
+        XCTAssert(app.buttons["Next"].waitForExistence(timeout: 2))
         app.buttons["Next"].tap()
 
         XCTAssert(app.staticTexts["ID: 2"].waitForExistence(timeout: 2))
+        XCTAssert(app.buttons["Next"].waitForExistence(timeout: 2))
         app.buttons["Next"].tap()
 
         XCTAssert(app.staticTexts["Welcome"].waitForExistence(timeout: 2))

@@ -31,13 +31,13 @@ struct OnboardingStartTestView: View {
             }
 
             Button {
-                path.append(OnboardingConsentMarkdownTestView.self)
+                path.append(OnboardingConsentTestView.self)
             } label: {
                 Text("Consent View (Markdown)")
             }
             
             Button {
-                path.append(OnboardingConsentMarkdownRenderingView.self)
+                path.append(OnboardingConsentFinishedRenderedView.self)
             } label: {
                 Text("Rendered Consent View (Markdown)")
             }
@@ -76,12 +76,10 @@ struct OnboardingStartTestView: View {
 
 
 #if DEBUG
-struct OnboardingStartTestView_Previews: PreviewProvider {
-    static var previews: some View {
-        OnboardingStack(startAtStep: OnboardingStartTestView.self) {
-            for onboardingView in OnboardingFlow.previewSimulatorViews {
-                onboardingView
-            }
+#Preview {
+    OnboardingStack(startAtStep: OnboardingStartTestView.self) {
+        for onboardingView in OnboardingFlow.previewSimulatorViews {
+            onboardingView
         }
     }
 }

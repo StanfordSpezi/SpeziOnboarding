@@ -18,11 +18,14 @@ import SwiftUI
 /// Allows the display markdown-based consent documents that can be signed using a family and given name and a hand drawn signature.
 /// In addition, it enables the export of the signed form as a PDF document.
 ///
-/// To observe and control the current state of the `ConsentDocument`, the view requires passing down a ``ConsentViewState`` as a SwiftUI `Binding` in the
-/// ``init(markdown:viewState:givenNameTitle:givenNamePlaceholder:familyNameTitle:familyNamePlaceholder:exportConfiguration:)`` initializer.
-/// This `Binding` can then be used to trigger the export of the consent form via setting the state to ``ConsentViewState/export``.
-/// After the rendering completes, the finished `PDFDocument` from Apple's PDFKit is accessible via the associated value of the view state in ``ConsentViewState/exported(document:)``.
-/// Other possible states of the `ConsentDocument` are the SpeziViews `ViewState`'s accessible via the associated value in ``ConsentViewState/base(_:)``.
+/// To observe and control the current state of the ``ConsentDocument``, the `View` requires passing down a ``ConsentViewState`` as a SwiftUI `Binding` in the
+/// ``init(markdown:viewState:givenNameTitle:givenNamePlaceholder:familyNameTitle:familyNamePlaceholder:exportConfiguration:consentSignatureDate:consentSignatureDateFormatter:)`` initializer.
+///
+/// This `Binding` can then be used to trigger the creation of the export representation of the consent form via setting the state to ``ConsentViewState/export``.
+/// After the export representation completes, the ``ConsentDocumentExportRepresentation`` is accessible via the associated value of the view state in ``ConsentViewState/exported(representation:)``.
+/// The ``ConsentDocumentExportRepresentation`` can then be rendered to a PDF via ``ConsentDocumentExportRepresentation/render()``.
+///
+/// Other possible states of the ``ConsentDocument`` are the SpeziViews `ViewState`'s accessible via the associated value in ``ConsentViewState/base(_:)``.
 /// In addition, the view provides information about the signing progress via the ``ConsentViewState/signing`` and ``ConsentViewState/signed`` states.
 ///
 /// ```swift
@@ -34,7 +37,8 @@ import SwiftUI
 ///         Data("This is a *markdown* **example**".utf8)
 ///     },
 ///     viewState: $state,
-///     exportConfiguration: .init(paperSize: .usLetter)   // Configure the properties of the exported consent form
+///     exportConfiguration: .init(paperSize: .usLetter),   // Configure the properties of the exported consent form
+///     consentSignatureDate: .now
 /// )
 /// ```
 public struct ConsentDocument: View {
@@ -45,8 +49,11 @@ public struct ConsentDocument: View {
     private let givenNamePlaceholder: LocalizedStringResource
     private let familyNameTitle: LocalizedStringResource
     private let familyNamePlaceholder: LocalizedStringResource
-    
-    let documentExport: ConsentDocumentExport
+    private let consentSignatureDate: Date?
+    private let consentSignatureDateFormatter: DateFormatter
+
+    let markdown: () async -> Data
+    let exportConfiguration: ConsentDocumentExportRepresentation.Configuration
 
     @Environment(\.colorScheme) var colorScheme
     @State var name = PersonNameComponents()
@@ -73,11 +80,13 @@ public struct ConsentDocument: View {
                 #endif
             }
                 .disabled(inputFieldsDisabled)
-                .onChange(of: name) {
+                .onChange(of: name) { _, name in
                     if !(name.givenName?.isEmpty ?? true) && !(name.familyName?.isEmpty ?? true) {
                         viewState = .namesEntered
                     } else {
-                        viewState = .base(.idle)
+                        withAnimation(.easeIn(duration: 0.2)) {
+                            viewState = .base(.idle)
+                        }
                         // Reset all strokes if name fields are not complete anymore
                         #if !os(macOS)
                         signature.strokes.removeAll()
@@ -85,7 +94,6 @@ public struct ConsentDocument: View {
                         signature.removeAll()
                         #endif
                     }
-                    documentExport.name = name
                 }
             
             Divider()
@@ -109,17 +117,27 @@ public struct ConsentDocument: View {
         }
     }
     
-    @MainActor private var signatureView: some View {
+    private var signatureView: some View {
         Group {
             #if !os(macOS)
-            SignatureView(signature: $signature, isSigning: $viewState.signing, canvasSize: $signatureSize, name: name)
+            SignatureView(
+                signature: $signature,
+                isSigning: $viewState.signing,
+                canvasSize: $signatureSize,
+                name: name,
+                formattedDate: formattedConsentSignatureDate
+            )
             #else
-            SignatureView(signature: $signature, name: name)
+            SignatureView(
+                signature: $signature,
+                name: name,
+                formattedDate: formattedConsentSignatureDate
+            )
             #endif
         }
             .padding(.vertical, 4)
             .disabled(inputFieldsDisabled)
-            .onChange(of: signature) {
+            .onChange(of: signature) { _, signature in
                 #if !os(macOS)
                 let isSignatureEmpty = signature.strokes.isEmpty
                 #else
@@ -128,15 +146,18 @@ public struct ConsentDocument: View {
                 if !(isSignatureEmpty || (name.givenName?.isEmpty ?? true) || (name.familyName?.isEmpty ?? true)) {
                     viewState = .signed
                 } else {
-                    viewState = .namesEntered
+                    if (name.givenName?.isEmpty ?? true) || (name.familyName?.isEmpty ?? true) {
+                        viewState = .base(.idle)    // Hide signature view if names not complete anymore
+                    } else {
+                        viewState = .namesEntered
+                    }
                 }
-                documentExport.signature = signature
             }
     }
     
     public var body: some View {
         VStack {
-            MarkdownView(asyncMarkdown: documentExport.asyncMarkdown, state: $viewState.base)
+            MarkdownView(asyncMarkdown: markdown, state: $viewState.base)
             Spacer()
             Group {
                 nameView
@@ -151,20 +172,12 @@ public struct ConsentDocument: View {
         }
             .transition(.opacity)
             .animation(.easeInOut, value: viewState == .namesEntered)
-            .onChange(of: viewState) {
+            .task(id: viewState) {
                 if case .export = viewState {
-                    Task {
-                        do {
-                            /// Stores the finished PDF in the Spezi `Standard`.
-                            let exportedConsent = try await export()
-                            
-                            documentExport.cachedPDF = exportedConsent
-                            viewState = .exported(document: exportedConsent, export: documentExport)
-                        } catch {
-                            // In case of error, go back to previous state.
-                            viewState = .base(.error(AnyLocalizedError(error: error)))
-                        }
-                    }
+                    // Captures the current state of the document and transforms it to the `ConsentDocumentExportRepresentation`
+                    self.viewState = .exported(
+                        representation: await self.exportRepresentation
+                    )
                 } else if case .base(let baseViewState) = viewState,
                           case .idle = baseViewState {
                     // Reset view state to correct one after handling an error view state via `.viewStateAlert()`
@@ -173,11 +186,11 @@ public struct ConsentDocument: View {
                     #else
                     let isSignatureEmpty = signature.isEmpty
                     #endif
-                    
+
                     if !isSignatureEmpty {
-                        viewState = .signed
-                    } else if !(name.givenName?.isEmpty ?? true) || !(name.familyName?.isEmpty ?? true) {
-                        viewState = .namesEntered
+                        self.viewState = .signed
+                    } else if !(name.givenName?.isEmpty ?? true) && !(name.familyName?.isEmpty ?? true) {
+                        self.viewState = .namesEntered
                     }
                 }
             }
@@ -185,9 +198,20 @@ public struct ConsentDocument: View {
     }
     
     private var inputFieldsDisabled: Bool {
-        viewState == .base(.processing) || viewState == .export || viewState == .storing
+        switch viewState {
+        case .base(.processing), .export, .exported: true
+        default: false
+        }
     }
-    
+
+    var formattedConsentSignatureDate: String? {
+        if let consentSignatureDate {
+            consentSignatureDateFormatter.string(from: consentSignatureDate)
+        } else {
+            nil
+        }
+    }
+
     
     /// Creates a `ConsentDocument` which renders a consent document with a markdown view.
     ///
@@ -200,8 +224,9 @@ public struct ConsentDocument: View {
     ///   - givenNamePlaceholder: The localization to use for the given name field placeholder.
     ///   - familyNameTitle: The localization to use for the family (last) name field.
     ///   - familyNamePlaceholder: The localization to use for the family name field placeholder.
-    ///   - exportConfiguration: Defines the properties of the exported consent form via ``ConsentDocument/ExportConfiguration``.
-    ///   - documentIdentifier: A unique identifier or "name" for the consent form, helpful for distinguishing consent forms when storing in the `Standard`.
+    ///   - exportConfiguration: Defines the properties of the exported consent form via ``ConsentDocumentExportRepresentation/Configuration``.
+    ///   - consentSignatureDate: The date that is displayed under the signature line.
+    ///   - consentSignatureDateFormatter: The date formatter used to format the date that is displayed under the signature line.
     public init(
         markdown: @escaping () async -> Data,
         viewState: Binding<ConsentViewState>,
@@ -209,44 +234,41 @@ public struct ConsentDocument: View {
         givenNamePlaceholder: LocalizedStringResource = LocalizationDefaults.givenNamePlaceholder,
         familyNameTitle: LocalizedStringResource = LocalizationDefaults.familyNameTitle,
         familyNamePlaceholder: LocalizedStringResource = LocalizationDefaults.familyNamePlaceholder,
-        exportConfiguration: ExportConfiguration = .init(),
-        documentIdentifier: String = ConsentDocumentExport.Defaults.documentIdentifier
+        exportConfiguration: ConsentDocumentExportRepresentation.Configuration = .init(),
+        consentSignatureDate: Date? = nil,
+        consentSignatureDateFormatter: DateFormatter = {
+            let formatter = DateFormatter()
+            formatter.dateStyle = .short
+            return formatter
+        }()
     ) {
+        self.markdown = markdown
         self._viewState = viewState
         self.givenNameTitle = givenNameTitle
         self.givenNamePlaceholder = givenNamePlaceholder
         self.familyNameTitle = familyNameTitle
         self.familyNamePlaceholder = familyNamePlaceholder
-        
-        self.documentExport = ConsentDocumentExport(
-            markdown: markdown,
-            exportConfiguration: exportConfiguration,
-            documentIdentifier: documentIdentifier
-        )
-        // Set initial values for the name and signature.
-        // These will be updated once the name and signature change.
-        self.documentExport.name = name
-        self.documentExport.signature = signature
+        self.exportConfiguration = exportConfiguration
+        self.consentSignatureDate = consentSignatureDate
+        self.consentSignatureDateFormatter = consentSignatureDateFormatter
     }
 }
 
 
 #if DEBUG
-struct ConsentDocument_Previews: PreviewProvider {
-    @State private static var viewState: ConsentViewState = .base(.idle)
-    
-    
-    static var previews: some View {
-        NavigationStack {
-            ConsentDocument(
-                markdown: {
-                    Data("This is a *markdown* **example**".utf8)
-                },
-                viewState: $viewState
-            )
-            .navigationTitle(Text(verbatim: "Consent"))
-            .padding()
-        }
+#Preview {
+    @Previewable @State var viewState: ConsentViewState = .base(.idle)
+
+
+    NavigationStack {
+        ConsentDocument(
+            markdown: {
+                Data("This is a *markdown* **example**".utf8)
+            },
+            viewState: $viewState
+        )
+        .navigationTitle(Text(verbatim: "Consent"))
+        .padding()
     }
 }
 #endif

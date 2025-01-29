@@ -9,18 +9,22 @@
 import SpeziOnboarding
 import SwiftUI
 
-struct OnboardingTestViewNotIdentifiable: View {
-    var text: String
+struct OnboardingIdentifiableTestViewCustom: View, Identifiable {
+    var id: String
 
     @Environment(OnboardingNavigationPath.self) private var path
 
 
     var body: some View {
         VStack(spacing: 12) {
-            Text(self.text)
+            Text(self.id)
 
             Button {
-                path.nextStep()
+                if self.id == "ID: 1" {
+                    path.append(customView: OnboardingIdentifiableTestViewCustom(id: "ID: 2"))
+                } else {
+                    path.nextStep()
+                }
             } label: {
                 Text("Next")
             }
@@ -29,12 +33,10 @@ struct OnboardingTestViewNotIdentifiable: View {
 }
 
 #if DEBUG
-struct OnboardingTestViewNotIdentifiable_Previews: PreviewProvider {
-    static var previews: some View {
-        OnboardingStack(startAtStep: OnboardingTestViewNotIdentifiable.self) {
-            for onboardingView in OnboardingFlow.previewSimulatorViews {
-                onboardingView
-            }
+#Preview {
+    OnboardingStack(startAtStep: OnboardingIdentifiableTestViewCustom.self) {
+        for onboardingView in OnboardingFlow.previewSimulatorViews {
+            onboardingView
         }
     }
 }

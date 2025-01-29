@@ -12,9 +12,9 @@ import SpeziViews
 import SwiftUI
 
 
-struct OnboardingConsentMarkdownRenderingView: View {
+struct OnboardingConsentFinishedRenderedView: View {
     let consentTitle: String
-    let documentIdentifier: String
+    let documentIdentifier: ConsentDocumentIdentifiers
 
     @Environment(OnboardingNavigationPath.self) private var path
     @Environment(ExampleStandard.self) private var standard
@@ -57,23 +57,23 @@ struct OnboardingConsentMarkdownRenderingView: View {
             .navigationBarTitleDisplayMode(.inline)
             #endif
             .task {
-                self.exportedConsent = try? await standard.loadConsentDocument(identifier: documentIdentifier)
-                try? await standard.resetDocument(identifier: documentIdentifier)
+                // Read and then clean up the respective exported consent document from the `ExampleStandard`
+                switch documentIdentifier {
+                case ConsentDocumentIdentifiers.first:
+                    exportedConsent = standard.firstConsentDocument.take()
+                case ConsentDocumentIdentifiers.second:
+                    exportedConsent = standard.secondConsentDocument.take()
+                }
             }
     }
 }
 
 
 #if DEBUG
-struct OnboardingConsentMarkdownRenderingView_Previews: PreviewProvider {
-    static var standard: OnboardingDataSource = .init()
-    
-    static var previews: some View {
-        OnboardingStack(startAtStep: OnboardingConsentMarkdownRenderingView.self) {
-            for onboardingView in OnboardingFlow.previewSimulatorViews {
-                onboardingView
-                    .environment(standard)
-            }
+#Preview {
+    OnboardingStack(startAtStep: OnboardingConsentFinishedRenderedView.self) {
+        for onboardingView in OnboardingFlow.previewSimulatorViews {
+            onboardingView
         }
     }
 }

@@ -23,7 +23,8 @@ import SwiftUI
 /// SignatureView(
 ///     signature: $signature,
 ///     isSigning: $isSigning,
-///     name: name
+///     name: name,
+///     formattedDate: "01/23/25"
 /// )
 /// ```
 public struct SignatureView: View {
@@ -37,14 +38,19 @@ public struct SignatureView: View {
     @Binding private var signature: String
     #endif
     private let name: PersonNameComponents
+    private let formattedDate: String?
     private let lineOffset: CGFloat
     
     
     public var body: some View {
         VStack {
             ZStack(alignment: .bottomLeading) {
-                SignatureViewBackground(name: name, lineOffset: lineOffset)
-                
+                SignatureViewBackground(
+                    name: name,
+                    formattedDate: formattedDate,
+                    lineOffset: lineOffset
+                )
+
                 #if !os(macOS)
                 CanvasView(drawing: $signature, isDrawing: $isSigning, showToolPicker: .constant(false))
                     .accessibilityLabel(Text("SIGNATURE_FIELD", bundle: .module))
@@ -75,10 +81,14 @@ public struct SignatureView: View {
             #endif
         }
             #if !os(macOS)
-            .onChange(of: isSigning) {
-                Task { @MainActor in
-                    canUndo = undoManager?.canUndo ?? false
-                }
+            .task {
+                // Crucial to reset the `UndoManager` between different `ConsentView`s in the `OnboardingStack`.
+                // Otherwise, actions are often not picked up
+                undoManager?.removeAllActions()
+                canUndo = false
+            }
+            .onChange(of: undoManager?.canUndo) { _, canUndo in
+                self.canUndo = canUndo ?? false
             }
             .transition(.opacity)
             .animation(.easeInOut, value: canUndo)
@@ -109,45 +119,119 @@ public struct SignatureView: View {
     ///   - isSigning: A `Binding` indicating if the user is currently signing.
     ///   - canvasSize: The size of the canvas as a Binding.
     ///   - name: The name that is displayed under the signature line.
+    ///   - formattedDate: The formatted date that is displayed under the signature line.
     ///   - lineOffset: Defines the distance of the signature line from the bottom of the view. The default value is 30.
-    init(
+    public init(
         signature: Binding<PKDrawing> = .constant(PKDrawing()),
         isSigning: Binding<Bool> = .constant(false),
         canvasSize: Binding<CGSize> = .constant(.zero),
         name: PersonNameComponents = PersonNameComponents(),
+        formattedDate: String? = nil,
         lineOffset: CGFloat = 30
     ) {
         self._signature = signature
         self._isSigning = isSigning
         self._canvasSize = canvasSize
         self.name = name
+        self.formattedDate = formattedDate
         self.lineOffset = lineOffset
+    }
+
+    /// Creates a new instance of an ``SignatureView``  with `String`-based name components.
+    /// - Parameters:
+    ///   - signature: A `Binding` containing the current signature as an `PKDrawing`.
+    ///   - isSigning: A `Binding` indicating if the user is currently signing.
+    ///   - canvasSize: The size of the canvas as a Binding.
+    ///   - givenName: The given name that is displayed under the signature line.
+    ///   - familyName: The family name that is displayed under the signature line.
+    ///   - formattedDate: The formatted date that is displayed under the signature line.
+    ///   - lineOffset: Defines the distance of the signature line from the bottom of the view. The default value is 30.
+    public init(
+        signature: Binding<PKDrawing> = .constant(PKDrawing()),
+        isSigning: Binding<Bool> = .constant(false),
+        canvasSize: Binding<CGSize> = .constant(.zero),
+        givenName: String = "",
+        familyName: String = "",
+        formattedDate: String? = nil,
+        lineOffset: CGFloat = 30
+    ) {
+        self.init(
+            signature: signature,
+            isSigning: isSigning,
+            canvasSize: canvasSize,
+            name: .init(givenName: givenName, familyName: familyName),
+            formattedDate: formattedDate,
+            lineOffset: lineOffset
+        )
     }
     #else
     /// Creates a new instance of an ``SignatureView``.
     /// - Parameters:
     ///   - signature: A `Binding` containing the current text-based signature as a `String`.
     ///   - name: The name that is displayed under the signature line.
+    ///   - formattedDate: The formatted date that is displayed under the signature line.
     ///   - lineOffset: Defines the distance of the signature line from the bottom of the view. The default value is 30.
-    init(
+    public init(
         signature: Binding<String> = .constant(String()),
         name: PersonNameComponents = PersonNameComponents(),
+        formattedDate: String? = nil,
         lineOffset: CGFloat = 30
     ) {
         self._signature = signature
         self.name = name
+        self.formattedDate = formattedDate
         self.lineOffset = lineOffset
+    }
+
+    /// Creates a new instance of an ``SignatureView`` with `String`-based name components.
+    /// - Parameters:
+    ///   - signature: A `Binding` containing the current text-based signature as a `String`.
+    ///   - givenName: The given name that is displayed under the signature line.
+    ///   - familyName: The family name that is displayed under the signature line.
+    ///   - formattedDate: The formatted date that is displayed under the signature line.
+    ///   - lineOffset: Defines the distance of the signature line from the bottom of the view. The default value is 30.
+    public init(
+        signature: Binding<String> = .constant(String()),
+        givenName: String = "",
+        familyName: String = "",
+        formattedDate: String? = nil,
+        lineOffset: CGFloat = 30
+    ) {
+        self.init(
+            signature: signature,
+            name: .init(givenName: givenName, familyName: familyName),
+            formattedDate: formattedDate,
+            lineOffset: lineOffset
+        )
     }
     #endif
 }
 
 
 #if DEBUG
-struct SignatureView_Previews: PreviewProvider {
-    static var previews: some View {
-        SignatureView()
+#Preview("Base Signature View") {
+    SignatureView()
+}
 
-        SignatureView(name: PersonNameComponents(givenName: "Leland", familyName: "Stanford"))
-    }
+#Preview("Including PersonNameComponents") {
+    SignatureView(name: PersonNameComponents(givenName: "Leland", familyName: "Stanford"))
+}
+
+#Preview("Including String-based names") {
+    SignatureView(givenName: "Leland", familyName: "Stanford")
+}
+
+#Preview("Including PersonNameComponents and Date") {
+    SignatureView(
+        name: PersonNameComponents(givenName: "Leland", familyName: "Stanford"),
+        formattedDate: "01/22/25"
+    )
+}
+
+#Preview("Including PersonNameComponents and Date with custom format") {
+    SignatureView(
+        name: PersonNameComponents(givenName: "Leland", familyName: "Stanford"),
+        formattedDate: "01/22/25"
+    )
 }
 #endif

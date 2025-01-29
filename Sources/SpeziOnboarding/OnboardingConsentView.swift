@@ -11,42 +11,34 @@ import AppKit
 #endif
 
 import Foundation
+import PDFKit
+import Spezi
 import SpeziViews
 import SwiftUI
 
 /// Onboarding view to display markdown-based consent documents that can be signed and exported.
 ///
-/// The `OnboardingConsentView` provides a convenient onboarding view for the display of markdown-based documents that can be
+/// The ``OnboardingConsentView`` provides a convenient onboarding `View` for the display of markdown-based documents that can be
 /// signed using a family and given name and a hand drawn signature.
 ///
-/// Furthermore, the view includes an export functionality, enabling users to share and store the signed consent form.
-/// The exported consent form is automatically stored in the Spezi `Standard`, requiring the `Standard` to conform to the ``OnboardingConstraint``.
+/// Furthermore, the `View` includes an export functionality, enabling users to share and store the signed consent form.
+/// The exported consent form PDF is received via the `action` closure on the ``OnboardingConsentView/init(markdown:action:title:currentDateInSignature:exportConfiguration:)``.
 ///
-/// The `OnboardingConsentView` builds on top of the SpeziOnboarding ``ConsentDocument`` 
+/// The ``OnboardingConsentView`` builds on top of the SpeziOnboarding ``ConsentDocument``
 /// by providing a more developer-friendly, convenient API with additional functionalities like the share consent option.
-///
-/// If you want to use multiple `OnboardingConsentView`, you can provide each with an identifier (see below).
-/// The identifier allows to distinguish the consent forms in the `Standard`.
-/// Any identifier is a string. We recommend storing and grouping consent document identifiers in an enum:
-/// ```swift
-/// enum DocumentIdentifiers {
-///     static let first = "firstConsentDocument"
-///     static let second = "secondConsentDocument"
-/// }
-/// ```
 ///
 /// ```swift
 /// OnboardingConsentView(
 ///     markdown: {
 ///         Data("This is a *markdown* **example**".utf8)
 ///     },
-///     action: {
+///     action: { exportedConsentPdf in
 ///         // The action that should be performed once the user has provided their consent.
+///         // Closure receives the exported consent PDF to persist or upload it.
 ///     },
 ///     title: "Consent",   // Configure the title of the consent view
-///     identifier: DocumentIdentifiers.first, // Specify a unique identifier String, preferably bundled
-///                                            // in an enum (see above). Only relevant if more than one OnboardingConsentView is needed.
-///     exportConfiguration: .init(paperSize: .usLetter)   // Configure the properties of the exported consent form
+///     exportConfiguration: .init(paperSize: .usLetter),   // Configure the properties of the exported consent form
+///     currentDateInSignature: true   // Indicates if the consent signature should include the current date
 /// )
 /// ```
 public struct OnboardingConsentView: View {
@@ -59,15 +51,11 @@ public struct OnboardingConsentView: View {
     }
         
     private let markdown: () async -> Data
-    private let action: () async -> Void
+    private let action: (_ document: PDFDocument) async throws -> Void
     private let title: LocalizedStringResource?
-    private let identifier: String
-    private let exportConfiguration: ConsentDocument.ExportConfiguration
-    private var backButtonHidden: Bool {
-        viewState == .storing || (viewState == .export && !willShowShareSheet)
-    }
-
-    @Environment(OnboardingDataSource.self) private var onboardingDataSource
+    private let currentDateInSignature: Bool
+    private let exportConfiguration: ConsentDocumentExportRepresentation.Configuration
+    
     @State private var viewState: ConsentViewState = .base(.idle)
     @State private var willShowShareSheet = false
     @State private var showShareSheet = false
@@ -88,43 +76,46 @@ public struct OnboardingConsentView: View {
                         markdown: markdown,
                         viewState: $viewState,
                         exportConfiguration: exportConfiguration,
-                        documentIdentifier: identifier
+                        consentSignatureDate: currentDateInSignature ? .now : nil
                     )
                     .padding(.bottom)
                 },
                 actionView: {
                     Button(
                         action: {
-                            viewState = .export
+                            withAnimation(.easeOut(duration: 0.2)) {
+                                viewState = .export     // Triggers the export process
+                            }
                         },
                         label: {
                             Text("CONSENT_ACTION", bundle: .module)
                                 .frame(maxWidth: .infinity, minHeight: 38)
-                                .processingOverlay(isProcessing: viewState == .storing || (viewState == .export && !willShowShareSheet))
+                                .processingOverlay(isProcessing: backButtonHidden)
                         }
                     )
                         .buttonStyle(.borderedProminent)
                         .disabled(!actionButtonsEnabled)
-                        .animation(.easeInOut, value: actionButtonsEnabled)
+                        .animation(.easeInOut(duration: 0.2), value: actionButtonsEnabled)
                         .id("ActionButton")
                 }
             )
             .scrollDisabled($viewState.signing.wrappedValue)
             .navigationBarBackButtonHidden(backButtonHidden)
-            .onChange(of: viewState) {
-                if case .exported(_, let export) = viewState {
+            .task(id: viewState) {
+                if case .exported(let consentExport) = viewState {
                     if !willShowShareSheet {
-                        viewState = .storing
-                        Task {
-                            do {
-                                /// Stores the finished PDF in the Spezi `Standard`.
-                                try await onboardingDataSource.store(export)
+                        do {
+                            // Pass the rendered consent form to the `action` closure
+                            nonisolated(unsafe) let pdf = try consentExport.render()
+                            try await action(pdf)
 
-                                await action()
-                                viewState = .base(.idle)
-                            } catch {
+                            withAnimation(.easeIn(duration: 0.2)) {
+                                self.viewState = .base(.idle)
+                            }
+                        } catch {
+                            withAnimation(.easeIn(duration: 0.2)) {
                                 // In case of error, go back to previous state.
-                                viewState = .base(.error(AnyLocalizedError(error: error)))
+                                self.viewState = .base(.error(AnyLocalizedError(error: error)))
                             }
                         }
                     } else {
@@ -163,30 +154,57 @@ public struct OnboardingConsentView: View {
                 }
             }
             .sheet(isPresented: $showShareSheet) {
-                if case .exported(let document, _) = viewState {
-                    #if !os(macOS)
-                    ShareSheet(sharedItem: document)
-                        .presentationDetents([.medium])
-                        .task {
-                            willShowShareSheet = false
-                        }
-                    #endif
+                if case .exported(let exportedConsent) = viewState {
+                    if let consentPdf = try? exportedConsent.render() {
+                        #if !os(macOS)
+                        ShareSheet(sharedItem: consentPdf)
+                            .presentationDetents([.medium])
+                            .task {
+                                willShowShareSheet = false
+                            }
+                            .onDisappear {
+                                withAnimation(.easeIn(duration: 0.2)) {
+                                    self.viewState = .signed
+                                }
+                            }
+                        #endif
+                    } else {
+                        ProgressView()
+                            .padding()
+                            .task {
+                                viewState = .base(.error(Error.consentExportError))
+                            }
+                    }
                 } else {
                     ProgressView()
                         .padding()
+                        .task {
+                            // This is required as only the "Markup" action from the ShareSheet misses to dismiss the share sheet again
+                            if !willShowShareSheet {
+                                showShareSheet = false
+                            }
+                        }
                 }
             }
             #if os(macOS)
             .onChange(of: showShareSheet) { _, isPresented in
                 if isPresented,
-                   case .exported(let exportedConsentDocumented, _) = viewState {
-                    let shareSheet = ShareSheet(sharedItem: exportedConsentDocumented)
-                    shareSheet.show()
+                   case .exported(let exportedConsent) = viewState {
+                    if let consentPdf = try? exportedConsent.render() {
+                        let shareSheet = ShareSheet(sharedItem: consentPdf)
+                        shareSheet.show()
 
-                    showShareSheet = false
+                        willShowShareSheet = false
+                        showShareSheet = false
+
+                        withAnimation(.easeIn(duration: 0.2)) {
+                            self.viewState = .signed
+                        }
+                    } else {
+                        viewState = .base(.error(Error.consentExportError))
+                    }
                 }
             }
-            
             // `NSSharingServicePicker` doesn't provide a completion handler as `UIActivityViewController` does,
             // therefore necessitating the deletion of the temporary file on disappearing.
             .onDisappear {
@@ -198,10 +216,19 @@ public struct OnboardingConsentView: View {
             }
             #endif
     }
-    
+
+    private var backButtonHidden: Bool {
+        let exportStates = switch viewState {
+        case .export, .exported: true
+        default: false
+        }
+        
+        return exportStates && !willShowShareSheet
+    }
+
     private var actionButtonsEnabled: Bool {
         switch viewState {
-        case .signing, .signed, .exported: true
+        case .signing, .signed: true
         default: false
         }
     }
@@ -210,39 +237,37 @@ public struct OnboardingConsentView: View {
     /// Creates an `OnboardingConsentView` which provides a convenient onboarding view for visualizing, signing, and exporting a consent form.
     /// - Parameters:
     ///   - markdown: The markdown content provided as an UTF8 encoded `Data` instance that can be provided asynchronously.
-    ///   - action: The action that should be performed once the consent is given.
+    ///   - action: The action that should be performed once the consent is given. Action is called with the exported consent document as a parameter.
     ///   - title: The title of the view displayed at the top. Can be `nil`, meaning no title is displayed.
-    ///   - identifier: A unique identifier or "name" for the consent form, helpful for distinguishing consent forms when storing in the `Standard`.
-    ///   - exportConfiguration: Defines the properties of the exported consent form via ``ConsentDocument/ExportConfiguration``.
+    ///   - currentDateInSignature: Indicates if the consent document should include the current date in the signature field. Defaults to `true`.
+    ///   - exportConfiguration: Defines the properties of the exported consent form via ``ConsentDocumentExportRepresentation/Configuration``.
     public init(
         markdown: @escaping () async -> Data,
-        action: @escaping () async -> Void,
+        action: @escaping (_ document: PDFDocument) async throws -> Void,
         title: LocalizedStringResource? = LocalizationDefaults.consentFormTitle,
-        identifier: String = ConsentDocumentExport.Defaults.documentIdentifier,
-        exportConfiguration: ConsentDocument.ExportConfiguration = .init()
+        currentDateInSignature: Bool = true,
+        exportConfiguration: ConsentDocumentExportRepresentation.Configuration = .init()
     ) {
         self.markdown = markdown
-        self.exportConfiguration = exportConfiguration
-        self.title = title
         self.action = action
-        self.identifier = identifier
+        self.title = title
+        self.currentDateInSignature = currentDateInSignature
+        self.exportConfiguration = exportConfiguration
     }
 }
 
 
 #if DEBUG
-struct OnboardingConsentView_Previews: PreviewProvider {
-    @State private static var viewState: ConsentViewState = .base(.idle)
-    
-    
-    static var previews: some View {
-        NavigationStack {
-            OnboardingConsentView(markdown: {
-                Data("This is a *markdown* **example**".utf8)
-            }, action: {
-                print("Next")
-            })
-        }
+#Preview {
+    @Previewable @State var viewState: ConsentViewState = .base(.idle)
+
+
+    NavigationStack {
+        OnboardingConsentView(markdown: {
+            Data("This is a *markdown* **example**".utf8)
+        }, action: { _ in
+            print("Next")
+        })
     }
 }
 #endif
