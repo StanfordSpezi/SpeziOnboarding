@@ -39,31 +39,18 @@ extension ConsentDocument {
 
     #if !os(macOS)
     private var signatureImage: UIImage {
-        var updatedDrawing = PKDrawing()
-
-        for stroke in signature.strokes {
-            // As the `PKDrawing.image()` function automatically converts the ink color dependent on the used color scheme (light or dark mode),
-            // force the ink used in the `UIImage` of the `PKDrawing` to always be black by adjusting the signature ink according to the color scheme.
-            let blackStroke = PKStroke(
-                ink: PKInk(stroke.ink.inkType, color: colorScheme == .light ? .black : .white),
-                path: stroke.path,
-                transform: stroke.transform,
-                mask: stroke.mask
-            )
-
-            updatedDrawing.strokes.append(blackStroke)
-        }
-
         #if os(iOS)
         let scale = UIScreen.main.scale
         #else
         let scale = 3.0 // retina scale is default
         #endif
 
-        return updatedDrawing.image(
+        // As the `PKDrawing.image()` function automatically converts the ink color dependent on the used color scheme (light or dark mode),
+        // force the tint color used in the `UIImage` to `black`.
+        return signature.image(
             from: .init(x: 0, y: 0, width: signatureSize.width, height: signatureSize.height),
             scale: scale
-        )
+        ).withRenderingMode(.alwaysTemplate).withTintColor(.black)
     }
     #endif
 }
