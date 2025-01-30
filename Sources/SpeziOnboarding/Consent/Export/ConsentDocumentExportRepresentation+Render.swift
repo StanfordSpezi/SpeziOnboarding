@@ -51,8 +51,9 @@ extension ConsentDocumentExportRepresentation {
             markdown: markdown,
             options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace)
         )) ?? AttributedString(String(localized: "MARKDOWN_LOADING_ERROR", bundle: .module))
-        
-        markdownString.font = configuration.fontSettings.documentContentFont
+
+        // Indirection needed to hide `Sendable` warnings of `NSFont` on macOS
+        markdownString.mergeAttributes(.init([.font: configuration.fontSettings.documentContentFont]))
 
         return PDFAttributedText(text: NSAttributedString(markdownString))
     }
