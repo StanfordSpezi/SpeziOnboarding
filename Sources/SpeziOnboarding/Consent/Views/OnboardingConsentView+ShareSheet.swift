@@ -8,9 +8,9 @@
 
 import PDFKit
 import SwiftUI
-#if os(macOS)
+#if canImport(AppKit)
 import AppKit
-#else
+#elseif canImport(UIKit)
 import UIKit
 #endif
 
@@ -19,7 +19,6 @@ extension OnboardingConsentView {
     #if !os(macOS)
     struct ShareSheet: UIViewControllerRepresentable {
         let sharedItem: PDFDocument
-
         
         func makeUIViewController(context: Context) -> UIActivityViewController {
             // Note: Need to write down the PDF to storage as in-memory PDFs are not recognized properly
