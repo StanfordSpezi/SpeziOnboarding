@@ -10,15 +10,17 @@ import SpeziOnboarding
 import SpeziViews
 import SwiftUI
 
-
 struct OnboardingConsentMarkdownTestView: View {
     @Environment(OnboardingNavigationPath.self) private var path
-    
     
     var body: some View {
         OnboardingConsentView(
             markdown: {
-                Data("This is a *markdown* **example** [May we contact you for future studies?]".utf8)
+                guard let url = Bundle.main.url(forResource: "Tester", withExtension: "md"),
+                      let data = try? Data(contentsOf: url) else {
+                    fatalError("ConsentDocument.md file not found in bundle.")
+                }
+                return data
             },
             action: {
                 path.nextStep()
@@ -27,7 +29,6 @@ struct OnboardingConsentMarkdownTestView: View {
         )
     }
 }
-
 
 #if DEBUG
 struct OnboardingConsentMarkdownTestView_Previews: PreviewProvider {

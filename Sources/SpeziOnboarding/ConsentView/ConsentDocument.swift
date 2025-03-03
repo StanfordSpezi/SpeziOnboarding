@@ -11,7 +11,6 @@ import PencilKit
 import SpeziPersonalInfo
 import SpeziViews
 import SwiftUI
-import SpeziValidation
 
 /// Display markdown-based consent documents that can be signed and exported.
 ///
@@ -47,7 +46,7 @@ public struct ConsentDocument: View {
     private let familyNameTitle: LocalizedStringResource
     private let familyNamePlaceholder: LocalizedStringResource
     let exportConfiguration: ExportConfiguration
-    
+
     @Environment(\.colorScheme) var colorScheme
     @State var name = PersonNameComponents()
     #if !os(macOS)
@@ -60,13 +59,15 @@ public struct ConsentDocument: View {
     public static var checked: [String: String] = [:]
     @State public var checkboxSnapshot: UIImage?
     @State public var allElements = [MarkdownElement]()
-    
+
     public enum MarkdownElement: Hashable {
         case signature(String)
         case checkbox(String, [String])
         case text(String)
     }
-    
+    @State private var markdownStrings: [String] = []
+    @State public var cleanedMarkdownData: Data?
+
     private var nameView: some View {
         VStack {
             Divider()
@@ -80,21 +81,20 @@ public struct ConsentDocument: View {
                 }
                 #endif
             }
-                .disabled(inputFieldsDisabled)
-                .onChange(of: name) {
-                    if !(name.givenName?.isEmpty ?? true) && !(name.familyName?.isEmpty ?? true) {
-                        viewState = .namesEntered
-                    } else {
-                        viewState = .base(.idle)
-                        // Reset all strokes if name fields are not complete anymore
-                        #if !os(macOS)
-                        signature.strokes.removeAll()
-                        #else
-                        signature.removeAll()
-                        #endif
-                    }
+            .disabled(inputFieldsDisabled)
+            .onChange(of: name) {
+                if !(name.givenName?.isEmpty ?? true) && !(name.familyName?.isEmpty ?? true) {
+                    viewState = .namesEntered
+                } else {
+                    viewState = .base(.idle)
+                    // Reset all strokes if name fields are not complete anymore
+                    #if !os(macOS)
+                    signature.strokes.removeAll()
+                    #else
+                    signature.removeAll()
+                    #endif
                 }
-            
+            }
             Divider()
         }
     }
@@ -167,20 +167,19 @@ public struct ConsentDocument: View {
         return elements
     }
 
-    
     struct CheckBoxView: View {
+        // TODO: add validation
         let question: String
         let options: [String]
-        
+
         @State private var elementSelected = "-"
-        @ValidationState private var validation
         
         var body: some View {
             VStack {
                 HStack {
                     Text(question)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                    
+
                     Menu {
                         ForEach(options, id: \.self) { theElement in
                             Button(theElement) {
@@ -198,29 +197,13 @@ public struct ConsentDocument: View {
                             .foregroundColor(.white)
                             .cornerRadius(5)
                     }
-                    .validate(elementSelected != "-", message: "Please select an option")
                 }
-                
-                if let firstValidationError = validation.allDisplayedValidationResults.first {
-                    Text(firstValidationError.message)
-                        .foregroundColor(.red)
-                        .font(.caption)
-                        .padding(.top, 4)
-                }
-
                 Divider()
                     .gridCellUnsizedAxes(.horizontal)
             }
-            .receiveValidation(in: $validation)
-            .onChange(of: elementSelected) { _, _ in
-                validation.validateSubviews()
-            }
-            .onAppear {
-                validation.validateSubviews()
-            }
         }
     }
-    
+
     private var nameInputView: some View {
         Grid(horizontalSpacing: 15) {
             NameFieldRow(name: $name, for: \.givenName) {
@@ -237,7 +220,7 @@ public struct ConsentDocument: View {
             }
         }
     }
-    
+
     private var signatureView: some View {
         Group {
             #if !os(macOS)
@@ -246,21 +229,22 @@ public struct ConsentDocument: View {
             SignatureView(signature: $signature, name: name)
             #endif
         }
-            .padding(.vertical, 4)
-            .disabled(inputFieldsDisabled)
-            .onChange(of: signature) {
-                #if !os(macOS)
-                let isSignatureEmpty = signature.strokes.isEmpty
-                #else
-                let isSignatureEmpty = signature.isEmpty
-                #endif
-                if !(isSignatureEmpty || (name.givenName?.isEmpty ?? true) || (name.familyName?.isEmpty ?? true)) {
-                    viewState = .signed
-                } else {
-                    viewState = .namesEntered
-                }
+        .padding(.vertical, 4)
+        .disabled(inputFieldsDisabled)
+        .onChange(of: signature) {
+            #if !os(macOS)
+            let isSignatureEmpty = signature.strokes.isEmpty
+            #else
+            let isSignatureEmpty = signature.isEmpty
+            #endif
+            if !(isSignatureEmpty || (name.givenName?.isEmpty ?? true) || (name.familyName?.isEmpty ?? true)) {
+                viewState = .signed
+            } else {
+                viewState = .namesEntered
             }
+        }
     }
+
     public var body: some View {
         ScrollView {
             ForEach(allElements, id: \.self) { element in
@@ -285,53 +269,27 @@ public struct ConsentDocument: View {
                     signatureView
                 }
             }
-        
-            Spacer()
-            Group {
-                nameView
-                if case .base(let baseViewState) = viewState,
-                   case .idle = baseViewState {
-                    EmptyView()
-                } else {
-                    signatureView
-                }
-            }
-            .frame(maxWidth: Self.maxWidthDrawing) // Limit the max view size so it fits on the PDF
         }
         .transition(.opacity)
-                    .animation(.easeInOut, value: viewState == .namesEntered)
-                    .onChange(of: viewState) {
-                        if case .export = viewState {
-                            
-//                            print(checked)
-//                            let renderer = ImageRenderer(content: checkboxesView)
-//                            if let uiImage = renderer.uiImage {
-//                                checkboxSnapshot = uiImage
-//                            }
-//                            Task {
-//                                guard let exportedConsent = await export() else {
-//                                    viewState = .base(.error(Error.memoryAllocationError))
-//                                    return
-//                                }
-//                                viewState = .exported(document: exportedConsent)
-//                            }
-                        } else if case .base(let baseViewState) = viewState,
-                                  case .idle = baseViewState {
-                            // Reset view state to correct one after handling an error view state via `.viewStateAlert()`
-                            #if !os(macOS)
-                            let isSignatureEmpty = signature.strokes.isEmpty
-                            #else
-                            let isSignatureEmpty = signature.isEmpty
-                            #endif
-                            
-                            if !isSignatureEmpty {
-                                viewState = .signed
-                            } else if !(name.givenName?.isEmpty ?? true) || !(name.familyName?.isEmpty ?? true) {
-                                viewState = .namesEntered
-                            }
-                        }
-                    }
-                        .viewStateAlert(state: $viewState.base)
+        .animation(.easeInOut, value: viewState == .namesEntered)
+        .onChange(of: viewState) { newState in
+            if case .export = newState {
+                // TODO: add export logic
+            } else if case .base(let baseViewState) = newState, case .idle = baseViewState {
+                #if !os(macOS)
+                let isSignatureEmpty = signature.strokes.isEmpty
+                #else
+                let isSignatureEmpty = signature.isEmpty
+                #endif
+                if !isSignatureEmpty {
+                    viewState = .signed
+                } else if !(name.givenName?.isEmpty ?? true) || !(name.familyName?.isEmpty ?? true) {
+                    viewState = .namesEntered
+                }
+            }
+        }
+        .transition(.opacity)
+        .animation(.easeInOut, value: viewState == .namesEntered)
         .onAppear {
             Task {
                 let elements = await extractMarkdownCB()
@@ -346,7 +304,7 @@ public struct ConsentDocument: View {
     private var inputFieldsDisabled: Bool {
         viewState == .base(.processing) || viewState == .export
     }
-    
+
     /// Creates a `ConsentDocument` which renders a consent document with a markdown view.
     ///
     /// The passed ``ConsentViewState`` indicates in which state the view currently is.
@@ -376,25 +334,22 @@ public struct ConsentDocument: View {
         self.familyNamePlaceholder = familyNamePlaceholder
         self.exportConfiguration = exportConfiguration
     }
-}
-
 
 #if DEBUG
-struct ConsentDocument_Previews: PreviewProvider {
-    @State private static var viewState: ConsentViewState = .base(.idle)
-    
-    
-    static var previews: some View {
-        NavigationStack {
-            ConsentDocument(
-                markdown: {
-                    Data("This is a *markdown* **example**".utf8)
-                },
-                viewState: $viewState
-            )
-            .navigationTitle(Text(verbatim: "Consent"))
-            .padding()
-        }
+#Preview {
+    @Previewable @State var viewState: ConsentViewState = .base(.idle)
+
+
+    NavigationStack {
+        ConsentDocument(
+            markdown: {
+                Data("This is a *markdown* **example**".utf8)
+            },
+            viewState: $viewState
+        )
+        .navigationTitle(Text(verbatim: "Consent"))
+        .padding()
     }
 }
 #endif
+}
