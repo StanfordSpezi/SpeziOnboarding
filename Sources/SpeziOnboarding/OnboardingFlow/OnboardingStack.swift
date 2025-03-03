@@ -82,8 +82,11 @@ public struct OnboardingStack: View {
     public var body: some View {
         NavigationStack(path: $onboardingNavigationPath.path) {
             onboardingNavigationPath.firstOnboardingView
+                .padding(.top, 24)
+                .environment(\.isInOnboardingStack, true)
                 .navigationDestination(for: OnboardingStepIdentifier.self) { onboardingStep in
                     onboardingNavigationPath.navigate(to: onboardingStep)
+                        .environment(\.isInOnboardingStack, true)
                 }
         }
             .environment(onboardingNavigationPath)
@@ -120,6 +123,11 @@ public struct OnboardingStack: View {
             )
         )
     }
+}
+
+
+extension EnvironmentValues {
+    @Entry public var isInOnboardingStack: Bool = false
 }
 
 

@@ -65,11 +65,7 @@ public class OnboardingNavigationPath {
     /// ``OnboardingStepIdentifier`` of first view in ``OnboardingStack``.
     /// `nil` if ``OnboardingStack`` is empty.
     internal var firstOnboardingStepIdentifier: OnboardingStepIdentifier? {
-        if onboardingSteps.elements.isEmpty {
-            return nil
-        } else {
-            return onboardingSteps.elements[0].key
-        }
+        onboardingSteps.elements.first?.key
     }
 
     /// The initial view that is presented to the user.
@@ -85,7 +81,6 @@ public class OnboardingNavigationPath {
               let view = onboardingSteps[firstOnboardingStepIdentifier] else {
             return .init(EmptyView())
         }
-
         return .init(view)
     }
 
@@ -100,7 +95,6 @@ public class OnboardingNavigationPath {
         guard let lastElement = path.last(where: { !$0.custom }) else {
             return firstOnboardingStepIdentifier
         }
-
         return lastElement
     }
 

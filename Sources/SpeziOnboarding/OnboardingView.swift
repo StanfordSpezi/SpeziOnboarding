@@ -75,28 +75,30 @@ public struct OnboardingView<TitleView: View, ContentView: View, ActionView: Vie
     private let contentView: ContentView
     private let actionView: ActionView
     
+    @Environment(\.isInOnboardingStack) private var isInOnboardingStack
+    
     
     public var body: some View {
-        Group {
-            GeometryReader { geometry in
-                ScrollView(.vertical, showsIndicators: false) {
-                    VStack(alignment: .center) {
-                        VStack {
-                            titleView
-                            contentView
-                        }
-                        if !(actionView is EmptyView) {
-                            Spacer()
-                            actionView
-                        }
-                        Spacer()
-                            .frame(height: 10)
+        GeometryReader { geometry in
+            ScrollView(.vertical, showsIndicators: false) {
+                VStack(alignment: .center) {
+                    VStack {
+                        titleView
+                        contentView
                     }
-                    .frame(minHeight: geometry.size.height)
+                    if !(actionView is EmptyView) {
+                        Spacer()
+                        actionView
+                    }
+                    Spacer()
+                        .frame(height: 10)
                 }
+                .frame(minHeight: geometry.size.height)
             }
-            .padding(24)
         }
+        // if the view is used as part of an `OnboardingStack`, we don't want the extra padding at the top,
+        // since that's where the navigation bar will be and we're already getting some padding via that.
+        .padding(isInOnboardingStack ? [.leading, .trailing, .bottom] : .all, 24)
     }
     
     
