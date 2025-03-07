@@ -89,11 +89,11 @@ public struct OnboardingStack: View {
                         .environment(\.isInOnboardingStack, true)
                 }
         }
-            .environment(onboardingNavigationPath)
-            .onChange(of: ObjectIdentifier(collection)) {
-                // ensure the model uses the latest views from the initializer
-                self.onboardingNavigationPath.updateViews(with: collection.views)
-            }
+        .environment(onboardingNavigationPath)
+        .onChange(of: ObjectIdentifier(collection)) {
+            // ensure the model uses the latest views from the initializer
+            self.onboardingNavigationPath.updateViews(with: collection.views)
+        }
     }
     
     
