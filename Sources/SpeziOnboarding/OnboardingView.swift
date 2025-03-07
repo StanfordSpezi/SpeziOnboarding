@@ -76,7 +76,7 @@ public struct OnboardingView<TitleView: View, ContentView: View, ActionView: Vie
     private let actionView: ActionView
     
     @Environment(\.isInOnboardingStack) private var isInOnboardingStack
-    
+    @Environment(\.onboardingViewEdgesWithPaddingDisabled) private var edgesWithPaddingDisabled
     
     public var body: some View {
         GeometryReader { geometry in
@@ -96,9 +96,14 @@ public struct OnboardingView<TitleView: View, ContentView: View, ActionView: Vie
                 .frame(minHeight: geometry.size.height)
             }
         }
+        .padding(edgesWithPadding, 24)
+    }
+    
+    private var edgesWithPadding: Edge.Set {
         // if the view is used as part of an `OnboardingStack`, we don't want the extra padding at the top,
         // since that's where the navigation bar will be and we're already getting some padding via that.
-        .padding(isInOnboardingStack ? [.leading, .trailing, .bottom] : .all, 24)
+        let edges: Edge.Set = isInOnboardingStack ? [.leading, .trailing, .bottom] : .all
+        return edges.subtracting(edgesWithPaddingDisabled)
     }
     
     
@@ -206,6 +211,18 @@ public struct OnboardingView<TitleView: View, ContentView: View, ActionView: Vie
                 }
             }
         )
+    }
+}
+
+
+extension EnvironmentValues {
+    @Entry fileprivate var onboardingViewEdgesWithPaddingDisabled: Edge.Set = []
+}
+
+
+extension OnboardingView {
+    public func disablePadding(_ edges: Edge.Set) -> some View {
+        self.environment(\.onboardingViewEdgesWithPaddingDisabled, edges)
     }
 }
 
