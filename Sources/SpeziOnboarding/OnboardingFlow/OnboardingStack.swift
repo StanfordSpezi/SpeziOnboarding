@@ -73,7 +73,10 @@ import SwiftUI
 ///
 /// - Note: When the ``SwiftUICore/View/onboardingIdentifier(_:)`` modifier is applied multiple times to the same view, the outermost identifier takes precedence.
 public struct OnboardingStack: View {
-    @State var onboardingNavigationPath: OnboardingNavigationPath
+//    private enum PathVariant {
+//        case external(OnboardingNavigationPath)
+//    }
+    @State private var onboardingNavigationPath: OnboardingNavigationPath
     private let collection: _OnboardingFlowViewCollection
 
     
@@ -91,8 +94,9 @@ public struct OnboardingStack: View {
         }
         .environment(onboardingNavigationPath)
         .onChange(of: ObjectIdentifier(collection)) {
+            print("UPDATED PATH")
             // ensure the model uses the latest views from the initializer
-            self.onboardingNavigationPath.updateViews(with: collection.views)
+//            self.onboardingNavigationPath.updateViews(with: collection.views)
         }
     }
     
@@ -124,6 +128,62 @@ public struct OnboardingStack: View {
         )
     }
 }
+
+
+//private struct OnboardingStackImpl1: View {
+//    private let onboardingFlowComplete: Binding<Bool>?
+//    private let onboardingFlow: _OnboardingFlowViewCollection
+//    private let startAtStep: (any View.Type)?
+//    @State private var path: OnboardingNavigationPath
+//    
+//    var body: some View {
+//        OnboardingStackImpl2(
+//            onboardingFlow: onboardingFlow,
+//            path: path
+//        )
+//    }
+//    
+//    init(
+//        onboardingFlowComplete: Binding<Bool>? = nil,
+//        onboardingFlow: _OnboardingFlowViewCollection,
+//        startAtStep: (any View.Type)? = nil
+//    ) {
+//        self.onboardingFlowComplete = onboardingFlowComplete
+//        self.onboardingFlow = onboardingFlow
+//        self.startAtStep = startAtStep
+//        self._path = State(initialValue: OnboardingNavigationPath(views: onboardingFlow.views, complete: onboardingFlowComplete, startAtStep: startAtStep))
+//    }
+//}
+//
+//
+//
+//private struct OnboardingStackImpl2: View {
+//    private let onboardingFlow: _OnboardingFlowViewCollection
+//    private var path: OnboardingNavigationPath
+//    
+//    var body: some View {
+//        @Bindable var path = path
+//        NavigationStack(path: $path.path) {
+//            path.firstOnboardingView
+//                .padding(.top, 24)
+//                .environment(\.isInOnboardingStack, true)
+//                .navigationDestination(for: OnboardingStepIdentifier.self) { onboardingStep in
+//                    path.navigate(to: onboardingStep)
+//                        .environment(\.isInOnboardingStack, true)
+//                }
+//        }
+//        .environment(path)
+//        .onChange(of: ObjectIdentifier(onboardingFlow)) {
+//            // ensure the model uses the latest views from the initializer
+//            self.path.updateViews(with: onboardingFlow.views)
+//        }
+//    }
+//    
+//    init(onboardingFlow: _OnboardingFlowViewCollection, path: OnboardingNavigationPath) {
+//        self.onboardingFlow = onboardingFlow
+//        self.path = path
+//    }
+//}
 
 
 extension EnvironmentValues {

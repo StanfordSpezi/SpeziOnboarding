@@ -10,6 +10,19 @@ import Foundation
 import OrderedCollections
 import SwiftUI
 
+/*
+ General Thoughts:
+ 
+ - there are multiple path-manipulating functions, for multiple kinds of manipulation:
+     - adding onto the path
+         - adding in the sense of taking one of the steps defined in the OnboardingStack {} call and pushing it onto the view hierarchy
+            (TODO question here what would happen were we to add the same view multiple times?)
+         - adding in the sense of pushing a custom view onto the stack, which wasn't defined in the init call
+         --> it's probably not a good idea to call both of these "append"(!)
+     - removing from the path
+         - removing the most recent
+ */
+
 // MARK: OnboardingNavigationPath
 
 /// Describes the current navigation state of a `OnboardingStack`.
@@ -51,7 +64,14 @@ import SwiftUI
 public class OnboardingNavigationPath {
     /// Internal SwiftUI `NavigationPath` that serves as the source of truth for the navigation state.
     /// Holds elements of type `OnboardingStepIdentifier` which identify the individual onboarding steps.
-    var path: [OnboardingStepIdentifier] = []
+    var path: [OnboardingStepIdentifier] = [] {
+        willSet {
+            print("WILL SET PATH\n- oldValue: \(path)\n- newValue: \(newValue)")
+        }
+        didSet {
+            print(" DID SET PATH\n- oldValue: \(oldValue)\n- newValue: \(path)")
+        }
+    }
     /// Boolean binding that is injected via the ``OnboardingStack``.
     /// Indicates if the onboarding flow is completed, meaning the last view declared within the ``OnboardingStack`` is completed.
     private let complete: Binding<Bool>?
@@ -107,11 +127,16 @@ public class OnboardingNavigationPath {
     ///   - startAtStep: An optional SwiftUI (Onboarding) `View` type indicating the first to-be-shown step of the onboarding flow.
     init(views: [any View], complete: Binding<Bool>?, startAtStep: (any View.Type)?) {
         self.complete = complete
+        print("ALLOCATE \(Self.self)", unsafeBitCast(self, to: uintptr_t.self))
         updateViews(with: views)
         // If specified, navigate to the first to-be-shown onboarding step
         if let startAtStep {
             append(startAtStep)
         }
+    }
+    
+    deinit {
+        print(" DESTROY \(Self.self)", unsafeBitCast(self, to: uintptr_t.self))
     }
     
 
