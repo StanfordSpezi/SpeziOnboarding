@@ -120,7 +120,8 @@ public struct OnboardingStack: View {
     ///   - onboardingFlowComplete: An optional SwiftUI `Binding` that is automatically set to true by
     ///     the ``OnboardingNavigationPath`` once the onboarding flow is completed.
     ///     Can be used to conditionally show/hide the `OnboardingStack`.
-    ///   - path: An optional, externally-managed ``OnboardingNavigationPath`` which will be used by this view. Only specify this if you actually need external control over the path; otherwise omit it to get the recommended default behaviour.
+    ///   - path: An optional, externally-managed ``OnboardingNavigationPath`` which will be used by this view.
+    ///       Only specify this if you actually need external control over the path; otherwise omit it to get the recommended default behaviour.
     ///   - startAtStep: An optional SwiftUI (Onboarding) `View` type indicating the first to-be-shown step of the onboarding flow.
     ///   - content: The SwiftUI (Onboarding) `View`s that are part of the onboarding flow.
     ///     You can define the `View`s using the onboarding view builder.
