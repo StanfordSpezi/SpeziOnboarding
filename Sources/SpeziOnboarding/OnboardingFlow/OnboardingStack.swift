@@ -81,7 +81,7 @@ public struct OnboardingStack: View {
     @State private var internalPath = OnboardingNavigationPath()
     
     /// The effective ``OnboardingNavigationPath``
-    private var path: OnboardingNavigationPath {
+    var path: OnboardingNavigationPath {
         externalPath ?? internalPath
     }
     

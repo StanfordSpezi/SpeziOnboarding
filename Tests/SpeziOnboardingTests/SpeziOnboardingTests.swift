@@ -22,7 +22,7 @@ struct SpeziOnboardingTests {
                 .onboardingIdentifier("Custom Identifier")
         }
 
-        let identifier = try #require(stack.onboardingNavigationPath.firstOnboardingStepIdentifier)
+        let identifier = try #require(stack.path.firstOnboardingStepIdentifier)
 
         var hasher = Hasher()
         hasher.combine("Custom Identifier")
