@@ -77,7 +77,6 @@ public struct OnboardingStack: View {
     private let isComplete: Binding<Bool>?
     private let startAtStep: (any View.Type)?
     private var externalPath: OnboardingNavigationPath?
-    @State private var didRunInitialConfig = false
     @State private var internalPath = OnboardingNavigationPath()
     
     /// The effective ``OnboardingNavigationPath``
@@ -99,17 +98,9 @@ public struct OnboardingStack: View {
                 }
         }
         .environment(path)
-        .onChange(of: ObjectIdentifier(onboardingFlow), initial: true) {
-            if !didRunInitialConfig {
-                // Note: we intentionally perform the initial configuration in here, instead of in the init.
-                // The reason for this is that calling path.configure in the init will, for some reason, cause
-                // a neverending loop of view updates when using an external path. Calling it in here does not.
-                didRunInitialConfig = true
-                path.configure(views: onboardingFlow.views, isComplete: isComplete, startAtStep: startAtStep)
-            } else {
-                // ensure the model uses the latest views from the initializer
-                path.updateViews(with: onboardingFlow.views)
-            }
+        .onChange(of: ObjectIdentifier(onboardingFlow)) {
+            // ensure the model uses the latest views from the initializer
+            path.updateViews(with: onboardingFlow.views)
         }
     }
     
@@ -120,7 +111,7 @@ public struct OnboardingStack: View {
     ///   - onboardingFlowComplete: An optional SwiftUI `Binding` that is automatically set to true by
     ///     the ``OnboardingNavigationPath`` once the onboarding flow is completed.
     ///     Can be used to conditionally show/hide the `OnboardingStack`.
-    ///   - path: An optional, externally-managed ``OnboardingNavigationPath`` which will be used by this view.
+    ///   - externalPath: An optional, externally-managed ``OnboardingNavigationPath`` which will be used by this view.
     ///       Only specify this if you actually need external control over the path; otherwise omit it to get the recommended default behaviour.
     ///   - startAtStep: An optional SwiftUI (Onboarding) `View` type indicating the first to-be-shown step of the onboarding flow.
     ///   - content: The SwiftUI (Onboarding) `View`s that are part of the onboarding flow.
@@ -128,14 +119,24 @@ public struct OnboardingStack: View {
     @MainActor
     public init(
         onboardingFlowComplete: Binding<Bool>? = nil,
-        path: OnboardingNavigationPath? = nil,
+        path externalPath: OnboardingNavigationPath? = nil,
         startAtStep: (any View.Type)? = nil,
         @OnboardingViewBuilder _ content: @MainActor () -> _OnboardingFlowViewCollection
     ) {
         onboardingFlow = content()
-        externalPath = path
         isComplete = onboardingFlowComplete
+        self.externalPath = externalPath
         self.startAtStep = startAtStep
+        if !path.didConfigure {
+            // Note: we intentionally perform the initial configuration in here, instead of in the init.
+            // The reason for this is that calling path.configure in the init will, for some reason, cause
+            // a neverending loop of view updates when using an external path. Calling it in here does not.
+            configurePath()
+        }
+    }
+    
+    private func configurePath() {
+        path.configure(views: onboardingFlow.views, isComplete: isComplete, startAtStep: startAtStep)
     }
 }
 

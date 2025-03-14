@@ -52,14 +52,7 @@ import SwiftUI
 public class OnboardingNavigationPath {
     /// Internal SwiftUI `NavigationPath` that serves as the source of truth for the navigation state.
     /// Holds elements of type `OnboardingStepIdentifier` which identify the individual onboarding steps.
-    var path: [OnboardingStepIdentifier] = [] {
-        willSet {
-            print("WILL SET PATH\n- oldValue: \(path)\n- newValue: \(newValue)")
-        }
-        didSet {
-            print(" DID SET PATH\n- oldValue: \(oldValue)\n- newValue: \(path)")
-        }
-    }
+    var path: [OnboardingStepIdentifier] = []
     /// Boolean binding that is injected via the ``OnboardingStack``.
     /// Indicates if the onboarding flow is completed, meaning the last view declared within the ``OnboardingStack`` is completed.
     private var isComplete: Binding<Bool>?
@@ -69,6 +62,8 @@ public class OnboardingNavigationPath {
     /// Stores all custom onboarding views that are appended to the `OnboardingNavigationPath`
     /// via the ``append(customView:)`` or ``append(customViewInit:)`` instance methods
     private var customOnboardingSteps: [OnboardingStepIdentifier: any View] = [:]
+    /// Indicates whether the Path's ``OnboardingNavigationPath/configure`` function has been called at least once.
+    private(set) var didConfigure = false
 
 
     /// ``OnboardingStepIdentifier`` of first view in ``OnboardingStack``.
@@ -131,6 +126,7 @@ public class OnboardingNavigationPath {
     ///     Is managed by the ``OnboardingNavigationPath`` to indicate whether the onboarding flow is complete.
     ///   - startAtStep: An optional SwiftUI (Onboarding) `View` type indicating the first to-be-shown step of the onboarding flow.
     func configure(views: [any View], isComplete: Binding<Bool>?, startAtStep: (any View.Type)?) {
+        didConfigure = true
         self.isComplete = isComplete
         updateViews(with: views)
         // If specified, navigate to the first to-be-shown onboarding step
