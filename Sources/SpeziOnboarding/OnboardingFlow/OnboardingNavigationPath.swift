@@ -50,8 +50,7 @@ import SwiftUI
 @MainActor
 @Observable
 public class OnboardingNavigationPath {
-    /// Internal SwiftUI `NavigationPath` that serves as the source of truth for the navigation state.
-    /// Holds elements of type `OnboardingStepIdentifier` which identify the individual onboarding steps.
+    /// The actual path of onboarding steps currently presented.
     var path: [OnboardingStepIdentifier] = []
     /// Boolean binding that is injected via the ``OnboardingStack``.
     /// Indicates if the onboarding flow is completed, meaning the last view declared within the ``OnboardingStack`` is completed.
