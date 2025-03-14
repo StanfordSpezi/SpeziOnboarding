@@ -56,7 +56,7 @@ extension ConsentDocumentExportRepresentation {
         
         /// The ``FontSettings`` store configuration of the fonts used to render the exported
         /// consent document, i.e., fonts for the content, title and signature.
-        public struct FontSettings: Equatable, Sendable {
+        public struct FontSettings: Equatable, @unchecked Sendable {
             /// The font of the caption rendered below the signature line.
             public let signatureCaptionFont: UINSFont
             /// The font of the prefix of the signature ("X" in most cases).
