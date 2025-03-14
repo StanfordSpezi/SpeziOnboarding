@@ -140,6 +140,9 @@ public struct OnboardingStack: View {
 
 
 extension EnvironmentValues {
+    /// Whether the view is currently contained within an ``OnboardingStack``.
+    ///
+    /// - Note: Don't set this value manually; ``OnboardingStack`` will set it for you where applicable.
     @Entry public var isInOnboardingStack: Bool = false
 }
 

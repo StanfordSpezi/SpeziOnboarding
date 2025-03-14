@@ -221,6 +221,11 @@ extension EnvironmentValues {
 
 
 extension OnboardingView {
+    /// Disables the ``OnboardingView``'s implicit padding for the specified edges.
+    ///
+    /// If this modifier is applied multiple times, the outermost call will take precedence.
+    ///
+    /// - Note: If the ``OnboardingView`` is contained in an ``OnboardingStack``, its top edge will already be disabled implicitly.
     public func disablePadding(_ edges: Edge.Set) -> some View {
         self.environment(\.onboardingViewEdgesWithPaddingDisabled, edges)
     }
