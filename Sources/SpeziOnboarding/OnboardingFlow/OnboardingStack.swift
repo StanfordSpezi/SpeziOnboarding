@@ -108,7 +108,7 @@ public struct OnboardingStack: View {
                 path.configure(views: onboardingFlow.views, isComplete: isComplete, startAtStep: startAtStep)
             } else {
                 // ensure the model uses the latest views from the initializer
-                self.path.updateViews(with: onboardingFlow.views)
+                path.updateViews(with: onboardingFlow.views)
             }
         }
     }
@@ -129,7 +129,7 @@ public struct OnboardingStack: View {
         onboardingFlowComplete: Binding<Bool>? = nil,
         path: OnboardingNavigationPath? = nil,
         startAtStep: (any View.Type)? = nil,
-        @OnboardingViewBuilder _ content: () -> _OnboardingFlowViewCollection
+        @OnboardingViewBuilder _ content: @MainActor () -> _OnboardingFlowViewCollection
     ) {
         onboardingFlow = content()
         externalPath = path
