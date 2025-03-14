@@ -73,30 +73,43 @@ import SwiftUI
 ///
 /// - Note: When the ``SwiftUICore/View/onboardingIdentifier(_:)`` modifier is applied multiple times to the same view, the outermost identifier takes precedence.
 public struct OnboardingStack: View {
-//    private enum PathVariant {
-//        case external(OnboardingNavigationPath)
-//    }
-    @State private var onboardingNavigationPath: OnboardingNavigationPath
-    private let collection: _OnboardingFlowViewCollection
-
+    private let onboardingFlow: _OnboardingFlowViewCollection
+    private let isComplete: Binding<Bool>?
+    private let startAtStep: (any View.Type)?
+    private var externalPath: OnboardingNavigationPath?
+    @State private var didRunInitialConfig = false
+    @State private var internalPath = OnboardingNavigationPath()
+    
+    /// The effective ``OnboardingNavigationPath``
+    private var path: OnboardingNavigationPath {
+        externalPath ?? internalPath
+    }
     
     /// The ``OnboardingStack/body`` contains a SwiftUI `NavigationStack` that is responsible for the navigation between
     /// the different onboarding views via an ``OnboardingNavigationPath``.
     public var body: some View {
-        NavigationStack(path: $onboardingNavigationPath.path) {
-            onboardingNavigationPath.firstOnboardingView
+        @Bindable var path = path
+        NavigationStack(path: $path.path) {
+            path.firstOnboardingView
                 .padding(.top, 24)
                 .environment(\.isInOnboardingStack, true)
-                .navigationDestination(for: OnboardingStepIdentifier.self) { onboardingStep in
-                    onboardingNavigationPath.navigate(to: onboardingStep)
+                .navigationDestination(for: OnboardingStepIdentifier.self) { step in
+                    path.navigate(to: step)
                         .environment(\.isInOnboardingStack, true)
                 }
         }
-        .environment(onboardingNavigationPath)
-        .onChange(of: ObjectIdentifier(collection)) {
-            print("UPDATED PATH")
-            // ensure the model uses the latest views from the initializer
-//            self.onboardingNavigationPath.updateViews(with: collection.views)
+        .environment(path)
+        .onChange(of: ObjectIdentifier(onboardingFlow), initial: true) {
+            if !didRunInitialConfig {
+                // Note: we intentionally perform the initial configuration in here, instead of in the init.
+                // The reason for this is that calling path.configure in the init will, for some reason, cause
+                // a neverending loop of view updates when using an external path. Calling it in here does not.
+                didRunInitialConfig = true
+                path.configure(views: onboardingFlow.views, isComplete: isComplete, startAtStep: startAtStep)
+            } else {
+                // ensure the model uses the latest views from the initializer
+                self.path.updateViews(with: onboardingFlow.views)
+            }
         }
     }
     
@@ -107,83 +120,23 @@ public struct OnboardingStack: View {
     ///   - onboardingFlowComplete: An optional SwiftUI `Binding` that is automatically set to true by
     ///     the ``OnboardingNavigationPath`` once the onboarding flow is completed.
     ///     Can be used to conditionally show/hide the `OnboardingStack`.
+    ///   - path: An optional, externally-managed ``OnboardingNavigationPath`` which will be used by this view. Only specify this if you actually need external control over the path; otherwise omit it to get the recommended default behaviour.
     ///   - startAtStep: An optional SwiftUI (Onboarding) `View` type indicating the first to-be-shown step of the onboarding flow.
     ///   - content: The SwiftUI (Onboarding) `View`s that are part of the onboarding flow.
     ///     You can define the `View`s using the onboarding view builder.
     @MainActor
     public init(
         onboardingFlowComplete: Binding<Bool>? = nil,
+        path: OnboardingNavigationPath? = nil,
         startAtStep: (any View.Type)? = nil,
-        @OnboardingViewBuilder _ content: @escaping () -> _OnboardingFlowViewCollection
+        @OnboardingViewBuilder _ content: () -> _OnboardingFlowViewCollection
     ) {
-        let onboardingFlowViewCollection = content()
-        self.collection = onboardingFlowViewCollection
-
-        self._onboardingNavigationPath = State(
-            wrappedValue: OnboardingNavigationPath(
-                views: onboardingFlowViewCollection.views,
-                complete: onboardingFlowComplete,
-                startAtStep: startAtStep
-            )
-        )
+        onboardingFlow = content()
+        externalPath = path
+        isComplete = onboardingFlowComplete
+        self.startAtStep = startAtStep
     }
 }
-
-
-//private struct OnboardingStackImpl1: View {
-//    private let onboardingFlowComplete: Binding<Bool>?
-//    private let onboardingFlow: _OnboardingFlowViewCollection
-//    private let startAtStep: (any View.Type)?
-//    @State private var path: OnboardingNavigationPath
-//    
-//    var body: some View {
-//        OnboardingStackImpl2(
-//            onboardingFlow: onboardingFlow,
-//            path: path
-//        )
-//    }
-//    
-//    init(
-//        onboardingFlowComplete: Binding<Bool>? = nil,
-//        onboardingFlow: _OnboardingFlowViewCollection,
-//        startAtStep: (any View.Type)? = nil
-//    ) {
-//        self.onboardingFlowComplete = onboardingFlowComplete
-//        self.onboardingFlow = onboardingFlow
-//        self.startAtStep = startAtStep
-//        self._path = State(initialValue: OnboardingNavigationPath(views: onboardingFlow.views, complete: onboardingFlowComplete, startAtStep: startAtStep))
-//    }
-//}
-//
-//
-//
-//private struct OnboardingStackImpl2: View {
-//    private let onboardingFlow: _OnboardingFlowViewCollection
-//    private var path: OnboardingNavigationPath
-//    
-//    var body: some View {
-//        @Bindable var path = path
-//        NavigationStack(path: $path.path) {
-//            path.firstOnboardingView
-//                .padding(.top, 24)
-//                .environment(\.isInOnboardingStack, true)
-//                .navigationDestination(for: OnboardingStepIdentifier.self) { onboardingStep in
-//                    path.navigate(to: onboardingStep)
-//                        .environment(\.isInOnboardingStack, true)
-//                }
-//        }
-//        .environment(path)
-//        .onChange(of: ObjectIdentifier(onboardingFlow)) {
-//            // ensure the model uses the latest views from the initializer
-//            self.path.updateViews(with: onboardingFlow.views)
-//        }
-//    }
-//    
-//    init(onboardingFlow: _OnboardingFlowViewCollection, path: OnboardingNavigationPath) {
-//        self.onboardingFlow = onboardingFlow
-//        self.path = path
-//    }
-//}
 
 
 extension EnvironmentValues {

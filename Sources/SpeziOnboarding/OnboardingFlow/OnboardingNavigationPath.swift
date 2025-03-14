@@ -74,7 +74,7 @@ public class OnboardingNavigationPath {
     }
     /// Boolean binding that is injected via the ``OnboardingStack``.
     /// Indicates if the onboarding flow is completed, meaning the last view declared within the ``OnboardingStack`` is completed.
-    private let complete: Binding<Bool>?
+    private var isComplete: Binding<Bool>?
 
     /// Stores all onboarding views as declared within the ``OnboardingStack`` and keep them in order.
     private var onboardingSteps: OrderedDictionary<OnboardingStepIdentifier, any View> = [:]
@@ -118,25 +118,37 @@ public class OnboardingNavigationPath {
         }
         return lastElement
     }
+    
+    /// Creates an empty, unconfigured `OnboardingNavigationPath`.
+    ///
+    /// This initializer is intended for creating empty, unconfigured `OnboardingNavigationPaths` which are then injected into an ``OnboardingStack``.
+    public init() {}
 
     /// An `OnboardingNavigationPath` represents the current navigation path within the ``OnboardingStack``.
     /// - Parameters:
     ///   - views: SwiftUI `View`s that are declared within the ``OnboardingStack``.
-    ///   - complete: An optional SwiftUI `Binding` that is injected by the ``OnboardingStack``.
+    ///   - isComplete: An optional SwiftUI `Binding` that is injected by the ``OnboardingStack``.
     ///     Is managed by the ``OnboardingNavigationPath`` to indicate whether the onboarding flow is complete.
     ///   - startAtStep: An optional SwiftUI (Onboarding) `View` type indicating the first to-be-shown step of the onboarding flow.
-    init(views: [any View], complete: Binding<Bool>?, startAtStep: (any View.Type)?) {
-        self.complete = complete
-        print("ALLOCATE \(Self.self)", unsafeBitCast(self, to: uintptr_t.self))
+    convenience init(views: [any View], isComplete: Binding<Bool>?, startAtStep: (any View.Type)?) {
+        self.init()
+        self.configure(views: views, isComplete: isComplete, startAtStep: startAtStep)
+    }
+    
+    
+    /// An `OnboardingNavigationPath` represents the current navigation path within the ``OnboardingStack``.
+    /// - Parameters:
+    ///   - views: SwiftUI `View`s that are declared within the ``OnboardingStack``.
+    ///   - isComplete: An optional SwiftUI `Binding` that is injected by the ``OnboardingStack``.
+    ///     Is managed by the ``OnboardingNavigationPath`` to indicate whether the onboarding flow is complete.
+    ///   - startAtStep: An optional SwiftUI (Onboarding) `View` type indicating the first to-be-shown step of the onboarding flow.
+    func configure(views: [any View], isComplete: Binding<Bool>?, startAtStep: (any View.Type)?) {
+        self.isComplete = isComplete
         updateViews(with: views)
         // If specified, navigate to the first to-be-shown onboarding step
         if let startAtStep {
             append(startAtStep)
         }
-    }
-    
-    deinit {
-        print(" DESTROY \(Self.self)", unsafeBitCast(self, to: uintptr_t.self))
     }
     
 
@@ -187,8 +199,8 @@ public class OnboardingNavigationPath {
     }
 
     private func onboardingComplete() {
-        if self.onboardingSteps.isEmpty && !(self.complete?.wrappedValue ?? false) {
-            self.complete?.wrappedValue = true
+        if self.onboardingSteps.isEmpty && !(self.isComplete?.wrappedValue ?? false) {
+            self.isComplete?.wrappedValue = true
         }
     }
 }
@@ -228,7 +240,7 @@ extension OnboardingNavigationPath {
     public func nextStep() {
         guard let currentStepIndex = onboardingSteps.elements.keys.firstIndex(where: { $0 == currentOnboardingStep }),
               currentStepIndex + 1 < onboardingSteps.elements.count else {
-            complete?.wrappedValue = true
+            isComplete?.wrappedValue = true
             return
         }
         appendToInternalNavigationPath(
