@@ -10,18 +10,6 @@ import Foundation
 import OrderedCollections
 import SwiftUI
 
-/*
- General Thoughts:
- 
- - there are multiple path-manipulating functions, for multiple kinds of manipulation:
-     - adding onto the path
-         - adding in the sense of taking one of the steps defined in the OnboardingStack {} call and pushing it onto the view hierarchy
-            (TODO question here what would happen were we to add the same view multiple times?)
-         - adding in the sense of pushing a custom view onto the stack, which wasn't defined in the init call
-         --> it's probably not a good idea to call both of these "append"(!)
-     - removing from the path
-         - removing the most recent
- */
 
 // MARK: OnboardingNavigationPath
 

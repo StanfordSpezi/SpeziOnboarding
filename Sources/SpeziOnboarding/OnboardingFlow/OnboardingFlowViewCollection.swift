@@ -16,7 +16,6 @@ import SwiftUI
 public class _OnboardingFlowViewCollection {  // swiftlint:disable:this type_name
     let views: [any View]
     
-    
     init(views: [any View]) {
         self.views = views
     }
