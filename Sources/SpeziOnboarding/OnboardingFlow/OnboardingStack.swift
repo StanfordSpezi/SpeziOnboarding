@@ -93,14 +93,14 @@ public struct OnboardingStack: View {
                 .padding(.top, 24)
                 .environment(\.isInOnboardingStack, true)
                 .navigationDestination(for: OnboardingStepIdentifier.self) { step in
-                    path.navigate(to: step)
+                    path.view(for: step)
                         .environment(\.isInOnboardingStack, true)
                 }
         }
         .environment(path)
         .onChange(of: ObjectIdentifier(onboardingFlow)) {
             // ensure the model uses the latest views from the initializer
-            path.updateViews(with: onboardingFlow.views)
+            path.updateViews(with: onboardingFlow.elements)
         }
     }
     
@@ -115,13 +115,13 @@ public struct OnboardingStack: View {
     ///       Only specify this if you actually need external control over the path; otherwise omit it to get the recommended default behaviour.
     ///   - startAtStep: An optional SwiftUI (Onboarding) `View` type indicating the first to-be-shown step of the onboarding flow.
     ///   - content: The SwiftUI (Onboarding) `View`s that are part of the onboarding flow.
-    ///     You can define the `View`s using the onboarding view builder.
+    ///     You can define the `View`s using the ``OnboardingFlowBuilder``.
     @MainActor
     public init(
         onboardingFlowComplete: Binding<Bool>? = nil,
         path externalPath: OnboardingNavigationPath? = nil,
         startAtStep: (any View.Type)? = nil,
-        @OnboardingViewBuilder _ content: @MainActor () -> _OnboardingFlowViewCollection
+        @OnboardingFlowBuilder _ content: @MainActor () -> _OnboardingFlowViewCollection
     ) {
         onboardingFlow = content()
         isComplete = onboardingFlowComplete
@@ -136,7 +136,7 @@ public struct OnboardingStack: View {
     }
     
     private func configurePath() {
-        path.configure(views: onboardingFlow.views, isComplete: isComplete, startAtStep: startAtStep)
+        path.configure(elements: onboardingFlow.elements, isComplete: isComplete, startAtStep: startAtStep)
     }
 }
 
