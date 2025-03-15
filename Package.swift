@@ -25,7 +25,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/StanfordSpezi/Spezi", from: "1.8.0"),
-        .package(url: "https://github.com/StanfordSpezi/SpeziFoundation", from: "2.1.0"),
+        .package(url: "https://github.com/StanfordSpezi/SpeziFoundation", branch: "lukas/hashable-staticstring"),
         .package(url: "https://github.com/StanfordSpezi/SpeziViews", from: "1.9.0"),
         .package(url: "https://github.com/apple/swift-collections", from: "1.1.4"),
         .package(url: "https://github.com/techprimate/TPPDF", from: "2.6.1")

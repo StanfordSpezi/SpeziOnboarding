@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import SpeziFoundation
 import SwiftUI
 
 
@@ -29,29 +30,5 @@ public class _OnboardingFlowViewCollection {  // swiftlint:disable:this type_nam
     
     init(elements: [Element]) {
         self.elements = elements
-    }
-}
-
-
-extension StaticString: @retroactive Hashable {
-    public static func == (lhs: Self, rhs: Self) -> Bool {
-        switch (lhs.hasPointerRepresentation, rhs.hasPointerRepresentation) {
-        case (true, true):
-            // the two strings are either truly identical (if they point to the same address),
-            // or they point to different memory locations which then contain identical contents
-            lhs.utf8Start == rhs.utf8Start || strcmp(lhs.utf8Start, rhs.utf8Start) == 0
-        case (false, false):
-            lhs.unicodeScalar == rhs.unicodeScalar
-        case (true, false), (false, true):
-            false
-        }
-    }
-    
-    public func hash(into hasher: inout Hasher) {
-        if self.hasPointerRepresentation {
-            hasher.combine(self.utf8Start)
-        } else {
-            hasher.combine(self.unicodeScalar)
-        }
     }
 }
