@@ -75,7 +75,7 @@ import SwiftUI
 public struct OnboardingStack: View {
     private let onboardingFlow: _OnboardingFlowViewCollection
     private let isComplete: Binding<Bool>?
-    private let startAtStep: (any View.Type)?
+    private let startAtStep: OnboardingNavigationPath.StepReference?
     private var externalPath: OnboardingNavigationPath?
     @State private var internalPath = OnboardingNavigationPath()
     
@@ -104,6 +104,24 @@ public struct OnboardingStack: View {
         }
     }
     
+    @MainActor
+    private init(
+        onboardingFlowComplete: Binding<Bool>? = nil,
+        path externalPath: OnboardingNavigationPath? = nil,
+        startAtStep: OnboardingNavigationPath.StepReference?,
+        @OnboardingFlowBuilder _ content: @MainActor () -> _OnboardingFlowViewCollection
+    ) {
+        onboardingFlow = content()
+        isComplete = onboardingFlowComplete
+        self.externalPath = externalPath
+        self.startAtStep = startAtStep
+        if !path.didConfigure {
+            // Note: we intentionally perform the initial configuration in here, instead of in the init.
+            // The reason for this is that calling path.configure in the init will, for some reason, cause
+            // a neverending loop of view updates when using an external path. Calling it in here does not.
+            configurePath()
+        }
+    }
     
     /// A `OnboardingStack` is defined by the passed in views defined by the view builder as well as an boolean `Binding`
     /// that is set to true when the onboarding flow is completed.
@@ -123,16 +141,38 @@ public struct OnboardingStack: View {
         startAtStep: (any View.Type)? = nil,
         @OnboardingFlowBuilder _ content: @MainActor () -> _OnboardingFlowViewCollection
     ) {
-        onboardingFlow = content()
-        isComplete = onboardingFlowComplete
-        self.externalPath = externalPath
-        self.startAtStep = startAtStep
-        if !path.didConfigure {
-            // Note: we intentionally perform the initial configuration in here, instead of in the init.
-            // The reason for this is that calling path.configure in the init will, for some reason, cause
-            // a neverending loop of view updates when using an external path. Calling it in here does not.
-            configurePath()
-        }
+        self.init(
+            onboardingFlowComplete: onboardingFlowComplete,
+            path: externalPath,
+            startAtStep: startAtStep.map { .viewType($0) },
+            content
+        )
+    }
+    
+    /// A `OnboardingStack` is defined by the passed in views defined by the view builder as well as an boolean `Binding`
+    /// that is set to true when the onboarding flow is completed.
+    /// - Parameters:
+    ///   - onboardingFlowComplete: An optional SwiftUI `Binding` that is automatically set to true by
+    ///     the ``OnboardingNavigationPath`` once the onboarding flow is completed.
+    ///     Can be used to conditionally show/hide the `OnboardingStack`.
+    ///   - externalPath: An optional, externally-managed ``OnboardingNavigationPath`` which will be used by this view.
+    ///       Only specify this if you actually need external control over the path; otherwise omit it to get the recommended default behaviour.
+    ///   - startAtStep: An optional SwiftUI (Onboarding) `View` type indicating the first to-be-shown step of the onboarding flow.
+    ///   - content: The SwiftUI (Onboarding) `View`s that are part of the onboarding flow.
+    ///     You can define the `View`s using the ``OnboardingFlowBuilder``.
+    @MainActor
+    public init(
+        onboardingFlowComplete: Binding<Bool>? = nil,
+        path externalPath: OnboardingNavigationPath? = nil,
+        startAtStep: (any Hashable)?,
+        @OnboardingFlowBuilder _ content: @MainActor () -> _OnboardingFlowViewCollection
+    ) {
+        self.init(
+            onboardingFlowComplete: onboardingFlowComplete,
+            path: externalPath,
+            startAtStep: startAtStep.map { .identifier($0) },
+            content
+        )
     }
     
     private func configurePath() {
@@ -151,8 +191,33 @@ extension EnvironmentValues {
 
 #if DEBUG
 #Preview {
-    OnboardingStack {
-        Text(verbatim: "Hello Spezi!")
+    @Previewable @State var path = OnboardingNavigationPath()
+    @Previewable @State var showFstStep = true
+    @Previewable @State var showSndStep = true
+    
+    OnboardingStack(path: path, startAtStep: 1) {
+        if showFstStep {
+            Group {
+                Text("name: \(path.tmpIDTypename)")
+                Button("NEXT") {
+                    path.nextStep()
+                }
+                .navigationTitle("Step A")
+            }
+            .onboardingIdentifier(1)
+        }
+        
+        if showSndStep {
+            Form {
+                Button("NEXT") {
+                    path.nextStep()
+                }
+                Toggle("Show 1st", isOn: $showFstStep)
+                Toggle("Show 2nd", isOn: $showSndStep)
+            }
+            .navigationTitle("Step B")
+            .onboardingIdentifier(2)
+        }
     }
 }
 #endif

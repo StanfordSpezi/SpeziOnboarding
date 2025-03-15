@@ -14,7 +14,17 @@ import SwiftUI
 /// 
 /// It contains both the identifier for an onboarding step (the view's type) as well as a flag that indicates if it's a custom onboarding step.
 struct OnboardingStepIdentifier {
-    let identifierHash: Int
+    /// The source of the `OnboardingStepIdentifier`'s identity
+    enum IdentifierKind {
+        /// The `OnboardingStepIdentifier` derives its identity from a `View`'s type and source location
+        case viewTypeAndSourceLoc
+        /// The `OnboardingStepIdentifier` derives its identity from a `Hashable` value.
+        case identifiable(any Hashable)
+    }
+    
+    let identifierKind: IdentifierKind
+    
+//    let identifierHash: Int
     
     /// Whether the step is custom, i.e. created via e.g. ``OnboardingNavigationPath/append(customView:)``
     let isCustom: Bool
@@ -31,18 +41,15 @@ struct OnboardingStepIdentifier {
         self.isCustom = isCustom
         self.viewType = type(of: element.view)
         self.flowElementSourceLocation = element.sourceLocation
-        var hasher = Hasher()
         if let identifiable = element.view as? any OnboardingIdentifiable {
             let id = identifiable.id
-            hasher.combine(id)
+            self.identifierKind = .identifiable(id)
         } else if let identifiable = element.view as? any Identifiable {
             let id = identifiable.id
-            hasher.combine(id)
+            self.identifierKind = .identifiable(id)
         } else {
-            hasher.combine(String(reflecting: type(of: element.view)))
-            hasher.combine(element.sourceLocation)
+            self.identifierKind = .viewTypeAndSourceLoc
         }
-        self.identifierHash = hasher.finalize()
     }
 
     /// Initializes an identifier using a view type.
@@ -53,31 +60,56 @@ struct OnboardingStepIdentifier {
         self.isCustom = isCustom
         self.viewType = viewType
         self.flowElementSourceLocation = nil
-        var hasher = Hasher()
-        hasher.combine(String(reflecting: viewType))
-        self.identifierHash = hasher.finalize()
+        self.identifierKind = .viewTypeAndSourceLoc
     }
 }
 
 
 extension OnboardingStepIdentifier: Hashable {
     static func == (lhs: Self, rhs: Self) -> Bool {
-        lhs.identifierHash == rhs.identifierHash
+        switch (lhs.identifierKind, rhs.identifierKind) {
+        case (.viewTypeAndSourceLoc, .viewTypeAndSourceLoc):
+            lhs.viewType == rhs.viewType && lhs.flowElementSourceLocation == rhs.flowElementSourceLocation
+        case (.identifiable(let lhsValue), .identifiable(let rhsValue)):
+            lhsValue.isEqual(rhsValue)
+        case (.viewTypeAndSourceLoc, .identifiable), (.identifiable, .viewTypeAndSourceLoc):
+            false
+        }
     }
     
     func hash(into hasher: inout Hasher) {
-        hasher.combine(identifierHash)
+        switch self.identifierKind {
+        case .viewTypeAndSourceLoc:
+            hasher.combine(ObjectIdentifier(viewType))
+            if let flowElementSourceLocation {
+                hasher.combine(flowElementSourceLocation)
+            }
+        case .identifiable(let value):
+            hasher.combine(ObjectIdentifier(type(of: value)))
+            hasher.combine(value)
+        }
     }
 }
 
 
 extension OnboardingStepIdentifier: CustomDebugStringConvertible {
     var debugDescription: String {
-        var desc = "\(Self.self)(hash: \(identifierHash), isCustom: \(isCustom), viewType: \(viewType)"
+        var desc = "\(Self.self)(isCustom: \(isCustom), viewType: \(viewType), identifierKind: \(identifierKind)"
         if let sourceLoc = flowElementSourceLocation {
             desc += ", sourceLoc: \(sourceLoc.fileId);\(sourceLoc.line);\(sourceLoc.column)"
         }
         desc += ")"
         return desc
+    }
+}
+
+
+extension Equatable {
+    func isEqual(_ other: Any) -> Bool {
+        if let other = other as? Self {
+            other == self
+        } else {
+            false
+        }
     }
 }
