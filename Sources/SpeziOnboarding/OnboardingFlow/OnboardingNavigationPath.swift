@@ -153,6 +153,7 @@ public class OnboardingNavigationPath {
         }
     }
     
+    
     /// Internal function used to update the onboarding steps within the ``OnboardingNavigationPath`` if the
     /// result builder associated with the ``OnboardingStack`` is reevaluated.
     ///
@@ -164,7 +165,7 @@ public class OnboardingNavigationPath {
         do {
             // Ensure that the incoming navigation stack elements are all unique.
             // Note: we don't need to worry about collisions between OnboardingFlow-provided
-            // views and manually-added custom views added, since the non-custom ones will
+            // views and manually-added custom views, since the non-custom ones will
             // always also be identified by their source location, which is never the case for the custom ones.
             var identifiersSeenSoFar = Set<OnboardingStepIdentifier>()
             for element in elements {
@@ -181,78 +182,41 @@ public class OnboardingNavigationPath {
                 }
             }
         }
-        
-        if true {
-            let currentStepIndex = path.lastIndex(where: { !$0.isCustom })
-            let oldSteps = self.onboardingSteps.keys
-            let newSteps = elements.map { OnboardingStepIdentifier(element: $0, isCustom: false) }
-            if let currentOnboardingStep, !newSteps.contains(currentOnboardingStep) {
-                logger.error("""
-                    New onboarding steps don't include step with same identifier as the currently active onboarding step.
-                    The change will be discarded.
+        // Only allow view updates to views ahead of the current onboarding step.
+        // Without this limitation, attempts to navigate backwards or dismiss the currently displayed onboarding step
+        // (for example, after receiving HealthKit authorizations) could lead to unintended behavior.
+        // Note: This approach isn't perfect. Imaging we're at step 5 in the OnboardingStack, and some condition in the
+        // view changes and we remove step 3 from the OnboardingFlow. In this case, we won't actually remove it from the Stack,
+        // since we're at a later step and removing step 3 while being at step 5 is not a good idea.
+        // But now if you return to step 1, and then start going forward again, it still will include step 3.
+        // We might want to keep track of such situations, and re-apply the changes when the Stack navigates back?
+        let currentStepIndex = currentOnboardingStep.flatMap {
+            onboardingSteps.elements.keys.firstIndex(of: $0)
+        } ?? 0
+        // Remove all onboarding steps after the current onboarding step
+        let nextStepIndex = currentStepIndex + 1
+        if nextStepIndex < onboardingSteps.elements.endIndex {
+            onboardingSteps.removeSubrange(nextStepIndex...)
+        }
+        for element in elements {
+            let identifier = OnboardingStepIdentifier(element: element)
+            let stepIsAfterCurrentStep = !onboardingSteps.keys.contains(identifier)
+            guard stepIsAfterCurrentStep else {
+                continue
+            }
+            if let conflictingIdentifier = onboardingSteps.keys.first(where: { $0 == identifier }) {
+                // We need the check again in here, since there might also be collisions between
+                // the part of the incoming steps we integrate into the view and the existing,
+                // already-visited steps we keep around.
+                preconditionFailure("""
+                    SpeziOnboarding: OnboardingStack contains elements with duplicate onboarding step identifiers.
+                    This is invalid. If your OnboardingStack contains multiple instances of the same View type,
+                    use the 'onboardingIdentifier(_:)' View modifier to uniquely identify it within the Stack.
+                    Problematic identifier: \(identifier).
+                    Conflicting identifier: \(conflictingIdentifier)
                     """)
-                return
             }
-            let newStepsByIdentifier = Dictionary(
-                uniqueKeysWithValues: elements.map { (OnboardingStepIdentifier(element: $0), $0.view) }
-            )
-            let difference = newSteps.difference(from: oldSteps).inferringMoves()
-            
-//            var path = path
-            
-            for change in difference {
-                switch change {
-                case let .insert(offset, identifier, _):
-                    guard let view = newStepsByIdentifier[identifier] else {
-                        // unreachable
-                        preconditionFailure("Unable to get view")
-                    }
-                    self.onboardingSteps.updateValue(view, forKey: identifier, insertingAt: offset)
-                case let .remove(offset, identifier, _):
-                    self.onboardingSteps.remove(at: offset)
-                    if let idx = path.firstIndex(of: identifier) {
-                        withTransaction(\.disablesAnimations, true) {
-                            path.remove(at: idx)
-                        }
-                    }
-                }
-            }
-            
-            // TODO disable transactions based on what we want to animate!
-//            withTransaction(\.disablesAnimations, true) {
-//                self.path = path
-//            }
-        } else {
-            
-            // Only allow view updates to views ahead of the current onboarding step.
-            // Without this limitation, attempts to navigate backwards or dismiss the currently displayed onboarding step
-            // (for example, after receiving HealthKit authorizations) could lead to unintended behavior.
-            let currentStepIndex = currentOnboardingStep.flatMap {
-                onboardingSteps.elements.keys.firstIndex(of: $0)
-            } ?? 0
-            
-            // Remove all onboarding steps after the current onboarding step
-            let nextStepIndex = currentStepIndex + 1
-            if nextStepIndex < onboardingSteps.elements.endIndex {
-                onboardingSteps.removeSubrange(nextStepIndex...)
-            }
-            
-            for (elementIdx, element) in elements.enumerated() {
-                let onboardingStepIdentifier = OnboardingStepIdentifier(element: element)
-                let stepIsAfterCurrentStep = elementIdx > currentStepIndex // !self.onboardingSteps.keys.contains(onboardingStepIdentifier)
-                guard stepIsAfterCurrentStep else {
-                    continue
-                }
-                
-                guard self.onboardingSteps[onboardingStepIdentifier] == nil else {
-                    preconditionFailure("""
-                    SpeziOnboarding: Duplicate Onboarding step identifier hash `\(onboardingStepIdentifier)` identified.
-                    Ensure unique Onboarding view identifiers within the `OnboardingStack`!
-                    """)
-                }
-                
-                self.onboardingSteps[onboardingStepIdentifier] = element.view
-            }
+            onboardingSteps[identifier] = element.view
         }
         onboardingComplete()
     }
@@ -327,13 +291,7 @@ extension OnboardingNavigationPath {
     /// - Parameters:
     ///   - onboardingStepType: The type of the onboarding `View` which should be displayed next. Must be declared within the ``OnboardingStack``.
     public func appendStep(_ stepType: any View.Type) {
-        guard let stepIdentifier = onboardingSteps.keys.first(where: { stepIdentifier in
-            !stepIdentifier.isCustom && stepIdentifier.viewType == stepType
-        }) else {
-            logger.error("Unable to find Onboarding Step with identifier '\(stepType)'")
-            return
-        }
-        pushStep(identifiedBy: stepIdentifier)
+        moveToFirstStep(identifiedBy: .viewType(stepType), includeIntermediateSteps: false)
     }
     
     
@@ -345,39 +303,21 @@ extension OnboardingNavigationPath {
     ///
     /// - Parameters:
     ///   - id: The identifier of the onboarding step to move to.
-    public func appendStep<ID: Hashable>(_ id: ID) {
-        guard let stepIdentifier = onboardingSteps.keys.first(where: { stepIdentifier in
-            guard !stepIdentifier.isCustom else {
-                return false
-            }
-            switch stepIdentifier.identifierKind {
-            case .viewTypeAndSourceLoc:
-                return false
-            case .identifiable(let anyHashable):
-                if let anyHashable = anyHashable as? ID {
-                    return anyHashable == id
-                } else {
-                    return false
-                }
-            }
-        }) else {
-            logger.error("Unable to find OnboardingStack step with identifier '\(String(describing: id))'")
-            return
-        }
-        pushStep(identifiedBy: stepIdentifier)
+    public func appendStep(_ id: some Hashable) {
+        moveToFirstStep(identifiedBy: .identifier(id), includeIntermediateSteps: false)
     }
     
     /// Modifies the navigation path to move to the first onboarding step of the specified type, and also add all steps inbetween.
     public func moveToFirstStep(ofType type: any View.Type) {
-        moveToFirstStep(identifiedBy: .viewType(type))
+        moveToFirstStep(identifiedBy: .viewType(type), includeIntermediateSteps: true)
     }
     
     /// Modifies the navigation path to move to the first onboarding step identified by the specified value, and also add all steps inbetween.
     public func moveToFirstStep(withIdentifier id: some Hashable) {
-        moveToFirstStep(identifiedBy: .identifier(id))
+        moveToFirstStep(identifiedBy: .identifier(id), includeIntermediateSteps: true)
     }
     
-    private func moveToFirstStep(identifiedBy stepRef: StepReference) {
+    private func moveToFirstStep(identifiedBy stepRef: StepReference, includeIntermediateSteps: Bool) {
         let currentOnboardingIndex = currentOnboardingStep.flatMap {
             onboardingSteps.keys.firstIndex(of: $0)
         } ?? 0
@@ -388,7 +328,7 @@ extension OnboardingNavigationPath {
             switch (stepRef, stepIdentifier.identifierKind) {
             case (.viewType(let type), _):
                 return stepIdentifier.viewType == type
-            case (.identifier(let valueA), .identifiable(let valueB)):
+            case let (.identifier(valueA), .identifiable(valueB)):
                 return valueA.isEqual(valueB)
             case (.identifier, .viewTypeAndSourceLoc):
                 return false
@@ -397,7 +337,11 @@ extension OnboardingNavigationPath {
             logger.error("Unable to find OnboardingStack step with identifier '\(String(describing: stepRef))'")
             return
         }
-        path = Array(onboardingSteps.keys[...stepIdentifierIdx].dropFirst())
+        if includeIntermediateSteps {
+            path = Array(onboardingSteps.keys[...stepIdentifierIdx].dropFirst())
+        } else {
+            path.append(onboardingSteps.keys[stepIdentifierIdx])
+        }
     }
     
     

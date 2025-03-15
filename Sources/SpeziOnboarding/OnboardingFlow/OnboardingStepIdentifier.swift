@@ -24,8 +24,6 @@ struct OnboardingStepIdentifier {
     
     let identifierKind: IdentifierKind
     
-//    let identifierHash: Int
-    
     /// Whether the step is custom, i.e. created via e.g. ``OnboardingNavigationPath/append(customView:)``
     let isCustom: Bool
     
@@ -70,7 +68,7 @@ extension OnboardingStepIdentifier: Hashable {
         switch (lhs.identifierKind, rhs.identifierKind) {
         case (.viewTypeAndSourceLoc, .viewTypeAndSourceLoc):
             lhs.viewType == rhs.viewType && lhs.flowElementSourceLocation == rhs.flowElementSourceLocation
-        case (.identifiable(let lhsValue), .identifiable(let rhsValue)):
+        case let (.identifiable(lhsValue), .identifiable(rhsValue)):
             lhsValue.isEqual(rhsValue)
         case (.viewTypeAndSourceLoc, .identifiable), (.identifiable, .viewTypeAndSourceLoc):
             false

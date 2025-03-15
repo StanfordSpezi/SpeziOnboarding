@@ -106,8 +106,8 @@ public struct OnboardingStack: View {
     
     @MainActor
     private init(
-        onboardingFlowComplete: Binding<Bool>? = nil,
-        path externalPath: OnboardingNavigationPath? = nil,
+        onboardingFlowComplete: Binding<Bool>? = nil, // swiftlint:disable:this function_default_parameter_at_end
+        path externalPath: OnboardingNavigationPath? = nil, // swiftlint:disable:this function_default_parameter_at_end
         startAtStep: OnboardingNavigationPath.StepReference?,
         @OnboardingFlowBuilder _ content: @MainActor () -> _OnboardingFlowViewCollection
     ) {
@@ -162,8 +162,8 @@ public struct OnboardingStack: View {
     ///     You can define the `View`s using the ``OnboardingFlowBuilder``.
     @MainActor
     public init(
-        onboardingFlowComplete: Binding<Bool>? = nil,
-        path externalPath: OnboardingNavigationPath? = nil,
+        onboardingFlowComplete: Binding<Bool>? = nil, // swiftlint:disable:this function_default_parameter_at_end
+        path externalPath: OnboardingNavigationPath? = nil, // swiftlint:disable:this function_default_parameter_at_end
         startAtStep: (any Hashable)?,
         @OnboardingFlowBuilder _ content: @MainActor () -> _OnboardingFlowViewCollection
     ) {
