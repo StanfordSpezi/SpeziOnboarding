@@ -15,11 +15,22 @@ import SwiftUI
 /// It contains both the identifier for an onboarding step (the view's type) as well as a flag that indicates if it's a custom onboarding step.
 struct OnboardingStepIdentifier {
     /// The source of the `OnboardingStepIdentifier`'s identity
-    enum IdentifierKind {
+    enum IdentifierKind: Equatable {
         /// The `OnboardingStepIdentifier` derives its identity from a `View`'s type and source location
         case viewTypeAndSourceLoc
         /// The `OnboardingStepIdentifier` derives its identity from a `Hashable` value.
         case identifiable(any Hashable)
+        
+        static func == (lhs: Self, rhs: Self) -> Bool {
+            switch (lhs, rhs) {
+            case (.viewTypeAndSourceLoc, .viewTypeAndSourceLoc):
+                true
+            case let (.identifiable(lhsValue), .identifiable(rhsValue)):
+                lhsValue.isEqual(rhsValue)
+            case (.viewTypeAndSourceLoc, .identifiable), (.identifiable, .viewTypeAndSourceLoc):
+                false
+            }
+        }
     }
     
     let identifierKind: IdentifierKind

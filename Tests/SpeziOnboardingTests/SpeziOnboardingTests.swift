@@ -21,13 +21,9 @@ struct SpeziOnboardingTests {
             Text("Hello World")
                 .onboardingIdentifier("Custom Identifier")
         }
-
+        
         let identifier = try #require(stack.path.firstOnboardingStepIdentifier)
-
-        var hasher = Hasher()
-        hasher.combine("Custom Identifier")
-        let final = hasher.finalize()
-        #expect(identifier.identifierHash == final)
+        #expect(identifier.identifierKind == .identifiable("Custom Identifier"))
     }
 
     @Test("PDF Export", arguments:
