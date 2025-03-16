@@ -34,20 +34,20 @@ struct OnboardingStepIdentifier {
     }
     
     let identifierKind: IdentifierKind
-    
-    /// Whether the step is custom, i.e. created via e.g. ``OnboardingNavigationPath/append(customView:)``
-    let isCustom: Bool
-    
     let viewType: any View.Type
     let flowElementSourceLocation: _OnboardingFlowViewCollection.Element.SourceLocation?
+    
+    /// Whether the step is custom, i.e. not one of the steps defined via the ``OnboardingFlowBuilder`` but instead created via e.g. ``OnboardingNavigationPath/append(customView:)``.
+    var isCustom: Bool {
+        flowElementSourceLocation == nil
+    }
     
     /// Initializes an identifier using a view. If the view conforms to `Identifiable`, its `id` is used; otherwise, the view's type is used.
     /// - Parameters:
     ///   - view: The view used to initialize the identifier.
     ///   - custom: A flag indicating whether the step is custom.
     @MainActor
-    init(element: _OnboardingFlowViewCollection.Element, isCustom: Bool = false) {
-        self.isCustom = isCustom
+    init(element: _OnboardingFlowViewCollection.Element) {
         self.viewType = type(of: element.view)
         self.flowElementSourceLocation = element.sourceLocation
         if let identifiable = element.view as? any OnboardingIdentifiable {
@@ -65,8 +65,7 @@ struct OnboardingStepIdentifier {
     /// - Parameters:
     ///   - onboardingStepType: The class of the view used to initialize the identifier.
     ///   - custom: A flag indicating whether the step is custom.
-    init(onboardingStepType viewType: (some View).Type, isCustom: Bool = false) {
-        self.isCustom = isCustom
+    init(onboardingStepType viewType: (some View).Type) {
         self.viewType = viewType
         self.flowElementSourceLocation = nil
         self.identifierKind = .viewTypeAndSourceLoc
@@ -114,7 +113,7 @@ extension OnboardingStepIdentifier: CustomDebugStringConvertible {
 
 
 extension Equatable {
-    func isEqual(_ other: Any) -> Bool {
+    func isEqual(_ other: any Equatable) -> Bool {
         if let other = other as? Self {
             other == self
         } else {

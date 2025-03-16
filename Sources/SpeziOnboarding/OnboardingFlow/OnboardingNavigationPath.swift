@@ -8,7 +8,6 @@
 
 import Foundation
 import OrderedCollections
-import OSLog
 import SwiftUI
 
 
@@ -53,7 +52,10 @@ import SwiftUI
 /// - ``init()``
 /// ### Navigating
 /// - ``nextStep()``
-/// ### Manipulating the Stack
+/// - ``appendStep(_:)-1ndu9``
+/// - ``appendStep(_:)-6x3z0``
+/// - ``moveToNextStep(ofType:)``
+/// - ``moveToNextStep(withIdentifier:)``
 /// - ``removeLast()``
 @MainActor
 @Observable
@@ -84,10 +86,6 @@ public class OnboardingNavigationPath {
     private var customOnboardingSteps: [OnboardingStepIdentifier: any View] = [:]
     /// Indicates whether the Path's ``OnboardingNavigationPath/configure`` function has been called at least once.
     private(set) var didConfigure = false
-    
-    var tmpIDTypename = ""
-    
-    @ObservationIgnored private let logger = Logger(subsystem: "edu.stanford.spezi.onboarding", category: "OnboardingStack")
 
 
     /// ``OnboardingStepIdentifier`` of first view in ``OnboardingStack``.
@@ -169,7 +167,7 @@ public class OnboardingNavigationPath {
             // always also be identified by their source location, which is never the case for the custom ones.
             var identifiersSeenSoFar = Set<OnboardingStepIdentifier>()
             for element in elements {
-                let identifier = OnboardingStepIdentifier(element: element, isCustom: false)
+                let identifier = OnboardingStepIdentifier(element: element)
                 guard identifiersSeenSoFar.insert(identifier).inserted else {
                     let conflictingIdentifier = identifiersSeenSoFar.first(where: { $0 == identifier })
                     preconditionFailure("""
@@ -288,12 +286,14 @@ extension OnboardingNavigationPath {
     ///
     /// - Important: The specified parameter type must correspond to a `View` type declared within the ``OnboardingStack``. Otherwise, this function will have no effect.
     ///
+    /// - Note: When using this function to append a step, any intermediate steps between the current step and the step being moved to will be skipped, and won't be added to the navigation path.
+    ///     Use ``moveToNextStep(ofType:)`` instead if you want intermediate steps to be included.
+    ///
     /// - Parameters:
     ///   - onboardingStepType: The type of the onboarding `View` which should be displayed next. Must be declared within the ``OnboardingStack``.
     public func appendStep(_ stepType: any View.Type) {
-        moveToFirstStep(identifiedBy: .viewType(stepType), includeIntermediateSteps: false)
+        moveToNextStep(identifiedBy: .viewType(stepType), includeIntermediateSteps: false)
     }
-    
     
     /// Moves the navigation path to the first onboarding step matching the identifier `id`.
     ///
@@ -301,23 +301,36 @@ extension OnboardingNavigationPath {
     ///
     /// - Important: The specified parameter type must correspond to a `View` type declared within the ``OnboardingStack``. Otherwise, this function will have no effect.
     ///
+    /// - Note: When using this function to append a step, any intermediate steps between the current step and the step being moved to will be skipped, and won't be added to the navigation path.
+    ///     Use ``moveToNextStep(withIdentifier:)`` instead if you want intermediate steps to be included.
+    ///
     /// - Parameters:
     ///   - id: The identifier of the onboarding step to move to.
     public func appendStep(_ id: some Hashable) {
-        moveToFirstStep(identifiedBy: .identifier(id), includeIntermediateSteps: false)
+        moveToNextStep(identifiedBy: .identifier(id), includeIntermediateSteps: false)
     }
     
     /// Modifies the navigation path to move to the first onboarding step of the specified type, and also add all steps inbetween.
-    public func moveToFirstStep(ofType type: any View.Type) {
-        moveToFirstStep(identifiedBy: .viewType(type), includeIntermediateSteps: true)
+    public func moveToNextStep(ofType type: any View.Type) {
+        moveToNextStep(identifiedBy: .viewType(type), includeIntermediateSteps: true)
     }
     
     /// Modifies the navigation path to move to the first onboarding step identified by the specified value, and also add all steps inbetween.
-    public func moveToFirstStep(withIdentifier id: some Hashable) {
-        moveToFirstStep(identifiedBy: .identifier(id), includeIntermediateSteps: true)
+    public func moveToNextStep(withIdentifier id: some Hashable) {
+        moveToNextStep(identifiedBy: .identifier(id), includeIntermediateSteps: true)
     }
     
-    private func moveToFirstStep(identifiedBy stepRef: StepReference, includeIntermediateSteps: Bool) {
+    /// Modifies the navigation path to move to the next onboarding step identified by the specified value, and also add all steps inbetween.
+    ///
+    /// This function will look at all onboarding steps after the current step, identify the first one that matches `stepRef`,
+    /// and push all steps between the current step and that step onto the stack (including, of course, the step matching `stepRef`).
+    ///
+    /// If no step matching `stepRef` exists, this function will have no effect.
+    ///
+    /// - Note: If `stepRef` is a `View` type, this function will navigate to the first step (following the current step) with a matching view type,
+    ///     even if that step is also using a custom identifier. If there are multiple steps with this type, and you want to select a step other than the first one,
+    ///     use an explicit identifier for matching instead.
+    private func moveToNextStep(identifiedBy stepRef: StepReference, includeIntermediateSteps: Bool) {
         let currentOnboardingIndex = currentOnboardingStep.flatMap {
             onboardingSteps.keys.firstIndex(of: $0)
         } ?? 0
@@ -334,7 +347,7 @@ extension OnboardingNavigationPath {
                 return false
             }
         }) else {
-            logger.error("Unable to find OnboardingStack step with identifier '\(String(describing: stepRef))'")
+            OnboardingStack.logger.error("Unable to find OnboardingStack step with identifier '\(String(describing: stepRef))'")
             return
         }
         if includeIntermediateSteps {
@@ -355,8 +368,7 @@ extension OnboardingNavigationPath {
     ///     It isn't required to declare this view within the ``OnboardingStack``.
     public func append(customView: some View) {
         let customOnboardingStepIdentifier = OnboardingStepIdentifier(
-            element: .init(view: customView, sourceLocation: nil),
-            isCustom: true
+            element: .init(view: customView, sourceLocation: nil)
         )
         customOnboardingSteps[customOnboardingStepIdentifier] = customView
         pushStep(identifiedBy: customOnboardingStepIdentifier)

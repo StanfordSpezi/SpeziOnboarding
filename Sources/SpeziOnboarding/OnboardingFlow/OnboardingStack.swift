@@ -7,17 +7,19 @@
 //
 
 import Foundation
+import OSLog
 import SwiftUI
 
 
-/// Navigation Stack of Onboarding Views.
+/// Managed Navigation Stack of Onboarding Views.
 ///
 /// The `OnboardingStack` wraps a SwiftUI `NavigationStack` and provides an easy to use API to declare the onboarding steps of health applications,
 /// eliminating the need for developers to manually determine the next to be shown step within each onboarding view (e.g. skipped steps as permissions are already granted).
 /// All of the (conditional) onboarding views are stated within the `OnboardingStack` from which the order of the onboarding flow is determined.
 ///
-/// Navigation within the `OnboardingStack` is possible via the ``OnboardingNavigationPath`` which works quite similar to the SwiftUI `NavigationPath`.
-/// It automatically navigates to the next to-be-shown onboarding step via ``OnboardingNavigationPath/nextStep()`` or manually via  ``OnboardingNavigationPath/append(_:)``.
+/// Navigation within the `OnboardingStack` is possible via the ``OnboardingNavigationPath`` which works similar to SwiftUI's `NavigationPath`.
+/// The ``OnboardingNavigationPath``'s ``OnboardingNavigationPath/nextStep()``, ``OnboardingNavigationPath/appendStep(_:)-1ndu9``,
+/// and ``OnboardingNavigationPath/moveToNextStep(ofType:)`` functions can be used to programmatically navigate within the stack.
 /// Furthermore, one can append custom onboarding steps that are not declared within the  `OnboardingStack`
 /// (e.g. as the structure of these steps isn't linear) via ``OnboardingNavigationPath/append(customView:)``.
 /// See the ``OnboardingNavigationPath`` for more details.
@@ -72,7 +74,17 @@ import SwiftUI
 /// ```
 ///
 /// - Note: When the ``SwiftUICore/View/onboardingIdentifier(_:)`` modifier is applied multiple times to the same view, the outermost identifier takes precedence.
+///
+/// ## Topics
+/// ### Creating an Onboarding Stack
+/// - ``init(onboardingFlowComplete:path:startAtStep:_:)-3fn08``
+/// - ``init(onboardingFlowComplete:path:startAtStep:_:)-39lmr``
+/// - ``OnboardingFlowBuilder``
+/// ### SwiftUI Environment Values
+/// - ``SwiftUICore/EnvironmentValues/isInOnboardingStack``
 public struct OnboardingStack: View {
+    static let logger = Logger(subsystem: "edu.stanford.spezi.onboarding", category: "OnboardingStack")
+    
     private let onboardingFlow: _OnboardingFlowViewCollection
     private let isComplete: Binding<Bool>?
     private let startAtStep: OnboardingNavigationPath.StepReference?
@@ -104,7 +116,6 @@ public struct OnboardingStack: View {
         }
     }
     
-    @MainActor
     private init(
         onboardingFlowComplete: Binding<Bool>? = nil, // swiftlint:disable:this function_default_parameter_at_end
         path externalPath: OnboardingNavigationPath? = nil, // swiftlint:disable:this function_default_parameter_at_end
@@ -134,7 +145,6 @@ public struct OnboardingStack: View {
     ///   - startAtStep: An optional SwiftUI (Onboarding) `View` type indicating the first to-be-shown step of the onboarding flow.
     ///   - content: The SwiftUI (Onboarding) `View`s that are part of the onboarding flow.
     ///     You can define the `View`s using the ``OnboardingFlowBuilder``.
-    @MainActor
     public init(
         onboardingFlowComplete: Binding<Bool>? = nil,
         path externalPath: OnboardingNavigationPath? = nil,
@@ -160,7 +170,6 @@ public struct OnboardingStack: View {
     ///   - startAtStep: An optional SwiftUI (Onboarding) `View` type indicating the first to-be-shown step of the onboarding flow.
     ///   - content: The SwiftUI (Onboarding) `View`s that are part of the onboarding flow.
     ///     You can define the `View`s using the ``OnboardingFlowBuilder``.
-    @MainActor
     public init(
         onboardingFlowComplete: Binding<Bool>? = nil, // swiftlint:disable:this function_default_parameter_at_end
         path externalPath: OnboardingNavigationPath? = nil, // swiftlint:disable:this function_default_parameter_at_end
@@ -192,32 +201,18 @@ extension EnvironmentValues {
 #if DEBUG
 #Preview {
     @Previewable @State var path = OnboardingNavigationPath()
-    @Previewable @State var showFstStep = true
-    @Previewable @State var showSndStep = true
     
     OnboardingStack(path: path, startAtStep: 1) {
-        if showFstStep {
-            Group {
-                Text("name: \(path.tmpIDTypename)")
-                Button("NEXT") {
-                    path.nextStep()
-                }
-                .navigationTitle("Step A")
-            }
-            .onboardingIdentifier(1)
+        Button("Next") {
+            path.nextStep()
         }
-        
-        if showSndStep {
-            Form {
-                Button("NEXT") {
-                    path.nextStep()
-                }
-                Toggle("Show 1st", isOn: $showFstStep)
-                Toggle("Show 2nd", isOn: $showSndStep)
-            }
-            .navigationTitle("Step B")
-            .onboardingIdentifier(2)
+        .navigationTitle("First Step")
+        .onboardingIdentifier(0)
+        Button("Next") {
+            path.nextStep()
         }
+        .navigationTitle("Second Step")
+        .onboardingIdentifier(1)
     }
 }
 #endif
