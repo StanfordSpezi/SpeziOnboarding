@@ -260,8 +260,7 @@ public struct OnboardingConsentView: View {
 #if DEBUG
 #Preview {
     @Previewable @State var viewState: ConsentViewState = .base(.idle)
-
-
+    
     NavigationStack {
         OnboardingConsentView(markdown: {
             Data("This is a *markdown* **example**".utf8)
