@@ -78,7 +78,7 @@
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Spezi-samtycke"
+            "value" : "Spezisamtycke"
           }
         }
       }
@@ -166,7 +166,7 @@
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "SpeziOnboarding: Olagligt Onboardingsteg"
+            "value" : "SpeziOnboarding: Olagligt onboardingsteg"
           }
         }
       }
