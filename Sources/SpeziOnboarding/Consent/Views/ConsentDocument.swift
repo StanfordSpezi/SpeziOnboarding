@@ -104,6 +104,7 @@ public struct ConsentDocument: View {
         Grid(horizontalSpacing: 15) {
             NameFieldRow(name: $name, for: \.givenName) {
                 Text(givenNameTitle)
+                    .fontWeight(.medium)
             } label: {
                 Text(givenNamePlaceholder)
             }
@@ -111,6 +112,7 @@ public struct ConsentDocument: View {
                 .gridCellUnsizedAxes(.horizontal)
             NameFieldRow(name: $name, for: \.familyName) {
                 Text(familyNameTitle)
+                    .fontWeight(.medium)
             } label: {
                 Text(familyNamePlaceholder)
             }
