@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import SpeziFoundation
 import SwiftUI
 
 
@@ -14,10 +15,20 @@ import SwiftUI
 ///
 /// You can not create a ``_OnboardingFlowViewCollection`` yourself. Please use the ``OnboardingStack`` that internally creates a ``_OnboardingFlowViewCollection`` with the passed views.
 public class _OnboardingFlowViewCollection {  // swiftlint:disable:this type_name
-    let views: [any View]
+    /// An element collected by the ``OnboardingFlowBuilder``.
+    public struct Element {
+        struct SourceLocation: Hashable, Sendable {
+            let fileId: StaticString
+            let line: UInt
+            let column: UInt
+        }
+        let view: any View
+        let sourceLocation: SourceLocation?
+    }
     
+    let elements: [Element]
     
-    init(views: [any View]) {
-        self.views = views
+    init(elements: [Element]) {
+        self.elements = elements
     }
 }

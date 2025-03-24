@@ -53,59 +53,21 @@ extension ConsentDocumentExportRepresentation {
             }
         }
         
-        #if !os(macOS)
-        /// The ``FontSettings`` store configuration of the fonts used to render the exported
-        /// consent document, i.e., fonts for the content, title and signature.
-        public struct FontSettings: Equatable, Sendable {
-            /// The font of the caption rendered below the signature line.
-            public let signatureCaptionFont: UIFont
-            /// The font of the prefix of the signature ("X" in most cases).
-            public let signaturePrefixFont: UIFont
-            /// The font of the content of the document (i.e., the rendered markdown text)
-            public let documentContentFont: UIFont
-            /// The font of the header (i.e., title of the document).
-            public let headerTitleFont: UIFont
-            /// The font of the export timestamp (optionally rendered in the top right document corner,
-            /// if exportConfiguration.includingTimestamp is true).
-            public let headerExportTimeStampFont: UIFont
-            
-            /// Creates an instance`FontSettings` specifying the fonts of various components of the exported document
-            ///
-            /// - Parameters:
-            ///   - signatureCaptionFont: The font used for the signature caption.
-            ///   - signaturePrefixFont: The font used for the signature prefix text.
-            ///   - documentContentFont: The font used for the main content of the document.
-            ///   - headerTitleFont: The font used for the header title.
-            ///   - headerExportTimeStampFont: The font used for the header timestamp.
-            public init(
-                signatureCaptionFont: UIFont,
-                signaturePrefixFont: UIFont,
-                documentContentFont: UIFont,
-                headerTitleFont: UIFont,
-                headerExportTimeStampFont: UIFont
-            ) {
-                self.signatureCaptionFont = signatureCaptionFont
-                self.signaturePrefixFont = signaturePrefixFont
-                self.documentContentFont = documentContentFont
-                self.headerTitleFont = headerTitleFont
-                self.headerExportTimeStampFont = headerExportTimeStampFont
-            }
-        }
-        #else
+        
         /// The ``FontSettings`` store configuration of the fonts used to render the exported
         /// consent document, i.e., fonts for the content, title and signature.
         public struct FontSettings: Equatable, @unchecked Sendable {
             /// The font of the caption rendered below the signature line.
-            public let signatureCaptionFont: NSFont
+            public let signatureCaptionFont: UINSFont
             /// The font of the prefix of the signature ("X" in most cases).
-            public let signaturePrefixFont: NSFont
+            public let signaturePrefixFont: UINSFont
             /// The font of the content of the document (i.e., the rendered markdown text)
-            public let documentContentFont: NSFont
+            public let documentContentFont: UINSFont
             /// The font of the header (i.e., title of the document).
-            public let headerTitleFont: NSFont
+            public let headerTitleFont: UINSFont
             /// The font of the export timestamp (optionally rendered in the top right document corner,
             /// if exportConfiguration.includingTimestamp is true).
-            public let headerExportTimeStampFont: NSFont
+            public let headerExportTimeStampFont: UINSFont
             
             /// Creates an instance`FontSettings` specifying the fonts of various components of the exported document
             ///
@@ -116,11 +78,11 @@ extension ConsentDocumentExportRepresentation {
             ///   - headerTitleFont: The font used for the header title.
             ///   - headerExportTimeStampFont: The font used for the header timestamp.
             public init(
-                signatureCaptionFont: NSFont,
-                signaturePrefixFont: NSFont,
-                documentContentFont: NSFont,
-                headerTitleFont: NSFont,
-                headerExportTimeStampFont: NSFont
+                signatureCaptionFont: UINSFont,
+                signaturePrefixFont: UINSFont,
+                documentContentFont: UINSFont,
+                headerTitleFont: UINSFont,
+                headerExportTimeStampFont: UINSFont
             ) {
                 self.signatureCaptionFont = signatureCaptionFont
                 self.signaturePrefixFont = signaturePrefixFont
@@ -129,7 +91,6 @@ extension ConsentDocumentExportRepresentation {
                 self.headerExportTimeStampFont = headerExportTimeStampFont
             }
         }
-        #endif
 
 
         let consentTitle: LocalizedStringResource
@@ -149,7 +110,7 @@ extension ConsentDocumentExportRepresentation {
             paperSize: PaperSize = .usLetter,
             consentTitle: LocalizedStringResource = Configuration.Defaults.exportedConsentFormTitle,
             includingTimestamp: Bool = true,
-            fontSettings: FontSettings = Configuration.Defaults.defaultExportFontSettings
+            fontSettings: FontSettings = .defaultExportFontSettings
         ) {
             self.paperSize = paperSize
             self.consentTitle = consentTitle
@@ -157,4 +118,30 @@ extension ConsentDocumentExportRepresentation {
             self.fontSettings = fontSettings
         }
     }
+}
+
+
+extension ConsentDocumentExportRepresentation.Configuration.FontSettings {
+    /// Default export font settings with fixed font sizes, ensuring a consistent appearance across platforms.
+    ///
+    /// This configuration uses `systemFont` and `boldSystemFont` with absolute font sizes to achieve uniform font sizes
+    /// on different operating systems such as macOS, iOS, and visionOS.
+    public static let defaultExportFontSettings = Self(
+        signatureCaptionFont: .systemFont(ofSize: 10),
+        signaturePrefixFont: .boldSystemFont(ofSize: 12),
+        documentContentFont: .systemFont(ofSize: 12),
+        headerTitleFont: .boldSystemFont(ofSize: 28),
+        headerExportTimeStampFont: .systemFont(ofSize: 8)
+    )
+
+    /// Default font based on system standards. In contrast to defaultExportFontSettings,
+    /// the font sizes might change according to the system settings, potentially leading to varying exported PDF documents
+    /// on devices with different system settings (e.g., larger default font size).
+    public static let defaultSystemDefaultFontSettings = Self(
+        signatureCaptionFont: .preferredFont(forTextStyle: .subheadline),
+        signaturePrefixFont: .preferredFont(forTextStyle: .title2),
+        documentContentFont: .preferredFont(forTextStyle: .body),
+        headerTitleFont: .boldSystemFont(ofSize: UINSFont.preferredFont(forTextStyle: .largeTitle).pointSize),
+        headerExportTimeStampFont: .preferredFont(forTextStyle: .caption1)
+    )
 }

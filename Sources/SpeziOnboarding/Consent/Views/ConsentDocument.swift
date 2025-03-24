@@ -56,7 +56,7 @@ public struct ConsentDocument: View {
     let exportConfiguration: ConsentDocumentExportRepresentation.Configuration
 
     @Environment(\.colorScheme) var colorScheme
-    @State var name = PersonNameComponents()
+    @State var name: PersonNameComponents
     #if !os(macOS)
     @State var signature = PKDrawing()
     #else
@@ -104,6 +104,7 @@ public struct ConsentDocument: View {
         Grid(horizontalSpacing: 15) {
             NameFieldRow(name: $name, for: \.givenName) {
                 Text(givenNameTitle)
+                    .fontWeight(.medium)
             } label: {
                 Text(givenNamePlaceholder)
             }
@@ -111,6 +112,7 @@ public struct ConsentDocument: View {
                 .gridCellUnsizedAxes(.horizontal)
             NameFieldRow(name: $name, for: \.familyName) {
                 Text(familyNameTitle)
+                    .fontWeight(.medium)
             } label: {
                 Text(familyNamePlaceholder)
             }
@@ -225,6 +227,7 @@ public struct ConsentDocument: View {
     ///   - familyNameTitle: The localization to use for the family (last) name field.
     ///   - familyNamePlaceholder: The localization to use for the family name field placeholder.
     ///   - exportConfiguration: Defines the properties of the exported consent form via ``ConsentDocumentExportRepresentation/Configuration``.
+    ///   - initialNameComponents: Allows prefilling the first and last name fields in the consent document.
     ///   - consentSignatureDate: The date that is displayed under the signature line.
     ///   - consentSignatureDateFormatter: The date formatter used to format the date that is displayed under the signature line.
     public init(
@@ -235,6 +238,7 @@ public struct ConsentDocument: View {
         familyNameTitle: LocalizedStringResource = LocalizationDefaults.familyNameTitle,
         familyNamePlaceholder: LocalizedStringResource = LocalizationDefaults.familyNamePlaceholder,
         exportConfiguration: ConsentDocumentExportRepresentation.Configuration = .init(),
+        initialNameComponents: PersonNameComponents? = nil,
         consentSignatureDate: Date? = nil,
         consentSignatureDateFormatter: DateFormatter = {
             let formatter = DateFormatter()
@@ -249,6 +253,7 @@ public struct ConsentDocument: View {
         self.familyNameTitle = familyNameTitle
         self.familyNamePlaceholder = familyNamePlaceholder
         self.exportConfiguration = exportConfiguration
+        self._name = State(initialValue: initialNameComponents ?? PersonNameComponents())
         self.consentSignatureDate = consentSignatureDate
         self.consentSignatureDateFormatter = consentSignatureDateFormatter
     }

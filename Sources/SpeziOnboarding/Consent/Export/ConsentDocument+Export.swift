@@ -39,10 +39,11 @@ extension ConsentDocument {
 
     #if !os(macOS)
     private var signatureImage: UIImage {
+        let scale: CGFloat
         #if os(iOS)
-        let scale = UIScreen.main.scale
+        scale = UIScreen.main.scale
         #else
-        let scale = 3.0 // retina scale is default
+        scale = 3 // retina scale is default
         #endif
 
         // As the `PKDrawing.image()` function automatically converts the ink color dependent on the used color scheme (light or dark mode),
