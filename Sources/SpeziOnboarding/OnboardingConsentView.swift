@@ -53,6 +53,7 @@ public struct OnboardingConsentView: View {
     private let markdown: () async -> Data
     private let action: (_ document: PDFDocument) async throws -> Void
     private let title: LocalizedStringResource?
+    private let initialNameComponents: PersonNameComponents?
     private let currentDateInSignature: Bool
     private let exportConfiguration: ConsentDocumentExportRepresentation.Configuration
     
@@ -76,6 +77,7 @@ public struct OnboardingConsentView: View {
                         markdown: markdown,
                         viewState: $viewState,
                         exportConfiguration: exportConfiguration,
+                        initialNameComponents: initialNameComponents,
                         consentSignatureDate: currentDateInSignature ? .now : nil
                     )
                     .padding(.bottom)
@@ -239,18 +241,21 @@ public struct OnboardingConsentView: View {
     ///   - markdown: The markdown content provided as an UTF8 encoded `Data` instance that can be provided asynchronously.
     ///   - action: The action that should be performed once the consent is given. Action is called with the exported consent document as a parameter.
     ///   - title: The title of the view displayed at the top. Can be `nil`, meaning no title is displayed.
+    ///   - initialNameComponents: Allows prefilling the first and last name fields in the consent document.
     ///   - currentDateInSignature: Indicates if the consent document should include the current date in the signature field. Defaults to `true`.
     ///   - exportConfiguration: Defines the properties of the exported consent form via ``ConsentDocumentExportRepresentation/Configuration``.
     public init(
         markdown: @escaping () async -> Data,
         action: @escaping (_ document: PDFDocument) async throws -> Void,
         title: LocalizedStringResource? = LocalizationDefaults.consentFormTitle,
+        initialNameComponents: PersonNameComponents? = nil,
         currentDateInSignature: Bool = true,
         exportConfiguration: ConsentDocumentExportRepresentation.Configuration = .init()
     ) {
         self.markdown = markdown
         self.action = action
         self.title = title
+        self.initialNameComponents = initialNameComponents
         self.currentDateInSignature = currentDateInSignature
         self.exportConfiguration = exportConfiguration
     }
