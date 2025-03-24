@@ -8,6 +8,12 @@
             "state" : "translated",
             "value" : "Einwilligung konnte nicht exportiert werden."
           }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Samtyckesdokumentet kunde inte exporteras."
+          }
         }
       }
     },
@@ -23,6 +29,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "I Consent"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jag Samtycker"
           }
         }
       }
@@ -40,6 +52,12 @@
             "state" : "translated",
             "value" : "Share consent form"
           }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dela samtyckesformulär"
+          }
         }
       }
     },
@@ -55,6 +73,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Spezi Consent"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spezisamtycke"
           }
         }
       }
@@ -72,6 +96,12 @@
             "state" : "translated",
             "value" : "Consent"
           }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Samtycke"
+          }
         }
       }
     },
@@ -87,6 +117,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Exported"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exporterad"
           }
         }
       }
@@ -104,6 +140,12 @@
             "state" : "translated",
             "value" : "Signed Consent Form"
           }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Undertecknat Samtyckesformulär"
+          }
         }
       }
     },
@@ -119,6 +161,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "SpeziOnboarding: Illegal Onboarding Step"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SpeziOnboarding: Olagligt onboardingsteg"
           }
         }
       }
@@ -136,6 +184,12 @@
             "state" : "translated",
             "value" : "Could not load and parse the document."
           }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Det gick inte att ladda och tolka dokumentet."
+          }
         }
       }
     },
@@ -151,6 +205,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Enter your last name ..."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ange ditt efternamn ..."
           }
         }
       }
@@ -168,6 +228,12 @@
             "state" : "translated",
             "value" : "Last Name"
           }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Efternamn"
+          }
         }
       }
     },
@@ -183,6 +249,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Enter your first name ..."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ange ditt förnamn ..."
           }
         }
       }
@@ -200,6 +272,12 @@
             "state" : "translated",
             "value" : "First Name"
           }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Förnamn"
+          }
         }
       }
     },
@@ -209,6 +287,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bitte versucht das Dokument erneut zu exportieren."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vänligen försök exportera samtyckedokumentet igen."
           }
         }
       }
@@ -226,6 +310,12 @@
             "state" : "translated",
             "value" : "Next"
           }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nästa"
+          }
         }
       }
     },
@@ -241,6 +331,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Signature date %@"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Signeringsdatum %@"
           }
         }
       }
@@ -258,6 +354,12 @@
             "state" : "translated",
             "value" : "Signature Field"
           }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Signaturfält"
+          }
         }
       }
     },
@@ -273,6 +375,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Name: %@"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Namn: %@"
           }
         }
       }
@@ -290,6 +398,12 @@
             "state" : "translated",
             "value" : "Undo"
           }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ångra"
+          }
         }
       }
     },
@@ -299,6 +413,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Der PDF export des Einwilligungsdokuments ist fehlgeschlagen."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Genereringen av PDF från samtyckedokumentet misslyckades."
           }
         }
       }
