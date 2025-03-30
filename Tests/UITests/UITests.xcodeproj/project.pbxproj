@@ -3,35 +3,12 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		106D8B662D45761600D7637A /* ConsentDocumentIdentifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 106D8B652D45760C00D7637A /* ConsentDocumentIdentifiers.swift */; };
-		106D8B682D45851500D7637A /* OnboardingConsentFinishedRenderedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 106D8B672D45851500D7637A /* OnboardingConsentFinishedRenderedView.swift */; };
 		2F61BDC329DD02D600D71D33 /* SpeziOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = 2F61BDC229DD02D600D71D33 /* SpeziOnboarding */; };
-		2F61BDC929DD3CC000D71D33 /* OnboardingTestsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F61BDC829DD3CC000D71D33 /* OnboardingTestsView.swift */; };
-		2F61BDCB29DDE76D00D71D33 /* OnboardingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F61BDCA29DDE76D00D71D33 /* OnboardingTests.swift */; };
-		2F6D139A28F5F386007C25D6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2F6D139928F5F386007C25D6 /* Assets.xcassets */; };
-		2FA7382C290ADFAA007ACEB9 /* TestApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FA7382B290ADFAA007ACEB9 /* TestApp.swift */; };
-		61040A1D2BAFA2F600EDD4EC /* OnboardingIdentifiableTestViewCustom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61040A1B2BAFA2F600EDD4EC /* OnboardingIdentifiableTestViewCustom.swift */; };
-		61D77B542BC83F0100E3165F /* OnboardingCustomToggleTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61D77B532BC83F0100E3165F /* OnboardingCustomToggleTestView.swift */; };
-		61F1697E2BCA888600D1622B /* OnboardingTestViewNotIdentifiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61F1697D2BCA888600D1622B /* OnboardingTestViewNotIdentifiable.swift */; };
-		80BAD0DB2D86C39500620B4B /* OnboardingConsentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80BAD0DA2D86C39500620B4B /* OnboardingConsentTests.swift */; };
-		80BAD0DD2D86C3CA00620B4B /* OnboardingCustomViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80BAD0DC2D86C3CA00620B4B /* OnboardingCustomViewTests.swift */; };
-		80BAD0DF2D86C3ED00620B4B /* OnboardingDynamicFlowTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80BAD0DE2D86C3ED00620B4B /* OnboardingDynamicFlowTests.swift */; };
-		970D444F2A6F048A00756FE2 /* OnboardingWelcomeTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 970D444E2A6F048A00756FE2 /* OnboardingWelcomeTestView.swift */; };
-		970D44512A6F04ED00756FE2 /* OnboardingSequentialTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 970D44502A6F04ED00756FE2 /* OnboardingSequentialTestView.swift */; };
-		970D44532A6F0B1900756FE2 /* OnboardingStartTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 970D44522A6F0B1900756FE2 /* OnboardingStartTestView.swift */; };
-		970D44552A6F119600756FE2 /* OnboardingConditionalTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 970D44542A6F119600756FE2 /* OnboardingConditionalTestView.swift */; };
-		97A8FF2C2A74449F008CD91A /* OnboardingCustomTestView1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97A8FF2B2A74449F008CD91A /* OnboardingCustomTestView1.swift */; };
-		97A8FF2E2A7444FC008CD91A /* OnboardingCustomTestView2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97A8FF2D2A7444FC008CD91A /* OnboardingCustomTestView2.swift */; };
-		97A8FF312A74607F008CD91A /* CustomToggleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97A8FF302A74607F008CD91A /* CustomToggleView.swift */; };
-		97C6AF772ACC86B70060155B /* ExampleStandard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97C6AF762ACC86B70060155B /* ExampleStandard.swift */; };
-		97C6AF792ACC88270060155B /* TestAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97C6AF782ACC88270060155B /* TestAppDelegate.swift */; };
 		97C6AF7B2ACC89000060155B /* XCTestExtensions in Frameworks */ = {isa = PBXBuildFile; productRef = 97C6AF7A2ACC89000060155B /* XCTestExtensions */; };
-		A950C9C02C68AFAD0052FA6D /* XCUIApplication+Onboarding.swift in Sources */ = {isa = PBXBuildFile; fileRef = A950C9BF2C68AFA80052FA6D /* XCUIApplication+Onboarding.swift */; };
-		C499597A2C6C8C1F008E5256 /* OnboardingConsentTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C49959782C6C8C1F008E5256 /* OnboardingConsentTestView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -45,34 +22,16 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		106D8B652D45760C00D7637A /* ConsentDocumentIdentifiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsentDocumentIdentifiers.swift; sourceTree = "<group>"; };
-		106D8B672D45851500D7637A /* OnboardingConsentFinishedRenderedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingConsentFinishedRenderedView.swift; sourceTree = "<group>"; };
 		2F61BDC129DD023E00D71D33 /* SpeziOnboarding */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = SpeziOnboarding; path = ../..; sourceTree = "<group>"; };
-		2F61BDC829DD3CC000D71D33 /* OnboardingTestsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingTestsView.swift; sourceTree = "<group>"; };
-		2F61BDCA29DDE76D00D71D33 /* OnboardingTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingTests.swift; sourceTree = "<group>"; };
 		2F6D139228F5F384007C25D6 /* TestApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		2F6D139928F5F386007C25D6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2F6D13AC28F5F386007C25D6 /* TestAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TestAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		2FA7382B290ADFAA007ACEB9 /* TestApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestApp.swift; sourceTree = "<group>"; };
 		2FB0758A299DDB9000C0B37F /* TestApp.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = TestApp.xctestplan; sourceTree = "<group>"; };
-		61040A1B2BAFA2F600EDD4EC /* OnboardingIdentifiableTestViewCustom.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingIdentifiableTestViewCustom.swift; sourceTree = "<group>"; };
-		61D77B532BC83F0100E3165F /* OnboardingCustomToggleTestView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingCustomToggleTestView.swift; sourceTree = "<group>"; };
-		61F1697D2BCA888600D1622B /* OnboardingTestViewNotIdentifiable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingTestViewNotIdentifiable.swift; sourceTree = "<group>"; };
-		80BAD0DA2D86C39500620B4B /* OnboardingConsentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingConsentTests.swift; sourceTree = "<group>"; };
-		80BAD0DC2D86C3CA00620B4B /* OnboardingCustomViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingCustomViewTests.swift; sourceTree = "<group>"; };
-		80BAD0DE2D86C3ED00620B4B /* OnboardingDynamicFlowTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingDynamicFlowTests.swift; sourceTree = "<group>"; };
-		970D444E2A6F048A00756FE2 /* OnboardingWelcomeTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingWelcomeTestView.swift; sourceTree = "<group>"; };
-		970D44502A6F04ED00756FE2 /* OnboardingSequentialTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingSequentialTestView.swift; sourceTree = "<group>"; };
-		970D44522A6F0B1900756FE2 /* OnboardingStartTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingStartTestView.swift; sourceTree = "<group>"; };
-		970D44542A6F119600756FE2 /* OnboardingConditionalTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingConditionalTestView.swift; sourceTree = "<group>"; };
-		97A8FF2B2A74449F008CD91A /* OnboardingCustomTestView1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingCustomTestView1.swift; sourceTree = "<group>"; };
-		97A8FF2D2A7444FC008CD91A /* OnboardingCustomTestView2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingCustomTestView2.swift; sourceTree = "<group>"; };
-		97A8FF302A74607F008CD91A /* CustomToggleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomToggleView.swift; sourceTree = "<group>"; };
-		97C6AF762ACC86B70060155B /* ExampleStandard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleStandard.swift; sourceTree = "<group>"; };
-		97C6AF782ACC88270060155B /* TestAppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestAppDelegate.swift; sourceTree = "<group>"; };
-		A950C9BF2C68AFA80052FA6D /* XCUIApplication+Onboarding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCUIApplication+Onboarding.swift"; sourceTree = "<group>"; };
-		C49959782C6C8C1F008E5256 /* OnboardingConsentTestView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingConsentTestView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		802AF8352D99F05600768D11 /* TestApp */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = TestApp; sourceTree = "<group>"; };
+		802AF84D2D99F06000768D11 /* TestAppUITests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = TestAppUITests; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		2F6D138F28F5F384007C25D6 /* Frameworks */ = {
@@ -94,36 +53,13 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		10BD9F752D439C6700E9282B /* Consent */ = {
-			isa = PBXGroup;
-			children = (
-				C49959782C6C8C1F008E5256 /* OnboardingConsentTestView.swift */,
-				106D8B672D45851500D7637A /* OnboardingConsentFinishedRenderedView.swift */,
-				106D8B652D45760C00D7637A /* ConsentDocumentIdentifiers.swift */,
-			);
-			path = Consent;
-			sourceTree = "<group>";
-		};
-		10BD9F762D439C8800E9282B /* OnboardingFlow */ = {
-			isa = PBXGroup;
-			children = (
-				97A8FF2B2A74449F008CD91A /* OnboardingCustomTestView1.swift */,
-				97A8FF2D2A7444FC008CD91A /* OnboardingCustomTestView2.swift */,
-				970D44542A6F119600756FE2 /* OnboardingConditionalTestView.swift */,
-				61D77B532BC83F0100E3165F /* OnboardingCustomToggleTestView.swift */,
-				61040A1B2BAFA2F600EDD4EC /* OnboardingIdentifiableTestViewCustom.swift */,
-				61F1697D2BCA888600D1622B /* OnboardingTestViewNotIdentifiable.swift */,
-			);
-			path = OnboardingFlow;
-			sourceTree = "<group>";
-		};
 		2F6D138928F5F384007C25D6 = {
 			isa = PBXGroup;
 			children = (
 				2FB0758A299DDB9000C0B37F /* TestApp.xctestplan */,
 				2F61BDC129DD023E00D71D33 /* SpeziOnboarding */,
-				2F6D139428F5F384007C25D6 /* TestApp */,
-				2F6D13AF28F5F386007C25D6 /* TestAppUITests */,
+				802AF8352D99F05600768D11 /* TestApp */,
+				802AF84D2D99F06000768D11 /* TestAppUITests */,
 				2F6D139328F5F384007C25D6 /* Products */,
 				2F6D13C228F5F3BE007C25D6 /* Frameworks */,
 			);
@@ -138,57 +74,11 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		2F6D139428F5F384007C25D6 /* TestApp */ = {
-			isa = PBXGroup;
-			children = (
-				970D44472A6F02E800756FE2 /* Views */,
-				2FA7382B290ADFAA007ACEB9 /* TestApp.swift */,
-				97C6AF782ACC88270060155B /* TestAppDelegate.swift */,
-				97C6AF762ACC86B70060155B /* ExampleStandard.swift */,
-				2F61BDC829DD3CC000D71D33 /* OnboardingTestsView.swift */,
-				2F6D139928F5F386007C25D6 /* Assets.xcassets */,
-			);
-			path = TestApp;
-			sourceTree = "<group>";
-		};
-		2F6D13AF28F5F386007C25D6 /* TestAppUITests */ = {
-			isa = PBXGroup;
-			children = (
-				A950C9BF2C68AFA80052FA6D /* XCUIApplication+Onboarding.swift */,
-				2F61BDCA29DDE76D00D71D33 /* OnboardingTests.swift */,
-				80BAD0DE2D86C3ED00620B4B /* OnboardingDynamicFlowTests.swift */,
-				80BAD0DC2D86C3CA00620B4B /* OnboardingCustomViewTests.swift */,
-				80BAD0DA2D86C39500620B4B /* OnboardingConsentTests.swift */,
-			);
-			path = TestAppUITests;
-			sourceTree = "<group>";
-		};
 		2F6D13C228F5F3BE007C25D6 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		970D44472A6F02E800756FE2 /* Views */ = {
-			isa = PBXGroup;
-			children = (
-				10BD9F762D439C8800E9282B /* OnboardingFlow */,
-				10BD9F752D439C6700E9282B /* Consent */,
-				97A8FF2F2A74606A008CD91A /* Helpers */,
-				970D44522A6F0B1900756FE2 /* OnboardingStartTestView.swift */,
-				970D444E2A6F048A00756FE2 /* OnboardingWelcomeTestView.swift */,
-				970D44502A6F04ED00756FE2 /* OnboardingSequentialTestView.swift */,
-			);
-			path = Views;
-			sourceTree = "<group>";
-		};
-		97A8FF2F2A74606A008CD91A /* Helpers */ = {
-			isa = PBXGroup;
-			children = (
-				97A8FF302A74607F008CD91A /* CustomToggleView.swift */,
-			);
-			path = Helpers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -206,6 +96,9 @@
 			buildRules = (
 			);
 			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				802AF8352D99F05600768D11 /* TestApp */,
 			);
 			name = TestApp;
 			packageProductDependencies = (
@@ -227,6 +120,9 @@
 			);
 			dependencies = (
 				2F6D13AE28F5F386007C25D6 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				802AF84D2D99F06000768D11 /* TestAppUITests */,
 			);
 			name = TestAppUITests;
 			packageProductDependencies = (
@@ -283,7 +179,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2F6D139A28F5F386007C25D6 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -322,23 +217,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				97C6AF792ACC88270060155B /* TestAppDelegate.swift in Sources */,
-				61F1697E2BCA888600D1622B /* OnboardingTestViewNotIdentifiable.swift in Sources */,
-				106D8B662D45761600D7637A /* ConsentDocumentIdentifiers.swift in Sources */,
-				C499597A2C6C8C1F008E5256 /* OnboardingConsentTestView.swift in Sources */,
-				970D44552A6F119600756FE2 /* OnboardingConditionalTestView.swift in Sources */,
-				97C6AF772ACC86B70060155B /* ExampleStandard.swift in Sources */,
-				970D44532A6F0B1900756FE2 /* OnboardingStartTestView.swift in Sources */,
-				970D44512A6F04ED00756FE2 /* OnboardingSequentialTestView.swift in Sources */,
-				61D77B542BC83F0100E3165F /* OnboardingCustomToggleTestView.swift in Sources */,
-				97A8FF2C2A74449F008CD91A /* OnboardingCustomTestView1.swift in Sources */,
-				2FA7382C290ADFAA007ACEB9 /* TestApp.swift in Sources */,
-				97A8FF2E2A7444FC008CD91A /* OnboardingCustomTestView2.swift in Sources */,
-				2F61BDC929DD3CC000D71D33 /* OnboardingTestsView.swift in Sources */,
-				61040A1D2BAFA2F600EDD4EC /* OnboardingIdentifiableTestViewCustom.swift in Sources */,
-				106D8B682D45851500D7637A /* OnboardingConsentFinishedRenderedView.swift in Sources */,
-				970D444F2A6F048A00756FE2 /* OnboardingWelcomeTestView.swift in Sources */,
-				97A8FF312A74607F008CD91A /* CustomToggleView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -346,11 +224,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				80BAD0DB2D86C39500620B4B /* OnboardingConsentTests.swift in Sources */,
-				A950C9C02C68AFAD0052FA6D /* XCUIApplication+Onboarding.swift in Sources */,
-				80BAD0DD2D86C3CA00620B4B /* OnboardingCustomViewTests.swift in Sources */,
-				80BAD0DF2D86C3ED00620B4B /* OnboardingDynamicFlowTests.swift in Sources */,
-				2F61BDCB29DDE76D00D71D33 /* OnboardingTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
