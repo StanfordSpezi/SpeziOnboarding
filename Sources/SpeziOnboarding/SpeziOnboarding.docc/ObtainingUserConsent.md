@@ -38,11 +38,11 @@ OnboardingConsentView(
 ### Using multiple consent forms
 
 If you want to show multiple consent documents to the user, that need to be signed separately, you can add multiple instances of ``OnboardingConsentView``.
-If used within the ``OnboardingStack``, it is important to specify a unique `View/onboardingIdentifier(:identifier)` for each ``OnboardingConsentView``.
+If used within a [`ManagedNavigationStack`](https://swiftpackageindex.com/StanfordSpezi/SpeziViews/main/documentation/speziviews/managednavigationstack), it might be necessary to specify a unique `View/navigationStepIdentifier(_:)` for each ``OnboardingConsentView`` (you can omit the explicit identifiers if you don't perform any manual navigation other than simply advancing the stack to the next step).
 
 
 ```swift
-OnboardingStack {
+ManagedNavigationStack {
     OnboardingConsentView(
         markdown: { Data("This is a *markdown* **example**".utf8) },
         action: { firstConsentPdf in
@@ -50,7 +50,7 @@ OnboardingStack {
             // Use the `OnboardingNavigationPath` from the SwiftUI `@Environment` to navigate to the next `OnboardingConsentView`.
         }
     )
-        .onboardingIdentifier("firstConsentView") // Set an identifier (String) for the `View`, to distinguish it from other `View`s of the same type.
+        .navigationStepIdentifier("firstConsentView") // Set an identifier (String) for the `View`, to distinguish it from other `View`s of the same type.
 
     OnboardingConsentView(
         markdown: { Data("This is a *markdown* **example**".utf8) },
@@ -58,7 +58,7 @@ OnboardingStack {
             // Store or share the second signed consent form.
         }
     )
-        .onboardingIdentifier("secondConsentView"), // Set an identifier for the `View`, to distinguish it from other `View`s of the same type.
+        .navigationStepIdentifier("secondConsentView"), // Set an identifier for the `View`, to distinguish it from other `View`s of the same type.
 }
 ```
 

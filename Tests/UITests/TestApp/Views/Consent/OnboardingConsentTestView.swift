@@ -16,7 +16,7 @@ struct OnboardingConsentTestView: View {
     let consentText: String
     let documentIdentifier: ConsentDocumentIdentifiers
 
-    @Environment(OnboardingStack.Path.self) private var path
+    @Environment(ManagedNavigationStack.Path.self) private var path
     @Environment(ExampleStandard.self) private var standard
 
     

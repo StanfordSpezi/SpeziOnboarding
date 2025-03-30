@@ -6,13 +6,13 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable file_types_order
-
 import SpeziViews
 
-/// Managed, sequential presentation of consecutive ``OnboardingView``s
-public typealias OnboardingStack = ManagedNavigationStack
 
-/// Manages the navigation within an ``OnboardingStack``
-@available(*, deprecated, renamed: "OnboardingStack.Path")
-public typealias OnboardingNavigationPath = OnboardingStack.Path
+/// :nodoc:
+@available(*, deprecated, renamed: "ManagedNavigationStack.Path")
+public typealias OnboardingNavigationPath = ManagedNavigationStack.Path
+
+/// :nodoc:
+@available(*, deprecated, renamed: "ManagedNavigationStack")
+public typealias OnboardingStack = ManagedNavigationStack

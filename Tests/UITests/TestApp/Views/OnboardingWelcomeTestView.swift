@@ -13,7 +13,7 @@ import SwiftUI
 
 // swiftlint:disable accessibility_label_for_image
 struct OnboardingWelcomeTestView: View {
-    @Environment(OnboardingStack.Path.self) private var path
+    @Environment(ManagedNavigationStack.Path.self) private var path
     
     
     var body: some View {

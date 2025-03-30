@@ -10,8 +10,9 @@ import SpeziOnboarding
 import SpeziViews
 import SwiftUI
 
+
 struct OnboardingCustomTestView2: View {
-    @Environment(OnboardingStack.Path.self) private var path
+    @Environment(ManagedNavigationStack.Path.self) private var path
     
     
     var body: some View {

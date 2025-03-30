@@ -12,7 +12,7 @@ import SwiftUI
 
 
 struct OnboardingStartTestView: View {
-    @Environment(OnboardingStack.Path.self) private var path
+    @Environment(ManagedNavigationStack.Path.self) private var path
     @Binding var showConditionalView: Bool
     
 

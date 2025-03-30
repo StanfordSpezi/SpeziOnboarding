@@ -16,7 +16,7 @@ struct OnboardingConsentFinishedRenderedView: View {
     let consentTitle: String
     let documentIdentifier: ConsentDocumentIdentifiers
 
-    @Environment(OnboardingStack.Path.self) private var path
+    @Environment(ManagedNavigationStack.Path.self) private var path
     @Environment(ExampleStandard.self) private var standard
     @State var exportedConsent: PDFDocument?
 

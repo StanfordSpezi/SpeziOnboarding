@@ -82,7 +82,7 @@ public struct SignatureView: View {
         }
             #if !os(macOS)
             .task {
-                // Crucial to reset the `UndoManager` between different `ConsentView`s in the `OnboardingStack`.
+                // Crucial to reset the `UndoManager` between different `ConsentView`s in a `ManagedNavigationStack`.
                 // Otherwise, actions are often not picked up
                 undoManager?.removeAllActions()
                 canUndo = false

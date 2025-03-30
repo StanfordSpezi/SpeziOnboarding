@@ -76,7 +76,7 @@ public struct OnboardingView<TitleView: View, ContentView: View, ActionView: Vie
     private let contentView: ContentView
     private let actionView: ActionView
     
-    @Environment(\.isInManagedNavigationStack) private var isInOnboardingStack
+    @Environment(\.isInManagedNavigationStack) private var isInManagedNavigationStack
     @Environment(\.onboardingViewEdgesWithPaddingDisabled) private var edgesWithPaddingDisabled
     
     public var body: some View {
@@ -106,9 +106,9 @@ public struct OnboardingView<TitleView: View, ContentView: View, ActionView: Vie
     ///
     /// - Note: This excludes the bottom edge, which is handled separately.
     private var edgesWithImplicitPadding: Edge.Set {
-        // if the view is used as part of an `OnboardingStack`, we don't want the extra padding at the top,
+        // if the view is used as part of an `ManagedNavigationStack`, we don't want the extra padding at the top,
         // since that's where the navigation bar will be and we're already getting some padding via that.
-        let edges: Edge.Set = isInOnboardingStack ? .horizontal : [.horizontal, .top]
+        let edges: Edge.Set = isInManagedNavigationStack ? .horizontal : [.horizontal, .top]
         return edges.subtracting(edgesWithPaddingDisabled)
     }
     
@@ -236,7 +236,7 @@ extension OnboardingView {
     ///
     /// If this modifier is applied multiple times, the outermost call will take precedence.
     ///
-    /// - Note: If the ``OnboardingView`` is contained in an ``OnboardingStack``, its top edge will already be disabled implicitly.
+    /// - Note: If the ``OnboardingView`` is contained in a `ManagedNavigationStack`, its top edge will already be disabled implicitly.
     public func disablePadding(_ edges: Edge.Set) -> some View {
         self.environment(\.onboardingViewEdgesWithPaddingDisabled, edges)
     }

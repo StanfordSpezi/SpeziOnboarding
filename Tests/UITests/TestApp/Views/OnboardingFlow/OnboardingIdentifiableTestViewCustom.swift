@@ -6,13 +6,14 @@
 // SPDX-License-Identifier: MIT
 //
 
-import SpeziOnboarding
+import SpeziViews
 import SwiftUI
+
 
 struct OnboardingIdentifiableTestViewCustom: View, Identifiable {
     var id: String
 
-    @Environment(OnboardingStack.Path.self) private var path
+    @Environment(ManagedNavigationStack.Path.self) private var path
 
 
     var body: some View {
