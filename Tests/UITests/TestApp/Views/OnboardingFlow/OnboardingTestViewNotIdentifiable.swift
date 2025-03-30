@@ -12,7 +12,7 @@ import SwiftUI
 struct OnboardingTestViewNotIdentifiable: View {
     var text: String
 
-    @Environment(OnboardingNavigationPath.self) private var path
+    @Environment(OnboardingStack.Path.self) private var path
 
 
     var body: some View {
@@ -27,13 +27,3 @@ struct OnboardingTestViewNotIdentifiable: View {
         }
     }
 }
-
-#if DEBUG
-#Preview {
-    OnboardingStack(startAtStep: OnboardingTestViewNotIdentifiable.self) {
-        for onboardingView in OnboardingFlow.previewSimulatorViews {
-            onboardingView
-        }
-    }
-}
-#endif

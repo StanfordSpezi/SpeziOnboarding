@@ -14,18 +14,6 @@ import Testing
 
 @Suite("SpeziOnboardingTests")
 struct SpeziOnboardingTests {
-    @Test("OnboardingIdentifier ViewModifier")
-    @MainActor
-    func testOnboardingIdentifierModifier() throws {
-        let stack = OnboardingStack {
-            Text("Hello World")
-                .onboardingIdentifier("Custom Identifier")
-        }
-        
-        let identifier = try #require(stack.path.firstOnboardingStepIdentifier)
-        #expect(identifier.identifierKind == .identifiable("Custom Identifier"))
-    }
-
     @Test("PDF Export", arguments:
             zip(
                 ["markdown_data_one_page", "markdown_data_two_pages"],

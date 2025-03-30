@@ -12,7 +12,7 @@ import SwiftUI
 
 
 struct OnboardingConditionalTestView: View {
-    @Environment(OnboardingNavigationPath.self) private var path
+    @Environment(OnboardingStack.Path.self) private var path
     
     
     var body: some View {
@@ -27,14 +27,3 @@ struct OnboardingConditionalTestView: View {
         }
     }
 }
-
-
-#if DEBUG
-#Preview {
-    OnboardingStack(startAtStep: OnboardingConditionalTestView.self) {
-        for onboardingView in OnboardingFlow.previewSimulatorViews {
-            onboardingView
-        }
-    }
-}
-#endif

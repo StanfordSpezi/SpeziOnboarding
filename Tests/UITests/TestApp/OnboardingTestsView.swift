@@ -15,42 +15,41 @@ struct OnboardingTestsView: View {
     @Binding var onboardingFlowComplete: Bool
     @State var showConditionalView = false
 
-
     var body: some View {
-        OnboardingStack(onboardingFlowComplete: $onboardingFlowComplete) {
+        OnboardingStack(didComplete: $onboardingFlowComplete) {
             OnboardingStartTestView(
                 showConditionalView: $showConditionalView
             )
             OnboardingWelcomeTestView()
             OnboardingSequentialTestView()
-
+            
             OnboardingConsentTestView(
                 consentTitle: "First Consent",
                 consentText: "This is the first *markdown* **example**",
                 documentIdentifier: ConsentDocumentIdentifiers.first
             )
-
+            
             OnboardingConsentFinishedRenderedView(
                 consentTitle: "First Consent",
                 documentIdentifier: ConsentDocumentIdentifiers.first
             )
-
+            
             OnboardingConsentTestView(
                 consentTitle: "Second Consent",
                 consentText: "This is the second *markdown* **example**",
                 documentIdentifier: ConsentDocumentIdentifiers.second
             )
-                .onboardingIdentifier(ConsentDocumentIdentifiers.second)
+            .onboardingIdentifier(ConsentDocumentIdentifiers.second)
             OnboardingConsentFinishedRenderedView(
                 consentTitle: "Second Consent",
                 documentIdentifier: ConsentDocumentIdentifiers.second
             )
-                .onboardingIdentifier("\(ConsentDocumentIdentifiers.second)_rendering")
-
+            .onboardingIdentifier("\(ConsentDocumentIdentifiers.second)_rendering")
+            
             OnboardingTestViewNotIdentifiable(text: "Leland").onboardingIdentifier("a")
             OnboardingTestViewNotIdentifiable(text: "Stanford").onboardingIdentifier("b")
             OnboardingCustomToggleTestView(showConditionalView: $showConditionalView)
-
+            
             if showConditionalView {
                 OnboardingConditionalTestView()
             }

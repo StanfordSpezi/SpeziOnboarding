@@ -7,10 +7,11 @@
 //
 
 import SpeziOnboarding
+import SpeziViews
 import SwiftUI
 
 struct OnboardingCustomTestView2: View {
-    @Environment(OnboardingNavigationPath.self) private var path
+    @Environment(OnboardingStack.Path.self) private var path
     
     
     var body: some View {
@@ -25,13 +26,3 @@ struct OnboardingCustomTestView2: View {
         }
     }
 }
-
-#if DEBUG
-#Preview {
-    OnboardingStack(startAtStep: OnboardingCustomTestView2.self) {
-        for onboardingView in OnboardingFlow.previewSimulatorViews {
-            onboardingView
-        }
-    }
-}
-#endif

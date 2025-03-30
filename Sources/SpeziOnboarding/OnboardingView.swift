@@ -6,6 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
+import SpeziViews
 import SwiftUI
 
 
@@ -75,7 +76,7 @@ public struct OnboardingView<TitleView: View, ContentView: View, ActionView: Vie
     private let contentView: ContentView
     private let actionView: ActionView
     
-    @Environment(\.isInOnboardingStack) private var isInOnboardingStack
+    @Environment(\.isInManagedNavigationStack) private var isInOnboardingStack
     @Environment(\.onboardingViewEdgesWithPaddingDisabled) private var edgesWithPaddingDisabled
     
     public var body: some View {
@@ -85,25 +86,35 @@ public struct OnboardingView<TitleView: View, ContentView: View, ActionView: Vie
                     VStack {
                         titleView
                         contentView
+                            // if we don't have a footer, we apply the bottom padding here
+                            .padding(.bottom, actionView is EmptyView ? bottomPadding : 0)
                     }
                     if !(actionView is EmptyView) {
                         Spacer()
                         actionView
+                            // if we do have a footer, we apply it here
+                            .padding(.bottom, bottomPadding)
                     }
-                    Spacer()
-                        .frame(height: 10)
                 }
                 .frame(minHeight: geometry.size.height)
             }
         }
-        .padding(edgesWithPadding, 24)
+        .padding(edgesWithImplicitPadding, 24)
     }
     
-    private var edgesWithPadding: Edge.Set {
+    /// The set of edges for which we want to apply implicit padding.
+    ///
+    /// - Note: This excludes the bottom edge, which is handled separately.
+    private var edgesWithImplicitPadding: Edge.Set {
         // if the view is used as part of an `OnboardingStack`, we don't want the extra padding at the top,
         // since that's where the navigation bar will be and we're already getting some padding via that.
-        let edges: Edge.Set = isInOnboardingStack ? [.leading, .trailing, .bottom] : .all
+        let edges: Edge.Set = isInOnboardingStack ? .horizontal : [.horizontal, .top]
         return edges.subtracting(edgesWithPaddingDisabled)
+    }
+    
+    private var bottomPadding: CGFloat {
+        // 34, because we hav 10 points of default padding we want, plus the 24 points added to the view as a whole.
+        edgesWithPaddingDisabled.contains(.bottom) ? 0 : 34
     }
     
     

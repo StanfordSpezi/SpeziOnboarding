@@ -16,7 +16,7 @@ struct OnboardingConsentFinishedRenderedView: View {
     let consentTitle: String
     let documentIdentifier: ConsentDocumentIdentifiers
 
-    @Environment(OnboardingNavigationPath.self) private var path
+    @Environment(OnboardingStack.Path.self) private var path
     @Environment(ExampleStandard.self) private var standard
     @State var exportedConsent: PDFDocument?
 
@@ -67,14 +67,3 @@ struct OnboardingConsentFinishedRenderedView: View {
             }
     }
 }
-
-
-#if DEBUG
-#Preview {
-    OnboardingStack(startAtStep: OnboardingConsentFinishedRenderedView.self) {
-        for onboardingView in OnboardingFlow.previewSimulatorViews {
-            onboardingView
-        }
-    }
-}
-#endif

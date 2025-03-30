@@ -11,7 +11,7 @@ import SwiftUI
 
 
 struct OnboardingCustomTestView1: View {
-    @Environment(OnboardingNavigationPath.self) private var path
+    @Environment(OnboardingStack.Path.self) private var path
     var exampleArgument: String
     
     
@@ -27,14 +27,3 @@ struct OnboardingCustomTestView1: View {
         }
     }
 }
-
-
-#if DEBUG
-#Preview {
-    OnboardingStack(startAtStep: OnboardingCustomTestView1.self) {
-        for onboardingView in OnboardingFlow.previewSimulatorViews {
-            onboardingView
-        }
-    }
-}
-#endif

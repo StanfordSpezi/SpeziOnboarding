@@ -16,7 +16,7 @@ struct OnboardingConsentTestView: View {
     let consentText: String
     let documentIdentifier: ConsentDocumentIdentifiers
 
-    @Environment(OnboardingNavigationPath.self) private var path
+    @Environment(OnboardingStack.Path.self) private var path
     @Environment(ExampleStandard.self) private var standard
 
     
@@ -44,14 +44,3 @@ struct OnboardingConsentTestView: View {
         )
     }
 }
-
-
-#if DEBUG
-#Preview {
-    OnboardingStack(startAtStep: OnboardingConsentTestView.self) {
-        for onboardingView in OnboardingFlow.previewSimulatorViews {
-            onboardingView
-        }
-    }
-}
-#endif

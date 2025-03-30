@@ -149,28 +149,6 @@
         }
       }
     },
-    "ILLEGAL_ONBOARDING_STEP" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "SpeziOnboarding: Unerlaubter Schritt während des Onboardings"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "SpeziOnboarding: Illegal Onboarding Step"
-          }
-        },
-        "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "SpeziOnboarding: Olagligt onboardingsteg"
-          }
-        }
-      }
-    },
     "MARKDOWN_LOADING_ERROR" : {
       "localizations" : {
         "de" : {

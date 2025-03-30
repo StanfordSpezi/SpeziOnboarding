@@ -10,7 +10,7 @@ import SpeziOnboarding
 import SwiftUI
 
 struct OnboardingCustomToggleTestView: View {
-    @Environment(OnboardingNavigationPath.self) private var path
+    @Environment(OnboardingStack.Path.self) private var path
     @Binding var showConditionalView: Bool
 
     var body: some View {
