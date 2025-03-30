@@ -6,9 +6,9 @@
 // SPDX-License-Identifier: MIT
 //
 
-import SpeziViews
-import SwiftUI
+// swiftlint:disable file_types_order
 
+import SpeziViews
 
 /// Managed, sequential presentation of consecutive ``OnboardingView``s
 public typealias OnboardingStack = ManagedNavigationStack
