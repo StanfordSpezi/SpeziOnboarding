@@ -12,3 +12,7 @@ import SwiftUI
 
 /// Managed, sequential presentation of consecutive ``OnboardingView``s
 public typealias OnboardingStack = ManagedNavigationStack
+
+/// Manages the navigation within an ``OnboardingStack``
+@available(*, deprecated, renamed: "OnboardingStack.Path")
+public typealias OnboardingNavigationPath = OnboardingStack.Path
