@@ -96,33 +96,29 @@ public struct SequentialOnboardingView<TitleView: View>: View {
     
     public var body: some View {
         ScrollViewReader { proxy in
-            OnboardingView(
-                titleView: {
-                    titleView
-                },
-                contentView: {
-                    ForEach(0..<content.count, id: \.self) { index in
-                        if index <= currentContentIndex {
-                            stepView(index: index)
-                                .id(index)
-                        }
-                    }
-                },
-                actionView: {
-                    OnboardingActionsView(
-                        primaryText: actionButtonTitle
-                    ) {
-                        if currentContentIndex < content.count - 1 {
-                            currentContentIndex += 1
-                            withAnimation {
-                                proxy.scrollTo(currentContentIndex - 1, anchor: .top)
-                            }
-                        } else {
-                            try await action()
-                        }
+            OnboardingView {
+                titleView
+            } content: {
+                ForEach(0..<content.count, id: \.self) { index in
+                    if index <= currentContentIndex {
+                        stepView(index: index)
+                            .id(index)
                     }
                 }
-            )
+            } footer: {
+                OnboardingActionsView(
+                    primaryText: actionButtonTitle
+                ) {
+                    if currentContentIndex < content.count - 1 {
+                        currentContentIndex += 1
+                        withAnimation {
+                            proxy.scrollTo(currentContentIndex - 1, anchor: .top)
+                        }
+                    } else {
+                        try await action()
+                    }
+                }
+            }
         }
     }
     
