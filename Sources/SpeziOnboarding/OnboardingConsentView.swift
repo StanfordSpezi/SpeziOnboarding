@@ -64,43 +64,39 @@ public struct OnboardingConsentView: View {
     
     public var body: some View {
         ScrollViewReader { proxy in // swiftlint:disable:this closure_body_length
-            OnboardingView(
-                titleView: {
-                    if let title {
-                        OnboardingTitleView(
-                            title: title
-                        )
-                    }
-                },
-                contentView: {
-                    ConsentDocument(
-                        markdown: markdown,
-                        viewState: $viewState,
-                        exportConfiguration: exportConfiguration,
-                        initialNameComponents: initialNameComponents,
-                        consentSignatureDate: currentDateInSignature ? .now : nil
+            OnboardingView {
+                if let title {
+                    OnboardingTitleView(
+                        title: title
                     )
-                    .padding(.bottom)
-                },
-                actionView: {
-                    Button(
-                        action: {
-                            withAnimation(.easeOut(duration: 0.2)) {
-                                viewState = .export     // Triggers the export process
-                            }
-                        },
-                        label: {
-                            Text("CONSENT_ACTION", bundle: .module)
-                                .frame(maxWidth: .infinity, minHeight: 38)
-                                .processingOverlay(isProcessing: backButtonHidden)
-                        }
-                    )
-                        .buttonStyle(.borderedProminent)
-                        .disabled(!actionButtonsEnabled)
-                        .animation(.easeInOut(duration: 0.2), value: actionButtonsEnabled)
-                        .id("ActionButton")
                 }
-            )
+            } content: {
+                ConsentDocument(
+                    markdown: markdown,
+                    viewState: $viewState,
+                    exportConfiguration: exportConfiguration,
+                    initialNameComponents: initialNameComponents,
+                    consentSignatureDate: currentDateInSignature ? .now : nil
+                )
+                .padding(.bottom)
+            } footer: {
+                Button(
+                    action: {
+                        withAnimation(.easeOut(duration: 0.2)) {
+                            viewState = .export     // Triggers the export process
+                        }
+                    },
+                    label: {
+                        Text("CONSENT_ACTION", bundle: .module)
+                            .frame(maxWidth: .infinity, minHeight: 38)
+                            .processingOverlay(isProcessing: backButtonHidden)
+                    }
+                )
+                    .buttonStyle(.borderedProminent)
+                    .disabled(!actionButtonsEnabled)
+                    .animation(.easeInOut(duration: 0.2), value: actionButtonsEnabled)
+                    .id("ActionButton")
+            }
             .scrollDisabled($viewState.signing.wrappedValue)
             .navigationBarBackButtonHidden(backButtonHidden)
             .task(id: viewState) {

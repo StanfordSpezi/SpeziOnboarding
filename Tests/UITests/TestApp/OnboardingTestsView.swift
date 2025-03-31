@@ -15,9 +15,9 @@ struct OnboardingTestsView: View {
     @Binding var onboardingFlowComplete: Bool
     @State var showConditionalView = false
 
-
+    
     var body: some View {
-        OnboardingStack(onboardingFlowComplete: $onboardingFlowComplete) {
+        ManagedNavigationStack(didComplete: $onboardingFlowComplete) {
             OnboardingStartTestView(
                 showConditionalView: $showConditionalView
             )
@@ -29,28 +29,30 @@ struct OnboardingTestsView: View {
                 consentText: "This is the first *markdown* **example**",
                 documentIdentifier: ConsentDocumentIdentifiers.first
             )
-
+            
             OnboardingConsentFinishedRenderedView(
                 consentTitle: "First Consent",
                 documentIdentifier: ConsentDocumentIdentifiers.first
             )
-
+            
             OnboardingConsentTestView(
                 consentTitle: "Second Consent",
                 consentText: "This is the second *markdown* **example**",
                 documentIdentifier: ConsentDocumentIdentifiers.second
             )
-                .onboardingIdentifier(ConsentDocumentIdentifiers.second)
+                .navigationStepIdentifier(ConsentDocumentIdentifiers.second)
             OnboardingConsentFinishedRenderedView(
                 consentTitle: "Second Consent",
                 documentIdentifier: ConsentDocumentIdentifiers.second
             )
-                .onboardingIdentifier("\(ConsentDocumentIdentifiers.second)_rendering")
-
-            OnboardingTestViewNotIdentifiable(text: "Leland").onboardingIdentifier("a")
-            OnboardingTestViewNotIdentifiable(text: "Stanford").onboardingIdentifier("b")
+                .navigationStepIdentifier("\(ConsentDocumentIdentifiers.second)_rendering")
+            
+            OnboardingTestViewNotIdentifiable(text: "Leland")
+                .navigationStepIdentifier("a")
+            OnboardingTestViewNotIdentifiable(text: "Stanford")
+                .navigationStepIdentifier("b")
             OnboardingCustomToggleTestView(showConditionalView: $showConditionalView)
-
+            
             if showConditionalView {
                 OnboardingConditionalTestView()
             }

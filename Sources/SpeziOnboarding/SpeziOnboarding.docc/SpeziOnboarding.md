@@ -166,7 +166,6 @@ struct ConsentViewExample: View {
 
 ### Structuring an Onboarding Flow
 
-- ``OnboardingStack``
 - ``OnboardingNavigationPath``
 - ``OnboardingViewBuilder``
 

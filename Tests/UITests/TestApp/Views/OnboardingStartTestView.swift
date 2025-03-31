@@ -12,32 +12,44 @@ import SwiftUI
 
 
 struct OnboardingStartTestView: View {
-    @Environment(OnboardingNavigationPath.self) private var path
+    @Environment(ManagedNavigationStack.Path.self) private var path
     @Binding var showConditionalView: Bool
     
 
     var body: some View {
         VStack(spacing: 8) {  // swiftlint:disable:this closure_body_length
             Button {
-                path.append(OnboardingWelcomeTestView.self)
+                path.navigateToNextStep(
+                    matching: .viewType(OnboardingWelcomeTestView.self),
+                    includeIntermediateSteps: false
+                )
             } label: {
                 Text("Welcome View")
             }
             
             Button {
-                path.append(OnboardingSequentialTestView.self)
+                path.navigateToNextStep(
+                    matching: .viewType(OnboardingSequentialTestView.self),
+                    includeIntermediateSteps: false
+                )
             } label: {
                 Text("Sequential Onboarding")
             }
 
             Button {
-                path.append(OnboardingConsentTestView.self)
+                path.navigateToNextStep(
+                    matching: .viewType(OnboardingConsentTestView.self),
+                    includeIntermediateSteps: false
+                )
             } label: {
                 Text("Consent View (Markdown)")
             }
             
             Button {
-                path.append(OnboardingConsentFinishedRenderedView.self)
+                path.navigateToNextStep(
+                    matching: .viewType(OnboardingConsentFinishedRenderedView.self),
+                    includeIntermediateSteps: false
+                )
             } label: {
                 Text("Rendered Consent View (Markdown)")
             }
@@ -73,14 +85,3 @@ struct OnboardingStartTestView: View {
         }
     }
 }
-
-
-#if DEBUG
-#Preview {
-    OnboardingStack(startAtStep: OnboardingStartTestView.self) {
-        for onboardingView in OnboardingFlow.previewSimulatorViews {
-            onboardingView
-        }
-    }
-}
-#endif

@@ -24,11 +24,11 @@ let package = Package(
         .library(name: "SpeziOnboarding", targets: ["SpeziOnboarding"])
     ],
     dependencies: [
-        .package(url: "https://github.com/StanfordSpezi/Spezi", from: "1.8.0"),
-        .package(url: "https://github.com/StanfordSpezi/SpeziFoundation", from: "2.1.2"),
-        .package(url: "https://github.com/StanfordSpezi/SpeziViews", from: "1.9.0"),
-        .package(url: "https://github.com/apple/swift-collections", from: "1.1.4"),
-        .package(url: "https://github.com/techprimate/TPPDF", from: "2.6.1")
+        .package(url: "https://github.com/StanfordSpezi/Spezi.git", from: "1.8.0"),
+        .package(url: "https://github.com/StanfordSpezi/SpeziFoundation.git", from: "2.1.2"),
+        .package(url: "https://github.com/StanfordSpezi/SpeziViews.git", branch: "lukas/ManagedNavigationStack"),
+        .package(url: "https://github.com/apple/swift-collections.git", from: "1.1.4"),
+        .package(url: "https://github.com/techprimate/TPPDF.git", from: "2.6.1")
     ] + swiftLintPackage(),
     targets: [
         .target(

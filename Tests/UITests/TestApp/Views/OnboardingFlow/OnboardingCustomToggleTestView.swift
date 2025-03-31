@@ -6,11 +6,12 @@
 // SPDX-License-Identifier: MIT
 //
 
-import SpeziOnboarding
+import SpeziViews
 import SwiftUI
 
+
 struct OnboardingCustomToggleTestView: View {
-    @Environment(OnboardingNavigationPath.self) private var path
+    @Environment(ManagedNavigationStack.Path.self) private var path
     @Binding var showConditionalView: Bool
 
     var body: some View {
