@@ -6,6 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
+import SpeziViews
 import SwiftUI
 
 
@@ -70,12 +71,12 @@ import SwiftUI
 ///     }
 /// )
 /// ```
-public struct OnboardingView<TitleView: View, ContentView: View, ActionView: View>: View {
-    private let titleView: TitleView
-    private let contentView: ContentView
-    private let actionView: ActionView
+public struct OnboardingView<Header: View, Content: View, Footer: View>: View {
+    private let header: Header
+    private let content: Content
+    private let footer: Footer
     
-    @Environment(\.isInOnboardingStack) private var isInOnboardingStack
+    @Environment(\.isInManagedNavigationStack) private var isInManagedNavigationStack
     @Environment(\.onboardingViewEdgesWithPaddingDisabled) private var edgesWithPaddingDisabled
     
     public var body: some View {
@@ -83,45 +84,71 @@ public struct OnboardingView<TitleView: View, ContentView: View, ActionView: Vie
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(alignment: .center) {
                     VStack {
-                        titleView
-                        contentView
+                        header
+                        content
+                            // if we don't have a footer, we apply the bottom padding here
+                            .padding(.bottom, footer is EmptyView ? bottomPadding : 0)
                     }
-                    if !(actionView is EmptyView) {
+                    if !(footer is EmptyView) {
                         Spacer()
-                        actionView
+                        footer
+                            // if we do have a footer, we apply it here
+                            .padding(.bottom, bottomPadding)
                     }
-                    Spacer()
-                        .frame(height: 10)
                 }
                 .frame(minHeight: geometry.size.height)
             }
         }
-        .padding(edgesWithPadding, 24)
+        .padding(edgesWithImplicitPadding, 24)
     }
     
-    private var edgesWithPadding: Edge.Set {
-        // if the view is used as part of an `OnboardingStack`, we don't want the extra padding at the top,
+    /// The set of edges for which we want to apply implicit padding.
+    ///
+    /// - Note: This excludes the bottom edge, which is handled separately.
+    private var edgesWithImplicitPadding: Edge.Set {
+        // if the view is used as part of an `ManagedNavigationStack`, we don't want the extra padding at the top,
         // since that's where the navigation bar will be and we're already getting some padding via that.
-        let edges: Edge.Set = isInOnboardingStack ? [.leading, .trailing, .bottom] : .all
+        let edges: Edge.Set = isInManagedNavigationStack ? .horizontal : [.horizontal, .top]
         return edges.subtracting(edgesWithPaddingDisabled)
+    }
+    
+    private var bottomPadding: CGFloat {
+        // 34, because we hav 10 points of default padding we want, plus the 24 points added to the view as a whole.
+        edgesWithPaddingDisabled.contains(.bottom) ? 0 : 34
     }
     
     
     /// Creates a customized `OnboardingView` allowing a complete customization of the  `OnboardingView`.
     /// 
     /// - Parameters:
+    ///   - header: The header view displayed at the top.
+    ///   - content: The content view.
+    ///   - footer: The footer view displayed at the bottom.
+    public init(
+        @ViewBuilder header: () -> Header = { EmptyView() },
+        @ViewBuilder content: () -> Content,
+        @ViewBuilder footer: () -> Footer
+    ) {
+        self.header = header()
+        self.content = content()
+        self.footer = footer()
+    }
+    
+    /// Creates a customized `OnboardingView` allowing a complete customization of the  `OnboardingView`.
+    ///
+    /// - Parameters:
     ///   - titleView: The title view displayed at the top.
     ///   - contentView: The content view.
     ///   - actionView: The action view displayed at the bottom.
+    @available(*, deprecated, renamed: "init(header:content:footer:)")
     public init(
-        @ViewBuilder titleView: () -> TitleView = { EmptyView() },
-        @ViewBuilder contentView: () -> ContentView,
-        @ViewBuilder actionView: () -> ActionView
+        @ViewBuilder titleView: () -> Header = { EmptyView() },
+        @ViewBuilder contentView: () -> Content,
+        @ViewBuilder actionView: () -> Footer
     ) {
-        self.titleView = titleView()
-        self.contentView = contentView()
-        self.actionView = actionView()
+        self.init(header: titleView, content: contentView, footer: actionView)
     }
+    
     
     /// Creates the default style of the `OnboardingView` uses a combination of an ``OnboardingTitleView``, ``OnboardingInformationView``,
     /// and ``OnboardingActionsView``.
@@ -138,19 +165,16 @@ public struct OnboardingView<TitleView: View, ContentView: View, ActionView: Vie
         areas: [OnboardingInformationView.Content],
         actionText: LocalizedStringResource,
         action: @escaping () async throws -> Void
-    ) where TitleView == OnboardingTitleView, ContentView == OnboardingInformationView, ActionView == OnboardingActionsView {
-        self.init(
-            titleView: {
-                OnboardingTitleView(title: title, subtitle: subtitle)
-            },
-            contentView: {
-                OnboardingInformationView(areas: areas)
-            }, actionView: {
-                OnboardingActionsView(actionText) {
-                    try await action()
-                }
+    ) where Header == OnboardingTitleView, Content == OnboardingInformationView, Footer == OnboardingActionsView {
+        self.init {
+            OnboardingTitleView(title: title, subtitle: subtitle)
+        } content: {
+            OnboardingInformationView(areas: areas)
+        } footer: {
+            OnboardingActionsView(actionText) {
+                try await action()
             }
-        )
+        }
     }
     
     /// Creates the default style of the `OnboardingView` uses a combination of an ``OnboardingTitleView``, ``OnboardingInformationView``,
@@ -169,19 +193,16 @@ public struct OnboardingView<TitleView: View, ContentView: View, ActionView: Vie
         areas: [OnboardingInformationView.Content],
         actionText: ActionText,
         action: @escaping () async throws -> Void
-    ) where TitleView == OnboardingTitleView, ContentView == OnboardingInformationView, ActionView == OnboardingActionsView {
-        self.init(
-            titleView: {
-                OnboardingTitleView(title: title, subtitle: subtitle)
-            },
-            contentView: {
-                OnboardingInformationView(areas: areas)
-            }, actionView: {
-                OnboardingActionsView(verbatim: actionText) {
-                    try await action()
-                }
+    ) where Header == OnboardingTitleView, Content == OnboardingInformationView, Footer == OnboardingActionsView {
+        self.init {
+            OnboardingTitleView(title: title, subtitle: subtitle)
+        } content: {
+            OnboardingInformationView(areas: areas)
+        } footer: {
+            OnboardingActionsView(verbatim: actionText) {
+                try await action()
             }
-        )
+        }
     }
     
     /// Creates the default style of the `OnboardingView` uses a combination of an ``OnboardingTitleView``, ``OnboardingInformationView``,
@@ -198,19 +219,16 @@ public struct OnboardingView<TitleView: View, ContentView: View, ActionView: Vie
         areas: [OnboardingInformationView.Content],
         actionText: ActionText,
         action: @escaping () async throws -> Void
-    ) where TitleView == OnboardingTitleView, ContentView == OnboardingInformationView, ActionView == OnboardingActionsView {
-        self.init(
-            titleView: {
-                OnboardingTitleView(title: title)
-            },
-            contentView: {
-                OnboardingInformationView(areas: areas)
-            }, actionView: {
-                OnboardingActionsView(verbatim: actionText) {
-                    try await action()
-                }
+    ) where Header == OnboardingTitleView, Content == OnboardingInformationView, Footer == OnboardingActionsView {
+        self.init {
+            OnboardingTitleView(title: title)
+        } content: {
+            OnboardingInformationView(areas: areas)
+        } footer: {
+            OnboardingActionsView(verbatim: actionText) {
+                try await action()
             }
-        )
+        }
     }
 }
 
@@ -225,7 +243,7 @@ extension OnboardingView {
     ///
     /// If this modifier is applied multiple times, the outermost call will take precedence.
     ///
-    /// - Note: If the ``OnboardingView`` is contained in an ``OnboardingStack``, its top edge will already be disabled implicitly.
+    /// - Note: If the ``OnboardingView`` is contained in a `ManagedNavigationStack`, its top edge will already be disabled implicitly.
     public func disablePadding(_ edges: Edge.Set) -> some View {
         self.environment(\.onboardingViewEdgesWithPaddingDisabled, edges)
     }

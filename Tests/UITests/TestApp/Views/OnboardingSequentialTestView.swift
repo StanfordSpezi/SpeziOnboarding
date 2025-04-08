@@ -12,7 +12,7 @@ import SwiftUI
 
 
 struct OnboardingSequentialTestView: View {
-    @Environment(OnboardingNavigationPath.self) private var path
+    @Environment(ManagedNavigationStack.Path.self) private var path
     
     
     var body: some View {
@@ -34,14 +34,3 @@ struct OnboardingSequentialTestView: View {
             #endif
     }
 }
-
-
-#if DEBUG
-#Preview {
-    OnboardingStack(startAtStep: OnboardingSequentialTestView.self) {
-        for onboardingView in OnboardingFlow.previewSimulatorViews {
-            onboardingView
-        }
-    }
-}
-#endif
