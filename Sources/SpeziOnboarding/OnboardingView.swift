@@ -77,6 +77,7 @@ public struct OnboardingView<Header: View, Content: View, Footer: View>: View {
     private let footer: Footer
     
     @Environment(\.isInManagedNavigationStack) private var isInManagedNavigationStack
+    @Environment(\.isFirstInManagedNavigationStack) private var isFirstInManagedNavigationStack
     @Environment(\.onboardingViewEdgesWithPaddingDisabled) private var edgesWithPaddingDisabled
     
     public var body: some View {
@@ -100,6 +101,10 @@ public struct OnboardingView<Header: View, Content: View, Footer: View>: View {
             }
         }
         .padding(edgesWithImplicitPadding, 24)
+        // if this is the first view in a Stack, we need to add an implicit extra top padding,
+        // in order to compensate for the fact that the other steps in the stack will get some de-facto
+        // top padding via the navigation bar (which won't be present in the first step).
+        .padding(.top, isFirstInManagedNavigationStack ? 24 : 0)
     }
     
     /// The set of edges for which we want to apply implicit padding.
