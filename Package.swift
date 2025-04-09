@@ -41,6 +41,7 @@ let package = Package(
                 .product(name: "OrderedCollections", package: "swift-collections"),
                 .product(name: "TPPDF", package: "TPPDF")
             ],
+            resources: [.process("Resources")],
             swiftSettings: [
                 .enableUpcomingFeature("ExistentialAny")
             ],
@@ -51,9 +52,7 @@ let package = Package(
             dependencies: [
                 .target(name: "SpeziOnboarding")
             ],
-            resources: [
-                .process("Resources/")
-            ],
+            resources: [.process("Resources")],
             swiftSettings: [
                 .enableUpcomingFeature("ExistentialAny")
             ],
