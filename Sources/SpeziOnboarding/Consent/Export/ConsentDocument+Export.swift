@@ -48,10 +48,13 @@ extension ConsentDocument {
 
         // As the `PKDrawing.image()` function automatically converts the ink color dependent on the used color scheme (light or dark mode),
         // force the tint color used in the `UIImage` to `black`.
-        return signature.image(
+        let image = signature.image(
             from: .init(x: 0, y: 0, width: signatureSize.width, height: signatureSize.height),
             scale: scale
-        ).withRenderingMode(.alwaysTemplate).withTintColor(.black)
+        )
+        return image
+            .withRenderingMode(.alwaysTemplate)
+            .withTintColor(.black)
     }
     #endif
 }
