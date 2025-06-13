@@ -1,8 +1,10 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "" : {
+
+    },
     "Consent document could not be exported." : {
-      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -19,7 +21,6 @@
       }
     },
     "CONSENT_ACTION" : {
-      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -42,7 +43,6 @@
       }
     },
     "CONSENT_SHARE" : {
-      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -65,7 +65,6 @@
       }
     },
     "CONSENT_TITLE" : {
-      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -88,7 +87,6 @@
       }
     },
     "CONSENT_VIEW_TITLE" : {
-      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -111,7 +109,6 @@
       }
     },
     "EXPORTED_TAG" : {
-      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -134,7 +131,6 @@
       }
     },
     "FILE_NAME_EXPORTED_CONSENT_FORM" : {
-      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -157,7 +153,6 @@
       }
     },
     "MARKDOWN_LOADING_ERROR" : {
-      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -180,7 +175,6 @@
       }
     },
     "NAME_FIELD_FAMILY_NAME_PLACEHOLDER" : {
-      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -203,7 +197,6 @@
       }
     },
     "NAME_FIELD_FAMILY_NAME_TITLE" : {
-      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -226,7 +219,6 @@
       }
     },
     "NAME_FIELD_GIVEN_NAME_PLACEHOLDER" : {
-      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -249,7 +241,6 @@
       }
     },
     "NAME_FIELD_GIVEN_NAME_TITLE" : {
-      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -272,7 +263,6 @@
       }
     },
     "Please try exporting the consent document again." : {
-      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -284,28 +274,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Vänligen försök exportera samtyckedokumentet igen."
-          }
-        }
-      }
-    },
-    "SEQUENTIAL_ONBOARDING_NEXT" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nächster Schritt"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Next"
-          }
-        },
-        "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nästa"
           }
         }
       }
@@ -334,7 +302,6 @@
       }
     },
     "SIGNATURE_FIELD" : {
-      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -380,7 +347,6 @@
       }
     },
     "SIGNATURE_VIEW_UNDO" : {
-      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -403,7 +369,6 @@
       }
     },
     "The PDF generation from the consent document failed. " : {
-      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {

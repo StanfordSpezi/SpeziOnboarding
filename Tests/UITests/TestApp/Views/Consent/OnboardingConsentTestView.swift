@@ -6,6 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
+import SpeziConsent
 import SpeziOnboarding
 import SpeziViews
 import SwiftUI
@@ -22,25 +23,22 @@ struct OnboardingConsentTestView: View {
     
     var body: some View {
         OnboardingConsentView(
-            markdown: {
-                Data(consentText.utf8)
-            },
-            action: { exportedConsent in
-                // Store the exported consent form in the `ExampleStandard`
-                switch documentIdentifier {
-                case .first: standard.firstConsentDocument = exportedConsent
-                case .second: standard.secondConsentDocument = exportedConsent
-                }
-
-                // Simulate storage / upload delay of consent form
-                try await Task.sleep(until: .now + .seconds(0.5))
-
-                // Navigates to the next onboarding step
-                path.nextStep()
-            },
+            markdown: { Data(consentText.utf8) },
             title: consentTitle.localized(),
             currentDateInSignature: true,
             exportConfiguration: .init(paperSize: .dinA4, includingTimestamp: true)
-        )
+        ) { exportedConsent in
+            // Store the exported consent form in the `ExampleStandard`
+            switch documentIdentifier {
+            case .first: standard.firstConsentDocument = exportedConsent
+            case .second: standard.secondConsentDocument = exportedConsent
+            }
+
+            // Simulate storage / upload delay of consent form
+            try await Task.sleep(until: .now + .seconds(0.5))
+
+            // Navigates to the next onboarding step
+            path.nextStep()
+        }
     }
 }

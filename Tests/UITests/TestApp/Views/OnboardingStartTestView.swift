@@ -6,6 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
+import SpeziConsent
 import SpeziOnboarding
 import SpeziViews
 import SwiftUI
@@ -15,68 +16,66 @@ struct OnboardingStartTestView: View {
     @Environment(ManagedNavigationStack.Path.self) private var path
     @Binding var showConditionalView: Bool
     
-
     var body: some View {
-        VStack(spacing: 8) {  // swiftlint:disable:this closure_body_length
-            Button {
+        let consentFileUrl = Bundle.main.url(forResource: "ConsentTest", withExtension: "md")! // swiftlint:disable:this force_unwrapping
+        Form { // swiftlint:disable:this closure_body_length
+            Button("Welcome View") {
                 path.navigateToNextStep(
                     matching: .viewType(OnboardingWelcomeTestView.self),
                     includeIntermediateSteps: false
                 )
-            } label: {
-                Text("Welcome View")
             }
-            
-            Button {
+            Button("Sequential Onboarding") {
                 path.navigateToNextStep(
                     matching: .viewType(OnboardingSequentialTestView.self),
                     includeIntermediateSteps: false
                 )
-            } label: {
-                Text("Sequential Onboarding")
             }
-
-            Button {
+            Button("Consent View (Markdown)") {
                 path.navigateToNextStep(
                     matching: .viewType(OnboardingConsentTestView.self),
                     includeIntermediateSteps: false
                 )
-            } label: {
-                Text("Consent View (Markdown)")
             }
-            
-            Button {
+            Button("Rendered Consent View (Markdown)") {
                 path.navigateToNextStep(
                     matching: .viewType(OnboardingConsentFinishedRenderedView.self),
                     includeIntermediateSteps: false
                 )
-            } label: {
-                Text("Rendered Consent View (Markdown)")
             }
-
-            Button {
+            Button("Complex Consent View") {
+                path.append(customView: ConsentDocumentView(
+                    consentDocument: try! ConsentDocument( // swiftlint:disable:this force_try
+                        contentsOf: consentFileUrl,
+                        initialName: nil,
+                        enableCustomElements: true
+                    ),
+                    signatureFieldLabels: .init(),
+                    consentSignatureDate: .now
+                ))
+            }
+            Button("Complex Consent View (2)") {
+                path.append(customView: OnboardingConsentView(
+                    consentDocumentUrl: consentFileUrl,
+                    enableCustomElements: true,
+                    initialName: nil,
+                    currentDateInSignature: true,
+                    exportConfiguration: .init()
+                ) { document in
+                    print("Did export document", document)
+                })
+            }
+            Button("Custom Onboarding View 1") {
                 path.append(
                     customView: OnboardingCustomTestView1(exampleArgument: "Hello Spezi!")
                 )
-            } label: {
-                Text("Custom Onboarding View 1")
             }
-            
-            Button {
+            Button("Custom Onboarding View 2") {
                 path.append(customView: OnboardingCustomTestView2())
-            } label: {
-                Text("Custom Onboarding View 2")
             }
-
-            Button {
+            Button("Onboarding Identifiable View") {
                 path.append(customView: OnboardingIdentifiableTestViewCustom(id: "ID: 1"))
-            } label: {
-                Text("Onboarding Identifiable View")
             }
-
-            Spacer()
-                .frame(height: 8)
-            
             /// We need to use a custom-built toggle as UI tests are very flakey when clicking on SwiftUI `Toggle`'s
             CustomToggleView(
                 text: "Show Conditional View",
