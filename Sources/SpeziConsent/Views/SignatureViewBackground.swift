@@ -11,8 +11,7 @@ import SwiftUI
 
 /// The `SignatureViewBackground` provides the background view for the ``SignatureView`` including the name and the signature line.
 struct SignatureViewBackground: View {
-    private let name: PersonNameComponents
-    private let formattedDate: String?
+    private let footer: SignatureView.Footer
     private let lineOffset: CGFloat
 
     #if !os(macOS)
@@ -41,29 +40,24 @@ struct SignatureViewBackground: View {
             .accessibilityHidden(true)
 
         HStack {
-            let name = name.formatted(.name(style: .long))
-            Text(name)
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-                .lineLimit(1) // Ensures the name is restricted to a single line
-                .truncationMode(.tail) // Truncate name at the end
-                .padding(.horizontal, 20)
-                .padding(.bottom, lineOffset - 18)
-                .accessibilityLabel(Text("SIGNATURE_NAME \(name)", bundle: .module))
-                .accessibilityHidden(name.isEmpty)
-
+            if let leadingText = footer.leadingText {
+                leadingText
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                    .lineLimit(1) // Ensures the name is restricted to a single line
+                    .truncationMode(.tail) // Truncate name at the end
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, lineOffset - 18)
+            }
             Spacer()
-
-            if let formattedDate {
-                Text(formattedDate)
+            if let trailingText = footer.trailingText {
+                trailingText
                     .font(.subheadline)
                     .foregroundColor(.secondary)
                     .lineLimit(1) // Ensures the date is restricted to a single line
                     .truncationMode(.middle) // Truncate date in the middle
                     .padding(.horizontal, 20)
                     .padding(.bottom, lineOffset - 18)
-                    .accessibilityLabel(Text("SIGNATURE_DATE \(formattedDate)", bundle: .module))
-                    .accessibilityHidden(formattedDate.isEmpty)
             }
         }
     }
@@ -71,30 +65,27 @@ struct SignatureViewBackground: View {
     
     /// Creates a new instance of an `SignatureViewBackground`.
     /// - Parameters:
-    ///   - name: The name that is displayed under the signature line.
+    ///   - footer: The footer's content.
     ///   - formattedDate: The formatted date that is displayed under the signature line.
     ///   - lineOffset: Defines the distance of the signature line from the bottom of the view. The default value is 30.
     ///   - backgroundColor: The color of the background of the signature canvas.
     #if !os(macOS)
     init(
-        name: PersonNameComponents = PersonNameComponents(),
-        formattedDate: String? = nil,
+        footer: SignatureView.Footer,
         lineOffset: CGFloat = 30,
         backgroundColor: UIColor = .secondarySystemBackground
     ) {
-        self.name = name
-        self.formattedDate = formattedDate
+        self.footer = footer
         self.lineOffset = lineOffset
         self.backgroundColor = backgroundColor
     }
     #else
     init(
-        name: PersonNameComponents = PersonNameComponents(),
-        formattedDate: String? = nil,
+        footer: SignatureView.Footer,
         lineOffset: CGFloat = 30,
         backgroundColor: NSColor = .secondarySystemFill
     ) {
-        self.name = name
+        self.footer = footer
         self.formattedDate = formattedDate
         self.lineOffset = lineOffset
         self.backgroundColor = backgroundColor
@@ -105,29 +96,25 @@ struct SignatureViewBackground: View {
 
 #if DEBUG
 #Preview("No signature date") {
+    let name = PersonNameComponents(givenName: "Leland", familyName: "Stanford")
     ZStack(alignment: .bottomLeading) {
-        SignatureViewBackground(
-            name: .init(givenName: "Leland", familyName: "Stanford"),
-            formattedDate: nil
-        )
+        SignatureViewBackground(footer: .init(
+            leading: Text(name, format: .name(style: .long))
+        ))
     }
-        .frame(height: 120)
+    .frame(height: 120)
 }
 
 #Preview("Including signature date") {
-    let dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .short
-        return formatter
-    }()
-
-
+    let name = PersonNameComponents(givenName: "Leland", familyName: "Stanford")
     ZStack(alignment: .bottomLeading) {
         SignatureViewBackground(
-            name: .init(givenName: "Leland", familyName: "Stanford"),
-            formattedDate: dateFormatter.string(from: .now)
+            footer: .init(
+                leading: Text(name, format: .name(style: .long)),
+                trailing: Text(Date.now, format: Date.FormatStyle(date: .numeric))
+            )
         )
     }
-        .frame(height: 120)
+    .frame(height: 120)
 }
 #endif

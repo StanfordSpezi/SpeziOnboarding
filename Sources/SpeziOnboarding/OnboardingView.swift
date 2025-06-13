@@ -82,7 +82,7 @@ public struct OnboardingView<Header: View, Content: View, Footer: View>: View {
     
     public var body: some View {
         GeometryReader { geometry in
-            ScrollView(.vertical, showsIndicators: false) {
+            ScrollView {
                 VStack(alignment: .center) {
                     VStack {
                         header
@@ -105,6 +105,7 @@ public struct OnboardingView<Header: View, Content: View, Footer: View>: View {
                 .frame(minHeight: geometry.size.height)
                 .frame(maxWidth: .infinity, alignment: .center)
             }
+            .scrollIndicators(.hidden)
         }
     }
     

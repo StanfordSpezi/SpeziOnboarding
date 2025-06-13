@@ -7,13 +7,14 @@
 //
 
 import Foundation
+import SpeziViews
 import SwiftUI
 import TPPDF
 
 
-extension ConsentDocumentExportRepresentation {
+extension ConsentDocument {
     /// The ``Configuration`` enables developers to define the properties of the exported consent form.
-    public struct Configuration: Equatable, Sendable {
+    public struct ExportConfiguration: Equatable, Sendable {
         /// Represents common paper sizes with their dimensions.
         ///
         /// You can use the `dimensions` property to get the width and height of each paper size in points.
@@ -97,7 +98,6 @@ extension ConsentDocumentExportRepresentation {
         let paperSize: PaperSize
         let includingTimestamp: Bool
         let fontSettings: FontSettings
-
         
         /// Creates an ``ConsentDocumentExportRepresentation/Configuration`` specifying the properties of the exported consent form.
         ///
@@ -108,12 +108,12 @@ extension ConsentDocumentExportRepresentation {
         ///   - fontSettings: Font settings for the exported form.
         public init(
             paperSize: PaperSize = .usLetter,
-            consentTitle: LocalizedStringResource = Configuration.Defaults.exportedConsentFormTitle,
+            consentTitle: LocalizedStringResource? = nil,
             includingTimestamp: Bool = true,
             fontSettings: FontSettings = .defaultExportFontSettings
         ) {
             self.paperSize = paperSize
-            self.consentTitle = consentTitle
+            self.consentTitle = consentTitle ?? LocalizedStringResource("CONSENT_TITLE", bundle: .atURL(from: .module))
             self.includingTimestamp = includingTimestamp
             self.fontSettings = fontSettings
         }
@@ -121,7 +121,7 @@ extension ConsentDocumentExportRepresentation {
 }
 
 
-extension ConsentDocumentExportRepresentation.Configuration.FontSettings {
+extension ConsentDocument.ExportConfiguration.FontSettings {
     /// Default export font settings with fixed font sizes, ensuring a consistent appearance across platforms.
     ///
     /// This configuration uses `systemFont` and `boldSystemFont` with absolute font sizes to achieve uniform font sizes
