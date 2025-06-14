@@ -65,11 +65,13 @@ extension ConsentDocument {
     
     
     struct SelectConfig: InteractiveSectionProtocol {
+        typealias Value = SelectionOption?
+        
         let id: String
         let prompt: String
         let options: [SelectionOption]
-        let initialValue: SelectionOption
-        let expectedValue: SelectionOption?
+        let initialValue: Value
+        let expectedValue: Value?
     }
     
     struct SignatureConfig: InteractiveSectionProtocol {
@@ -77,5 +79,12 @@ extension ConsentDocument {
         let id: String
         var initialValue: Value { .init() }
         var expectedValue: Value? { nil }
+    }
+}
+
+
+extension ConsentDocument.SelectConfig {
+    static var emptySelectionDefaultTitle: String {
+        String(localized: "CONSENT_NO_SELECTION_DEFAULT_TITLE", bundle: .module)
     }
 }

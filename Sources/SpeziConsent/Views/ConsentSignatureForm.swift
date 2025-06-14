@@ -20,9 +20,6 @@ import SwiftUI
 /// Allows the display markdown-based consent documents that can be signed using a family and given name and a hand drawn signature.
 /// In addition, it enables the export of the signed form as a PDF document.
 ///
-/// To observe and control the current state of the ``ConsentDocument``, the `View` requires passing down a ``ConsentViewState`` as a SwiftUI `Binding` in the
-/// ``init(markdown:viewState:givenNameTitle:givenNamePlaceholder:familyNameTitle:familyNamePlaceholder:exportConfiguration:consentSignatureDate:consentSignatureDateFormatter:)`` initializer.
-///
 /// This `Binding` can then be used to trigger the creation of the export representation of the consent form via setting the state to ``ConsentViewState/export``.
 /// After the export representation completes, the ``ConsentDocumentExportRepresentation`` is accessible via the associated value of the view state in ``ConsentViewState/exported(representation:)``.
 /// The ``ConsentDocumentExportRepresentation`` can then be rendered to a PDF via ``ConsentDocumentExportRepresentation/render()``.
@@ -51,7 +48,6 @@ public struct ConsentSignatureForm: View {
     private let signatureDate: Date?
     private let signatureDateFormat: Date.FormatStyle
 
-    @Environment(\.colorScheme) var colorScheme
     @Binding private var storage: ConsentDocument.SignatureStorage
     private var isSigning: Binding<Bool>?
     
@@ -68,10 +64,8 @@ public struct ConsentSignatureForm: View {
                 }
                 #endif
             }
-            .onChange(of: storage.name) { _, _ in
-                print("STORAGE DID CHANGE")
+            .onChange(of: storage.name) {
                 if !storage.didEnterNames {
-                    print("clear signature")
                     // Reset all strokes if name fields are not complete anymore
                     self.storage.clearSignature()
                 }
@@ -130,30 +124,6 @@ public struct ConsentSignatureForm: View {
         .frame(maxWidth: Self.maxWidthDrawing) // Limit the max view size so it fits on the PDF
         .transition(.opacity)
         .animation(.easeInOut, value: storage.didEnterNames)
-//        .task(id: viewState) {
-//            if case .export = viewState {
-////                // Captures the current state of the document and transforms it to the `ConsentDocumentExportRepresentation`
-////                self.viewState = .exported(
-////                    representation: await self.exportRepresentation
-////                )
-//                fatalError()
-//            } else if case .base(let baseViewState) = viewState,
-//                      case .idle = baseViewState {
-//                // Reset view state to correct one after handling an error view state via `.viewStateAlert()`
-//                #if !os(macOS)
-//                let isSignatureEmpty = storage.signature.strokes.isEmpty
-//                #else
-//                let isSignatureEmpty = storage.signature.isEmpty
-//                #endif
-//
-//                if !isSignatureEmpty {
-//                    self.viewState = .signed
-//                } else if !(name.givenName?.isEmpty ?? true) && !(name.familyName?.isEmpty ?? true) {
-//                    self.viewState = .namesEntered
-//                }
-//            }
-//        }
-//        .viewStateAlert(state: $viewState.base)
     }
 
     var formattedConsentSignatureDate: String? {

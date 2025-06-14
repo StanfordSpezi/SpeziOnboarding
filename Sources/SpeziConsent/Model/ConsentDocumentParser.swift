@@ -57,7 +57,7 @@ public struct ConsentParseError: Error, Hashable {
 }
 
 
-struct ConsentFileParser: ~Copyable {
+struct ConsentDocumentParser: ~Copyable {
     fileprivate struct ParsedCustomElement {
         indirect enum Content {
             case text(String)
@@ -113,18 +113,22 @@ struct ConsentFileParser: ~Copyable {
                     consume()
                 }
             }
-        } catch let error as ConsentParseError {
+        } catch {
             switch error.kind {
             case .eof:
                 break
             default:
                 throw error
             }
-        } catch {
-            fatalError("unreachable")
         }
-        if !currentSectionText.isEmpty {
-            sections.append(.markdown(currentSectionText))
+        sections.append(.markdown(currentSectionText))
+        sections.removeAll { section in
+            switch section {
+            case .markdown(let text):
+                text.trimmingWhitespace().isEmpty
+            case .toggle, .select, .signature:
+                false
+            }
         }
         return .init(frontmatter: frontmatter, sections: sections)
     }
@@ -314,7 +318,7 @@ struct ConsentFileParser: ~Copyable {
 }
 
 
-extension ConsentFileParser {
+extension ConsentDocumentParser {
     private var currentChar: Character? {
         input[safe: position]
     }
@@ -372,7 +376,7 @@ extension ConsentFileParser {
 }
 
 
-extension ConsentFileParser {
+extension ConsentDocumentParser {
     private var currentSourceLoc: ConsentParseError.SourceLocation {
         let lineNumber = input[..<position].count(where: \.isNewline)
         let wholeCurrentLine = { () -> Substring in
@@ -408,14 +412,14 @@ extension Character {
 }
 
 
-extension ConsentFileParser {
+extension ConsentDocumentParser {
     struct ParseResult: Sendable {
         let frontmatter: ConsentDocument.Frontmatter
         let sections: [ConsentDocument.Section]
     }
     
     static func parse(_ text: String) throws(ConsentParseError) -> ParseResult {
-        var parser = ConsentFileParser(input: text)
+        var parser = ConsentDocumentParser(input: text)
         return try parser.parse()
     }
     
@@ -439,7 +443,7 @@ extension ConsentDocument.Section {
         case unexpectedElement(String) // ewww assoc type
     }
     
-    fileprivate static func toggle(_ element: ConsentFileParser.ParsedCustomElement) throws(ConstructSectionError) -> Self {
+    fileprivate static func toggle(_ element: ConsentDocumentParser.ParsedCustomElement) throws(ConstructSectionError) -> Self {
         guard let id = element[attribute: "id"], !id.isEmpty else {
             throw .missingAttribute("id")
         }
@@ -451,7 +455,7 @@ extension ConsentDocument.Section {
         return .toggle(.init(id: id, prompt: prompt, initialValue: defaultValue, expectedValue: expectedValue))
     }
     
-    fileprivate static func select(_ element: ConsentFileParser.ParsedCustomElement) throws(ConstructSectionError) -> Self {
+    fileprivate static func select(_ element: ConsentDocumentParser.ParsedCustomElement) throws(ConstructSectionError) -> Self {
         guard let id = element[attribute: "id"], !id.isEmpty else {
             throw .missingAttribute("id")
         }
@@ -480,9 +484,7 @@ extension ConsentDocument.Section {
             }
         }
         let findOption = { id in options.first { $0.id == id } }
-        guard let initialSelection = element[attribute: "initialValue"].flatMap(findOption) else {
-            throw .missingField("initialValue")
-        }
+        let initialSelection = element[attribute: "initialValue"].flatMap(findOption)
         let expectedSelection = element[attribute: "expectedValue"].flatMap(findOption)
         return .select(.init(
             id: id,
@@ -493,7 +495,7 @@ extension ConsentDocument.Section {
         ))
     }
     
-    fileprivate static func signature(_ element: ConsentFileParser.ParsedCustomElement) throws(ConstructSectionError) -> Self {
+    fileprivate static func signature(_ element: ConsentDocumentParser.ParsedCustomElement) throws(ConstructSectionError) -> Self {
         guard let id = element[attribute: "id"], !id.isEmpty else {
             throw .missingField("id")
         }

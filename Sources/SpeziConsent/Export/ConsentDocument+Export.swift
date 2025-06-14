@@ -131,7 +131,7 @@ extension PDFRenderer {
             style: cellStyle
         )
         table[0, 1] = PDFTableCell(
-            content: try .init(content: selection.title),
+            content: try .init(content: selection?.title),
             alignment: .right,
             style: cellStyle
         )

@@ -12,9 +12,11 @@ import SwiftUI
 import class PDFKit.PDFDocument
 
 
+/// Represents and manages a Markdown-based (potentially interactive) Consent Document.
 @Observable
 @MainActor
 public final class ConsentDocument: Sendable {
+    /// An Error that can occur when initializing a Markdown-based consent document.
     public enum LoadError: Error {
         case inputNotUTF8
         case failedToParse(ConsentParseError)
@@ -97,25 +99,28 @@ public final class ConsentDocument: Sendable {
         }
     }
     
-    nonisolated let frontmatter: [String: String]
+    /// The document's frontmatter metadata.
+    nonisolated public let frontmatter: [String: String]
+    /// The document's extracted content, as a series of sections.
     nonisolated let sections: [Section]
     
+    /// Stores the state of the document's interactive sections.
     private var interactiveSectionsState = InteractiveSectionsState()
-//    private var signatureStates: [String: SignatureStorage] = [:]
     
     /// Whether the `ConsentDocument` was created with support for custom elements enabled.
     public let customElementsEnabled: Bool
-    
-    var signatureDate: String?
+    /// The document's signature date, if any.
+    public var signatureDate: String?
     /// Indicates whether a signature is currently being signed somewhere in the consent document.
-    var isSigning = false
-    private(set) var isExporting = false
+    public package(set) var isSigning = false
+    /// Indicates whether the document is currently being exported.
+    public private(set) var isExporting = false
     
     public init(markdown: String, initialName: PersonNameComponents? = nil, enableCustomElements: Bool = true) throws(LoadError) {
         customElementsEnabled = enableCustomElements
         if enableCustomElements {
             do {
-                let parseResult = try ConsentFileParser.parse(markdown)
+                let parseResult = try ConsentDocumentParser.parse(markdown)
                 self.frontmatter = parseResult.frontmatter
                 self.sections = parseResult.sections
             } catch {
@@ -157,7 +162,6 @@ public final class ConsentDocument: Sendable {
                 try interactiveSectionsState.register(section: config)
             case .signature(let config):
                 try interactiveSectionsState.register(section: config)
-//                signatureStates[id] = .init(name: defaultName ?? .init(), signature: .init())
             }
         }
     }

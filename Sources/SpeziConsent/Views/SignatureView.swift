@@ -41,16 +41,19 @@ public struct SignatureView: View {
     }
     
     #if !os(macOS)
-    @Environment(\.undoManager) private var undoManager
     @Binding private var signature: PKDrawing
     @Binding private var canvasSize: CGSize
     @Binding private var isSigning: Bool
-    @State private var canUndo = false
+    @State private var observedCanvasSizes = AsyncStream.makeStream(of: CGSize.self)
     #else
     @Binding private var signature: String
     #endif
     private let footer: Footer
     private let lineOffset: CGFloat
+    
+    private var canClear: Bool {
+        !signature.strokes.isEmpty
+    }
     
     
     public var body: some View {
@@ -58,47 +61,46 @@ public struct SignatureView: View {
             ZStack(alignment: .bottomLeading) {
                 SignatureViewBackground(footer: footer, lineOffset: lineOffset)
                 #if !os(macOS)
-                CanvasView(drawing: $signature, isDrawing: $isSigning, showToolPicker: .constant(false))
-                    .accessibilityLabel(Text("SIGNATURE_FIELD", bundle: .module))
-                    .accessibilityAddTraits(.allowsDirectInteraction)
-                    .onPreferenceChange(CanvasView.CanvasSizePreferenceKey.self) { size in
-                        runOrScheduleOnMainActor {
-                            // for some reason, the preference won't update on visionOS if placed in a parent view
-                            self.canvasSize = size
-                        }
-                    }
+                signatureCanvas
                 #else
                 signatureTextField
                 #endif
             }
-                .frame(height: 120)
-            
+            .frame(height: 120)
             #if !os(macOS)
-            Button(
-                action: {
-                    undoManager?.undo()
-                    canUndo = undoManager?.canUndo ?? false
-                },
-                label: {
-                    Text("SIGNATURE_VIEW_UNDO", bundle: .module)
-                }
-            )
-                .disabled(!canUndo)
+            Button {
+                signature = .init()
+            } label: {
+                Text("SIGNATURE_VIEW_CLEAR", bundle: .module)
+            }
+            .disabled(!canClear)
             #endif
         }
-            #if !os(macOS)
-            .task {
-                // Crucial to reset the `UndoManager` between different `ConsentView`s in a `ManagedNavigationStack`.
-                // Otherwise, actions are often not picked up
-                undoManager?.removeAllActions()
-                canUndo = false
+        // TODO?
+//        #if !os(macOS)
+//        .transition(.opacity)
+//        .animation(.easeInOut, value: canUndo)
+//        #endif
+    }
+    
+    @available(macOS, unavailable)
+    private var signatureCanvas: some View {
+        CanvasView(
+            drawing: $signature,
+            isDrawing: $isSigning,
+            showToolPicker: .constant(false)
+        )
+        .accessibilityLabel(Text("SIGNATURE_FIELD", bundle: .module))
+        .accessibilityAddTraits(.allowsDirectInteraction)
+        .onPreferenceChange(CanvasView.CanvasSizePreferenceKey.self) { size in
+            observedCanvasSizes.continuation.yield(size)
+        }
+        .task {
+            for await size in observedCanvasSizes.stream {
+                self.canvasSize = size
             }
-            .onChange(of: undoManager?.canUndo) { _, canUndo in
-                self.canUndo = canUndo ?? false
-            }
-            .transition(.opacity)
-            .animation(.easeInOut, value: canUndo)
-            #endif
+            fatalError()
+        }
     }
     
     #if os(macOS)

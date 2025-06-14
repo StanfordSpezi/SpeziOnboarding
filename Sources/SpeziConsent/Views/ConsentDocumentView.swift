@@ -13,10 +13,13 @@ import SpeziPersonalInfo
 import SpeziViews
 import SwiftUI
 
-/// Display markdown-based consent documents that can be signed and exported.
+/// Display markdown-based consent documents that can be filled out, signed, and exported.
 ///
 /// Allows the display markdown-based consent documents that can be signed using a family and given name and a hand drawn signature.
 /// In addition, it enables the export of the signed form as a PDF document.
+///
+/// Your app creates a ``ConsentDocument``, which acts as the model representing a markdown-based consent form.
+/// This view displays the ``ConsentDocument``, and enables data entry into the document's interactive components, such as e.g. checkboxes, selection pickers, and signature fields.
 ///
 /// To observe and control the current state of the ``ConsentDocument``, the `View` requires passing down a ``ConsentViewState`` as a SwiftUI `Binding` in the
 /// ``init(markdown:viewState:givenNameTitle:givenNamePlaceholder:familyNameTitle:familyNamePlaceholder:exportConfiguration:consentSignatureDate:consentSignatureDateFormatter:)`` initializer.
@@ -42,7 +45,6 @@ import SwiftUI
 /// )
 /// ```
 public struct ConsentDocumentView: View {
-    @Environment(\.colorScheme) var colorScheme
     @Bindable private var consentDocument: ConsentDocument
     private let signatureFieldLabels: ConsentSignatureForm.Labels
     private let signatureDate: Date?
@@ -57,7 +59,8 @@ public struct ConsentDocumentView: View {
                     .id(section.id)
                 let nextIsSignature = sections[safe: sectionIdx + 1]?.isSignature ?? false
                 if sectionIdx == sections.endIndex - 2, nextIsSignature {
-                    // if the last section is a signature, we add a spacer
+                    // if the last section is a signature, we add a spacer.
+                    // this means that, if the consent is short, we push the signature field down all the way to the bottom of the screen.
                     Spacer()
                 }
                 if sectionIdx < sections.endIndex - 1 && !nextIsSignature {
@@ -89,14 +92,10 @@ public struct ConsentDocumentView: View {
     private func view(for section: ConsentDocument.Section) -> some View {
         switch section {
         case .markdown(let text):
-            if false {
-                MarkdownView(markdown: Data(text.utf8))
-            } else {
-                HStack {
-                    Markdown(text)
-                    Spacer()
-                    // we can't seem to get the `Markdown` view to make itself as wide as possible, so this is the next best option :/
-                }
+            HStack {
+                Markdown(text)
+                Spacer()
+                // we can't seem to get the `Markdown` view to make itself as wide as possible, so this is the next best option :/
             }
         case .toggle(let config):
             Toggle(
@@ -125,7 +124,7 @@ public struct ConsentDocumentView: View {
 extension ConsentDocumentView {
     private struct CustomPicker: View {
         let title: String
-        @Binding var selection: ConsentDocument.SelectionOption
+        @Binding var selection: ConsentDocument.SelectionOption?
         let options: [ConsentDocument.SelectionOption]
         
         var body: some View {
@@ -133,9 +132,12 @@ extension ConsentDocumentView {
                 Text(title)
                 Spacer()
                 Picker("", selection: $selection) {
+                    Text(ConsentDocument.SelectConfig.emptySelectionDefaultTitle)
+                        .tag(ConsentDocument.SelectionOption?.none)
                     ForEach(options, id: \.self) { option in
                         Text(option.title)
                             .foregroundStyle(.primary)
+                            .tag(ConsentDocument.SelectionOption?.some(option))
                     }
                 }
                 .pickerStyle(.menu)
