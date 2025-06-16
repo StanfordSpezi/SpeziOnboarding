@@ -75,8 +75,8 @@ public struct ConsentSignatureForm: View {
     private var signatureView: some View {
         Group {
             let footer = SignatureView.Footer(
-                leading: Text(storage.name, format: .name(style: .long)),
-                trailing: signatureDate.map { Text($0, format: signatureDateFormat) }
+                name: storage.name.formatted(.name(style: .long)),
+                date: signatureDate.map { $0.formatted(signatureDateFormat) } ?? ""
             )
             #if !os(macOS)
             SignatureView(

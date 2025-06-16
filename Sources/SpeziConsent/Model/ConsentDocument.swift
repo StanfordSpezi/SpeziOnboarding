@@ -8,6 +8,7 @@
 
 import Foundation
 import PencilKit
+import SpeziFoundation
 import SwiftUI
 import class PDFKit.PDFDocument
 
@@ -370,6 +371,23 @@ extension ConsentDocument {
 }
 
 
+// MARK: Metadata
+
+extension ConsentDocument {
+    /// The document's title, if present in the metadata
+    public var title: String? {
+        frontmatter["title"]
+    }
+    
+    /// The document's version, if present in the metadata
+    public var version: Version? {
+        frontmatter["version"].flatMap { Version($0) }
+    }
+}
+
+
+// MARK: Export
+
 extension ConsentDocument {
     /// Exports the consent document as a formatted PDF.
     public func export(using config: ConsentDocument.ExportConfiguration) throws -> sending PDFKit.PDFDocument {
@@ -382,6 +400,8 @@ extension ConsentDocument {
     }
 }
 
+
+// MARK: Other
 
 extension ConsentDocument: Identifiable, Hashable {
     nonisolated public static func == (lhs: ConsentDocument, rhs: ConsentDocument) -> Bool {

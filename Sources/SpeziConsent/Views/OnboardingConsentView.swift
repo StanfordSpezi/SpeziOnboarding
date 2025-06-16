@@ -42,7 +42,9 @@ public struct OnboardingConsentView: View {
                         consentDocument: consentDocument,
                         consentSignatureDate: currentDateInSignature ? .now : nil
                     )
+                    #if !(os(macOS) || os(visionOS))
                     .scrollDismissesKeyboard(.interactively)
+                    #endif
                 } else {
                     ProgressView("Loading Consent Form")
                 }

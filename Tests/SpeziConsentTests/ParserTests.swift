@@ -8,6 +8,7 @@
 
 import PDFKit
 @testable import SpeziConsent
+import SpeziFoundation
 import SwiftUI
 import Testing
 
@@ -46,12 +47,14 @@ struct ConsentParserTests {
             - abc
             - def
             """
-        let result = try ConsentDocumentParser.parse(input)
-        #expect(result.frontmatter == [
+        let document = try ConsentDocument(markdown: input)
+        #expect(document.frontmatter == [
             "title": "abc",
             "version": "1.0.2"
         ])
-        #expect(result.sections == [
+        #expect(document.title == "abc")
+        #expect(document.version == Version(1, 0, 2))
+        #expect(document.sections == [
             .markdown("First markdown block\n- abc\n- def")
         ])
     }

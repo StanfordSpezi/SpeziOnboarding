@@ -17,7 +17,7 @@ struct OnboardingStartTestView: View {
     @Binding var showConditionalView: Bool
     
     var body: some View {
-        let consentFileUrl = Bundle.main.url(forResource: "ConsentTest", withExtension: "md")! // swiftlint:disable:this force_unwrapping
+        let consentFileUrl = Bundle.main.url(forResource: "Consent", withExtension: "md")! // swiftlint:disable:this force_unwrapping
         Form { // swiftlint:disable:this closure_body_length
             Button("Welcome View") {
                 path.navigateToNextStep(

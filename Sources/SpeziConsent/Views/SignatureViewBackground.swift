@@ -40,25 +40,25 @@ struct SignatureViewBackground: View {
             .accessibilityHidden(true)
 
         HStack {
-            if let leadingText = footer.leadingText {
-                leadingText
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                    .lineLimit(1) // Ensures the name is restricted to a single line
-                    .truncationMode(.tail) // Truncate name at the end
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, lineOffset - 18)
-            }
+            Text(footer.nameText)
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+                .lineLimit(1) // Ensures the name is restricted to a single line
+                .truncationMode(.tail) // Truncate name at the end
+                .padding(.horizontal, 20)
+                .padding(.bottom, lineOffset - 18)
+                .accessibilityLabel(Text("SIGNATURE_NAME \(footer.nameText)", bundle: .module))
+                .accessibilityHidden(footer.nameText.isEmpty)
             Spacer()
-            if let trailingText = footer.trailingText {
-                trailingText
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                    .lineLimit(1) // Ensures the date is restricted to a single line
-                    .truncationMode(.middle) // Truncate date in the middle
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, lineOffset - 18)
-            }
+            Text(footer.dateText)
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+                .lineLimit(1) // Ensures the date is restricted to a single line
+                .truncationMode(.middle) // Truncate date in the middle
+                .padding(.horizontal, 20)
+                .padding(.bottom, lineOffset - 18)
+                .accessibilityLabel(Text("SIGNATURE_DATE \(footer.dateText)", bundle: .module))
+                .accessibilityHidden(footer.dateText.isEmpty)
         }
     }
     
@@ -98,7 +98,7 @@ struct SignatureViewBackground: View {
     let name = PersonNameComponents(givenName: "Leland", familyName: "Stanford")
     ZStack(alignment: .bottomLeading) {
         SignatureViewBackground(footer: .init(
-            leading: Text(name, format: .name(style: .long))
+            name: name.formatted(.name(style: .long))
         ))
     }
     .frame(height: 120)
@@ -109,8 +109,8 @@ struct SignatureViewBackground: View {
     ZStack(alignment: .bottomLeading) {
         SignatureViewBackground(
             footer: .init(
-                leading: Text(name, format: .name(style: .long)),
-                trailing: Text(Date.now, format: Date.FormatStyle(date: .numeric))
+                name: name.formatted(.name(style: .long)),
+                date: Date.now.formatted(date: .numeric, time: .omitted)
             )
         )
     }

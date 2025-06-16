@@ -42,13 +42,13 @@ import SwiftUI
 public struct SignatureView: View {
     /// The ``SignatureView``'s footer configuration
     public struct Footer: Sendable {
-        let leadingText: Text?
-        let trailingText: Text?
+        let nameText: String
+        let dateText: String
         
         /// Creates a new `Footer`, with optional leading and trailing texts.
-        public init(leading: Text? = nil, trailing: Text? = nil) {
-            self.leadingText = leading
-            self.trailingText = trailing
+        public init(name: String = "", date: String = "") {
+            self.nameText = name
+            self.dateText = date
         }
     }
     
@@ -180,7 +180,7 @@ public struct SignatureView: View {
         signature: $signature,
         isSigning: $isSigning,
         footer: .init(
-            leading: Text(name, format: .name(style: .long))
+            name: name.formatted(.name(style: .long))
         )
     )
 }
@@ -194,9 +194,9 @@ public struct SignatureView: View {
         signature: $signature,
         isSigning: $isSigning,
         footer: .init(
-            leading: Text(name, format: .name(style: .long)),
+            name: name.formatted(.name(style: .long)),
             // swiftlint:disable:next force_unwrapping
-            trailing: Text(cal.date(from: .init(year: 2025, month: 1, day: 22))!, format: Date.FormatStyle(date: .numeric))
+            date: cal.date(from: .init(year: 2025, month: 1, day: 22))!.formatted(date: .numeric, time: .omitted)
         )
     )
 }
@@ -210,9 +210,9 @@ public struct SignatureView: View {
         signature: $signature,
         isSigning: $isSigning,
         footer: .init(
-            leading: Text(name, format: .name(style: .abbreviated)),
+            name: name.formatted(.name(style: .abbreviated)),
             // swiftlint:disable:next force_unwrapping
-            trailing: Text(cal.date(from: .init(year: 2025, month: 1, day: 22))!, format: .iso8601)
+            date: cal.date(from: .init(year: 2025, month: 1, day: 22))!.ISO8601Format()
         )
     )
 }

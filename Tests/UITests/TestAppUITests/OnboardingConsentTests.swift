@@ -63,10 +63,10 @@ final class OnboardingConsentTests: XCTestCase {
         #endif
 
         XCTAssert(app.staticTexts["First Name"].exists)
-        try app.textFields["Enter your first name ..."].enter(value: "Leland")
+        try app.textFields["Enter your first name…"].enter(value: "Leland")
 
         XCTAssert(app.staticTexts["Last Name"].exists)
-        try app.textFields["Enter your last name ..."].enter(value: "Stanford")
+        try app.textFields["Enter your last name…"].enter(value: "Stanford")
 
         app.hitConsentButton()
 

@@ -4,22 +4,8 @@
     "" : {
 
     },
-    "Consent document could not be exported." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Einwilligung konnte nicht exportiert werden."
-          }
-        },
-        "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Samtyckesdokumentet kunde inte exporteras."
-          }
-        }
-      }
+    "A" : {
+
     },
     "CONSENT_ACTION" : {
       "localizations" : {
@@ -115,29 +101,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Exporterad"
-          }
-        }
-      }
-    },
-    "FILE_NAME_EXPORTED_CONSENT_FORM" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Unterschriebe Einwilligung"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Signed Consent Form"
-          }
-        },
-        "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Undertecknat Samtyckesformulär"
           }
         }
       }
@@ -255,25 +218,18 @@
         }
       }
     },
-    "Please try exporting the consent document again." : {
-      "extractionState" : "stale",
+    "Share Consent Form" : {
+
+    },
+    "SIGNATURE_DATE %@" : {
       "localizations" : {
-        "de" : {
+        "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bitte versucht das Dokument erneut zu exportieren."
-          }
-        },
-        "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vänligen försök exportera samtyckedokumentet igen."
+            "value" : "Date: %@"
           }
         }
       }
-    },
-    "Share Consent Form" : {
-
     },
     "SIGNATURE_FIELD" : {
       "localizations" : {
@@ -297,6 +253,16 @@
         }
       }
     },
+    "SIGNATURE_NAME %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Name: %@"
+          }
+        }
+      }
+    },
     "SIGNATURE_VIEW_CLEAR" : {
       "localizations" : {
         "en" : {
@@ -307,22 +273,8 @@
         }
       }
     },
-    "The PDF generation from the consent document failed. " : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Der PDF export des Einwilligungsdokuments ist fehlgeschlagen."
-          }
-        },
-        "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Genereringen av PDF från samtyckedokumentet misslyckades."
-          }
-        }
-      }
+    "X" : {
+
     }
   },
   "version" : "1.0"

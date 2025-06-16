@@ -74,7 +74,8 @@ let package = Package(
         .testTarget(
             name: "SpeziConsentTests",
             dependencies: [
-                .target(name: "SpeziConsent")
+                .target(name: "SpeziConsent"),
+                .product(name: "SpeziFoundation", package: "SpeziFoundation")
             ],
             resources: [.process("Resources")],
             swiftSettings: [.enableUpcomingFeature("ExistentialAny")],

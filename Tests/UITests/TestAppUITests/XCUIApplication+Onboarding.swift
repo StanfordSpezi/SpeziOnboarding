@@ -69,33 +69,34 @@ extension XCUIApplication {
         #endif
 
         XCTAssert(staticTexts["First Name"].waitForExistence(timeout: 2))
-        try textFields["Enter your first name ..."].enter(value: "Leland")
+        try textFields["Enter your first name…"].enter(value: "Leland")
 
         XCTAssert(staticTexts["Last Name"].waitForExistence(timeout: 2))
-        try textFields["Enter your last name ..."].enter(value: "Stanford")
+        try textFields["Enter your last name…"].enter(value: "Stanford")
         
         hitConsentButton()
 
+        print(self.debugDescription)
         XCTAssert(staticTexts["Name: Leland Stanford"].waitForExistence(timeout: 2))
 
         #if !os(macOS)
-        XCTAssert(buttons["Undo"].waitForExistence(timeout: 2.0))
-        XCTAssertFalse(buttons["Undo"].isEnabled)
+        XCTAssert(buttons["Clear"].waitForExistence(timeout: 2.0))
+        XCTAssertFalse(buttons["Clear"].isEnabled)
 
         staticTexts["Name: Leland Stanford"].swipeRight()
 
-        XCTAssert(buttons["Undo"].waitForExistence(timeout: 2.0))
-        XCTAssertTrue(buttons["Undo"].isEnabled)
-        buttons["Undo"].tap()
+        XCTAssert(buttons["Clear"].waitForExistence(timeout: 2.0))
+        XCTAssertTrue(buttons["Clear"].isEnabled)
+        buttons["Clear"].tap()
 
-        XCTAssert(buttons["Undo"].waitForExistence(timeout: 2.0))
-        XCTAssertFalse(buttons["Undo"].isEnabled)
+        XCTAssert(buttons["Clear"].waitForExistence(timeout: 2.0))
+        XCTAssertFalse(buttons["Clear"].isEnabled)
 
         XCTAssert(scrollViews["Signature Field"].waitForExistence(timeout: 2))
         scrollViews["Signature Field"].swipeRight()
 
-        XCTAssert(buttons["Undo"].waitForExistence(timeout: 2.0))
-        XCTAssertTrue(buttons["Undo"].isEnabled)
+        XCTAssert(buttons["Clear"].waitForExistence(timeout: 2.0))
+        XCTAssertTrue(buttons["Clear"].isEnabled)
         #else
         XCTAssert(textFields["Signature Field"].waitForExistence(timeout: 2))
         try textFields["Signature Field"].enter(value: "Leland Stanford")
