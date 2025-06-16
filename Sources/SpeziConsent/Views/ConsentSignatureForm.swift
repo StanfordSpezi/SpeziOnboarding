@@ -50,6 +50,9 @@ public struct ConsentSignatureForm: View {
 
     @Binding private var storage: ConsentDocument.SignatureStorage
     private var isSigning: Binding<Bool>?
+    @FocusState private var nameInputIsFocused
+    
+    private let dividerId = UUID()
     
     private var nameView: some View {
         VStack {
@@ -71,9 +74,11 @@ public struct ConsentSignatureForm: View {
                 }
             }
             Divider()
+                .id(dividerId)
         }
     }
     
+    @ViewBuilder
     private var nameInputView: some View {
         Grid(horizontalSpacing: 15) {
             NameFieldRow(name: $storage.name, for: \.givenName) {
@@ -91,6 +96,7 @@ public struct ConsentSignatureForm: View {
                 Text(labels.familyNamePlaceholder)
             }
         }
+        .focused($nameInputIsFocused)
     }
     
     private var signatureView: some View {
@@ -117,13 +123,20 @@ public struct ConsentSignatureForm: View {
     }
     
     public var body: some View {
-        Group {
-            nameView
-            signatureView
+        ScrollViewReader { proxy in
+            Group {
+                nameView
+                signatureView
+            }
+            .frame(maxWidth: Self.maxWidthDrawing) // Limit the max view size so it fits on the PDF
+            .transition(.opacity)
+            .animation(.easeInOut, value: storage.didEnterNames)
+            .onChange(of: nameInputIsFocused) { old, new in
+                if !old && new {
+                    proxy.scrollTo(dividerId, anchor: .top) // this works, but seemingly only by accident???
+                }
+            }
         }
-        .frame(maxWidth: Self.maxWidthDrawing) // Limit the max view size so it fits on the PDF
-        .transition(.opacity)
-        .animation(.easeInOut, value: storage.didEnterNames)
     }
 
     var formattedConsentSignatureDate: String? {

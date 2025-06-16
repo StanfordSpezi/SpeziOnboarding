@@ -27,7 +27,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/StanfordSpezi/Spezi.git", from: "1.8.0"),
         .package(url: "https://github.com/StanfordSpezi/SpeziFoundation.git", from: "2.1.2"),
-        .package(url: "https://github.com/StanfordSpezi/SpeziViews.git", branch: "lukas/CanvasView-disableDrawing"),
+        .package(url: "https://github.com/StanfordSpezi/SpeziViews.git", revision: "22267bc04079e17f999a09da1429b7c1c7aabf14"),
         .package(url: "https://github.com/apple/swift-collections.git", from: "1.1.4"),
         .package(url: "https://github.com/techprimate/TPPDF.git", from: "2.6.1"),
         .package(url: "https://github.com/gonzalezreal/swift-markdown-ui.git", from: "2.4.1")

@@ -108,6 +108,8 @@ struct ConsentDocumentParser: ~Copyable {
                     } else {
                         try emitError(.other("Unexpected top-level custom element: \(element)"))
                     }
+                } else if try skipCommentIfApplicable() {
+                    // we ignore the comment
                 } else {
                     currentSectionText.append(currentChar)
                     consume()
@@ -289,7 +291,6 @@ struct ConsentDocumentParser: ~Copyable {
         try emitError(.other("Unable to find closing tag for \(parsedElement)"))
     }
     
-    
     private mutating func _attemptToCloseCustomElement(_ element: ParsedCustomElement) -> ParsedCustomElement? {
         let possibleClosingTags = ["</>", "</\(element.name)>"]
         for tag in possibleClosingTags {
@@ -312,6 +313,43 @@ struct ConsentDocumentParser: ~Copyable {
         return String(text.trimmingWhitespace())
     }
     
+    
+    /// Parses an HTML comment starting at the current position.
+    ///
+    /// Since HTML doesn't support nested comments, this function in effect simply consumes all text until the next `-->` character sequence.
+    ///
+    /// - returns: the contents of the parsed comment, excluding the leading `<!--` and the trailing `-->`.
+    ///     if no comment starts at the current position, the function returns `nil`.
+    private mutating func parseComment() throws(ConsentParseError) -> String? {
+        guard currentChar == "<" && peek(1) == "!" && peek(2) == "-" && peek(3) == "-" else {
+            return nil
+        }
+        consume(4)
+        var commentBody = ""
+        while let currentChar {
+            if currentChar == "-" && peek(1) == "-" && peek(2) == ">" {
+                consume(3)
+                return commentBody
+            } else {
+                commentBody.append(currentChar)
+                consume()
+            }
+        }
+        // we ran out of characters before closing the comment.
+        try emitError(.other("Unterminated Comment"))
+    }
+    
+    
+    /// Skips a comment, if one starts at the current position
+    ///
+    /// - returns: `true` iff a comment was skipped, `false` otherwise.
+    @discardableResult
+    private mutating func skipCommentIfApplicable() throws(ConsentParseError) -> Bool {
+        try parseComment() != nil
+    }
+}
+
+extension ConsentDocumentParser {
     private func emitError(_ kind: ConsentParseError.Kind) throws(ConsentParseError) -> Never {
         throw .init(kind: kind, sourceLoc: currentSourceLoc)
     }

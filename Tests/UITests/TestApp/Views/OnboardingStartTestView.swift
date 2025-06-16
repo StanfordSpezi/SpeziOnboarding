@@ -44,26 +44,9 @@ struct OnboardingStartTestView: View {
                 )
             }
             Button("Complex Consent View") {
-                path.append(customView: ConsentDocumentView(
-                    consentDocument: try! ConsentDocument( // swiftlint:disable:this force_try
-                        contentsOf: consentFileUrl,
-                        initialName: nil,
-                        enableCustomElements: true
-                    ),
-                    signatureFieldLabels: .init(),
-                    consentSignatureDate: .now
-                ))
-            }
-            Button("Complex Consent View (2)") {
-                path.append(customView: OnboardingConsentView(
-                    consentDocumentUrl: consentFileUrl,
-                    enableCustomElements: true,
-                    initialName: nil,
-                    currentDateInSignature: true,
-                    exportConfiguration: .init()
-                ) { document in
-                    print("Did export document", document)
-                })
+                path.append(
+                    customView: Consent(url: consentFileUrl)
+                )
             }
             Button("Custom Onboarding View 1") {
                 path.append(

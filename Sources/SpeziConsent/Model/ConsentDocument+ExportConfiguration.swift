@@ -13,11 +13,11 @@ import TPPDF
 
 
 extension ConsentDocument {
-    /// The ``Configuration`` enables developers to define the properties of the exported consent form.
+    /// Define the properties of an exported ``ConsentDocument``.
     public struct ExportConfiguration: Equatable, Sendable {
         /// Represents common paper sizes with their dimensions.
         ///
-        /// You can use the `dimensions` property to get the width and height of each paper size in points.
+        /// You can use the ``dimensions`` property to get the width and height of each paper size in points.
         ///
         /// - Note: The dimensions are calculated based on the standard DPI (dots per inch) of 72 for print.
         public enum PaperSize: Equatable, Sendable {
@@ -25,14 +25,12 @@ extension ConsentDocument {
             case usLetter
             /// Standard DIN A4 paper size.
             case dinA4
-
             
             /// Provides the dimensions of the paper in points.
             ///
             /// - Returns: A tuple containing the width and height of the paper in points.
-            var dimensions: (width: CGFloat, height: CGFloat) {
+            public var dimensions: (width: CGFloat, height: CGFloat) {
                 let pointsPerInch: CGFloat = 72.0
-
                 switch self {
                 case .usLetter:
                     let widthInInches: CGFloat = 8.5
@@ -53,7 +51,6 @@ extension ConsentDocument {
                 }
             }
         }
-        
         
         /// The ``FontSettings`` store configuration of the fonts used to render the exported
         /// consent document, i.e., fonts for the content, title and signature.
@@ -92,7 +89,6 @@ extension ConsentDocument {
                 self.headerExportTimeStampFont = headerExportTimeStampFont
             }
         }
-
 
         let consentTitle: LocalizedStringResource
         let paperSize: PaperSize

@@ -1,7 +1,7 @@
 //
 // This source file is part of the Stanford Spezi open-source project
 //
-// SPDX-FileCopyrightText: 2022 Stanford University and the project authors (see CONTRIBUTORS.md)
+// SPDX-FileCopyrightText: 2025 Stanford University and the project authors (see CONTRIBUTORS.md)
 //
 // SPDX-License-Identifier: MIT
 //
@@ -29,6 +29,9 @@ struct PDFRenderer {
     
     
     consuming func render() throws -> sending PDFKit.PDFDocument {
+        if let title = consentDocument.frontmatter["title"], !title.isEmpty {
+            pdf.info.title = title
+        }
         if config.includingTimestamp {
             pdf.add(.contentRight, attributedTextObject: renderedExportTimestamp())
         }
@@ -42,6 +45,7 @@ struct PDFRenderer {
         }
         return pdfDocument
     }
+    
     
     private func renderedExportTimestamp() -> PDFAttributedText {
         var text = String(localized: "EXPORTED_TAG", bundle: .module)

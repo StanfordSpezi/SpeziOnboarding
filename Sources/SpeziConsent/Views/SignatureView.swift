@@ -14,17 +14,29 @@ import SwiftUI
 
 /// Input freeform signatures using a finger or the Apple Pencil.
 ///
-/// Use SwiftUI `Bindings` to obtain information like the content of the signature and if the user is currently signing:
+/// Use SwiftUI `Bindings` provide storage for the signature itself (a `PKDrawing`) and to keep track of whether the user is currently signing their signature:
 /// ```swift
 /// @State var signature = PKDrawing()
 /// @State var isSigning = false
-/// 
+///
+/// SignatureView(signature: $signature, isSigning: $isSigning)
+/// ```
+///
+/// You can optionally also keep track of the size of the canvas, and provide text that should be displayed in the ``SignatureView``'s footer:
+/// ```swift
+/// @State var signature = PKDrawing()
+/// @State var isSigning = false
+/// @State var canvasSize: CGSize = .zero
+/// let name = PersonNameComponents(givenName: "Leland", familyName: "Stanford")
 ///
 /// SignatureView(
 ///     signature: $signature,
 ///     isSigning: $isSigning,
-///     name: name,
-///     formattedDate: "01/23/25"
+///     canvasSize: $canvasSize,
+///     footer: .init(
+///         leading: Text(name, format: .name(style: .long)),
+///         trailing: Text(Date.now, format: Date.FormatStyle(date: .numeric))
+///     )
 /// )
 /// ```
 public struct SignatureView: View {
@@ -45,15 +57,15 @@ public struct SignatureView: View {
     @Binding private var canvasSize: CGSize
     @Binding private var isSigning: Bool
     @State private var observedCanvasSizes = AsyncStream.makeStream(of: CGSize.self)
+    private var canClear: Bool {
+        !signature.strokes.isEmpty
+    }
     #else
     @Binding private var signature: String
     #endif
     private let footer: Footer
     private let lineOffset: CGFloat
     
-    private var canClear: Bool {
-        !signature.strokes.isEmpty
-    }
     
     
     public var body: some View {
@@ -76,14 +88,9 @@ public struct SignatureView: View {
             .disabled(!canClear)
             #endif
         }
-        // TODO?
-//        #if !os(macOS)
-//        .transition(.opacity)
-//        .animation(.easeInOut, value: canUndo)
-//        #endif
     }
     
-    @available(macOS, unavailable)
+    #if !os(macOS)
     private var signatureCanvas: some View {
         CanvasView(
             drawing: $signature,
@@ -99,23 +106,22 @@ public struct SignatureView: View {
             for await size in observedCanvasSizes.stream {
                 self.canvasSize = size
             }
-            fatalError()
+            observedCanvasSizes = AsyncStream.makeStream()
         }
     }
-    
-    #if os(macOS)
+    #else
     private var signatureTextField: some View {
         TextField(text: $signature) {
             Text("SIGNATURE_FIELD", bundle: .module)
         }
-            .accessibilityLabel(Text("SIGNATURE_FIELD", bundle: .module))
-            .accessibilityAddTraits(.allowsDirectInteraction)
-            .font(.custom("Snell Roundhand", size: 32))
-            .textFieldStyle(PlainTextFieldStyle())
-            .background(Color.clear)
-            .padding(.bottom, lineOffset + 2)
-            .padding(.leading, 46)
-            .padding(.trailing, 24)
+        .accessibilityLabel(Text("SIGNATURE_FIELD", bundle: .module))
+        .accessibilityAddTraits(.allowsDirectInteraction)
+        .font(.custom("Snell Roundhand", size: 32))
+        .textFieldStyle(PlainTextFieldStyle())
+        .background(Color.clear)
+        .padding(.bottom, lineOffset + 2)
+        .padding(.leading, 46)
+        .padding(.trailing, 24)
     }
     #endif
     
@@ -129,8 +135,8 @@ public struct SignatureView: View {
     ///   - footer: The footer's content.
     ///   - lineOffset: Defines the distance of the signature line from the bottom of the view. The default value is 30.
     public init(
-        signature: Binding<PKDrawing> = .constant(PKDrawing()),
-        isSigning: Binding<Bool> = .constant(false),
+        signature: Binding<PKDrawing>,
+        isSigning: Binding<Bool>,
         canvasSize: Binding<CGSize> = .constant(.zero),
         footer: Footer = .init(),
         lineOffset: CGFloat = 30
@@ -160,35 +166,55 @@ public struct SignatureView: View {
 }
 
 
-#if DEBUG
+#if DEBUG && !os(macOS)
 #Preview("Base Signature View") {
-    SignatureView()
+    @Previewable @State var signature = PKDrawing()
+    @Previewable @State var isSigning = false
+    SignatureView(signature: $signature, isSigning: $isSigning)
 }
 
 #Preview("Including PersonNameComponents") {
+    @Previewable @State var signature = PKDrawing()
+    @Previewable @State var isSigning = false
     let name = PersonNameComponents(givenName: "Leland", familyName: "Stanford")
-    SignatureView(footer: .init(
-        leading: Text(name, format: .name(style: .long))
-    ))
+    SignatureView(
+        signature: $signature,
+        isSigning: $isSigning,
+        footer: .init(
+            leading: Text(name, format: .name(style: .long))
+        )
+    )
 }
 
 #Preview("Including PersonNameComponents and Date") {
     @Previewable @Environment(\.calendar) var cal
+    @Previewable @State var signature = PKDrawing()
+    @Previewable @State var isSigning = false
     let name = PersonNameComponents(givenName: "Leland", familyName: "Stanford")
-    SignatureView(footer: .init(
-        leading: Text(name, format: .name(style: .long)),
-        // swiftlint:disable:next force_unwrapping
-        trailing: Text(cal.date(from: .init(year: 2025, month: 1, day: 22))!, format: Date.FormatStyle(date: .numeric))
-    ))
+    SignatureView(
+        signature: $signature,
+        isSigning: $isSigning,
+        footer: .init(
+            leading: Text(name, format: .name(style: .long)),
+            // swiftlint:disable:next force_unwrapping
+            trailing: Text(cal.date(from: .init(year: 2025, month: 1, day: 22))!, format: Date.FormatStyle(date: .numeric))
+        )
+    )
 }
 
 #Preview("Including PersonNameComponents and Date with different format") {
     @Previewable @Environment(\.calendar) var cal
+    @Previewable @State var signature = PKDrawing()
+    @Previewable @State var isSigning = false
     let name = PersonNameComponents(givenName: "Leland", familyName: "Stanford")
-    SignatureView(footer: .init(
-        leading: Text(name, format: .name(style: .abbreviated)),
-        // swiftlint:disable:next force_unwrapping
-        trailing: Text(cal.date(from: .init(year: 2025, month: 1, day: 22))!, format: .iso8601)
-    ))
+    SignatureView(
+        signature: $signature,
+        isSigning: $isSigning,
+        footer: .init(
+            leading: Text(name, format: .name(style: .abbreviated)),
+            // swiftlint:disable:next force_unwrapping
+            trailing: Text(cal.date(from: .init(year: 2025, month: 1, day: 22))!, format: .iso8601)
+        )
+    )
 }
 #endif

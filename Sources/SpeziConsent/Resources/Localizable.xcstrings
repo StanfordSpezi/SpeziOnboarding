@@ -5,6 +5,7 @@
 
     },
     "Consent document could not be exported." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -48,28 +49,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "(No selection)"
-          }
-        }
-      }
-    },
-    "CONSENT_SHARE" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Teile die Einwilligung"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Share consent form"
-          }
-        },
-        "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dela samtyckesformulär"
           }
         }
       }
@@ -141,6 +120,7 @@
       }
     },
     "FILE_NAME_EXPORTED_CONSENT_FORM" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -161,6 +141,15 @@
           }
         }
       }
+    },
+    "Go to next field" : {
+
+    },
+    "Go to previous field" : {
+
+    },
+    "Loading Consent Form" : {
+
     },
     "MARKDOWN_LOADING_ERROR" : {
       "localizations" : {
@@ -273,6 +262,7 @@
       }
     },
     "Please try exporting the consent document again." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -321,6 +311,7 @@
       }
     },
     "The PDF generation from the consent document failed. " : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {

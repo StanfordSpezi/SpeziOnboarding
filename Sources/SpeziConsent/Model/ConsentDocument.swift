@@ -13,6 +13,27 @@ import class PDFKit.PDFDocument
 
 
 /// Represents and manages a Markdown-based (potentially interactive) Consent Document.
+///
+/// `ConsentDocument` instances are intended to be used as State Objects; they are Observable and provide state for various consent-related views,
+/// such as e.g. the ``ConsentDocumentView`` or the ``OnboardingConsentView``.
+///
+/// `ConsentDocument`s are created from Markdown-formatted text, which can optionally include custom interactive elements defined by SpeziConsent,
+/// in order to enable form-like data collection from users as they are going through the consent document.
+///
+/// Users are typically required to sign consent documents; unless explicitly instructed not to all `ConsentDocument`s include an implicit signature field at the bottom of the
+///
+/// ## State management
+/// In addition to defining the contents of the document, the `ConsentDocument` class also keeps track of the values the user entered for the document's interactive components.
+/// It also provides APIs for understanding the overall state of the documement, such as ``isExporting``, ``isSigning``, and ``completionState``.
+///
+/// ## Exporting
+/// Use the ``ConsentDocument/export(using:)`` function to obtain a PDF representation of the formatted document, taking into account user responses for interactive components.
+///
+/// ## Topics
+/// ### Creating Consent Documents
+/// - ``init(markdown:initialName:enableCustomElements:)-(String,_,_)``
+/// - ``init(markdown:initialName:enableCustomElements:)-(Data,_,_)``
+/// - ``init(contentsOf:initialName:enableCustomElements:)``
 @Observable
 @MainActor
 public final class ConsentDocument: Sendable {
@@ -143,7 +164,7 @@ public final class ConsentDocument: Sendable {
         try self.init(markdown: text, initialName: initialName, enableCustomElements: enableCustomElements)
     }
     
-    public convenience init(contentsOf url: URL, initialName: PersonNameComponents? = nil, enableCustomElements: Bool = false) throws {
+    public convenience init(contentsOf url: URL, initialName: PersonNameComponents? = nil, enableCustomElements: Bool = true) throws {
         let data = try Data(contentsOf: url)
         guard let text = String(data: data, encoding: .utf8) else {
             throw LoadError.inputNotUTF8
@@ -184,12 +205,12 @@ extension ConsentDocument {
 
 
 extension ConsentDocument {
-    enum ConsentCompletionState: Hashable, Sendable {
+    public enum ConsentCompletionState: Hashable, Sendable {
         case incomplete(firstIncompleteId: String)
         case complete
     }
     
-    var completionState: ConsentCompletionState {
+    public var completionState: ConsentCompletionState {
         for section in sections {
             switch section {
             case .markdown:
@@ -215,7 +236,8 @@ extension ConsentDocument {
 
 
 extension ConsentDocument {
-    func export(config: ConsentDocument.ExportConfiguration) throws -> sending PDFKit.PDFDocument {
+    /// Exports the consent document as a formatted PDF.
+    public func export(using config: ConsentDocument.ExportConfiguration) throws -> sending PDFKit.PDFDocument {
         isExporting = true
         defer {
             isExporting = false

@@ -86,7 +86,6 @@ struct SignatureViewBackground: View {
         backgroundColor: NSColor = .secondarySystemFill
     ) {
         self.footer = footer
-        self.formattedDate = formattedDate
         self.lineOffset = lineOffset
         self.backgroundColor = backgroundColor
     }

@@ -16,29 +16,43 @@ struct OnboardingConsentTestView: View {
     let consentTitle: String
     let consentText: String
     let documentIdentifier: ConsentDocumentIdentifiers
-
+    private let exportConfig = ConsentDocument.ExportConfiguration(paperSize: .dinA4, includingTimestamp: true)
+    
     @Environment(ManagedNavigationStack.Path.self) private var path
     @Environment(ExampleStandard.self) private var standard
-
+    
+    @State private var consentDocument: ConsentDocument?
+    @State private var viewState: ViewState = .idle
     
     var body: some View {
         OnboardingConsentView(
-            markdown: { Data(consentText.utf8) },
+            consentDocument: consentDocument,
             title: consentTitle.localized(),
-            currentDateInSignature: true,
-            exportConfiguration: .init(paperSize: .dinA4, includingTimestamp: true)
-        ) { exportedConsent in
+            currentDateInSignature: true
+        ) {
+            guard let consentDocument else {
+                return
+            }
+            let pdf = try consentDocument.export(using: exportConfig)
             // Store the exported consent form in the `ExampleStandard`
             switch documentIdentifier {
-            case .first: standard.firstConsentDocument = exportedConsent
-            case .second: standard.secondConsentDocument = exportedConsent
+            case .first:
+                standard.firstConsentDocument = pdf
+            case .second:
+                standard.secondConsentDocument = pdf
             }
-
             // Simulate storage / upload delay of consent form
             try await Task.sleep(until: .now + .seconds(0.5))
-
-            // Navigates to the next onboarding step
+            // Navigate to the next onboarding step
             path.nextStep()
+        }
+        .viewStateAlert(state: $viewState)
+        .task {
+            do {
+                consentDocument = try ConsentDocument(markdown: consentText)
+            } catch {
+                viewState = .error(AnyLocalizedError(error: error))
+            }
         }
     }
 }
