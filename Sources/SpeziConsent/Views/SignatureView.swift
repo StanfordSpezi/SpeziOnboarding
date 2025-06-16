@@ -67,7 +67,6 @@ public struct SignatureView: View {
     private let lineOffset: CGFloat
     
     
-    
     public var body: some View {
         VStack {
             ZStack(alignment: .bottomLeading) {

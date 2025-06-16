@@ -6,12 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
-#if os(macOS)
-import AppKit
-#endif
 import Foundation
-import PDFKit
-import Spezi
 import SpeziOnboarding
 import SpeziViews
 import SwiftUI
@@ -19,29 +14,7 @@ import SwiftUI
 
 /// Onboarding view to display markdown-based consent documents that can be signed and exported.
 ///
-/// The ``OnboardingConsentView`` provides a convenient onboarding `View` for the display of markdown-based documents that can be
-/// signed using a family and given name and a hand drawn signature.
-///
-/// Furthermore, the `View` includes an export functionality, enabling users to share and store the signed consent form.
-/// The exported consent form PDF is received via the `action` closure on the ``OnboardingConsentView/init(markdown:action:title:currentDateInSignature:exportConfiguration:)``.
-///
-/// The ``OnboardingConsentView`` builds on top of the SpeziOnboarding ``ConsentDocument``
-/// by providing a more developer-friendly, convenient API with additional functionalities like the share consent option.
-///
-/// ```swift
-/// OnboardingConsentView(
-///     markdown: {
-///         Data("This is a *markdown* **example**".utf8)
-///     },
-///     action: { exportedConsentPdf in
-///         // The action that should be performed once the user has provided their consent.
-///         // Closure receives the exported consent PDF to persist or upload it.
-///     },
-///     title: "Consent",   // Configure the title of the consent view
-///     exportConfiguration: .init(paperSize: .usLetter),   // Configure the properties of the exported consent form
-///     currentDateInSignature: true   // Indicates if the consent signature should include the current date
-/// )
-/// ```
+/// The ``OnboardingConsentView`` embeds a ``ConsentDocumentView`` into an `OnboardingView` that is compatible with SpeziOnboarding's Onboarding Stack API.
 public struct OnboardingConsentView: View {
     /// Provides default localization values for necessary fields in the ``OnboardingConsentView``.
     public enum LocalizationDefaults {
@@ -58,41 +31,38 @@ public struct OnboardingConsentView: View {
     @State private var viewState: ViewState = .idle
     
     public var body: some View {
-        // TODO bring back the scrolling!
-        ScrollViewReader { proxy in // swiftlint:disable:this closure_body_length
-            OnboardingView {
-                if let title {
-                    OnboardingTitleView(title: title)
-                }
-            } content: {
-                Group {
-                    if let consentDocument {
-                        ConsentDocumentView(
-                            consentDocument: consentDocument,
-                            consentSignatureDate: currentDateInSignature ? .now : nil
-                        )
-                    } else {
-                        ProgressView("Loading Consent Form")
-                    }
-                }
-                .padding(.bottom)
-            } footer: {
-                AsyncButton(state: $viewState) {
-                    try await action()
-                } label: {
-                    Text("CONSENT_ACTION", bundle: .module)
-                        .frame(maxWidth: .infinity, minHeight: 38)
-                        .processingOverlay(isProcessing: backButtonHidden)
-                }
-                .buttonStyle(.borderedProminent)
-                .disabled(!actionButtonsEnabled)
-                .animation(.easeInOut(duration: 0.2), value: actionButtonsEnabled)
-                .id("ActionButton")
+        OnboardingView {
+            if let title {
+                OnboardingTitleView(title: title)
             }
-            .scrollDisabled(consentDocument?.isSigning == true)
-            .navigationBarBackButtonHidden(backButtonHidden)
+        } content: {
+            Group {
+                if let consentDocument {
+                    ConsentDocumentView(
+                        consentDocument: consentDocument,
+                        consentSignatureDate: currentDateInSignature ? .now : nil
+                    )
+                    .scrollDismissesKeyboard(.interactively)
+                } else {
+                    ProgressView("Loading Consent Form")
+                }
+            }
+            .padding(.bottom)
+        } footer: {
+            AsyncButton(state: $viewState) {
+                try await action()
+            } label: {
+                Text("CONSENT_ACTION", bundle: .module)
+                    .frame(maxWidth: .infinity, minHeight: 38)
+                    .processingOverlay(isProcessing: backButtonHidden)
+            }
+            .buttonStyle(.borderedProminent)
+            .disabled(!actionButtonsEnabled)
+            .animation(.easeInOut(duration: 0.2), value: actionButtonsEnabled)
+            .id("ActionButton")
         }
-        .scrollDismissesKeyboard(.interactively)
+        .scrollDisabled(consentDocument?.isSigning == true)
+        .navigationBarBackButtonHidden(backButtonHidden)
     }
 
     private var backButtonHidden: Bool {

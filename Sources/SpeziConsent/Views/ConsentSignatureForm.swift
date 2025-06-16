@@ -13,33 +13,7 @@ import SpeziViews
 import SwiftUI
 
 
-/// A Signature Form with Name entry.
-///
-/// Display markdown-based consent documents that can be signed and exported.
-///
-/// Allows the display markdown-based consent documents that can be signed using a family and given name and a hand drawn signature.
-/// In addition, it enables the export of the signed form as a PDF document.
-///
-/// This `Binding` can then be used to trigger the creation of the export representation of the consent form via setting the state to ``ConsentViewState/export``.
-/// After the export representation completes, the ``ConsentDocumentExportRepresentation`` is accessible via the associated value of the view state in ``ConsentViewState/exported(representation:)``.
-/// The ``ConsentDocumentExportRepresentation`` can then be rendered to a PDF via ``ConsentDocumentExportRepresentation/render()``.
-///
-/// Other possible states of the ``ConsentDocument`` are the SpeziViews `ViewState`'s accessible via the associated value in ``ConsentViewState/base(_:)``.
-/// In addition, the view provides information about the signing progress via the ``ConsentViewState/signing`` and ``ConsentViewState/signed`` states.
-///
-/// ```swift
-/// // Enables observing the view state of the consent document
-/// @State var state: ConsentDocument.ConsentViewState = .base(.idle)
-///
-/// ConsentDocument(
-///     markdown: {
-///         Data("This is a *markdown* **example**".utf8)
-///     },
-///     viewState: $state,
-///     exportConfiguration: .init(paperSize: .usLetter),   // Configure the properties of the exported consent form
-///     consentSignatureDate: .now
-/// )
-/// ```
+/// A Signature Form consisting of text fields for name entry, and a canvas for drawing a signature.
 public struct ConsentSignatureForm: View {
     /// The maximum width such that the drawing canvas fits onto the PDF.
     static let maxWidthDrawing: CGFloat = 550
@@ -78,8 +52,7 @@ public struct ConsentSignatureForm: View {
         }
     }
     
-    @ViewBuilder
-    private var nameInputView: some View {
+    @ViewBuilder private var nameInputView: some View {
         Grid(horizontalSpacing: 15) {
             NameFieldRow(name: $storage.name, for: \.givenName) {
                 Text(labels.givenNameTitle)
@@ -150,14 +123,11 @@ public struct ConsentSignatureForm: View {
     
     /// Creates a `ConsentDocument` which renders a consent document with a markdown view.
     ///
-    /// The passed ``ConsentViewState`` indicates in which state the view currently is.
-    /// This is especially useful for exporting the consent form as well as error management.
-    /// - Parameters:
-    ///   - labels: Allows customizing which text should be used for the signature field's labels.
-    ///   - storage: A `Binding` to the storage that manages the data input into this view (i.e., the name and the signature).
-    ///   - isSigning: An optional `Binding<Bool>` that will be updated by this view to indicate whether the user is currently entering their signature into the field.
-    ///   - signatureDate: The date that is displayed under the signature line.
-    ///   - signatureDateFormat: The date format used to format the `signatureDate`.
+    /// - parameter labels: Allows customizing which text should be used for the signature field's labels.
+    /// - parameter storage: A `Binding` to the storage that manages the data input into this view (i.e., the name and the signature).
+    /// - parameter isSigning: An optional `Binding<Bool>` that will be updated by this view to indicate whether the user is currently entering their signature into the field.
+    /// - parameter signatureDate: The date that is displayed under the signature line.
+    /// - parameter signatureDateFormat: The date format used to format the `signatureDate`.
     public init(
         labels: Labels = .init(), // swiftlint:disable:this function_default_parameter_at_end
         storage: Binding<ConsentDocument.SignatureStorage>,

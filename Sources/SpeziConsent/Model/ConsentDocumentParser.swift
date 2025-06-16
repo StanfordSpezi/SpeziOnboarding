@@ -11,6 +11,7 @@
 import Foundation
 
 
+/// An error that occurred when parsing markdown text.
 public struct ConsentParseError: Error, Hashable {
     /// The parse error's kind
     public enum Kind: Hashable, Sendable {
@@ -57,7 +58,7 @@ public struct ConsentParseError: Error, Hashable {
 }
 
 
-struct ConsentDocumentParser: ~Copyable {
+struct ConsentDocumentParser: ~Copyable { // swiftlint:disable:this type_body_length
     fileprivate struct ParsedCustomElement {
         indirect enum Content {
             case text(String)
@@ -82,7 +83,7 @@ struct ConsentDocumentParser: ~Copyable {
     }
     
     
-    fileprivate mutating func parse() throws(ConsentParseError) -> ParseResult {
+    fileprivate mutating func parse() throws(ConsentParseError) -> ParseResult { // swiftlint:disable:this function_body_length cyclomatic_complexity
         typealias Section = ConsentDocument.Section
         let frontmatter = try parseFrontmatter()
         var sections: [Section] = []
@@ -124,12 +125,17 @@ struct ConsentDocumentParser: ~Copyable {
             }
         }
         sections.append(.markdown(currentSectionText))
-        sections.removeAll { section in
+        sections = sections.compactMap { section in
             switch section {
             case .markdown(let text):
-                text.trimmingWhitespace().isEmpty
+                let trimmed = text.trimmingWhitespace()
+                if trimmed.isEmpty {
+                    return nil
+                } else {
+                    return .markdown(String(trimmed))
+                }
             case .toggle, .select, .signature:
-                false
+                return section
             }
         }
         return .init(frontmatter: frontmatter, sections: sections)
@@ -239,6 +245,7 @@ struct ConsentDocumentParser: ~Copyable {
         try expectAndConsume("<")
         let name = try parseIdentifier()
         var parsedElement = ParsedCustomElement(name: name)
+        var elementIsClosed = false
         loop: while true {
             switch currentChar {
             case .none:
@@ -247,9 +254,11 @@ struct ConsentDocumentParser: ~Copyable {
                 // end of opening tag
                 consume()
                 break loop
-            case "/":
+            case "/" where peek() == ">":
                 // upcoming end of opening tag
-                consume()
+                consume(2)
+                elementIsClosed = true
+                break loop
             case .some(let char) where char.isWhitespace:
                 // whitespace/newlines between things
                 consume()
@@ -265,6 +274,9 @@ struct ConsentDocumentParser: ~Copyable {
                 }
                 parsedElement.attributes.append((attrName, attrValue))
             }
+        }
+        if elementIsClosed {
+            return parsedElement
         }
         if let element = _attemptToCloseCustomElement(parsedElement) {
             return element
@@ -321,13 +333,13 @@ struct ConsentDocumentParser: ~Copyable {
     /// - returns: the contents of the parsed comment, excluding the leading `<!--` and the trailing `-->`.
     ///     if no comment starts at the current position, the function returns `nil`.
     private mutating func parseComment() throws(ConsentParseError) -> String? {
-        guard currentChar == "<" && peek(1) == "!" && peek(2) == "-" && peek(3) == "-" else {
+        guard remainingInput.starts(with: "<!--") else {
             return nil
         }
         consume(4)
         var commentBody = ""
         while let currentChar {
-            if currentChar == "-" && peek(1) == "-" && peek(2) == ">" {
+            if remainingInput.starts(with: "-->") {
                 consume(3)
                 return commentBody
             } else {
@@ -445,7 +457,7 @@ extension Character {
     }
     
     fileprivate var isValidIdent: Bool {
-        isValidIdentStart || (self >= "0" && self <= "9")
+        isValidIdentStart || (self >= "0" && self <= "9") || self == "-"
     }
 }
 
@@ -488,8 +500,8 @@ extension ConsentDocument.Section {
         guard case .text(let prompt) = element.content.first else {
             throw .missingField("prompt")
         }
-        let defaultValue = element[attribute: "initialValue"].flatMap { Bool($0) } ?? false
-        let expectedValue = element[attribute: "expectedValue"].flatMap { Bool($0) }
+        let defaultValue = element[attribute: "initial-value"].flatMap { Bool($0) } ?? false
+        let expectedValue = element[attribute: "expected-value"].flatMap { Bool($0) }
         return .toggle(.init(id: id, prompt: prompt, initialValue: defaultValue, expectedValue: expectedValue))
     }
     
@@ -522,8 +534,8 @@ extension ConsentDocument.Section {
             }
         }
         let findOption = { id in options.first { $0.id == id } }
-        let initialSelection = element[attribute: "initialValue"].flatMap(findOption)
-        let expectedSelection = element[attribute: "expectedValue"].flatMap(findOption)
+        let initialSelection = element[attribute: "initial-value"].flatMap(findOption)
+        let expectedSelection = element[attribute: "expected-value"].flatMap(findOption)
         return .select(.init(
             id: id,
             prompt: prompt,
@@ -550,6 +562,7 @@ extension Collection {
 
 
 extension StringProtocol {
+    /// Removes all leading and trailing whitespace from the string.
     func trimmingWhitespace() -> SubSequence {
         trimming(while: \.isWhitespace)
     }

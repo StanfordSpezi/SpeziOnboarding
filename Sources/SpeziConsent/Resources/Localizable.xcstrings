@@ -142,12 +142,6 @@
         }
       }
     },
-    "Go to next field" : {
-
-    },
-    "Go to previous field" : {
-
-    },
     "Loading Consent Form" : {
 
     },
@@ -277,6 +271,9 @@
           }
         }
       }
+    },
+    "Share Consent Form" : {
+
     },
     "SIGNATURE_FIELD" : {
       "localizations" : {

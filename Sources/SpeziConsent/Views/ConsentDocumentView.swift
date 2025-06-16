@@ -13,37 +13,18 @@ import SpeziPersonalInfo
 import SpeziViews
 import SwiftUI
 
-/// Display markdown-based consent documents that can be filled out, signed, and exported.
+/// Display a markdown-based ``ConsentDocument`` that can be filled out, signed, and exported.
 ///
 /// Allows the display markdown-based consent documents that can be signed using a family and given name and a hand drawn signature.
-/// In addition, it enables the export of the signed form as a PDF document.
 ///
 /// Your app creates a ``ConsentDocument``, which acts as the model representing a markdown-based consent form.
 /// This view displays the ``ConsentDocument``, and enables data entry into the document's interactive components, such as e.g. checkboxes, selection pickers, and signature fields.
 ///
-/// To observe and control the current state of the ``ConsentDocument``, the `View` requires passing down a ``ConsentViewState`` as a SwiftUI `Binding` in the
-/// ``init(markdown:viewState:givenNameTitle:givenNamePlaceholder:familyNameTitle:familyNamePlaceholder:exportConfiguration:consentSignatureDate:consentSignatureDateFormatter:)`` initializer.
+/// - Important: A `ConsentDocumentView` should always be placed in a `ScrollView`.
+///     Otherwise, the `ConsentDocumentView`'s contents will easily overflow the available screen space.
+///     If you use a ``OnboardingConsentView``, the `ScrollView` is taken care of for you.
 ///
-/// This `Binding` can then be used to trigger the creation of the export representation of the consent form via setting the state to ``ConsentViewState/export``.
-/// After the export representation completes, the ``ConsentDocumentExportRepresentation`` is accessible via the associated value of the view state in ``ConsentViewState/exported(representation:)``.
-/// The ``ConsentDocumentExportRepresentation`` can then be rendered to a PDF via ``ConsentDocumentExportRepresentation/render()``.
-///
-/// Other possible states of the ``ConsentDocument`` are the SpeziViews `ViewState`'s accessible via the associated value in ``ConsentViewState/base(_:)``.
-/// In addition, the view provides information about the signing progress via the ``ConsentViewState/signing`` and ``ConsentViewState/signed`` states.
-///
-/// ```swift
-/// // Enables observing the view state of the consent document
-/// @State var state: ConsentDocument.ConsentViewState = .base(.idle)
-///
-/// ConsentDocument(
-///     markdown: {
-///         Data("This is a *markdown* **example**".utf8)
-///     },
-///     viewState: $state,
-///     exportConfiguration: .init(paperSize: .usLetter),   // Configure the properties of the exported consent form
-///     consentSignatureDate: .now
-/// )
-/// ```
+/// > Note: In the context of user onboarding, you might want to use the ``OnboardingConsentView`` instead.
 public struct ConsentDocumentView: View {
     @Bindable private var consentDocument: ConsentDocument
     private let signatureFieldLabels: ConsentSignatureForm.Labels
@@ -72,8 +53,10 @@ public struct ConsentDocumentView: View {
     
     /// Creates a `ConsentDocumentView`, which renders a consent document with a markdown view.
     ///
-    /// - parameters:
-    ///   - signatureFieldLabels: Allows customizing which text should be used for labels in signature fields within this ``ConsentDocumentView``.
+    /// - parameter consentDocument: The consent document the view should display and edit.
+    /// - parameter signatureFieldLabels: Allows customizing which text should be used for labels in signature fields within this ``ConsentDocumentView``.
+    /// - parameter consentSignatureDate: The date that should be used for the signature.
+    /// - parameter consentSignatureDateFormat: The `Date.FormatStyle` that should be used when rendering `consentSignatureDate`.
     public init(
         consentDocument: ConsentDocument,
         signatureFieldLabels: ConsentSignatureForm.Labels = .init(),

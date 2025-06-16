@@ -95,10 +95,10 @@ extension ConsentDocument {
         let includingTimestamp: Bool
         let fontSettings: FontSettings
         
-        /// Creates an ``ConsentDocumentExportRepresentation/Configuration`` specifying the properties of the exported consent form.
+        /// Creates an Export Configuration
         ///
         /// - Parameters:
-        ///   - paperSize: The page size of the exported form represented by ``ConsentDocumentExportRepresentation/Configuration/PaperSize``.
+        ///   - paperSize: The desired page size of the exported form.
         ///   - consentTitle: The title of the exported consent form.
         ///   - includingTimestamp: Indicates if the exported form includes a timestamp.
         ///   - fontSettings: Font settings for the exported form.

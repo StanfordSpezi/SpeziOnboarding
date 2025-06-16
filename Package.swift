@@ -44,9 +44,7 @@ let package = Package(
                 .product(name: "TPPDF", package: "TPPDF")
             ],
             resources: [.process("Resources")],
-            swiftSettings: [
-                .enableUpcomingFeature("ExistentialAny")
-            ],
+            swiftSettings: [.enableUpcomingFeature("ExistentialAny")],
             plugins: [] + swiftLintPlugin()
         ),
         .target(
@@ -62,9 +60,7 @@ let package = Package(
                 .product(name: "MarkdownUI", package: "swift-markdown-ui")
             ],
             resources: [.process("Resources")],
-            swiftSettings: [
-                .enableUpcomingFeature("ExistentialAny")
-            ],
+            swiftSettings: [.enableUpcomingFeature("ExistentialAny")],
             plugins: [] + swiftLintPlugin()
         ),
         .testTarget(
@@ -72,10 +68,16 @@ let package = Package(
             dependencies: [
                 .target(name: "SpeziOnboarding")
             ],
-            resources: [.process("Resources")],
-            swiftSettings: [
-                .enableUpcomingFeature("ExistentialAny")
+            swiftSettings: [.enableUpcomingFeature("ExistentialAny")],
+            plugins: [] + swiftLintPlugin()
+        ),
+        .testTarget(
+            name: "SpeziConsentTests",
+            dependencies: [
+                .target(name: "SpeziConsent")
             ],
+            resources: [.process("Resources")],
+            swiftSettings: [.enableUpcomingFeature("ExistentialAny")],
             plugins: [] + swiftLintPlugin()
         )
     ]
