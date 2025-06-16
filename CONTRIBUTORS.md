@@ -13,6 +13,6 @@ SpeziOnboarding contributors
 
 * [Paul Schmiedmayer](https://github.com/PSchmiedmayer)
 * [Vishnu Ravi](https://github.com/vishnuravi)
-* [Andreas Bauer](https://github.com/Supereg)
+* [Andreas Bauer](https://github.com/bauer-andreas)
 * [Philipp Zagar](https://github.com/philippzagar)
 * [Lukas Kollmer](https://github.com/lukaskollmer)
