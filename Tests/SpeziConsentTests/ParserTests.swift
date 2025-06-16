@@ -36,6 +36,7 @@ struct ConsentParserTests {
     }
     
     @Test
+    @MainActor
     func frontmatterParsing() throws {
         let input = """
             ---
