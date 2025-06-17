@@ -81,10 +81,30 @@ public struct ConsentDocumentView: View {
                 // we can't seem to get the `Markdown` view to make itself as wide as possible, so this is the next best option :/
             }
         case .toggle(let config):
+            let valueBinding = consentDocument.binding(for: config)
             Toggle(
                 config.prompt,
-                isOn: consentDocument.binding(for: config)
+                isOn: valueBinding
             )
+            // Goal: we want a Toggle that can be toggled by tapping anywhere in its frame.
+            // Issue: using only `.onTapGesture` doesn't quite work, since that'll only trigger for touches that are in the
+            //     left part of the view, where the Toggle's text is, but not for eg above/below the Toggle, if the text is significantly taller
+            //     than the Toggle itself.
+            // Solution: this combination of using both `.onTapGesture` directly on the view and adding a custom clear background with a
+            //     tap gesture of its own covers both scenarios. (Having only the background tap gesture, without the one directly on the view
+            //     doesn't work, since that'll only trigger for interactions with the region above/below the Toggle, but not for taps in the text area.)
+            // Alternative: We could also have placed the Toggle in a ZStack, and added a clear layer with a tap gesture on top of the Toggle,
+            //     but that wouldn't let any touch events through to the toggle, meaning that you can't e.g. drag it via a long touch interaction.
+            .background {
+                Color.clear
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        valueBinding.wrappedValue.toggle()
+                    }
+            }
+            .onTapGesture {
+                valueBinding.wrappedValue.toggle()
+            }
         case .select(let config):
             CustomPicker(
                 title: config.prompt,
