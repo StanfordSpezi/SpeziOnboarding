@@ -13,7 +13,6 @@ import struct PencilKit.PKDrawing
 extension ConsentDocument {
     typealias Frontmatter = [String: String]
     
-    
     enum Section: Hashable, Sendable {
         case markdown(String)
         case toggle(ToggleConfig)
@@ -77,7 +76,7 @@ extension ConsentDocument {
     struct SignatureConfig: InteractiveSectionProtocol {
         typealias Value = ConsentDocument.SignatureStorage
         let id: String
-        var initialValue: Value { .init() }
+        var initialValue = Value()
         var expectedValue: Value? { nil }
     }
 }

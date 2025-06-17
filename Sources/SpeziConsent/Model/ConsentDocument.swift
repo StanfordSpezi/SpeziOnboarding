@@ -198,7 +198,7 @@ public final class ConsentDocument: Sendable {
     }
     
     /// Storage container for the data entered into a ``ConsentSignatureForm``, as part of filling out a ``ConsentDocument``.
-    public struct SignatureStorage: Equatable {
+    public struct SignatureStorage: Hashable, @unchecked Sendable {
         #if !os(macOS)
         public typealias Signature = PKDrawing
         #else
@@ -312,7 +312,8 @@ public final class ConsentDocument: Sendable {
                 try interactiveSectionsState.register(section: config)
             case .select(let config):
                 try interactiveSectionsState.register(section: config)
-            case .signature(let config):
+            case .signature(var config):
+                config.initialValue = .init(name: defaultName ?? .init())
                 try interactiveSectionsState.register(section: config)
             }
         }
@@ -410,5 +411,11 @@ extension ConsentDocument: Identifiable, Hashable {
     
     nonisolated public func hash(into hasher: inout Hasher) {
         hasher.combine(ObjectIdentifier(self))
+    }
+}
+
+extension PKDrawing: @retroactive Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(dataRepresentation())
     }
 }
