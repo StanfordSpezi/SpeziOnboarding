@@ -76,8 +76,9 @@ extension ConsentDocument {
     struct SignatureConfig: InteractiveSectionProtocol {
         typealias Value = ConsentDocument.SignatureStorage
         let id: String
-        var initialValue = Value()
+        var initialValue: Value { .init(name: initialName ?? .init()) }
         var expectedValue: Value? { nil }
+        var initialName: PersonNameComponents?
     }
 }
 
