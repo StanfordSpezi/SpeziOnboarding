@@ -76,6 +76,7 @@ public struct OnboardingView<Header: View, Content: View, Footer: View>: View {
     private let content: Content
     private let footer: Footer
     
+    @Environment(\.verticalScrollIndicatorVisibility) private var scrollIndicatorVisibility
     @Environment(\.isInManagedNavigationStack) private var isInManagedNavigationStack
     @Environment(\.isFirstInManagedNavigationStack) private var isFirstInManagedNavigationStack
     @Environment(\.onboardingViewEdgesWithPaddingDisabled) private var edgesWithPaddingDisabled
@@ -105,7 +106,7 @@ public struct OnboardingView<Header: View, Content: View, Footer: View>: View {
                 .frame(minHeight: geometry.size.height)
                 .frame(maxWidth: .infinity, alignment: .center)
             }
-            .scrollIndicators(.hidden)
+            .scrollIndicators(effectiveScrollIndicatorVisibility, axes: .vertical)
         }
     }
     
@@ -122,6 +123,11 @@ public struct OnboardingView<Header: View, Content: View, Footer: View>: View {
     private var bottomPadding: CGFloat {
         // 34, because we hav 10 points of default padding we want, plus the 24 points added to the view as a whole.
         edgesWithPaddingDisabled.contains(.bottom) ? 0 : 34
+    }
+    
+    private var effectiveScrollIndicatorVisibility: ScrollIndicatorVisibility {
+        let visibility = scrollIndicatorVisibility
+        return visibility == .automatic ? .hidden : visibility
     }
     
     
