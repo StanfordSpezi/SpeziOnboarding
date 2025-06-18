@@ -103,11 +103,7 @@ final class OnboardingConsentTests: XCTestCase {
             let element = app.switches["ConsentForm:data-sharing"].firstMatch
             XCTAssert(element.exists, line: line)
             XCTAssertEqual(try XCTUnwrap(XCTUnwrap(element.value) as? String), beforeValue ? "1" : "0", line: line)
-            if element.isHittable {
-                element.tap()
-            } else {
-                element.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
-            }
+            try element.toggleSwitch()
             try await Task.sleep(for: .seconds(0.25))
             XCTAssertEqual(try XCTUnwrap(XCTUnwrap(element.value) as? String), afterValue ? "1" : "0", line: line)
         }
@@ -116,12 +112,16 @@ final class OnboardingConsentTests: XCTestCase {
         try await flipToggle(beforeValue: false, afterValue: true)
         XCTAssertFalse(shareButton.isEnabled)
         
-        try await Task.sleep(for: .seconds(1))
+        #if !os(visionOS)
         app.swipeUp()
+        #endif
+        try await Task.sleep(for: .seconds(1))
         
         func select(option: String?, expectedCurrentSelection: String?, line: UInt = #line) async throws {
             let noSelectionTitle = "(No selection)"
             let button = app.buttons["ConsentForm:select1"]
+            print(button.debugDescription)
+            XCTAssert(button.exists)
             XCTAssert(button.staticTexts[expectedCurrentSelection ?? noSelectionTitle].waitForExistence(timeout: 1), line: line)
             button.tap()
             XCTAssert(app.buttons["Mountains"].waitForExistence(timeout: 1), line: line)
@@ -156,7 +156,9 @@ final class OnboardingConsentTests: XCTestCase {
         try await select(option: "Mountains", expectedCurrentSelection: "Beach")
         XCTAssertTrue(shareButton.isEnabled)
         
+        #if !os(visionOS)
         app.swipeDown()
+        #endif
         try await Task.sleep(for: .seconds(1))
         
         XCTAssertTrue(shareButton.isEnabled)
@@ -176,5 +178,35 @@ extension XCUIApplication {
     fileprivate func assertShareSheetTextElementExists(_ text: String, file: StaticString = #filePath, line: UInt = #line) {
         let exists = self.staticTexts[text].waitForExistence(timeout: 1) || self.otherElements[text].waitForExistence(timeout: 1)
         XCTAssert(exists, file: file, line: line)
+    }
+}
+
+
+extension XCUIElement {
+    func toggleSwitch(file: StaticString = #filePath, line: UInt = #line) throws {
+        #if os(visionOS)
+        let value = switch try XCTUnwrap(value as? String, file: file, line: line) {
+        case "0":
+            false
+        case "1":
+            true
+        case let rawValue:
+            throw NSError(domain: "edu.stanford.SpezOnboarding.UITests", code: 0, userInfo: [
+                NSLocalizedDescriptionKey: "Unexpected switch value: '\(rawValue)'"
+            ])
+        }
+        if value {
+            swipeLeft()
+        } else {
+            swipeRight()
+        }
+//        fatalError("TODO")
+        #else
+        if isHittable {
+            tap()
+        } else {
+            coordinate(withNormalizedOffset: .init(dx: 0.5, dy: 0.5)).tap()
+        }
+        #endif
     }
 }
