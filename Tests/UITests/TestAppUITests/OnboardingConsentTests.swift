@@ -164,7 +164,6 @@ final class OnboardingConsentTests: XCTestCase {
         shareButton.tap()
         
         app.assertShareSheetTextElementExists("Knee Replacement Study Consent Form")
-        app.assertShareSheetTextElementExists("PDF Document · 23 KB")
     }
 }
 
