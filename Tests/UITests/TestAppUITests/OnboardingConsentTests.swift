@@ -103,7 +103,11 @@ final class OnboardingConsentTests: XCTestCase {
             let element = app.switches["ConsentForm:data-sharing"].firstMatch
             XCTAssert(element.exists, line: line)
             XCTAssertEqual(try XCTUnwrap(XCTUnwrap(element.value) as? String), beforeValue ? "1" : "0", line: line)
-            element.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+            if element.isHittable {
+                element.tap()
+            } else {
+                element.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+            }
             try await Task.sleep(for: .seconds(0.25))
             XCTAssertEqual(try XCTUnwrap(XCTUnwrap(element.value) as? String), afterValue ? "1" : "0", line: line)
         }
