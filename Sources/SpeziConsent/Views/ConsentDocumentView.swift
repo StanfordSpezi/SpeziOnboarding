@@ -86,6 +86,7 @@ public struct ConsentDocumentView: View {
                 config.prompt,
                 isOn: valueBinding
             )
+            .accessibilityIdentifier(for: config)
             // Goal: we want a Toggle that can be toggled by tapping anywhere in its frame.
             // Issue: using only `.onTapGesture` doesn't quite work, since that'll only trigger for touches that are in the
             //     left part of the view, where the Toggle's text is, but not for eg above/below the Toggle, if the text is significantly taller
@@ -107,9 +108,8 @@ public struct ConsentDocumentView: View {
             }
         case .select(let config):
             CustomPicker(
-                title: config.prompt,
-                selection: consentDocument.binding(for: config),
-                options: config.options
+                config: config,
+                selection: consentDocument.binding(for: config)
             )
         case .signature(let config):
             ConsentSignatureForm(
@@ -119,6 +119,7 @@ public struct ConsentDocumentView: View {
                 signatureDate: signatureDate,
                 signatureDateFormat: signatureDateFormat
             )
+            .accessibilityIdentifier(for: config)
         }
     }
 }
@@ -126,27 +127,43 @@ public struct ConsentDocumentView: View {
 
 extension ConsentDocumentView {
     private struct CustomPicker: View {
-        let title: String
+        let config: ConsentDocument.SelectConfig
         @Binding var selection: String
-        let options: [ConsentDocument.SelectionOption]
         
         var body: some View {
             HStack {
-                Text(title)
+                Text(config.prompt)
                 Spacer()
                 Picker("", selection: $selection) {
                     Text(ConsentDocument.SelectConfig.emptySelectionDefaultTitle)
                         .tag(ConsentDocument.SelectConfig.emptySelection)
-                    ForEach(options, id: \.self) { option in
+                    ForEach(config.options, id: \.self) { option in
                         Text(option.title)
                             .foregroundStyle(.primary)
                             .tag(option.id)
                     }
                 }
+                .accessibilityIdentifier(for: config)
                 .pickerStyle(.menu)
-                .tint(selection == ConsentDocument.SelectConfig.emptySelection ? Color.red : nil)
+                .tint(tintColor)
             }
         }
+        
+        private var tintColor: Color? {
+            switch config.expectedSelection {
+            case .option, .anything(allowEmptySelection: true):
+                nil
+            case .anything(allowEmptySelection: false):
+                selection == ConsentDocument.SelectConfig.emptySelection ? .red : nil
+            }
+        }
+    }
+}
+
+
+extension View {
+    fileprivate func accessibilityIdentifier(for section: some ConsentDocument.InteractiveSectionProtocol) -> some View {
+        self.accessibilityIdentifier("ConsentForm:\(section.id)")
     }
 }
 
