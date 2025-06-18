@@ -25,6 +25,7 @@ struct Consent: View {
             path.nextStep()
         }
         .viewStateAlert(state: $viewState)
+        .scrollIndicators(.visible)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 ConsentShareButton(

@@ -127,7 +127,7 @@ public struct ConsentDocumentView: View {
 extension ConsentDocumentView {
     private struct CustomPicker: View {
         let title: String
-        @Binding var selection: ConsentDocument.SelectionOption?
+        @Binding var selection: String
         let options: [ConsentDocument.SelectionOption]
         
         var body: some View {
@@ -136,14 +136,15 @@ extension ConsentDocumentView {
                 Spacer()
                 Picker("", selection: $selection) {
                     Text(ConsentDocument.SelectConfig.emptySelectionDefaultTitle)
-                        .tag(ConsentDocument.SelectionOption?.none)
+                        .tag(ConsentDocument.SelectConfig.emptySelection)
                     ForEach(options, id: \.self) { option in
                         Text(option.title)
                             .foregroundStyle(.primary)
-                            .tag(ConsentDocument.SelectionOption?.some(option))
+                            .tag(option.id)
                     }
                 }
                 .pickerStyle(.menu)
+                .tint(selection == ConsentDocument.SelectConfig.emptySelection ? Color.red : nil)
             }
         }
     }

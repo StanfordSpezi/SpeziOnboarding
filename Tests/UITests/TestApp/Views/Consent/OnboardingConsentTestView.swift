@@ -33,7 +33,7 @@ struct OnboardingConsentTestView: View {
             guard let consentDocument else {
                 return
             }
-            let pdf = try consentDocument.export(using: exportConfig)
+            let pdf = try consentDocument.export(using: exportConfig).pdf
             // Store the exported consent form in the `ExampleStandard`
             switch documentIdentifier {
             case .first:

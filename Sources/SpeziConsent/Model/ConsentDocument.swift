@@ -67,7 +67,7 @@ import class PDFKit.PDFDocument
 ///
 /// For example, the following `toggle` will prevent its ``ConsentDocument`` from being completed unless the user selects a true value:
 /// ```html
-/// <toggle id="data-sharing" expectedValue=true>
+/// <toggle id="data-sharing" expected-value=true>
 ///     I agree that the data i enter into the app may used for scientific research
 /// </toggle>
 /// ```
@@ -93,6 +93,7 @@ import class PDFKit.PDFDocument
 /// Specification:
 /// ```html
 /// <select id={*} initial-value={option-id?} expected-value={option-id?}>
+///     {Prompt Text}
 ///     <option id={*}>{Option1 Title}</option>
 ///     ...
 ///     <option id={*}>{OptionN Title}</option>
@@ -100,8 +101,11 @@ import class PDFKit.PDFDocument
 /// ```
 /// - `id` attribute: required; used to identify the element and provide access to the user-entered data
 /// - `initial-value` attribute: optional; the `id` of one of the options contained within the `select`; used as the initial selection value; defaults to an empty selection if missing
-/// - `expected-value` attribute: optional; the `id` of one of the options contained within the `select`; allows controlling the consent document completion state
-/// - content: required; a series of `<option>` elements, each of which consists of an `id` attribute and a title in its text contents.
+/// - `expected-value` attribute: optional; the `id` of one of the options contained within the `select`; allows controlling the consent document completion state.
+///     Setting this value to `*` will result in any selected value being accepted (ie, you want to require the user to make a selection, but don't want to enforce any "correct" selection).
+///     Omit the `expected-value` entirely in order to also allow empty selections.
+/// - content: required; a series of markdown text blocks and `<option>` elements, each of which consists of an `id` attribute and a title in its text contents.
+///     You can intersperse prompt text and options. The parser will combine all raw text found within the `select` element by joining each line with a space.
 ///
 /// #### Signature Element
 /// The `signature` element models a form consisting of name entry text fields and a signature drawing canvas.
@@ -134,6 +138,7 @@ import class PDFKit.PDFDocument
 /// ### Exporting Consent Documents
 /// - ``export(using:)``
 /// - ``ExportConfiguration``
+/// - ``ExportResult``
 /// - ``isExporting``
 ///
 /// ### Other
@@ -160,43 +165,6 @@ public final class ConsentDocument: Sendable {
         case duplicateCustomElementId(String)
     }
     
-    struct InteractiveSectionsState {
-        private struct SelectionState<Section: InteractiveSectionProtocol> {
-            let section: Section
-            var value: Section.Value
-            
-            init(_ section: Section) {
-                self.section = section
-                self.value = section.initialValue
-            }
-        }
-        
-        private var storage: [String: Any] = [:]
-        
-        fileprivate mutating func register(section: some InteractiveSectionProtocol) throws(LoadError) {
-            guard storage[section.id] == nil else {
-                throw .duplicateCustomElementId(section.id)
-            }
-            storage[section.id] = SelectionState(section)
-        }
-        
-        subscript<S: InteractiveSectionProtocol>(section: S) -> S.Value {
-            get {
-                guard let state = storage[section.id] as? SelectionState<S> else {
-                    preconditionFailure("Attempting to read value for unregistered section!")
-                }
-                return state.value
-            }
-            set {
-                guard var state = storage[section.id] as? SelectionState<S> else {
-                    preconditionFailure("Attempting to set value for unregistered section!")
-                }
-                state.value = newValue
-                storage[section.id] = state
-            }
-        }
-    }
-    
     /// Storage container for the data entered into a ``ConsentSignatureForm``, as part of filling out a ``ConsentDocument``.
     public struct SignatureStorage: Hashable {
         #if !os(macOS)
@@ -221,8 +189,8 @@ public final class ConsentDocument: Sendable {
             (name.givenName ?? "") != "" && (name.familyName ?? "") != "" // swiftlint:disable:this empty_string
         }
         
-        public init(name: PersonNameComponents = .init()) {
-            self.name = name
+        public init(name: PersonNameComponents? = nil) {
+            self.name = name ?? .init()
             self.signature = .init()
         }
         
@@ -236,13 +204,20 @@ public final class ConsentDocument: Sendable {
         }
     }
     
+    
+    public struct UserResponses {
+        public internal(set) var toggles: [String: Bool] = [:]
+        public internal(set) var selects: [String: String] = [:]
+        public internal(set) var signatures: [String: SignatureStorage] = [:]
+    }
+    
     /// The document's frontmatter metadata.
     nonisolated public let frontmatter: [String: String]
     /// The document's extracted content, as a series of sections.
     nonisolated let sections: [Section]
     
     /// Stores the state of the document's interactive sections.
-    private var interactiveSectionsState = InteractiveSectionsState()
+    private var userResponses = UserResponses()
     
     /// Whether the `ConsentDocument` was created with support for custom elements enabled.
     public let customElementsEnabled: Bool
@@ -309,12 +284,12 @@ public final class ConsentDocument: Sendable {
             case .markdown:
                 break
             case .toggle(let config):
-                try interactiveSectionsState.register(section: config)
+                userResponses.toggles[config.id] = config.initialValue
             case .select(let config):
-                try interactiveSectionsState.register(section: config)
+                userResponses.selects[config.id] = config.initialValue
             case .signature(var config):
                 config.initialName = defaultName
-                try interactiveSectionsState.register(section: config)
+                userResponses.signatures[config.id] = .init(name: defaultName)
             }
         }
     }
@@ -324,14 +299,14 @@ public final class ConsentDocument: Sendable {
 extension ConsentDocument {
     func binding<S: InteractiveSectionProtocol>(for section: S) -> Binding<S.Value> {
         Binding<S.Value> {
-            self.interactiveSectionsState[section]
+            self.userResponses[keyPath: section.userResponsesKeyPath] ?? section.initialValue
         } set: { newValue in
-            self.interactiveSectionsState[section] = newValue
+            self.userResponses[keyPath: section.userResponsesKeyPath] = newValue
         }
     }
     
     func value<S: InteractiveSectionProtocol>(for section: S) -> S.Value {
-        interactiveSectionsState[section]
+        userResponses[keyPath: section.userResponsesKeyPath] ?? section.initialValue
     }
 }
 
@@ -348,26 +323,26 @@ extension ConsentDocument {
     
     /// The document's completion state
     public var completionState: ConsentCompletionState {
+        typealias ISP = InteractiveSectionProtocol
         for section in sections {
             switch section {
             case .markdown:
                 continue
-            case .toggle(let config):
-                if let expectedValue = config.expectedValue, value(for: config) != expectedValue {
-                    return .incomplete(firstIncompleteId: config.id)
-                }
-            case .select(let config):
-                if let expectedValue = config.expectedValue, value(for: config) != expectedValue {
-                    return .incomplete(firstIncompleteId: config.id)
-                }
-            case .signature(let config):
-                let storage = value(for: config)
-                guard storage.didEnterNames && storage.isSigned else {
+            case .toggle(let config as any ISP), .select(let config as any ISP), .signature(let config as any ISP):
+                if !config.valueMatchesExpected(in: self) {
                     return .incomplete(firstIncompleteId: config.id)
                 }
             }
         }
         return .complete
+    }
+}
+
+
+extension ConsentDocument.InteractiveSectionProtocol {
+    @MainActor
+    fileprivate func valueMatchesExpected(in document: ConsentDocument) -> Bool {
+        self.valueMatchesExpected(document.value(for: self))
     }
 }
 
@@ -390,14 +365,29 @@ extension ConsentDocument {
 // MARK: Export
 
 extension ConsentDocument {
+    /// Result of an export operation. Contains the produced PDF as well as associated metadata.
+    public struct ExportResult {
+        /// The filled out PDF document that was created from the consent document and the user-provided responses.
+        public let pdf: PDFKit.PDFDocument
+        /// The consent document's markdown frontmatter metadata.
+        public let frontmatterMetadata: [String: String]
+        /// The user's provided responses for the interactive elements in the consent form.
+        public let userResponses: UserResponses
+    }
+    
     /// Exports the consent document as a formatted PDF.
-    public func export(using config: ConsentDocument.ExportConfiguration) throws -> sending PDFKit.PDFDocument {
+    public func export(using config: ConsentDocument.ExportConfiguration) throws -> ExportResult {
         isExporting = true
         defer {
             isExporting = false
         }
         let renderer = PDFRenderer(consentDocument: self, config: config)
-        return try renderer.render()
+        let pdf = try renderer.render()
+        return ExportResult(
+            pdf: pdf,
+            frontmatterMetadata: frontmatter,
+            userResponses: userResponses
+        )
     }
 }
 

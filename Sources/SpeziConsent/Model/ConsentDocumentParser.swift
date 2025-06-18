@@ -239,6 +239,7 @@ struct ConsentDocumentParser: ~Copyable { // swiftlint:disable:this type_body_le
     
     private mutating func parseCustomElement() throws(ConsentParseError) -> ParsedCustomElement? {
         // swiftlint:disable:previous function_body_length cyclomatic_complexity
+        consume(while: \.isWhitespace)
         guard currentChar == "<", let next = peek(), next.isValidIdentStart else {
             return nil
         }
@@ -285,7 +286,7 @@ struct ConsentDocumentParser: ~Copyable { // swiftlint:disable:this type_body_le
                 if let element = try parseCustomElement() {
                     parsedElement.content.append(.element(element))
                 } else {
-                    let text = parseElementTextContents()
+                    let text = String(parseElementTextContents().trimmingWhitespace())
                     if !text.isEmpty {
                         parsedElement.content.append(.text(text))
                     } else {
@@ -463,9 +464,15 @@ extension Character {
 
 
 extension ConsentDocumentParser {
-    struct ParseResult: Sendable {
+    struct ParseResult: Hashable, Sendable {
         let frontmatter: ConsentDocument.Frontmatter
         let sections: [ConsentDocument.Section]
+        
+        // swiftlint:disable:next function_default_parameter_at_end
+        init(frontmatter: ConsentDocument.Frontmatter = [:], sections: [ConsentDocument.Section]) {
+            self.frontmatter = frontmatter
+            self.sections = sections
+        }
     }
     
     static func parse(_ text: String) throws(ConsentParseError) -> ParseResult {
@@ -491,6 +498,7 @@ extension ConsentDocument.Section {
         case missingAttribute(String)
         case missingField(String)
         case unexpectedElement(String) // ewww assoc type
+        case other(String)
     }
     
     fileprivate static func toggle(_ element: ConsentDocumentParser.ParsedCustomElement) throws(ConstructSectionError) -> Self {
@@ -505,6 +513,7 @@ extension ConsentDocument.Section {
         return .toggle(.init(id: id, prompt: prompt, initialValue: defaultValue, expectedValue: expectedValue))
     }
     
+    // swiftlint:disable:next function_body_length cyclomatic_complexity
     fileprivate static func select(_ element: ConsentDocumentParser.ParsedCustomElement) throws(ConstructSectionError) -> Self {
         guard let id = element[attribute: "id"], !id.isEmpty else {
             throw .missingAttribute("id")
@@ -517,8 +526,7 @@ extension ConsentDocument.Section {
                 if prompt.isEmpty {
                     prompt = text
                 } else {
-                    prompt.append("\n\n")
-                    prompt.append(text)
+                    prompt.append(" " + text)
                 }
             case .element(let element):
                 guard element.name == "option" else {
@@ -533,15 +541,32 @@ extension ConsentDocument.Section {
                 options.append(.init(id: optionId, title: prompt))
             }
         }
-        let findOption = { id in options.first { $0.id == id } }
-        let initialSelection = element[attribute: "initial-value"].flatMap(findOption)
-        let expectedSelection = element[attribute: "expected-value"].flatMap(findOption)
+        let initialValue = element[attribute: "initial-value"] ?? ConsentDocument.SelectConfig.emptySelection
+        guard initialValue.isEmpty || options.contains(where: { $0.id == initialValue }) else {
+            throw .other("initial value references nonexisting option id '\(initialValue)'")
+        }
+        let expectedSelection = try { () throws (ConstructSectionError) -> ConsentDocument.SelectConfig.ExpectedSelection in
+            let rawValue = element[attribute: "expected-value"]
+            switch rawValue {
+            case nil:
+                return .anything(allowEmptySelection: true)
+            case .some(""):
+                throw .missingAttribute("expected-value")
+            case .some("*"):
+                return .anything(allowEmptySelection: false)
+            case .some(let id):
+                guard options.contains(where: { $0.id == id }) else {
+                    throw .other("expected value references notexisting option id '\(id)'")
+                }
+                return .option(id: id)
+            }
+        }()
         return .select(.init(
             id: id,
             prompt: prompt,
             options: options,
-            initialValue: initialSelection,
-            expectedValue: expectedSelection
+            initialValue: initialValue,
+            expectedSelection: expectedSelection
         ))
     }
     

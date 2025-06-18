@@ -26,7 +26,7 @@ public struct ConsentShareButton: View {
             guard let consentDocument else {
                 return
             }
-            exportPdf = .init(try consentDocument.export(using: exportConfiguration))
+            exportPdf = .init(try consentDocument.export(using: exportConfiguration).pdf)
         } label: {
             if let consentDocument, consentDocument.isExporting {
                 HStack {

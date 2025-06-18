@@ -91,11 +91,75 @@ struct ConsentParserTests {
                     .init(id: "option1", title: "Option1"),
                     .init(id: "option2", title: "Option2")
                 ],
-                initialValue: .init(id: "option1", title: "Option1"),
-                expectedValue: ConsentDocument.SelectionOption?.none // we need the explicit type here, since this is a double optional :/
+                initialValue: "option1",
+                expectedSelection: .anything(allowEmptySelection: true)
             )),
             .markdown("even more mark down"),
             .signature(.init(id: "sig1"))
         ])
+    }
+    
+    @Test(arguments: [
+        "<signature id=sig></signature>",
+        "<signature id=sig></>",
+        "<signature id=sig />"
+    ])
+    func endOfTagHandling(input: String) throws {
+        let result = try ConsentDocumentParser.parse(input)
+        #expect(result == .init(frontmatter: [:], sections: [
+            .signature(.init(id: "sig"))
+        ]))
+    }
+    
+    @Test
+    func select0() throws {
+        let input = """
+            <select id=select1 initial-value=option1>
+                <option id=option1>Text</>
+            </select>
+            """
+        let result = try ConsentDocumentParser.parse(input)
+        #expect(result == .init(sections: [
+            .select(.init(
+                id: "select1",
+                prompt: "",
+                options: [.init(id: "option1", title: "Text")],
+                initialValue: "option1",
+                expectedSelection: .anything(allowEmptySelection: true)
+            ))
+        ]))
+    }
+    
+    @Test
+    func select1() throws {
+        let input = """
+            <select id=select1 expected-value="*">
+                Please select
+                <option id=o1>T1</>
+                your preferred option
+                <option id=o2>T2</>
+            </select>
+            """
+        let result = try ConsentDocumentParser.parse(input)
+        #expect(result == .init(sections: [
+            .select(.init(
+                id: "select1",
+                prompt: "Please select your preferred option",
+                options: [.init(id: "o1", title: "T1"), .init(id: "o2", title: "T2")],
+                initialValue: "",
+                expectedSelection: .anything(allowEmptySelection: false)
+            ))
+        ]))
+    }
+    
+    @Test
+    func invalidInput0() throws {
+        let input = """
+            <select id=select1 initial-value=option1>
+            </select>
+            """
+        #expect(throws: (any Error).self) {
+            try ConsentDocumentParser.parse(input)
+        }
     }
 }
