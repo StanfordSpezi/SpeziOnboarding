@@ -29,7 +29,7 @@ The `SpeziOnboarding` module provides views that can be used for performing onbo
     }
     @Column {
         @Image(source: "ConsentView", alt: "Screenshot displaying the consent view.") {
-            A ``OnboardingConsentView`` can be used to allow your users to read and agree to a document as well as exporting it.
+            An [`OnboardingConsentView`](https://swiftpackageindex.com/stanfordspezi/spezionboarding/documentation/speziconsent/onboardingconsentview) can be used to allow your users to read and agree to a document as well as exporting it.
         }
     }
 }
@@ -143,9 +143,8 @@ struct SequentialOnboardingViewExample: View {
 
 ### Onboarding Views
 
+- ``OnboardingView``
+- ``SequentialOnboardingView``
 - ``OnboardingActionsView``
 - ``OnboardingInformationView``
 - ``OnboardingTitleView``
-- ``OnboardingConsentView``
-- ``OnboardingView``
-- ``SequentialOnboardingView``

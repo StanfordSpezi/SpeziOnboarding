@@ -106,7 +106,7 @@ extension ConsentDocument {
             paperSize: PaperSize = .usLetter,
             consentTitle: LocalizedStringResource? = nil,
             includingTimestamp: Bool = true,
-            fontSettings: FontSettings = .defaultExportFontSettings
+            fontSettings: FontSettings = .default
         ) {
             self.paperSize = paperSize
             self.consentTitle = consentTitle ?? LocalizedStringResource("CONSENT_TITLE", bundle: .atURL(from: .module))
@@ -122,7 +122,7 @@ extension ConsentDocument.ExportConfiguration.FontSettings {
     ///
     /// This configuration uses `systemFont` and `boldSystemFont` with absolute font sizes to achieve uniform font sizes
     /// on different operating systems such as macOS, iOS, and visionOS.
-    public static let defaultExportFontSettings = Self(
+    public static let `default` = Self(
         signatureCaptionFont: .systemFont(ofSize: 10),
         signaturePrefixFont: .boldSystemFont(ofSize: 12),
         documentContentFont: .systemFont(ofSize: 12),
@@ -133,7 +133,7 @@ extension ConsentDocument.ExportConfiguration.FontSettings {
     /// Default font based on system standards. In contrast to defaultExportFontSettings,
     /// the font sizes might change according to the system settings, potentially leading to varying exported PDF documents
     /// on devices with different system settings (e.g., larger default font size).
-    public static let defaultSystemDefaultFontSettings = Self(
+    public static let systemDefault = Self(
         signatureCaptionFont: .preferredFont(forTextStyle: .subheadline),
         signaturePrefixFont: .preferredFont(forTextStyle: .title2),
         documentContentFont: .preferredFont(forTextStyle: .body),

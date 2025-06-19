@@ -43,7 +43,6 @@ public struct ConsentShareButton: View {
                 }
             }
         }
-        .id(consentDocument) // required as a workaround for https://github.com/StanfordSpezi/SpeziViews/issues/68
         .disabled(consentDocument?.completionState != .complete || consentDocument?.isExporting == true)
         .shareSheet(item: $exportPdf)
     }
