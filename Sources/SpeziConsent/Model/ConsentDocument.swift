@@ -21,7 +21,7 @@ import class PDFKit.PDFDocument
 /// `ConsentDocument`s are created from Markdown-formatted text, which can optionally include custom interactive elements defined by SpeziConsent,
 /// in order to enable form-like data collection from users as they are going through the consent document.
 ///
-/// Users are typically required to sign consent documents; unless explicitly instructed not to all `ConsentDocument`s include an implicit signature field at the bottom of the
+/// Users are typically required to sign consent documents; unless explicitly instructed not to all `ConsentDocument`s include an implicit signature field at the bottom of the document.
 ///
 /// ### State management
 /// In addition to defining the contents of the document, the `ConsentDocument` class also keeps track of the values the user entered for the document's interactive components.
@@ -68,7 +68,7 @@ import class PDFKit.PDFDocument
 /// For example, the following `toggle` will prevent its ``ConsentDocument`` from being completed unless the user selects a true value:
 /// ```html
 /// <toggle id="data-sharing" expected-value=true>
-///     I agree that the data i enter into the app may used for scientific research
+///     I agree that the data I enter into the app may used for scientific research.
 /// </toggle>
 /// ```
 ///
