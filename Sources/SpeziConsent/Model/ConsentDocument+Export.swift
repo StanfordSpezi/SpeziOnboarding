@@ -29,7 +29,7 @@ struct PDFRenderer {
     
     
     consuming func render() throws -> sending PDFKit.PDFDocument {
-        if let title = consentDocument.frontmatter["title"], !title.isEmpty {
+        if let title = consentDocument.title, !title.isEmpty {
             pdf.info.title = title
         }
         if config.includingTimestamp {

@@ -53,7 +53,7 @@ struct SpeziConsentTests {
         let knownGoodPdf = try #require(loadPDFFromPath(path: pdfPath))
         let exportResult = try document.export(using: exportConfiguration)
         #expect(exportResult.pdf.equatable == knownGoodPdf.equatable)
-        #expect(exportResult.frontmatterMetadata.isEmpty)
+        #expect(exportResult.metadata.isEmpty)
         #expect(exportResult.userResponses.toggles.isEmpty)
         #expect(exportResult.userResponses.selects.isEmpty)
         #expect(exportResult.userResponses.signatures.count == 1)

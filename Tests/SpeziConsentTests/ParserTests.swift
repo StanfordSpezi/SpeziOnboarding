@@ -49,7 +49,7 @@ struct ConsentParserTests {
             - def
             """
         let document = try ConsentDocument(markdown: input)
-        #expect(document.frontmatter == [
+        #expect(document.metadata == [
             "title": "abc",
             "version": "1.0.2"
         ])

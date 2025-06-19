@@ -125,9 +125,13 @@ import class PDFKit.PDFDocument
 /// - ``LoadError``
 ///
 /// ### Accessing Form Contents
-/// - ``frontmatter``
+/// - ``metadata``
+/// - ``userResponses-swift.property``
 /// - ``signatureDate``
+/// - ``title``
+/// - ``version``
 /// - ``SignatureStorage``
+/// - ``UserResponses-swift.struct``
 ///
 /// ### State Handling
 /// - ``isExporting``
@@ -211,13 +215,13 @@ public final class ConsentDocument: Sendable {
         public internal(set) var signatures: [String: SignatureStorage] = [:]
     }
     
-    /// The document's frontmatter metadata.
-    nonisolated public let frontmatter: [String: String]
+    /// The document's metadata, parsed from the markdown frontmatter if present.
+    nonisolated public let metadata: [String: String]
     /// The document's extracted content, as a series of sections.
     nonisolated let sections: [Section]
     
     /// Stores the state of the document's interactive sections.
-    private var userResponses = UserResponses()
+    public private(set) var userResponses = UserResponses()
     
     /// Whether the `ConsentDocument` was created with support for custom elements enabled.
     public let customElementsEnabled: Bool
@@ -238,13 +242,13 @@ public final class ConsentDocument: Sendable {
         if enableCustomElements {
             do {
                 let parseResult = try ConsentDocumentParser.parse(markdown)
-                self.frontmatter = parseResult.frontmatter
+                self.metadata = parseResult.frontmatter
                 self.sections = parseResult.sections
             } catch {
                 throw .failedToParse(error)
             }
         } else {
-            frontmatter = [:]
+            metadata = [:]
             sections = [
                 .markdown(markdown),
                 .signature(.init(id: "default-signature"))
@@ -352,12 +356,12 @@ extension ConsentDocument.InteractiveSectionProtocol {
 extension ConsentDocument {
     /// The document's title, if present in the metadata
     public var title: String? {
-        frontmatter["title"]
+        metadata["title"]
     }
     
     /// The document's version, if present in the metadata
     public var version: Version? {
-        frontmatter["version"].flatMap { Version($0) }
+        metadata["version"].flatMap { Version($0) }
     }
 }
 
@@ -370,7 +374,7 @@ extension ConsentDocument {
         /// The filled out PDF document that was created from the consent document and the user-provided responses.
         public let pdf: PDFKit.PDFDocument
         /// The consent document's markdown frontmatter metadata.
-        public let frontmatterMetadata: [String: String]
+        public let metadata: [String: String]
         /// The user's provided responses for the interactive elements in the consent form.
         public let userResponses: UserResponses
     }
@@ -385,7 +389,7 @@ extension ConsentDocument {
         let pdf = try renderer.render()
         return ExportResult(
             pdf: pdf,
-            frontmatterMetadata: frontmatter,
+            metadata: metadata,
             userResponses: userResponses
         )
     }
