@@ -200,7 +200,6 @@ extension XCUIElement {
         } else {
             swipeRight()
         }
-//        fatalError("TODO")
         #else
         if isHittable {
             tap()
