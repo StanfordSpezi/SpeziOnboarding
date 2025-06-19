@@ -117,15 +117,13 @@ final class OnboardingConsentTests: XCTestCase {
         #endif
         try await Task.sleep(for: .seconds(1))
         
-        func select(option: String?, expectedCurrentSelection: String?, line: UInt = #line) async throws {
+        func select(in elementId: String, option: String?, expectedCurrentSelection: String?, line: UInt = #line) async throws {
             let noSelectionTitle = "(No selection)"
-            let button = app.buttons["ConsentForm:select1"]
+            let button = app.buttons["ConsentForm:\(elementId)"]
             print(button.debugDescription)
             XCTAssert(button.exists)
             XCTAssert(button.staticTexts[expectedCurrentSelection ?? noSelectionTitle].waitForExistence(timeout: 1), line: line)
             button.tap()
-            XCTAssert(app.buttons["Mountains"].waitForExistence(timeout: 1), line: line)
-            XCTAssert(app.buttons["Beach"].waitForExistence(timeout: 1), line: line)
             app.buttons[option ?? noSelectionTitle].tap()
             try await Task.sleep(for: .seconds(0.25))
             XCTAssert(button.staticTexts[expectedCurrentSelection ?? noSelectionTitle].waitForNonExistence(timeout: 1), line: line)
@@ -133,8 +131,10 @@ final class OnboardingConsentTests: XCTestCase {
         }
         
         XCTAssertFalse(shareButton.isEnabled)
-        try await select(option: "Mountains", expectedCurrentSelection: nil)
+        try await select(in: "select1", option: "Mountains", expectedCurrentSelection: nil)
         XCTAssertFalse(shareButton.isEnabled)
+        
+        try await select(in: "select2", option: "No", expectedCurrentSelection: nil)
         
         do {
             for (nameComponent, name) in zip(["first", "last"], ["Leland", "Stanford"]) {
@@ -149,11 +149,11 @@ final class OnboardingConsentTests: XCTestCase {
         try await Task.sleep(for: .seconds(1))
         
         XCTAssertTrue(shareButton.isEnabled)
-        try await select(option: nil, expectedCurrentSelection: "Mountains")
+        try await select(in: "select1", option: nil, expectedCurrentSelection: "Mountains")
         XCTAssertFalse(shareButton.isEnabled)
-        try await select(option: "Beach", expectedCurrentSelection: nil)
+        try await select(in: "select1", option: "Beach", expectedCurrentSelection: nil)
         XCTAssertTrue(shareButton.isEnabled)
-        try await select(option: "Mountains", expectedCurrentSelection: "Beach")
+        try await select(in: "select1", option: "Mountains", expectedCurrentSelection: "Beach")
         XCTAssertTrue(shareButton.isEnabled)
         
         #if !os(visionOS)

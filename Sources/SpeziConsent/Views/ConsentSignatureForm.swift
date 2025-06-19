@@ -112,14 +112,6 @@ public struct ConsentSignatureForm: View {
         }
     }
 
-    var formattedConsentSignatureDate: String? {
-        if let signatureDate {
-            signatureDate.formatted(signatureDateFormat)
-        } else {
-            nil
-        }
-    }
-
     
     /// Creates a `ConsentDocument` which renders a consent document with a markdown view.
     ///

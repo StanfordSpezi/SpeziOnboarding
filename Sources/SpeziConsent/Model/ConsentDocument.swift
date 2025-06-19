@@ -120,7 +120,6 @@ import class PDFKit.PDFDocument
 ///
 /// ### Creating Consent Documents
 /// - ``init(markdown:initialName:enableCustomElements:)-(String,_,_)``
-/// - ``init(markdown:initialName:enableCustomElements:)-(Data,_,_)``
 /// - ``init(contentsOf:initialName:enableCustomElements:)``
 /// - ``LoadError``
 ///
@@ -276,10 +275,7 @@ public final class ConsentDocument: Sendable {
     /// - parameter enableCustomElements: Whether the Document should enable support for parsing custom elements when processing the markdown text. Defaults to true.
     public convenience init(contentsOf url: URL, initialName: PersonNameComponents? = nil, enableCustomElements: Bool = true) throws {
         let data = try Data(contentsOf: url)
-        guard let text = String(data: data, encoding: .utf8) else {
-            throw LoadError.inputNotUTF8
-        }
-        try self.init(markdown: text, initialName: initialName, enableCustomElements: enableCustomElements)
+        try self.init(markdown: data, initialName: initialName, enableCustomElements: enableCustomElements)
     }
     
     private func processConsentFileSections(defaultName: PersonNameComponents?) throws(LoadError) {

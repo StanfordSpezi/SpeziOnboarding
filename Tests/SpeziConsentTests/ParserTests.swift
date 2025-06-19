@@ -42,6 +42,8 @@ struct ConsentParserTests {
             ---
             title: abc
             version: 1.0.2
+            keyOnlyEntry:
+            keyAndValueEntry: value
             ---
             
             First markdown block
@@ -51,7 +53,9 @@ struct ConsentParserTests {
         let document = try ConsentDocument(markdown: input)
         #expect(document.metadata == [
             "title": "abc",
-            "version": "1.0.2"
+            "version": "1.0.2",
+            "keyOnlyEntry": "",
+            "keyAndValueEntry": "value"
         ])
         #expect(document.title == "abc")
         #expect(document.version == Version(1, 0, 2))
@@ -155,7 +159,22 @@ struct ConsentParserTests {
     @Test
     func invalidInput0() throws {
         let input = """
-            <select id=select1 initial-value=option1>
+            <select id=select1 initial-value=o3>
+                <option id=o1>T1</>
+                <option id=o2>T2</>
+            </select>
+            """
+        #expect(throws: (any Error).self) {
+            try ConsentDocumentParser.parse(input)
+        }
+    }
+    
+    @Test
+    func invalidInput1() throws {
+        let input = """
+            <select id=select1 expected-value=o3>
+                <option id=o1>T1</>
+                <option id=o2>T2</>
             </select>
             """
         #expect(throws: (any Error).self) {

@@ -150,7 +150,7 @@ struct ConsentDocumentParser: ~Copyable { // swiftlint:disable:this type_body_le
         consumeLine()
         while let key = try? parseIdentifier() {
             try expectAndConsume(":")
-            try expectAndConsume(" ")
+            consume(while: { $0.isWhitespace && !$0.isNewline })
             let value = currentLine ?? ""
             consumeLine()
             frontmatter[key] = String(value)
@@ -380,10 +380,6 @@ extension ConsentDocumentParser {
     
     private var currentLine: Substring? {
         remainingInput.isEmpty ? nil : remainingInput.prefix { !$0.isNewline }
-    }
-    
-    private var isAtEnd: Bool {
-        position >= input.endIndex
     }
     
     private var isAtBeginningOfLine: Bool {

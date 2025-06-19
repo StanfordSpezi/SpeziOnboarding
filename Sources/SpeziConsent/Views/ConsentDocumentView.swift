@@ -151,9 +151,9 @@ extension ConsentDocumentView {
         
         private var tintColor: Color? {
             switch config.expectedSelection {
-            case .option, .anything(allowEmptySelection: true):
+            case .anything(allowEmptySelection: true):
                 nil
-            case .anything(allowEmptySelection: false):
+            case .option, .anything(allowEmptySelection: false):
                 selection == ConsentDocument.SelectConfig.emptySelection ? .red : nil
             }
         }

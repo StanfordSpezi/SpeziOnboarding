@@ -14,6 +14,10 @@ import TPPDF
 
 @MainActor
 struct PDFRenderer {
+    enum ExportError: Error {
+        case unableToProducePDF
+    }
+    
     private let consentDocument: ConsentDocument
     private let config: ConsentDocument.ExportConfiguration
     
@@ -41,7 +45,7 @@ struct PDFRenderer {
         }
         let pdfData = try PDFGenerator(document: pdf).generateData()
         guard let pdfDocument = PDFKit.PDFDocument(data: pdfData) else {
-            preconditionFailure("Rendered PDF data from TPPDF could not be converted to PDFKit.PDFDocument.")   // never happens
+            throw ExportError.unableToProducePDF // should be unreachable
         }
         return pdfDocument
     }

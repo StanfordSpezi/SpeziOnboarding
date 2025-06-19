@@ -125,8 +125,7 @@ extension ConsentDocument {
         static var userResponsesKeyPath: StorageKeyPath { \.signatures }
         
         let id: String
-        var initialValue: Value { .init(name: initialName ?? .init()) }
-        var expectedValue: Value? { nil }
+        var initialValue: Value { .init(name: initialName) }
         var initialName: PersonNameComponents?
         
         func valueMatchesExpected(_ value: ConsentDocument.SignatureStorage) -> Bool {

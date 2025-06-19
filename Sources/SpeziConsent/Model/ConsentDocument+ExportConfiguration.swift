@@ -29,7 +29,7 @@ extension ConsentDocument {
             /// Provides the dimensions of the paper in points.
             ///
             /// - Returns: A tuple containing the width and height of the paper in points.
-            public var dimensions: (width: CGFloat, height: CGFloat) {
+            var dimensions: (width: CGFloat, height: CGFloat) {
                 let pointsPerInch: CGFloat = 72.0
                 switch self {
                 case .usLetter:
