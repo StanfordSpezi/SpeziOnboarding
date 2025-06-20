@@ -72,41 +72,26 @@ import SwiftUI
 /// )
 /// ```
 public struct OnboardingView<Header: View, Content: View, Footer: View>: View {
-    private let header: Header
-    private let content: Content
-    private let footer: Footer
-    
     @Environment(\.verticalScrollIndicatorVisibility) private var scrollIndicatorVisibility
     @Environment(\.isInManagedNavigationStack) private var isInManagedNavigationStack
     @Environment(\.isFirstInManagedNavigationStack) private var isFirstInManagedNavigationStack
     @Environment(\.onboardingViewEdgesWithPaddingDisabled) private var edgesWithPaddingDisabled
     
+    private let wrapInScrollView: Bool
+    private let header: Header
+    private let content: Content
+    private let footer: Footer
+    
     public var body: some View {
         GeometryReader { geometry in
-            ScrollView {
-                VStack(alignment: .center) {
-                    VStack {
-                        header
-                        content
-                            // if we don't have a footer, we apply the bottom padding here
-                            .padding(.bottom, footer is EmptyView ? bottomPadding : 0)
-                    }
-                    if !(footer is EmptyView) {
-                        Spacer()
-                        footer
-                            // if we do have a footer, we apply it here
-                            .padding(.bottom, bottomPadding)
-                    }
+            if wrapInScrollView {
+                ScrollView {
+                    makeContents(geometry: geometry)
                 }
-                .padding(edgesWithImplicitPadding, 24)
-                // if this is the first view in a Stack, we need to add an implicit extra top padding,
-                // in order to compensate for the fact that the other steps in the stack will get some de-facto
-                // top padding via the navigation bar (which won't be present in the first step).
-                .padding(.top, isFirstInManagedNavigationStack ? 24 : 0)
-                .frame(minHeight: geometry.size.height)
-                .frame(maxWidth: .infinity, alignment: .center)
+                .scrollIndicators(effectiveScrollIndicatorVisibility, axes: .vertical)
+            } else {
+                makeContents(geometry: geometry)
             }
-            .scrollIndicators(effectiveScrollIndicatorVisibility, axes: .vertical)
         }
     }
     
@@ -134,14 +119,19 @@ public struct OnboardingView<Header: View, Content: View, Footer: View>: View {
     /// Creates a customized `OnboardingView` allowing a complete customization of the  `OnboardingView`.
     /// 
     /// - Parameters:
+    ///   - wrapInScrollView: Whether the `OnboardingView` should wrap its body (i.e., the `header`, the `content`, and the `footer`) in a `ScrollView`.
+    ///       Defaults to `true`, but can be set to `false` to work around some edge cased, like e.g. when the `content` is/contains
+    ///       a `Form` (which already wraps its content in a `ScrollView`), in which case this parameter allows you to avoid getting double, nested `ScrollView`s.
     ///   - header: The header view displayed at the top.
     ///   - content: The content view.
     ///   - footer: The footer view displayed at the bottom.
     public init(
+        wrapInScrollView: Bool = true,
         @ViewBuilder header: () -> Header = { EmptyView() },
         @ViewBuilder content: () -> Content,
         @ViewBuilder footer: () -> Footer
     ) {
+        self.wrapInScrollView = wrapInScrollView
         self.header = header()
         self.content = content()
         self.footer = footer()
@@ -150,16 +140,25 @@ public struct OnboardingView<Header: View, Content: View, Footer: View>: View {
     /// Creates a customized `OnboardingView` allowing a complete customization of the  `OnboardingView`.
     ///
     /// - Parameters:
+    ///   - wrapInScrollView: Whether the `OnboardingView` should wrap its body (i.e., the `header`, the `content`, and the `footer`) in a `ScrollView`.
+    ///       Defaults to `true`, but can be set to `false` to work around some edge cased, like e.g. when the `content` is/contains
+    ///       a `Form` (which already wraps its content in a `ScrollView`), in which case this parameter allows you to avoid getting double, nested `ScrollView`s.
     ///   - titleView: The title view displayed at the top.
     ///   - contentView: The content view.
     ///   - actionView: The action view displayed at the bottom.
-    @available(*, deprecated, renamed: "init(header:content:footer:)")
+    @available(*, deprecated, renamed: "init(wrapInScrollView:header:content:footer:)")
     public init(
+        wrapInScrollView: Bool = true,
         @ViewBuilder titleView: () -> Header = { EmptyView() },
         @ViewBuilder contentView: () -> Content,
         @ViewBuilder actionView: () -> Footer
     ) {
-        self.init(header: titleView, content: contentView, footer: actionView)
+        self.init(
+            wrapInScrollView: wrapInScrollView,
+            header: titleView,
+            content: contentView,
+            footer: actionView
+        )
     }
     
     
@@ -242,6 +241,32 @@ public struct OnboardingView<Header: View, Content: View, Footer: View>: View {
                 try await action()
             }
         }
+    }
+    
+    
+    @ViewBuilder
+    private func makeContents(geometry: GeometryProxy) -> some View {
+        VStack(alignment: .center) {
+            VStack {
+                header
+                content
+                    // if we don't have a footer, we apply the bottom padding here
+                    .padding(.bottom, footer is EmptyView ? bottomPadding : 0)
+            }
+            if !(footer is EmptyView) {
+                Spacer()
+                footer
+                    // if we do have a footer, we apply it here
+                    .padding(.bottom, bottomPadding)
+            }
+        }
+        .padding(edgesWithImplicitPadding, 24)
+        // if this is the first view in a Stack, we need to add an implicit extra top padding,
+        // in order to compensate for the fact that the other steps in the stack will get some de-facto
+        // top padding via the navigation bar (which won't be present in the first step).
+        .padding(.top, isFirstInManagedNavigationStack ? 24 : 0)
+        .frame(minHeight: geometry.size.height)
+        .frame(maxWidth: .infinity, alignment: .center)
     }
 }
 
