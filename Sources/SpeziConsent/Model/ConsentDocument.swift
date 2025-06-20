@@ -170,7 +170,7 @@ public final class ConsentDocument: Sendable {
     }
     
     /// Storage container for the data entered into a ``ConsentSignatureForm``, as part of filling out a ``ConsentDocument``.
-    public struct SignatureStorage: Hashable {
+    public struct SignatureStorage: Hashable, Codable {
         #if !os(macOS)
         public typealias Signature = PKDrawing
         #else
@@ -209,7 +209,7 @@ public final class ConsentDocument: Sendable {
     }
     
     
-    public struct UserResponses {
+    public struct UserResponses: Hashable, Codable {
         public internal(set) var toggles: [String: Bool] = [:]
         public internal(set) var selects: [String: String] = [:]
         public internal(set) var signatures: [String: SignatureStorage] = [:]
@@ -387,11 +387,5 @@ extension ConsentDocument: Identifiable, Hashable {
     
     nonisolated public func hash(into hasher: inout Hasher) {
         hasher.combine(ObjectIdentifier(self))
-    }
-}
-
-extension PKDrawing: @retroactive Hashable {
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(dataRepresentation())
     }
 }
