@@ -130,8 +130,6 @@ import class PDFKit.PDFDocument
 /// - ``metadata``
 /// - ``userResponses-swift.property``
 /// - ``signatureDate``
-/// - ``title``
-/// - ``version``
 /// - ``SignatureStorage``
 /// - ``UserResponses-swift.struct``
 ///
@@ -218,7 +216,7 @@ public final class ConsentDocument: Sendable {
     }
     
     /// The document's metadata, parsed from the markdown frontmatter if present.
-    nonisolated public let metadata: [String: String]
+    nonisolated public let metadata: Metadata
     /// The document's extracted content, as a series of sections.
     nonisolated let sections: [Section]
     
@@ -244,13 +242,13 @@ public final class ConsentDocument: Sendable {
         if enableCustomElements {
             do {
                 let parseResult = try ConsentDocumentParser.parse(markdown)
-                self.metadata = parseResult.frontmatter
+                self.metadata = .init(parseResult.frontmatter)
                 self.sections = parseResult.sections
             } catch {
                 throw .failedToParse(error)
             }
         } else {
-            metadata = [:]
+            metadata = .init()
             sections = [
                 .markdown(markdown),
                 .signature(.init(id: "default-signature"))
@@ -350,21 +348,6 @@ extension ConsentDocument.InteractiveSectionProtocol {
 }
 
 
-// MARK: Metadata
-
-extension ConsentDocument {
-    /// The document's title, if present in the metadata
-    public var title: String? {
-        metadata["title"]
-    }
-    
-    /// The document's version, if present in the metadata
-    public var version: Version? {
-        metadata["version"].flatMap { Version($0) }
-    }
-}
-
-
 // MARK: Export
 
 extension ConsentDocument {
@@ -372,8 +355,8 @@ extension ConsentDocument {
     public struct ExportResult {
         /// The filled out PDF document that was created from the consent document and the user-provided responses.
         public let pdf: PDFKit.PDFDocument
-        /// The consent document's markdown frontmatter metadata.
-        public let metadata: [String: String]
+        /// The consent document's metadata.
+        public let metadata: ConsentDocument.Metadata
         /// The user's provided responses for the interactive elements in the consent form.
         public let userResponses: UserResponses
     }

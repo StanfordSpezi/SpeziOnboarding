@@ -57,8 +57,8 @@ struct ConsentParserTests {
             "keyOnlyEntry": "",
             "keyAndValueEntry": "value"
         ])
-        #expect(document.title == "abc")
-        #expect(document.version == Version(1, 0, 2))
+        #expect(document.metadata.title == "abc")
+        #expect(document.metadata.version == Version(1, 0, 2))
         #expect(document.sections == [
             .markdown("First markdown block\n- abc\n- def")
         ])
