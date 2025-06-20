@@ -352,7 +352,7 @@ extension ConsentDocument.InteractiveSectionProtocol {
 
 extension ConsentDocument {
     /// Result of an export operation. Contains the produced PDF as well as associated metadata.
-    public struct ExportResult {
+    public struct ExportResult: ~Copyable {
         /// The filled out PDF document that was created from the consent document and the user-provided responses.
         public let pdf: PDFKit.PDFDocument
         /// The consent document's metadata.
