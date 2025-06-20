@@ -28,7 +28,8 @@ struct OnboardingConsentTestView: View {
         OnboardingConsentView(
             consentDocument: consentDocument,
             title: consentTitle.localized(),
-            currentDateInSignature: true
+            currentDateInSignature: true,
+            viewState: $viewState
         ) {
             guard let consentDocument else {
                 return

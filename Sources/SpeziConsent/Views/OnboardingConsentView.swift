@@ -28,7 +28,7 @@ public struct OnboardingConsentView: View {
     private let action: @MainActor () async throws -> Void
     private let currentDateInSignature: Bool
     private var consentDocument: ConsentDocument?
-    @State private var viewState: ViewState = .idle
+    @Binding private var viewState: ViewState
     
     public var body: some View {
         OnboardingView {
@@ -89,16 +89,19 @@ public struct OnboardingConsentView: View {
     ///     Pass `nil` if your app is currently still loading the document, but already wishes to display a "loading in progress" version of the ``OnboardingConsentView``.
     /// - parameter title: The title of the view displayed at the top. Can be `nil`, meaning no title is displayed.
     /// - parameter currentDateInSignature: Whether the current date should be included in the consent form's signature fields.
+    /// - parameter viewState: A binding that provides the `ViewState` the view should use.
     /// - parameter action: The action to perform when the user bas completed the consent form and taps the Onboarding View's "Continue" button.
     public init(
         consentDocument: ConsentDocument?,
         title: LocalizedStringResource? = LocalizationDefaults.consentFormTitle,
         currentDateInSignature: Bool = true,
+        viewState: Binding<ViewState>,
         action: @escaping @MainActor () async throws -> Void
     ) {
         self.consentDocument = consentDocument
         self.title = title
         self.currentDateInSignature = currentDateInSignature
+        self._viewState = viewState
         self.action = action
     }
 }
@@ -106,9 +109,10 @@ public struct OnboardingConsentView: View {
 
 #if DEBUG
 #Preview {
+    @Previewable @State var viewState: ViewState = .idle
     let document = try? ConsentDocument(markdown: "This is a *markdown* **example**")
     NavigationStack {
-        OnboardingConsentView(consentDocument: document) {
+        OnboardingConsentView(consentDocument: document, viewState: $viewState) {
             print("Next")
         }
     }

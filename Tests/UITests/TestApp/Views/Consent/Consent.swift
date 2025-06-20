@@ -21,7 +21,7 @@ struct Consent: View {
     @State private var viewState: ViewState = .idle
     
     var body: some View {
-        OnboardingConsentView(consentDocument: consentDocument) {
+        OnboardingConsentView(consentDocument: consentDocument, viewState: $viewState) {
             path.nextStep()
         }
         .viewStateAlert(state: $viewState)
