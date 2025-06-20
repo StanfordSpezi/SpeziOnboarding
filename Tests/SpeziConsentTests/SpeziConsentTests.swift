@@ -16,15 +16,17 @@ import Testing
 struct SpeziConsentTests {
     @Test
     func metadataCoding() throws {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.sortedKeys]
         let metadata: ConsentDocument.Metadata = [
             "title": "Study Consent",
             "version": "1.0.0"
         ]
-        let encoded = try JSONEncoder().encode(metadata)
+        let encoded = try encoder.encode(metadata)
         let decoded = try JSONDecoder().decode(ConsentDocument.Metadata.self, from: encoded)
         #expect(decoded == metadata)
         
-        let encoded2 = try JSONEncoder().encode([
+        let encoded2 = try encoder.encode([
             "title": "Study Consent",
             "version": "1.0.0"
         ])
