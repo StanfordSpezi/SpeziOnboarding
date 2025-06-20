@@ -12,7 +12,7 @@ import struct SpeziFoundation.Version
 
 extension ConsentDocument {
     /// A key-value mapping containing the metadata parsed from a consent form.
-    public struct Metadata: Hashable, Sendable {
+    public struct Metadata: Hashable, Codable, Sendable {
         public typealias Storage = [String: String]
         
         private let storage: Storage
