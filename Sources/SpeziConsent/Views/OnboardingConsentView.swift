@@ -45,6 +45,7 @@ public struct OnboardingConsentView: View {
                     #if !(os(macOS) || os(visionOS))
                     .scrollDismissesKeyboard(.interactively)
                     #endif
+                    .disabled(viewState == .processing)
                 } else {
                     ProgressView("Loading Consent Form")
                 }
