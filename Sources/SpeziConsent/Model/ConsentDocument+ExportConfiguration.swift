@@ -90,7 +90,7 @@ extension ConsentDocument {
             }
         }
 
-        let consentTitle: LocalizedStringResource
+        let consentTitle: LocalizedStringResource?
         let paperSize: PaperSize
         let includingTimestamp: Bool
         let fontSettings: FontSettings
@@ -109,7 +109,7 @@ extension ConsentDocument {
             fontSettings: FontSettings = .default
         ) {
             self.paperSize = paperSize
-            self.consentTitle = consentTitle ?? LocalizedStringResource("CONSENT_TITLE", bundle: .atURL(from: .module))
+            self.consentTitle = consentTitle
             self.includingTimestamp = includingTimestamp
             self.fontSettings = fontSettings
         }

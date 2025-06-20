@@ -39,7 +39,9 @@ struct PDFRenderer {
         if config.includingTimestamp {
             pdf.add(.contentRight, attributedTextObject: renderedExportTimestamp())
         }
-        pdf.add(.contentCenter, attributedTextObject: renderedHeader())
+        if let header = renderedHeader() {
+            pdf.add(.contentCenter, attributedTextObject: header)
+        }
         for section in consentDocument.sections {
             try add(section)
         }
@@ -64,9 +66,12 @@ struct PDFRenderer {
     }
     
     /// Exports the header text (i.e., document title) as a `PDFAttributedText`
-    private func renderedHeader() -> PDFAttributedText {
+    private func renderedHeader() -> PDFAttributedText? {
+        guard let titleText = config.consentTitle?.localizedString(), !titleText.isEmpty else {
+            return nil
+        }
         let attributedTitle = NSMutableAttributedString(
-            string: config.consentTitle.localizedString() + "\n\n",
+            string: titleText + "\n\n",
             attributes: [.font: config.fontSettings.headerTitleFont]
         )
         return PDFAttributedText(text: attributedTitle)

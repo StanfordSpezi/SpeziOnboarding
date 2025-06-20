@@ -39,28 +39,6 @@
         }
       }
     },
-    "CONSENT_TITLE" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Spezi Einwilligung"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Spezi Consent"
-          }
-        },
-        "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Spezisamtycke"
-          }
-        }
-      }
-    },
     "CONSENT_VIEW_TITLE" : {
       "localizations" : {
         "de" : {
