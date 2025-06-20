@@ -90,7 +90,6 @@ extension ConsentDocument {
             }
         }
 
-        let consentTitle: LocalizedStringResource?
         let paperSize: PaperSize
         let includingTimestamp: Bool
         let fontSettings: FontSettings
@@ -99,17 +98,14 @@ extension ConsentDocument {
         ///
         /// - Parameters:
         ///   - paperSize: The desired page size of the exported form.
-        ///   - consentTitle: The title of the exported consent form.
         ///   - includingTimestamp: Indicates if the exported form includes a timestamp.
         ///   - fontSettings: Font settings for the exported form.
         public init(
             paperSize: PaperSize = .usLetter,
-            consentTitle: LocalizedStringResource? = nil,
             includingTimestamp: Bool = true,
             fontSettings: FontSettings = .default
         ) {
             self.paperSize = paperSize
-            self.consentTitle = consentTitle
             self.includingTimestamp = includingTimestamp
             self.fontSettings = fontSettings
         }

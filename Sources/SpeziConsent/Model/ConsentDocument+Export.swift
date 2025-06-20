@@ -67,11 +67,11 @@ struct PDFRenderer {
     
     /// Exports the header text (i.e., document title) as a `PDFAttributedText`
     private func renderedHeader() -> PDFAttributedText? {
-        guard let titleText = config.consentTitle?.localizedString(), !titleText.isEmpty else {
+        guard let title = consentDocument.metadata.title, !title.isEmpty else {
             return nil
         }
         let attributedTitle = NSMutableAttributedString(
-            string: titleText + "\n\n",
+            string: title + "\n\n",
             attributes: [.font: config.fontSettings.headerTitleFont]
         )
         return PDFAttributedText(text: attributedTitle)
