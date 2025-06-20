@@ -170,7 +170,10 @@ public final class ConsentDocument: Sendable {
     }
     
     /// Storage container for the data entered into a ``ConsentSignatureForm``, as part of filling out a ``ConsentDocument``.
-    public struct SignatureStorage: Hashable, Codable {
+    public struct SignatureStorage: Hashable, Codable, @unchecked Sendable {
+        // ^^ SAFETY: we should be able to safely mark this as @unchecked Sendable, since PKDrawing is likely Sendable already
+        //    (it's explicitly intended as a value type alternative to PKDrawingReference), but is probably just missing the annotation.
+        //    See also FB18233435 (`PKDrawing` isn't marked as Sendable; should be since it's a value type)
         #if !os(macOS)
         public typealias Signature = PKDrawing
         #else
@@ -209,7 +212,7 @@ public final class ConsentDocument: Sendable {
     }
     
     
-    public struct UserResponses: Hashable, Codable {
+    public struct UserResponses: Hashable, Codable, Sendable {
         public internal(set) var toggles: [String: Bool] = [:]
         public internal(set) var selects: [String: String] = [:]
         public internal(set) var signatures: [String: SignatureStorage] = [:]
@@ -352,7 +355,7 @@ extension ConsentDocument.InteractiveSectionProtocol {
 
 extension ConsentDocument {
     /// Result of an export operation. Contains the produced PDF as well as associated metadata.
-    public struct ExportResult: ~Copyable {
+    public struct ExportResult {
         /// The filled out PDF document that was created from the consent document and the user-provided responses.
         public let pdf: PDFKit.PDFDocument
         /// The consent document's metadata.
@@ -362,7 +365,7 @@ extension ConsentDocument {
     }
     
     /// Exports the consent document as a formatted PDF.
-    public func export(using config: ConsentDocument.ExportConfiguration) throws -> ExportResult {
+    public func export(using config: ConsentDocument.ExportConfiguration) throws -> sending ExportResult {
         isExporting = true
         defer {
             isExporting = false

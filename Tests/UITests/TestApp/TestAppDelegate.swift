@@ -7,10 +7,9 @@
 //
 
 import Spezi
-import SpeziOnboarding
 
 
-class TestAppDelegate: SpeziAppDelegate {
+final class TestAppDelegate: SpeziAppDelegate {
     override var configuration: Configuration {
         Configuration(standard: ExampleStandard()) {}
     }
