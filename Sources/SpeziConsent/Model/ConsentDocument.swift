@@ -22,6 +22,9 @@ import class PDFKit.PDFDocument
 /// in order to enable form-like data collection from users as they are going through the consent document.
 ///
 /// Users are typically required to sign consent documents; unless explicitly instructed not to all `ConsentDocument`s include an implicit signature field at the bottom of the document.
+/// For ``ConsentDocument``s created with the `enableCustomElements` flag set to `true` (the default),
+/// the application is responsible to include at least one `signature` element in the document's input markdown text (see below).
+/// If the `enableCustomElements` flag is set to `false`, the ``ConsentDocument`` initializers will automatically append a signature element at the end of the document.
 ///
 /// ### State management
 /// In addition to defining the contents of the document, the `ConsentDocument` class also keeps track of the values the user entered for the document's interactive components.
