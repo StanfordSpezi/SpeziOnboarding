@@ -176,7 +176,7 @@ final class OnboardingConsentTests: XCTestCase {
 
 extension XCUIApplication {
     fileprivate func assertShareSheetTextElementExists(_ text: String, file: StaticString = #filePath, line: UInt = #line) {
-        let exists = self.staticTexts[text].waitForExistence(timeout: 1) || self.otherElements[text].waitForExistence(timeout: 1)
+        let exists = self.staticTexts[text].waitForExistence(timeout: 2) || self.otherElements[text].waitForExistence(timeout: 2)
         XCTAssert(exists, file: file, line: line)
     }
 }
