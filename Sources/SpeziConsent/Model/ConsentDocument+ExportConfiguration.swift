@@ -7,16 +7,17 @@
 //
 
 import Foundation
+import SpeziViews
 import SwiftUI
 import TPPDF
 
 
-extension ConsentDocumentExportRepresentation {
-    /// The ``Configuration`` enables developers to define the properties of the exported consent form.
-    public struct Configuration: Equatable, Sendable {
+extension ConsentDocument {
+    /// Define the properties of an exported ``ConsentDocument``.
+    public struct ExportConfiguration: Equatable, Sendable {
         /// Represents common paper sizes with their dimensions.
         ///
-        /// You can use the `dimensions` property to get the width and height of each paper size in points.
+        /// You can use the ``dimensions`` property to get the width and height of each paper size in points.
         ///
         /// - Note: The dimensions are calculated based on the standard DPI (dots per inch) of 72 for print.
         public enum PaperSize: Equatable, Sendable {
@@ -24,14 +25,12 @@ extension ConsentDocumentExportRepresentation {
             case usLetter
             /// Standard DIN A4 paper size.
             case dinA4
-
             
             /// Provides the dimensions of the paper in points.
             ///
             /// - Returns: A tuple containing the width and height of the paper in points.
             var dimensions: (width: CGFloat, height: CGFloat) {
                 let pointsPerInch: CGFloat = 72.0
-
                 switch self {
                 case .usLetter:
                     let widthInInches: CGFloat = 8.5
@@ -52,7 +51,6 @@ extension ConsentDocumentExportRepresentation {
                 }
             }
         }
-        
         
         /// The ``FontSettings`` store configuration of the fonts used to render the exported
         /// consent document, i.e., fonts for the content, title and signature.
@@ -92,28 +90,22 @@ extension ConsentDocumentExportRepresentation {
             }
         }
 
-
-        let consentTitle: LocalizedStringResource
         let paperSize: PaperSize
         let includingTimestamp: Bool
         let fontSettings: FontSettings
-
         
-        /// Creates an ``ConsentDocumentExportRepresentation/Configuration`` specifying the properties of the exported consent form.
+        /// Creates an Export Configuration
         ///
         /// - Parameters:
-        ///   - paperSize: The page size of the exported form represented by ``ConsentDocumentExportRepresentation/Configuration/PaperSize``.
-        ///   - consentTitle: The title of the exported consent form.
+        ///   - paperSize: The desired page size of the exported form.
         ///   - includingTimestamp: Indicates if the exported form includes a timestamp.
         ///   - fontSettings: Font settings for the exported form.
         public init(
             paperSize: PaperSize = .usLetter,
-            consentTitle: LocalizedStringResource = Configuration.Defaults.exportedConsentFormTitle,
             includingTimestamp: Bool = true,
-            fontSettings: FontSettings = .defaultExportFontSettings
+            fontSettings: FontSettings = .default
         ) {
             self.paperSize = paperSize
-            self.consentTitle = consentTitle
             self.includingTimestamp = includingTimestamp
             self.fontSettings = fontSettings
         }
@@ -121,12 +113,12 @@ extension ConsentDocumentExportRepresentation {
 }
 
 
-extension ConsentDocumentExportRepresentation.Configuration.FontSettings {
+extension ConsentDocument.ExportConfiguration.FontSettings {
     /// Default export font settings with fixed font sizes, ensuring a consistent appearance across platforms.
     ///
     /// This configuration uses `systemFont` and `boldSystemFont` with absolute font sizes to achieve uniform font sizes
     /// on different operating systems such as macOS, iOS, and visionOS.
-    public static let defaultExportFontSettings = Self(
+    public static let `default` = Self(
         signatureCaptionFont: .systemFont(ofSize: 10),
         signaturePrefixFont: .boldSystemFont(ofSize: 12),
         documentContentFont: .systemFont(ofSize: 12),
@@ -137,7 +129,7 @@ extension ConsentDocumentExportRepresentation.Configuration.FontSettings {
     /// Default font based on system standards. In contrast to defaultExportFontSettings,
     /// the font sizes might change according to the system settings, potentially leading to varying exported PDF documents
     /// on devices with different system settings (e.g., larger default font size).
-    public static let defaultSystemDefaultFontSettings = Self(
+    public static let systemDefault = Self(
         signatureCaptionFont: .preferredFont(forTextStyle: .subheadline),
         signaturePrefixFont: .preferredFont(forTextStyle: .title2),
         documentContentFont: .preferredFont(forTextStyle: .body),

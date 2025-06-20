@@ -15,6 +15,11 @@
           "containerPath" : "container:..\/..",
           "identifier" : "SpeziOnboarding",
           "name" : "SpeziOnboarding"
+        },
+        {
+          "containerPath" : "container:..\/..",
+          "identifier" : "SpeziConsent",
+          "name" : "SpeziConsent"
         }
       ]
     },

@@ -27,15 +27,15 @@ jobs:
       matrix:
         include:
           - buildConfig: Debug
-            artifactname: SpeziOnboarding-iOS.xcresult
-            resultBundle: SpeziOnboarding-iOS.xcresult
+            artifactname: SpeziOnboarding-Package-iOS.xcresult
+            resultBundle: SpeziOnboarding-Package-iOS.xcresult
           - buildConfig: Release
-            artifactname: SpeziOnboarding-iOS-Release.xcresult
-            resultBundle: SpeziOnboarding-iOS-Release.xcresult
+            artifactname: SpeziOnboarding-Package-iOS-Release.xcresult
+            resultBundle: SpeziOnboarding-Package-iOS-Release.xcresult
     with:
       runsonlabels: '["macOS", "self-hosted"]'
       checkout_lfs: true
-      scheme: SpeziOnboarding
+      scheme: SpeziOnboarding-Package
       buildConfig: ${{ matrix.buildConfig }}
       resultBundle: ${{ matrix.resultBundle }}
       artifactname: ${{ matrix.artifactname }}
@@ -46,15 +46,15 @@ jobs:
       matrix:
         include:
           - buildConfig: Debug
-            artifactname: SpeziOnboarding-visionOS.xcresult
-            resultBundle: SpeziOnboarding-visionOS.xcresult
+            artifactname: SpeziOnboarding-Package-visionOS.xcresult
+            resultBundle: SpeziOnboarding-Package-visionOS.xcresult
           - buildConfig: Release
-            artifactname: SpeziOnboarding-visionOS-Release.xcresult
-            resultBundle: SpeziOnboarding-visionOS-Release.xcresult
+            artifactname: SpeziOnboarding-Package-visionOS-Release.xcresult
+            resultBundle: SpeziOnboarding-Package-visionOS-Release.xcresult
     with:
       runsonlabels: '["macOS", "self-hosted"]'
       checkout_lfs: true
-      scheme: SpeziOnboarding
+      scheme: SpeziOnboarding-Package
       destination: 'platform=visionOS Simulator,name=Apple Vision Pro'
       buildConfig: ${{ matrix.buildConfig }}
       resultBundle: ${{ matrix.resultBundle }}
@@ -66,15 +66,15 @@ jobs:
       matrix:
         include:
           - buildConfig: Debug
-            artifactname: SpeziOnboarding-macOS.xcresult
-            resultBundle: SpeziOnboarding-macOS.xcresult
+            artifactname: SpeziOnboarding-Package-macOS.xcresult
+            resultBundle: SpeziOnboarding-Package-macOS.xcresult
           - buildConfig: Release
-            artifactname: SpeziOnboarding-macOS-Release.xcresult
-            resultBundle: SpeziOnboarding-macOS-Release.xcresult
+            artifactname: SpeziOnboarding-Package-macOS-Release.xcresult
+            resultBundle: SpeziOnboarding-Package-macOS-Release.xcresult
     with:
       runsonlabels: '["macOS", "self-hosted"]'
       checkout_lfs: true
-      scheme: SpeziOnboarding
+      scheme: SpeziOnboarding-Package
       destination: 'platform=macOS,arch=arm64'
       buildConfig: ${{ matrix.buildConfig }}
       resultBundle: ${{ matrix.resultBundle }}
@@ -116,6 +116,6 @@ jobs:
     needs: [buildandtest_ios, buildandtest_visionos, buildandtest_macos, buildandtestuitests_ios, buildandtestuitests_ipad, buildandtestuitests_visionos]
     uses: StanfordSpezi/.github/.github/workflows/create-and-upload-coverage-report.yml@v2
     with:
-      coveragereports: 'SpeziOnboarding-iOS.xcresult SpeziOnboarding-visionOS.xcresult SpeziOnboarding-macOS.xcresult TestApp-iOS.xcresult TestApp-iPadOS.xcresult TestApp-visionOS.xcresult'
+      coveragereports: 'SpeziOnboarding-Package-iOS.xcresult SpeziOnboarding-Package-visionOS.xcresult SpeziOnboarding-Package-macOS.xcresult TestApp-iOS.xcresult TestApp-iPadOS.xcresult TestApp-visionOS.xcresult'
     secrets:
       token: ${{ secrets.CODECOV_TOKEN }}

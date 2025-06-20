@@ -63,10 +63,10 @@ final class OnboardingConsentTests: XCTestCase {
         #endif
 
         XCTAssert(app.staticTexts["First Name"].exists)
-        try app.textFields["Enter your first name ..."].enter(value: "Leland")
+        try app.textFields["Enter your first name…"].enter(value: "Leland")
 
         XCTAssert(app.staticTexts["Last Name"].exists)
-        try app.textFields["Enter your last name ..."].enter(value: "Stanford")
+        try app.textFields["Enter your last name…"].enter(value: "Stanford")
 
         app.hitConsentButton()
 
@@ -83,5 +83,127 @@ final class OnboardingConsentTests: XCTestCase {
         app.hitConsentButton()
 
         XCTAssert(app.staticTexts["First Consent PDF rendering exists"].waitForExistence(timeout: 2))
+    }
+    
+    
+    @MainActor
+    func testInteractiveConsentContent() async throws { // swiftlint:disable:this function_body_length
+        let app = XCUIApplication()
+        app.launch()
+        XCTAssertTrue(app.wait(for: .runningForeground, timeout: 2.0))
+        
+        app.buttons["Complex Consent View"].tap()
+        
+        let shareButton = app.navigationBars.firstMatch.buttons["Share Consent Form"]
+        XCTAssert(shareButton.waitForExistence(timeout: 1))
+        XCTAssertFalse(shareButton.isEnabled)
+        
+        func flipToggle(beforeValue: Bool, afterValue: Bool, line: UInt = #line) async throws {
+            let element = app.switches["ConsentForm:data-sharing"].firstMatch
+            XCTAssert(element.exists, line: line)
+            XCTAssertEqual(try XCTUnwrap(XCTUnwrap(element.value) as? String), beforeValue ? "1" : "0", line: line)
+            try element.toggleSwitch()
+            try await Task.sleep(for: .seconds(0.25))
+            XCTAssertEqual(try XCTUnwrap(XCTUnwrap(element.value) as? String), afterValue ? "1" : "0", line: line)
+        }
+        
+        XCTAssertFalse(shareButton.isEnabled)
+        try await flipToggle(beforeValue: false, afterValue: true)
+        XCTAssertFalse(shareButton.isEnabled)
+        
+        #if !os(visionOS)
+        app.swipeUp()
+        #endif
+        try await Task.sleep(for: .seconds(1))
+        
+        func select(in elementId: String, option: String?, expectedCurrentSelection: String?, line: UInt = #line) async throws {
+            let noSelectionTitle = "(No selection)"
+            let button = app.buttons["ConsentForm:\(elementId)"]
+            XCTAssert(button.exists)
+            XCTAssert(button.staticTexts[expectedCurrentSelection ?? noSelectionTitle].waitForExistence(timeout: 1), line: line)
+            button.tap()
+            app.buttons[option ?? noSelectionTitle].tap()
+            try await Task.sleep(for: .seconds(0.25))
+            XCTAssert(button.staticTexts[expectedCurrentSelection ?? noSelectionTitle].waitForNonExistence(timeout: 1), line: line)
+            XCTAssert(button.staticTexts[option ?? noSelectionTitle].waitForExistence(timeout: 1), line: line)
+        }
+        
+        XCTAssertFalse(shareButton.isEnabled)
+        try await select(in: "select1", option: "Mountains", expectedCurrentSelection: nil)
+        XCTAssertFalse(shareButton.isEnabled)
+        
+        try await select(in: "select2", option: "No", expectedCurrentSelection: nil)
+        
+        do {
+            for (nameComponent, name) in zip(["first", "last"], ["Leland", "Stanford"]) {
+                let textField = app.textFields["Enter your \(nameComponent) name…"]
+                XCTAssert(textField.waitForExistence(timeout: 2))
+                try textField.enter(value: name)
+            }
+            XCTAssertFalse(shareButton.isEnabled)
+            let signatureCanvas = app.scrollViews["ConsentForm:sig"]
+            signatureCanvas.swipeRight()
+        }
+        try await Task.sleep(for: .seconds(1))
+        
+        XCTAssertTrue(shareButton.isEnabled)
+        try await select(in: "select1", option: nil, expectedCurrentSelection: "Mountains")
+        XCTAssertFalse(shareButton.isEnabled)
+        try await select(in: "select1", option: "Beach", expectedCurrentSelection: nil)
+        XCTAssertTrue(shareButton.isEnabled)
+        try await select(in: "select1", option: "Mountains", expectedCurrentSelection: "Beach")
+        XCTAssertTrue(shareButton.isEnabled)
+        
+        #if !os(visionOS)
+        app.swipeDown()
+        #endif
+        try await Task.sleep(for: .seconds(1))
+        
+        XCTAssertTrue(shareButton.isEnabled)
+        try await flipToggle(beforeValue: true, afterValue: false)
+        XCTAssertFalse(shareButton.isEnabled)
+        try await flipToggle(beforeValue: false, afterValue: true)
+        XCTAssertTrue(shareButton.isEnabled)
+        
+        shareButton.tap()
+        
+        app.assertShareSheetTextElementExists("Knee Replacement Study Consent Form")
+    }
+}
+
+
+extension XCUIApplication {
+    fileprivate func assertShareSheetTextElementExists(_ text: String, file: StaticString = #filePath, line: UInt = #line) {
+        let exists = self.staticTexts[text].waitForExistence(timeout: 2) || self.otherElements[text].waitForExistence(timeout: 2)
+        XCTAssert(exists, file: file, line: line)
+    }
+}
+
+
+extension XCUIElement {
+    func toggleSwitch(file: StaticString = #filePath, line: UInt = #line) throws {
+        #if os(visionOS)
+        let value = switch try XCTUnwrap(value as? String, file: file, line: line) {
+        case "0":
+            false
+        case "1":
+            true
+        case let rawValue:
+            throw NSError(domain: "edu.stanford.SpezOnboarding.UITests", code: 0, userInfo: [
+                NSLocalizedDescriptionKey: "Unexpected switch value: '\(rawValue)'"
+            ])
+        }
+        if value {
+            swipeLeft()
+        } else {
+            swipeRight()
+        }
+        #else
+        if isHittable {
+            tap()
+        } else {
+            coordinate(withNormalizedOffset: .init(dx: 0.5, dy: 0.5)).tap()
+        }
+        #endif
     }
 }
