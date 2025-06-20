@@ -12,7 +12,7 @@ import struct SpeziFoundation.Version
 
 extension ConsentDocument {
     /// A key-value mapping containing the metadata parsed from a consent form.
-    public struct Metadata: Hashable, Codable, Sendable {
+    public struct Metadata: Hashable, Sendable {
         public typealias Storage = [String: String]
         
         private let storage: Storage
@@ -68,5 +68,18 @@ extension ConsentDocument.Metadata: Collection {
 extension ConsentDocument.Metadata: ExpressibleByDictionaryLiteral {
     public init(dictionaryLiteral elements: (String, String)...) {
         self.init(Dictionary(uniqueKeysWithValues: elements))
+    }
+}
+
+
+extension ConsentDocument.Metadata: Codable {
+    public init(from decoder: any Decoder) throws {
+        storage = try Storage(from: decoder)
+//        let container = try decoder.singleValueContainer()
+//        storage = try container.decode(Storage.self)
+    }
+    
+    public func encode(to encoder: any Encoder) throws {
+        try storage.encode(to: encoder)
     }
 }
