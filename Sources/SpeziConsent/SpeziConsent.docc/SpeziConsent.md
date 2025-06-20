@@ -31,17 +31,18 @@ and also provides a share button in the top-right corner, allowing participants 
 ```swift
 struct ConsentStep: View {
     let url: URL
-    @Environment(ManagedNavigationStack.Path.self) private var path
+    
     @State private var consentDocument: ConsentDocument?
     @State private var viewState: ViewState = .idle
     
     var body: some View {
         OnboardingConsentView(consentDocument: consentDocument) {
-            path.nextStep()
+            // advance your Onboarding flow in response to the user having confirmed a completed consent document
         }
         .viewStateAlert(state: $viewState)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
+                // give your user the ability to obtain a PDF version of the consent document they just signed
                 ConsentShareButton(
                     consentDocument: consentDocument,
                     viewState: $viewState
@@ -49,6 +50,8 @@ struct ConsentStep: View {
             }
         }
         .task {
+            // load the consent document when the view is first displayed.
+            // this will automatically cause the `OnboardingConsentView` above to update its contents.
             do {
                 consentDocument = try ConsentDocument(contentsOf: url)
             } catch {

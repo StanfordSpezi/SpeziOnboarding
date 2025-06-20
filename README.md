@@ -21,7 +21,8 @@ Provides UI components for Onboarding and Consent.
 
 ## Overview
 
-The SpeziOnboarding module provides user interface components to onboard a user to an application, including the possibility of retrieving consent for study participation.
+- The [`SpeziOnboarding`](https://swiftpackageindex.com/stanfordspezi/spezionboarding/documentation/spezionboarding) module provides user interface components to onboard a user to an application;
+- The [`SpeziConsent`](https://swiftpackageindex.com/stanfordspezi/spezionboarding/documentation/speziconsent) module provides utilities for retrieving consent for e.g. a study participation.
 
 |![Screenshot displaying the onboarding view.](Sources/SpeziOnboarding/SpeziOnboarding.docc/Resources/OnboardingView.png#gh-light-mode-only) ![Screenshot displaying the onboarding view.](Sources/SpeziOnboarding/SpeziOnboarding.docc/Resources/OnboardingView~dark.png#gh-dark-mode-only)|![Screenshot displaying the sequential onboarding view.](Sources/SpeziOnboarding/SpeziOnboarding.docc/Resources/SequentialOnboardingView.png#gh-light-mode-only) ![Screenshot displaying the sequential onboarding view.](Sources/SpeziOnboarding/SpeziOnboarding.docc/Resources/SequentialOnboardingView~dark.png#gh-dark-mode-only)|![Screenshot displaying the consent view.](Sources/SpeziOnboarding/SpeziOnboarding.docc/Resources/ConsentView.png#gh-light-mode-only) ![Screenshot displaying the consent view.](Sources/SpeziOnboarding/SpeziOnboarding.docc/Resources/ConsentView~dark.png#gh-dark-mode-only)
 |:--:|:--:|:--:|
@@ -136,23 +137,20 @@ The view also uses the [`ConsentShareButton`](https://swiftpackageindex.com/stan
 import SpeziConsent
 import SwiftUI
 
-struct Consent: View {
+struct ConsentStep: View {
     let url: URL
-    
-    @Environment(ManagedNavigationStack.Path.self) private var path
     
     @State private var consentDocument: ConsentDocument?
     @State private var viewState: ViewState = .idle
     
     var body: some View {
         OnboardingConsentView(consentDocument: consentDocument) {
-            // advance your Onboarding flow in response to the user having confirmed a completed consent document 
-            path.nextStep()
+            // advance your Onboarding flow in response to the user having confirmed a completed consent document
         }
         .viewStateAlert(state: $viewState)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
-                // give your user the ability to obtain a PDF version of the consent document they just signed 
+                // give your user the ability to obtain a PDF version of the consent document they just signed
                 ConsentShareButton(
                     consentDocument: consentDocument,
                     viewState: $viewState
@@ -160,6 +158,8 @@ struct Consent: View {
             }
         }
         .task {
+            // load the consent document when the view is first displayed.
+            // this will automatically cause the `OnboardingConsentView` above to update its contents.
             do {
                 consentDocument = try ConsentDocument(contentsOf: url)
             } catch {

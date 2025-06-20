@@ -93,7 +93,6 @@ final class OnboardingConsentTests: XCTestCase {
         XCTAssertTrue(app.wait(for: .runningForeground, timeout: 2.0))
         
         app.buttons["Complex Consent View"].tap()
-        print(app.debugDescription)
         
         let shareButton = app.navigationBars.firstMatch.buttons["Share Consent Form"]
         XCTAssert(shareButton.waitForExistence(timeout: 1))
@@ -120,7 +119,6 @@ final class OnboardingConsentTests: XCTestCase {
         func select(in elementId: String, option: String?, expectedCurrentSelection: String?, line: UInt = #line) async throws {
             let noSelectionTitle = "(No selection)"
             let button = app.buttons["ConsentForm:\(elementId)"]
-            print(button.debugDescription)
             XCTAssert(button.exists)
             XCTAssert(button.staticTexts[expectedCurrentSelection ?? noSelectionTitle].waitForExistence(timeout: 1), line: line)
             button.tap()

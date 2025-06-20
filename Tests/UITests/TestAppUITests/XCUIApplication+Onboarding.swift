@@ -75,8 +75,7 @@ extension XCUIApplication {
         try textFields["Enter your last name…"].enter(value: "Stanford")
         
         hitConsentButton()
-
-        print(self.debugDescription)
+        
         XCTAssert(staticTexts["Name: Leland Stanford"].waitForExistence(timeout: 2))
 
         #if !os(macOS)
