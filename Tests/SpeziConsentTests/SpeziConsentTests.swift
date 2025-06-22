@@ -8,34 +8,13 @@
 
 import PDFKit
 @testable import SpeziConsent
+@testable import SpeziFoundation
 import SwiftUI
 import Testing
 
 
 @Suite
 struct SpeziConsentTests {
-    @Test
-    func metadataCoding() throws {
-        let encoder = JSONEncoder()
-        encoder.outputFormatting = [.sortedKeys]
-        let metadata: ConsentDocument.Metadata = [
-            "title": "Study Consent",
-            "version": "1.0.0"
-        ]
-        let encoded = try encoder.encode(metadata)
-        let decoded = try JSONDecoder().decode(ConsentDocument.Metadata.self, from: encoded)
-        #expect(decoded == metadata)
-        
-        let encoded2 = try encoder.encode([
-            "title": "Study Consent",
-            "version": "1.0.0"
-        ])
-        let decoded2 = try JSONDecoder().decode(ConsentDocument.Metadata.self, from: encoded2)
-        #expect(encoded2 == encoded)
-        #expect(decoded2 == metadata)
-    }
-    
-    
     @Test("PDF Export", arguments:
             zip(
                 ["markdown_data_one_page", "markdown_data_two_pages"],

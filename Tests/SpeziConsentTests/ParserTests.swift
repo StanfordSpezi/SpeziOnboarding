@@ -16,6 +16,7 @@ import Testing
 @Suite
 struct ConsentParserTests {
     @Test
+    @MainActor
     func simpleParsing() throws {
         let input = """
             # Hello World
@@ -28,9 +29,9 @@ struct ConsentParserTests {
             - forward
             - to welcoming you
             """
-        let result = try ConsentDocumentParser.parse(input)
-        #expect(result.frontmatter.isEmpty)
-        #expect(result.sections == [
+        let document = try ConsentDocument(markdown: input)
+        #expect(document.metadata.isEmpty)
+        #expect(document.sections == [
             .markdown(input)
         ])
     }
@@ -65,6 +66,7 @@ struct ConsentParserTests {
     }
     
     @Test
+    @MainActor
     func customElementParsing() throws {
         let input = """
             Hello *there* :)
@@ -80,9 +82,9 @@ struct ConsentParserTests {
             even more mark down
             <signature id=sig1></signature>
             """
-        let result = try ConsentDocumentParser.parse(input)
-        #expect(result.frontmatter.isEmpty)
-        #expect(result.sections == [
+        let document = try ConsentDocument(markdown: input)
+        #expect(document.metadata.isEmpty)
+        #expect(document.sections == [
             .markdown("Hello *there* :)"),
             .toggle(.init(id: "toggle1", prompt: "Prompt1", initialValue: true, expectedValue: false)),
             .toggle(.init(id: "toggle2", prompt: "Prompt2", initialValue: false, expectedValue: true)),
@@ -108,22 +110,25 @@ struct ConsentParserTests {
         "<signature id=sig></>",
         "<signature id=sig />"
     ])
+    @MainActor
     func endOfTagHandling(input: String) throws {
-        let result = try ConsentDocumentParser.parse(input)
-        #expect(result == .init(frontmatter: [:], sections: [
+        let document = try ConsentDocument(markdown: input)
+        #expect(document.metadata.isEmpty)
+        #expect(document.sections == [
             .signature(.init(id: "sig"))
-        ]))
+        ])
     }
     
     @Test
+    @MainActor
     func select0() throws {
         let input = """
             <select id=select1 initial-value=option1>
                 <option id=option1>Text</>
             </select>
             """
-        let result = try ConsentDocumentParser.parse(input)
-        #expect(result == .init(sections: [
+        let document = try ConsentDocument(markdown: input)
+        #expect(document.sections == [
             .select(.init(
                 id: "select1",
                 prompt: "",
@@ -131,10 +136,11 @@ struct ConsentParserTests {
                 initialValue: "option1",
                 expectedSelection: .anything(allowEmptySelection: true)
             ))
-        ]))
+        ])
     }
     
     @Test
+    @MainActor
     func select1() throws {
         let input = """
             <select id=select1 expected-value="*">
@@ -144,8 +150,8 @@ struct ConsentParserTests {
                 <option id=o2>T2</>
             </select>
             """
-        let result = try ConsentDocumentParser.parse(input)
-        #expect(result == .init(sections: [
+        let document = try ConsentDocument(markdown: input)
+        #expect(document.sections == [
             .select(.init(
                 id: "select1",
                 prompt: "Please select your preferred option",
@@ -153,10 +159,11 @@ struct ConsentParserTests {
                 initialValue: "",
                 expectedSelection: .anything(allowEmptySelection: false)
             ))
-        ]))
+        ])
     }
     
     @Test
+    @MainActor
     func invalidInput0() throws {
         let input = """
             <select id=select1 initial-value=o3>
@@ -165,11 +172,12 @@ struct ConsentParserTests {
             </select>
             """
         #expect(throws: (any Error).self) {
-            try ConsentDocumentParser.parse(input)
+            try ConsentDocument(markdown: input)
         }
     }
     
     @Test
+    @MainActor
     func invalidInput1() throws {
         let input = """
             <select id=select1 expected-value=o3>
@@ -178,7 +186,7 @@ struct ConsentParserTests {
             </select>
             """
         #expect(throws: (any Error).self) {
-            try ConsentDocumentParser.parse(input)
+            try ConsentDocument(markdown: input)
         }
     }
 }
