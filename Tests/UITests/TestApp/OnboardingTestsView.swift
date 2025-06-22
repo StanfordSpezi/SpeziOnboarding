@@ -17,7 +17,7 @@ struct OnboardingTestsView: View {
 
     
     var body: some View {
-        ManagedNavigationStack(didComplete: $onboardingFlowComplete) {
+        ManagedNavigationStack(didComplete: $onboardingFlowComplete) { // swiftlint:disable:this closure_body_length
             OnboardingStartTestView(
                 showConditionalView: $showConditionalView
             )
@@ -26,7 +26,10 @@ struct OnboardingTestsView: View {
 
             OnboardingConsentTestView(
                 consentTitle: "First Consent",
-                consentText: "This is the first *markdown* **example**",
+                consentText: """
+                    This is the first *markdown* **example**
+                    <signature id=sig />
+                    """,
                 documentIdentifier: ConsentDocumentIdentifiers.first
             )
             
@@ -37,7 +40,10 @@ struct OnboardingTestsView: View {
             
             OnboardingConsentTestView(
                 consentTitle: "Second Consent",
-                consentText: "This is the second *markdown* **example**",
+                consentText: """
+                    This is the second *markdown* **example**
+                    <signature id=sig />
+                    """,
                 documentIdentifier: ConsentDocumentIdentifiers.second
             )
                 .navigationStepIdentifier(ConsentDocumentIdentifiers.second)

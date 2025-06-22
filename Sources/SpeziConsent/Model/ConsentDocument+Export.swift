@@ -81,8 +81,8 @@ struct PDFRenderer {
 extension PDFRenderer {
     private func add(_ section: ConsentDocument.Section) throws {
         switch section {
-        case .markdown(let text):
-            addMarkdownBlock(text)
+        case .markdown(let rawContent):
+            addMarkdownBlock(rawContent)
         case .signature(let config):
             addRenderedSignature(config)
         case .toggle(let config):

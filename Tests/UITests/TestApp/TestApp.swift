@@ -32,3 +32,12 @@ struct UITestsApp: App {
         #endif
     }
 }
+
+extension View {
+    func printingType() -> Self {
+        print()
+        print(Self.self)
+        print(type(of: self))
+        return self
+    }
+}
