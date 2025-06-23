@@ -32,10 +32,12 @@ public struct ConsentDocumentView: View {
     private let signatureDateFormat: Date.FormatStyle
     
     public var body: some View {
-        MarkdownDocumentView(
+        MarkdownView(
             markdownDocument: consentDocument.markdownDocument,
-            dividerRule: .custom { _, sndBlockIdx -> Bool in
-                !consentDocument.sections[sndBlockIdx].isSignature
+            dividerRule: .custom { blockIdx, _ -> Bool in
+                let section = consentDocument.sections[blockIdx]
+                let nextSection = consentDocument.sections[blockIdx + 1]
+                return (section.isMarkdown && !nextSection.isMarkdown || !section.isMarkdown && nextSection.isMarkdown) && !nextSection.isSignature
             }
         ) { blockIdx, _ in
             let section = consentDocument.sections[blockIdx]
