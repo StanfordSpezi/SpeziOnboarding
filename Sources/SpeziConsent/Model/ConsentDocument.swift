@@ -213,10 +213,13 @@ public final class ConsentDocument: Sendable {
         }
     }
     
-    
+    /// Stores the user responses provided by a user for a ``ConsentDocument``.
     public struct UserResponses: Hashable, Codable, Sendable {
+        /// The user's responses to the consent document's `toggle` elements.
         public internal(set) var toggles: [String: Bool] = [:]
+        /// The user's responses to the consent document's `select` elements.
         public internal(set) var selects: [String: String] = [:]
+        /// The user's responses to the consent document's `signature` elements.
         public internal(set) var signatures: [String: SignatureStorage] = [:]
     }
     
