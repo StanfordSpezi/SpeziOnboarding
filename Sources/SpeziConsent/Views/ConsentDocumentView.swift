@@ -34,7 +34,7 @@ public struct ConsentDocumentView: View {
     public var body: some View {
         MarkdownView(
             markdownDocument: consentDocument.markdownDocument,
-            dividerRule: .custom { blockIdx, _ -> Bool in
+            dividerRule: .init { blockIdx, _ -> Bool in
                 let section = consentDocument.sections[blockIdx]
                 let nextSection = consentDocument.sections[blockIdx + 1]
                 return (section.isMarkdown && !nextSection.isMarkdown || !section.isMarkdown && nextSection.isMarkdown) && !nextSection.isSignature
