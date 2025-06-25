@@ -19,16 +19,12 @@ extension ConsentDocument {
         case select(SelectConfig)
         case signature(SignatureConfig)
         
-        var id: String? {
+        var isMarkdown: Bool {
             switch self {
             case .markdown:
-                nil
-            case .toggle(let config):
-                config.id
-            case .select(let config):
-                config.id
-            case .signature(let config):
-                config.id
+                true
+            case .toggle, .select, .signature:
+                false
             }
         }
         

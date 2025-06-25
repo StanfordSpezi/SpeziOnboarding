@@ -32,22 +32,21 @@ public struct ConsentDocumentView: View {
     private let signatureDateFormat: Date.FormatStyle
     
     public var body: some View {
-        let sections = consentDocument.sections
-        VStack(spacing: 12) {
-            ForEach(Array(sections.indices), id: \.self) { sectionIdx in
-                let section = sections[sectionIdx]
-                view(for: section)
-                    .id(section.id)
-                let nextIsSignature = sections[safe: sectionIdx + 1]?.isSignature ?? false
-                if sectionIdx == sections.endIndex - 2, nextIsSignature {
-                    // if the last section is a signature, we add a spacer.
-                    // this means that, if the consent is short, we push the signature field down all the way to the bottom of the screen.
-                    Spacer()
-                }
-                if sectionIdx < sections.endIndex - 1 && !nextIsSignature {
-                    Divider()
-                }
+        MarkdownView(
+            markdownDocument: consentDocument.markdownDocument,
+            dividerRule: .init { blockIdx, _ -> Bool in
+                let section = consentDocument.sections[blockIdx]
+                let nextSection = consentDocument.sections[blockIdx + 1]
+                return (section.isMarkdown && !nextSection.isMarkdown || !section.isMarkdown && nextSection.isMarkdown) && !nextSection.isSignature
             }
+        ) { blockIdx, _ in
+            let section = consentDocument.sections[blockIdx]
+            if section.isSignature && blockIdx == consentDocument.sections.endIndex - 1 {
+                // if the last section is a signature, we add a spacer.
+                // this means that, if the consent is short, we push the signature field down all the way to the bottom of the screen.
+                Spacer()
+            }
+            view(for: section)
         }
     }
     
@@ -74,12 +73,8 @@ public struct ConsentDocumentView: View {
     @ViewBuilder
     private func view(for section: ConsentDocument.Section) -> some View {
         switch section {
-        case .markdown(let text):
-            HStack {
-                Markdown(text)
-                Spacer()
-                // we can't seem to get the `Markdown` view to make itself as wide as possible, so this is the next best option :/
-            }
+        case .markdown:
+            let _ = preconditionFailure("unreachable") // swiftlint:disable:this redundant_discardable_let
         case .toggle(let config):
             let valueBinding = consentDocument.binding(for: config)
             Toggle(

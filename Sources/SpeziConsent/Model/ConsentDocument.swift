@@ -164,7 +164,9 @@ public final class ConsentDocument: Sendable {
         /// The input was not valid UTF-8-encoded text.
         case inputNotUTF8
         /// The parser was unable to process the input.
-        case failedToParse(ConsentParseError)
+        case failedToParse(MarkdownDocument.ParseError)
+        /// Something went wrong trying to process the document's interactive/custom elements.
+        case failedToProcessInteractiveElements(String)
         /// The input contains multiple custom elements with identical `id`s.
         case duplicateCustomElementId(String)
     }
@@ -211,23 +213,31 @@ public final class ConsentDocument: Sendable {
         }
     }
     
-    
+    /// Stores the user responses provided by a user for a ``ConsentDocument``.
     public struct UserResponses: Hashable, Codable, Sendable {
+        /// The user's responses to the consent document's `toggle` elements.
         public internal(set) var toggles: [String: Bool] = [:]
+        /// The user's responses to the consent document's `select` elements.
         public internal(set) var selects: [String: String] = [:]
+        /// The user's responses to the consent document's `signature` elements.
         public internal(set) var signatures: [String: SignatureStorage] = [:]
     }
     
+    /// The underlying `MarkdownDocument`, from which this `ConsentDocument` was created.
+    nonisolated let markdownDocument: MarkdownDocument
+    
     /// The document's metadata, parsed from the markdown frontmatter if present.
-    nonisolated public let metadata: Metadata
+    nonisolated public var metadata: MarkdownDocument.Metadata {
+        markdownDocument.metadata
+    }
     /// The document's extracted content, as a series of sections.
+    ///
+    /// There is a 1:1 correspondence between the `sections` and `markdownDocument.blocks`.
     nonisolated let sections: [Section]
     
     /// Stores the state of the document's interactive sections.
     public private(set) var userResponses = UserResponses()
     
-    /// Whether the `ConsentDocument` was created with support for custom elements enabled.
-    public let customElementsEnabled: Bool
     /// The document's signature date, if any.
     public var signatureDate: String?
     /// Indicates whether a signature is currently being signed somewhere in the consent document.
@@ -239,23 +249,39 @@ public final class ConsentDocument: Sendable {
     ///
     /// - parameter markdown: The Markdown input
     /// - parameter initialName: The default name that should be used for signature forms embedded in the Document
-    /// - parameter enableCustomElements: Whether the Document should enable support for parsing custom elements when processing `markdown`. Defaults to true.
-    public init(markdown: String, initialName: PersonNameComponents? = nil, enableCustomElements: Bool = true) throws(LoadError) {
-        customElementsEnabled = enableCustomElements
-        if enableCustomElements {
-            do {
-                let parseResult = try ConsentDocumentParser.parse(markdown)
-                self.metadata = .init(parseResult.frontmatter)
-                self.sections = parseResult.sections
-            } catch {
-                throw .failedToParse(error)
+    public init(markdown: String, initialName: PersonNameComponents? = nil) throws(LoadError) {
+        do {
+            markdownDocument = try MarkdownDocument(
+                processing: markdown,
+                customElementNames: ["toggle", "select", "signature", "option"]
+            )
+        } catch {
+            throw LoadError.failedToParse(error)
+        }
+        sections = try markdownDocument.blocks.map { block throws(LoadError) -> Section in
+            switch block {
+            case .markdown(id: _, let rawContents):
+                return .markdown(rawContents)
+            case .customElement(let parsedElement):
+                do {
+                    switch parsedElement.name {
+                    case "toggle":
+                        return try Section.toggle(parsedElement)
+                    case "select":
+                        return try Section.select(parsedElement)
+                    case "signature":
+                        return try Section.signature(parsedElement)
+                    default:
+                        throw LoadError.failedToProcessInteractiveElements("Unexpected top-level element: \(parsedElement.name)")
+                    }
+                } catch let error as LoadError {
+                    throw error
+                } catch {
+                    throw LoadError.failedToProcessInteractiveElements(
+                        "Unable to construct \(parsedElement.name.localizedCapitalized) element from \(parsedElement): \(error)"
+                    )
+                }
             }
-        } else {
-            metadata = .init()
-            sections = [
-                .markdown(markdown),
-                .signature(.init(id: "default-signature"))
-            ]
         }
         try processConsentFileSections(defaultName: initialName)
     }
@@ -264,22 +290,20 @@ public final class ConsentDocument: Sendable {
     ///
     /// - parameter markdown: The Markdown input. Must be valid UTF-8.
     /// - parameter initialName: The default name that should be used for signature forms embedded in the Document
-    /// - parameter enableCustomElements: Whether the Document should enable support for parsing custom elements when processing `markdown`. Defaults to true.
-    public convenience init(markdown: Data, initialName: PersonNameComponents? = nil, enableCustomElements: Bool = true) throws(LoadError) {
+    public convenience init(markdown: Data, initialName: PersonNameComponents? = nil) throws(LoadError) {
         guard let text = String(data: markdown, encoding: .utf8) else {
             throw .inputNotUTF8
         }
-        try self.init(markdown: text, initialName: initialName, enableCustomElements: enableCustomElements)
+        try self.init(markdown: text, initialName: initialName)
     }
     
     /// Creates a Consent Document by parsing Markdown from a URL.
     ///
     /// - parameter url: The url of the Markdown file.
     /// - parameter initialName: The default name that should be used for signature forms embedded in the Document
-    /// - parameter enableCustomElements: Whether the Document should enable support for parsing custom elements when processing the markdown text. Defaults to true.
-    public convenience init(contentsOf url: URL, initialName: PersonNameComponents? = nil, enableCustomElements: Bool = true) throws {
+    public convenience init(contentsOf url: URL, initialName: PersonNameComponents? = nil) throws {
         let data = try Data(contentsOf: url)
-        try self.init(markdown: data, initialName: initialName, enableCustomElements: enableCustomElements)
+        try self.init(markdown: data, initialName: initialName)
     }
     
     private func processConsentFileSections(defaultName: PersonNameComponents?) throws(LoadError) {
@@ -359,7 +383,7 @@ extension ConsentDocument {
         /// The filled out PDF document that was created from the consent document and the user-provided responses.
         public let pdf: PDFKit.PDFDocument
         /// The consent document's metadata.
-        public let metadata: ConsentDocument.Metadata
+        public let metadata: MarkdownDocument.Metadata
         /// The user's provided responses for the interactive elements in the consent form.
         public let userResponses: UserResponses
     }

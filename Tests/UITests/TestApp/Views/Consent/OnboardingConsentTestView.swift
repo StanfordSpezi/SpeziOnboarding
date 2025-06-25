@@ -50,7 +50,7 @@ struct OnboardingConsentTestView: View {
         .viewStateAlert(state: $viewState)
         .task {
             do {
-                consentDocument = try ConsentDocument(markdown: consentText, enableCustomElements: false)
+                consentDocument = try ConsentDocument(markdown: consentText)
             } catch {
                 viewState = .error(AnyLocalizedError(error: error))
             }
