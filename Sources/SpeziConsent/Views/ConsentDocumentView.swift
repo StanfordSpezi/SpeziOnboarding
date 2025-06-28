@@ -37,7 +37,7 @@ public struct ConsentDocumentView: View {
             dividerRule: .init { blockIdx, _ -> Bool in
                 let section = consentDocument.sections[blockIdx]
                 let nextSection = consentDocument.sections[blockIdx + 1]
-                return (section.isMarkdown && !nextSection.isMarkdown || !section.isMarkdown && nextSection.isMarkdown) && !nextSection.isSignature
+                return (section.isMarkdown && !nextSection.isMarkdown || !section.isMarkdown) && !nextSection.isSignature
             }
         ) { blockIdx, _ in
             let section = consentDocument.sections[blockIdx]
