@@ -6,7 +6,6 @@
 // SPDX-License-Identifier: MIT
 //
 
-import SpeziConsent
 import SpeziOnboarding
 import SpeziViews
 import SwiftUI
@@ -17,8 +16,7 @@ struct OnboardingStartTestView: View {
     @Binding var showConditionalView: Bool
     
     var body: some View {
-        let consentFileUrl = Bundle.main.url(forResource: "Consent", withExtension: "md")! // swiftlint:disable:this force_unwrapping
-        Form { // swiftlint:disable:this closure_body_length
+        Form {
             Button("Welcome View") {
                 path.navigateToNextStep(
                     matching: .viewType(OnboardingWelcomeTestView.self),
@@ -29,23 +27,6 @@ struct OnboardingStartTestView: View {
                 path.navigateToNextStep(
                     matching: .viewType(OnboardingSequentialTestView.self),
                     includeIntermediateSteps: false
-                )
-            }
-            Button("Consent View (Markdown)") {
-                path.navigateToNextStep(
-                    matching: .viewType(OnboardingConsentTestView.self),
-                    includeIntermediateSteps: false
-                )
-            }
-            Button("Rendered Consent View (Markdown)") {
-                path.navigateToNextStep(
-                    matching: .viewType(OnboardingConsentFinishedRenderedView.self),
-                    includeIntermediateSteps: false
-                )
-            }
-            Button("Complex Consent View") {
-                path.append(
-                    customView: Consent(url: consentFileUrl)
                 )
             }
             Button("Custom Onboarding View 1") {

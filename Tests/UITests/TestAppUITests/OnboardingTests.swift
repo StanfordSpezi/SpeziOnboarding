@@ -48,10 +48,6 @@ final class OnboardingTests: XCTestCase {
         XCTAssert(app.buttons["Continue"].waitForExistence(timeout: 2.0))
         app.buttons["Continue"].tap()
 
-        // Check first and second consent export
-        try app.consentViewOnboardingFlow(consentTitle: "First Consent", markdownText: "This is the first markdown example")
-        try app.consentViewOnboardingFlow(consentTitle: "Second Consent", markdownText: "This is the second markdown example")
-
         XCTAssert(app.staticTexts["Leland"].waitForExistence(timeout: 2))
         XCTAssert(app.buttons["Next"].waitForExistence(timeout: 2))
         app.buttons["Next"].tap()
@@ -99,6 +95,7 @@ final class OnboardingTests: XCTestCase {
         XCTAssert(app.staticTexts["And you should pay close attention ..."].exists)
     }
 
+    
     @MainActor
     func testSequentialOnboarding() throws {
         let app = XCUIApplication()
@@ -136,7 +133,7 @@ final class OnboardingTests: XCTestCase {
         XCTAssert(app.buttons["Continue"].exists)
         app.buttons["Continue"].tap()
 
-        XCTAssert(app.staticTexts["First Consent"].waitForExistence(timeout: 2))
+        XCTAssert(app.staticTexts["Leland"].waitForExistence(timeout: 2))
     }
     
     @MainActor

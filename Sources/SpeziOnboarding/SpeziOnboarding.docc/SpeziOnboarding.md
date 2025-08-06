@@ -14,7 +14,7 @@ Provides SwiftUI views for onboarding users onto a digital health application.
 
 ## Overview
 
-The `SpeziOnboarding` module provides views that can be used for performing onboarding tasks, such as providing an overview of your app and asking a user to read and sign a consent document.
+The `SpeziOnboarding` module provides views that can be used for performing onboarding tasks, such as providing an overview of your app and, in combination with [SpeziConsent](https://swiftpackageindex.com/stanfordspezi/speziconsent/documentation/speziconsent) asking a user to read and sign a consent document.
 
 @Row {
     @Column {

@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		2F61BDC329DD02D600D71D33 /* SpeziOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = 2F61BDC229DD02D600D71D33 /* SpeziOnboarding */; };
-		8067273A2DFABBCC009291E1 /* SpeziConsent in Frameworks */ = {isa = PBXBuildFile; productRef = 806727392DFABBCC009291E1 /* SpeziConsent */; };
 		97C6AF7B2ACC89000060155B /* XCTestExtensions in Frameworks */ = {isa = PBXBuildFile; productRef = 97C6AF7A2ACC89000060155B /* XCTestExtensions */; };
 /* End PBXBuildFile section */
 
@@ -40,7 +39,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				2F61BDC329DD02D600D71D33 /* SpeziOnboarding in Frameworks */,
-				8067273A2DFABBCC009291E1 /* SpeziConsent in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -105,7 +103,6 @@
 			name = TestApp;
 			packageProductDependencies = (
 				2F61BDC229DD02D600D71D33 /* SpeziOnboarding */,
-				806727392DFABBCC009291E1 /* SpeziConsent */,
 			);
 			productName = Example;
 			productReference = 2F6D139228F5F384007C25D6 /* TestApp.app */;
@@ -660,10 +657,6 @@
 		2F61BDC229DD02D600D71D33 /* SpeziOnboarding */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SpeziOnboarding;
-		};
-		806727392DFABBCC009291E1 /* SpeziConsent */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = SpeziConsent;
 		};
 		97C6AF7A2ACC89000060155B /* XCTestExtensions */ = {
 			isa = XCSwiftPackageProductDependency;
