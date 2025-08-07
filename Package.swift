@@ -25,7 +25,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/StanfordSpezi/Spezi.git", from: "1.8.0"),
-        .package(url: "https://github.com/StanfordSpezi/SpeziViews.git", branch: "lukas/improve")
+        .package(url: "https://github.com/StanfordSpezi/SpeziViews.git", from: "1.12.1")
     ] + swiftLintPackage(),
     targets: [
         .target(

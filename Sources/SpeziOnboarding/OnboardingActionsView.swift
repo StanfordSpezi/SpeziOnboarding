@@ -44,17 +44,17 @@ public struct OnboardingActionsView: View {
                     .frame(maxWidth: .infinity, minHeight: 38)
             }
             .buttonStyle(.borderedProminent)
-            .transform {
-                #if !os(visionOS)
-                if #available(iOS 26, macOS 26, tvOS 26, watchOS 26, *) {
-                    $0.glassEffect(.regular.interactive())
-                } else {
-                    $0
-                }
-                #else
-                $0
-                #endif
-            }
+//            .transform {
+//                #if !os(visionOS)
+//                if #available(iOS 26, macOS 26, tvOS 26, watchOS 26, *) {
+//                    $0.glassEffect(.regular.interactive())
+//                } else {
+//                    $0
+//                }
+//                #else
+//                $0
+//                #endif
+//            }
             if let secondaryText, let secondaryAction {
                 AsyncButton(state: $secondaryActionState, action: secondaryAction) {
                     secondaryText
