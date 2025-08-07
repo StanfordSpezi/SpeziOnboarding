@@ -137,30 +137,6 @@ public struct OnboardingView<Header: View, Content: View, Footer: View>: View {
         self.footer = footer()
     }
     
-    /// Creates a customized `OnboardingView` allowing a complete customization of the  `OnboardingView`.
-    ///
-    /// - Parameters:
-    ///   - wrapInScrollView: Whether the `OnboardingView` should wrap its body (i.e., the `header`, the `content`, and the `footer`) in a `ScrollView`.
-    ///       Defaults to `true`, but can be set to `false` to work around some edge cased, like e.g. when the `content` is/contains
-    ///       a `Form` (which already wraps its content in a `ScrollView`), in which case this parameter allows you to avoid getting double, nested `ScrollView`s.
-    ///   - titleView: The title view displayed at the top.
-    ///   - contentView: The content view.
-    ///   - actionView: The action view displayed at the bottom.
-    @available(*, deprecated, renamed: "init(wrapInScrollView:header:content:footer:)")
-    public init(
-        wrapInScrollView: Bool = true,
-        @ViewBuilder titleView: () -> Header = { EmptyView() },
-        @ViewBuilder contentView: () -> Content,
-        @ViewBuilder actionView: () -> Footer
-    ) {
-        self.init(
-            wrapInScrollView: wrapInScrollView,
-            header: titleView,
-            content: contentView,
-            footer: actionView
-        )
-    }
-    
     
     /// Creates the default style of the `OnboardingView` uses a combination of an ``OnboardingTitleView``, ``OnboardingInformationView``,
     /// and ``OnboardingActionsView``.
