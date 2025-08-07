@@ -40,19 +40,31 @@ public struct OnboardingActionsView: View {
         VStack {
             AsyncButton(state: $primaryActionState, action: primaryAction) {
                 primaryText
+                    .bold()
                     .frame(maxWidth: .infinity, minHeight: 38)
             }
-                .buttonStyle(.borderedProminent)
+            .buttonStyle(.borderedProminent)
+            .transform {
+                #if !os(visionOS)
+                if #available(iOS 26, macOS 26, tvOS 26, watchOS 26, *) {
+                    $0.glassEffect(.regular.interactive())
+                } else {
+                    $0
+                }
+                #else
+                $0
+                #endif
+            }
             if let secondaryText, let secondaryAction {
                 AsyncButton(state: $secondaryActionState, action: secondaryAction) {
                     secondaryText
                 }
-                    .padding(.top, 10)
+                .padding(.top, 10)
             }
         }
-            .disabled(primaryActionState != .idle || secondaryActionState != .idle)
-            .viewStateAlert(state: $primaryActionState)
-            .viewStateAlert(state: $secondaryActionState)
+        .disabled(primaryActionState != .idle || secondaryActionState != .idle)
+        .viewStateAlert(state: $primaryActionState)
+        .viewStateAlert(state: $secondaryActionState)
     }
 
 
@@ -125,6 +137,13 @@ public struct OnboardingActionsView: View {
             secondaryText: Text(verbatim: String(secondaryText)),
             secondaryAction: secondaryAction
         )
+    }
+}
+
+
+extension View {
+    func transform(@ViewBuilder _ transform: (Self) -> some View) -> some View {
+        transform(self)
     }
 }
 

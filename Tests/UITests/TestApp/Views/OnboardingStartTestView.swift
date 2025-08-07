@@ -15,36 +15,48 @@ struct OnboardingStartTestView: View {
     @Environment(ManagedNavigationStack.Path.self) private var path
     @Binding var showConditionalView: Bool
     
+    @State private var isShowingScreenshotsFlow = false
+    
     var body: some View {
         Form {
-            Button("Welcome View") {
-                path.navigateToNextStep(
-                    matching: .viewType(OnboardingWelcomeTestView.self),
-                    includeIntermediateSteps: false
+            Section {
+                Button("Welcome View") {
+                    path.navigateToNextStep(
+                        matching: .viewType(OnboardingWelcomeTestView.self),
+                        includeIntermediateSteps: false
+                    )
+                }
+                Button("Sequential Onboarding") {
+                    path.navigateToNextStep(
+                        matching: .viewType(OnboardingSequentialTestView.self),
+                        includeIntermediateSteps: false
+                    )
+                }
+                Button("Custom Onboarding View 1") {
+                    path.append(
+                        customView: OnboardingCustomTestView1(exampleArgument: "Hello Spezi!")
+                    )
+                }
+                Button("Custom Onboarding View 2") {
+                    path.append(customView: OnboardingCustomTestView2())
+                }
+                Button("Onboarding Identifiable View") {
+                    path.append(customView: OnboardingIdentifiableTestViewCustom(id: "ID: 1"))
+                }
+                /// We need to use a custom-built toggle as UI tests are very flakey when clicking on SwiftUI `Toggle`'s
+                CustomToggleView(
+                    text: "Show Conditional View",
+                    condition: $showConditionalView
                 )
             }
-            Button("Sequential Onboarding") {
-                path.navigateToNextStep(
-                    matching: .viewType(OnboardingSequentialTestView.self),
-                    includeIntermediateSteps: false
-                )
+            Section {
+                Button("Screenshots") {
+                    isShowingScreenshotsFlow = true
+                }
             }
-            Button("Custom Onboarding View 1") {
-                path.append(
-                    customView: OnboardingCustomTestView1(exampleArgument: "Hello Spezi!")
-                )
-            }
-            Button("Custom Onboarding View 2") {
-                path.append(customView: OnboardingCustomTestView2())
-            }
-            Button("Onboarding Identifiable View") {
-                path.append(customView: OnboardingIdentifiableTestViewCustom(id: "ID: 1"))
-            }
-            /// We need to use a custom-built toggle as UI tests are very flakey when clicking on SwiftUI `Toggle`'s
-            CustomToggleView(
-                text: "Show Conditional View",
-                condition: $showConditionalView
-            )
+        }
+        .sheet(isPresented: $isShowingScreenshotsFlow) {
+            ScreenshotsFlow()
         }
     }
 }

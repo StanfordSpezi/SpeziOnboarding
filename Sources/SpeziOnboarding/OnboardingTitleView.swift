@@ -15,22 +15,23 @@ import SwiftUI
 /// OnboardingTitleView(title: "Title", subtitle: "Subtitle")
 /// ```
 public struct OnboardingTitleView: View {
+    private static let isIOS26 = ProcessInfo.processInfo.operatingSystemVersion.majorVersion >= 26
+    
     private let title: Text
     private let subtitle: Text?
-
     
     public var body: some View {
-        VStack {
+        VStack(alignment: .leading) {
             title
                 .bold()
                 .font(.largeTitle)
-                .multilineTextAlignment(.center)
+                .multilineTextAlignment(Self.isIOS26 ? .leading : .center)
                 .padding(.bottom)
                 .accessibilityAddTraits(.isHeader)
             
             if let subtitle {
                 subtitle
-                    .multilineTextAlignment(.center)
+                    .multilineTextAlignment(Self.isIOS26 ? .leading : .center)
                     .padding(.bottom)
             }
         }
