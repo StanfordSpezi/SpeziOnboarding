@@ -21,10 +21,11 @@ concurrency:
 
 jobs:
   package_tests:
-    name: Build and Test Swift Package ${{ matrix.platform }}
+    name: Build and Test Swift Package ${{ matrix.platform }} ${{ matrix.config }}
     uses: StanfordBDHG/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
     strategy:
       matrix:
+        config: [debug, release]
         include:
           - platform: iOS
             destination: 'platform=iOS Simulator,name=iPhone 16 Pro'
@@ -36,13 +37,15 @@ jobs:
       runsonlabels: '["macOS", "self-hosted"]'
       scheme: SpeziOnboarding
       destination: ${{ matrix.destination }}
-      resultBundle: ${{ format('SpeziOnboarding-{0}.xcresult', matrix.platform) }}
-      artifactname: ${{ format('SpeziOnboarding-{0}.xcresult', matrix.platform) }}
+      buildConfig: ${{ matrix.config }}
+      resultBundle: ${{ format('SpeziOnboarding-{0}-{1}.xcresult', matrix.platform, matrix.config) }}
+      artifactname: ${{ format('SpeziOnboarding-{0}-{1}.xcresult', matrix.platform, matrix.config) }}
   ui_tests:
-    name: Build and Test UI Tests ${{ matrix.platform }}
+    name: Build and Test UI Tests ${{ matrix.platform }} ${{ matrix.config }}
     uses: StanfordBDHG/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
     strategy:
       matrix:
+        config: [debug, release]
         include:
           - platform: iOS
             destination: 'platform=iOS Simulator,name=iPhone 16 Pro'
@@ -55,8 +58,9 @@ jobs:
       path: 'Tests/UITests'
       scheme: TestApp
       destination: ${{ matrix.destination }}
-      resultBundle: ${{ format('TestApp-{0}.xcresult', matrix.platform) }}
-      artifactname: ${{ format('TestApp-{0}.xcresult', matrix.platform) }}
+      buildConfig: ${{ matrix.config }}
+      resultBundle: ${{ format('TestApp-{0}-{1}.xcresult', matrix.platform, matrix.config) }}
+      artifactname: ${{ format('TestApp-{0}-{1}.xcresult', matrix.platform, matrix.config) }}
   uploadcoveragereport:
     name: Upload Coverage Report
     needs: [package_tests, ui_tests]
