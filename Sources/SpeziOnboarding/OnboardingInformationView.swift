@@ -14,7 +14,7 @@ import SwiftUI
 /// Present informational content in a row-based style.
 ///
 /// The `OnboardingInformationView` allows developers to present a unified style to display informational content as defined
-/// by the ``OnboardingInformationView/Content`` type.
+/// by the ``OnboardingInformationView/Area`` type.
 ///
 /// The following example displays an ``OnboardingInformationView`` with two information areas:
 /// ```swift

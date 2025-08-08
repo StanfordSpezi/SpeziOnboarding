@@ -142,9 +142,9 @@ public struct OnboardingView<Header: View, Content: View, Footer: View>: View {
     /// and ``OnboardingActionsView``.
     ///
     /// - Parameters:
-    ///   - title: The localized title of the ``OnboardingView``.
-    ///   - subtitle: The localized subtitle of the ``OnboardingView``.
-    ///   - areas: The areas of the ``OnboardingView`` defined using ``OnboardingInformationView/Content`` instances..
+    ///   - title: The onboarding view's localized title.
+    ///   - subtitle: The onboarding view's optional localized subtitle.
+    ///   - areas: The onboarding view's, defining the view's main content.
     ///   - actionText: The localized text that should appear on the ``OnboardingView``'s primary button.
     ///   - action: The close that is called then the primary button is pressed.
     public init(
@@ -171,7 +171,7 @@ public struct OnboardingView<Header: View, Content: View, Footer: View>: View {
     /// - Parameters:
     ///   - title: The title without localization.
     ///   - subtitle: The subtitle without localization.
-    ///   - areas: The areas of the `OnboardingView` defined using ``OnboardingInformationView/Content`` instances..
+    ///   - areas: The onboarding view's, defining the view's main content.
     ///   - actionText: The text that should appear on the `OnboardingView`'s primary button without localization.
     ///   - action: The close that is called then the primary button is pressed.
     @_disfavoredOverload

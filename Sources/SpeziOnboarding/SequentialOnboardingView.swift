@@ -175,7 +175,7 @@ extension SequentialOnboardingView {
     /// - Parameters:
     ///   - title: The localized title.
     ///   - subtitle: The localized subtitle.
-    ///   - steps: The areas of the `SequentialOnboardingView` defined using ``SequentialOnboardingView/Content`` instances..
+    ///   - steps: The sequential onboarding view's steps, defining the main content being built up step-by-step by the view.
     ///   - actionText: The localized text that should appear on the `SequentialOnboardingView`'s primary button.
     ///   - action: The close that is called then the primary button is pressed.
     public init(
@@ -197,8 +197,9 @@ extension SequentialOnboardingView {
     /// and ``OnboardingActionsView``.
     ///
     /// - Parameters:
-    ///   - title: The title  without localization.
-    ///   - steps: The areas of the `SequentialOnboardingView` defined using ``SequentialOnboardingView/Content`` instances..
+    ///   - title: The title without localization.
+    ///   - subtitle: The view's optional subtitle
+    ///   - steps: The sequential onboarding view's steps, defining the main content being built up step-by-step by the view.
     ///   - actionText: The text that should appear on the `SequentialOnboardingView`'s primary button.
     ///   - action: The close that is called then the primary button is pressed.
     @_disfavoredOverload
@@ -222,7 +223,7 @@ extension SequentialOnboardingView {
     ///
     /// - Parameters:
     ///   - titleView: The title view displayed at the top.
-    ///   - steps: The areas of the `SequentialOnboardingView` defined using ``SequentialOnboardingView/Content`` instances..
+    ///   - steps: The sequential onboarding view's steps, defining the main content being built up step-by-step by the view.
     ///   - actionText: The text that should appear on the `SequentialOnboardingView`'s primary button without localization.
     ///   - action: The close that is called then the primary button is pressed.
     @_disfavoredOverload
@@ -244,7 +245,7 @@ extension SequentialOnboardingView {
     ///
     /// - Parameters:
     ///   - titleView: The title view displayed at the top.
-    ///   - steps: The areas of the ``SequentialOnboardingView`` defined using ``SequentialOnboardingView/Content`` instances..
+    ///   - steps: The sequential onboarding view's steps, defining the main content being built up step-by-step by the view.
     ///   - actionText: The localized text that should appear on the ``SequentialOnboardingView``'s primary button.
     ///   - action: The close that is called then the primary button is pressed.
     public init(
