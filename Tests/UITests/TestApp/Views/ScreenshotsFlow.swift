@@ -33,20 +33,25 @@ private struct Welcome: View {
             subtitle: "This application demonstrates several Spezi features & modules",
             areas: [
                 .init(
-                    icon: Image(systemName: "apps.iphone"),
+                    systemSymbol: "apps.iphone",
                     title: "The Spezi Framework",
                     description: "The Spezi Framework builds the foundation of this template application."
                 ),
                 .init(
-                    icon: Image(systemName: "shippingbox"),
+                    systemSymbol: "shippingbox",
                     title: "Swift Package Manager",
                     description: "Spezi is imported into applications using the Swift Package Manager."
                 ),
                 .init(
-                    icon: Image(systemName: "square.3.layers.3d"),
+                    systemSymbol: "square.3.layers.3d",
                     title: "Spezi Modules",
-                    description: "Spezi offers several modules including HealthKit integration, questionnaires, account management, and more…"
+                    description: "Spezi offers several modules including HealthKit integration, questionnaires, account management, and more."
                 ),
+                .init(
+                    systemSymbol: "shuffle",
+                    title: "HL7 FHIR Integration",
+                    description: "Many of Spezi's modules offer native support for FHIR-based data sharing with existing systems and workflows."
+                )
             ],
             actionText: "Learn More"
         ) {
@@ -63,11 +68,11 @@ private struct InterestingModules: View {
         SequentialOnboardingView(
             title: "Interesting Modules",
             subtitle: "Here are a few key Spezi modules and features",
-            content: [
-                .init(title: "Onboarding", description: "The Onboarding module allows you to build an onboarding flow like this one"),
-                .init(title: "Account", description: "SpeziAccount enabled user log in and sign up, using Firebase and other services"),
-                .init(title: "HL7 FHIR", description: "Many Spezi modules support the HL7 FHIR standard, enabling easy data sharing and integration into existing workflows"),
-                .init(title: "Scheduler", description: "Via Spezi's Scheduler module, users can be prompted to complete tasks based on schedules")
+            steps: [
+                .init(title: "Onboarding", description: "The Onboarding module allows you to build an onboarding flow like this one."),
+                .init(title: "Account", description: "SpeziAccount enabled user log in and sign up, using Firebase and other services."),
+                .init(title: "HealthKit", description: "Work with Health data collected by the user's iPhone and Watch."),
+                .init(title: "Scheduler", description: "Via Spezi's Scheduler module, users can be prompted to complete tasks based on schedules.")
             ],
             actionText: "Continue"
         ) {

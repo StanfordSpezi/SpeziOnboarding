@@ -40,8 +40,8 @@ import SwiftUI
 /// }
 /// ```
 public struct SequentialOnboardingView<TitleView: View>: View {
-    /// A `Content` defines the way that information is displayed in an ``SequentialOnboardingView``.
-    public struct Content {
+    /// A `Step` defines the way that information is displayed in an ``SequentialOnboardingView``.
+    public struct Step {
         /// The title of the area in the ``SequentialOnboardingView``.
         public let title: Text?
         /// The description of the area in the ``SequentialOnboardingView``.
@@ -87,11 +87,11 @@ public struct SequentialOnboardingView<TitleView: View>: View {
     
     
     private let titleView: TitleView
-    private let content: [Content]
+    private let steps: [Step]
     private let actionText: Text
     private let action: () async throws -> Void
 
-    @State private var currentContentIndex: Int = 0
+    @State private var currentStepIndex: Int = 0
     
     
     public var body: some View {
@@ -99,20 +99,18 @@ public struct SequentialOnboardingView<TitleView: View>: View {
             OnboardingView {
                 titleView
             } content: {
-                ForEach(0..<content.count, id: \.self) { index in
-                    if index <= currentContentIndex {
+                ForEach(0..<steps.count, id: \.self) { index in
+                    if index <= currentStepIndex {
                         stepView(index: index)
                             .id(index)
                     }
                 }
             } footer: {
-                OnboardingActionsView(
-                    primaryText: actionButtonTitle
-                ) {
-                    if currentContentIndex < content.count - 1 {
-                        currentContentIndex += 1
+                OnboardingActionsView(primaryText: actionButtonTitle) {
+                    if currentStepIndex < steps.count - 1 {
+                        currentStepIndex += 1
                         withAnimation {
-                            proxy.scrollTo(currentContentIndex - 1, anchor: .top)
+                            proxy.scrollTo(currentStepIndex - 1, anchor: .top)
                         }
                     } else {
                         try await action()
@@ -123,139 +121,27 @@ public struct SequentialOnboardingView<TitleView: View>: View {
     }
     
     private var actionButtonTitle: Text {
-        if currentContentIndex < content.count - 1 {
+        if currentStepIndex < steps.count - 1 {
             return Text("SEQUENTIAL_ONBOARDING_NEXT", bundle: .module)
         } else {
             return actionText
         }
     }
 
-    private init(titleView: TitleView, content: [Content], actionText: Text, action: @escaping () async throws -> Void) {
+    private init(
+        titleView: TitleView,
+        steps: [Step],
+        actionText: Text,
+        action: @escaping @MainActor () async throws -> Void
+    ) {
         self.titleView = titleView
-        self.content = content
+        self.steps = steps
         self.actionText = actionText
         self.action = action
     }
-
-    /// Creates the default style of the `SequentialOnboardingView` that uses a combination of an ``OnboardingTitleView``
-    /// and ``OnboardingActionsView``.
-    ///
-    /// - Parameters:
-    ///   - title: The localized title.
-    ///   - subtitle: The localized subtitle.
-    ///   - content: The areas of the `SequentialOnboardingView` defined using ``SequentialOnboardingView/Content`` instances..
-    ///   - actionText: The localized text that should appear on the `SequentialOnboardingView`'s primary button.
-    ///   - action: The close that is called then the primary button is pressed.
-    public init(
-        title: LocalizedStringResource,
-        subtitle: LocalizedStringResource? = nil, // swiftlint:disable:this function_default_parameter_at_end
-        content: [Content],
-        actionText: LocalizedStringResource,
-        action: @escaping () async throws -> Void
-    ) where TitleView == OnboardingTitleView {
-        self.init(
-            titleView: OnboardingTitleView(title: title, subtitle: subtitle),
-            content: content,
-            actionText: Text(actionText),
-            action: action
-        )
-    }
-    
-    /// Creates the default style of the `SequentialOnboardingView` that uses a combination of an ``OnboardingTitleView``
-    /// and ``OnboardingActionsView``.
-    ///
-    /// - Parameters:
-    ///   - title: The title  without localization.
-    ///   - content: The areas of the `SequentialOnboardingView` defined using ``SequentialOnboardingView/Content`` instances..
-    ///   - actionText: The text that should appear on the `SequentialOnboardingView`'s primary button.
-    ///   - action: The close that is called then the primary button is pressed.
-    @_disfavoredOverload
-    public init<Title: StringProtocol, ActionText: StringProtocol>(
-        title: Title,
-        content: [Content],
-        actionText: ActionText,
-        action: @escaping () async throws -> Void
-    ) where TitleView == OnboardingTitleView {
-        self.init(
-            titleView: OnboardingTitleView(title: title),
-            content: content,
-            actionText: Text(verbatim: String(actionText)),
-            action: action
-        )
-    }
-    
-    /// Creates the default style of the `SequentialOnboardingView` that uses a combination of an ``OnboardingTitleView``
-    /// and ``OnboardingActionsView``.
-    ///
-    /// - Parameters:
-    ///   - title: The title without localization.
-    ///   - subtitle: The subtitle without localization.
-    ///   - content: The areas of the `SequentialOnboardingView` defined using ``SequentialOnboardingView/Content`` instances..
-    ///   - actionText: The text that should appear on the `SequentialOnboardingView`'s primary button.
-    ///   - action: The close that is called then the primary button is pressed.
-    @_disfavoredOverload
-    public init<Title: StringProtocol, Subtitle: StringProtocol, ActionText: StringProtocol>(
-        title: Title,
-        subtitle: Subtitle?,
-        content: [Content],
-        actionText: ActionText,
-        action: @escaping () async throws -> Void
-    ) where TitleView == OnboardingTitleView {
-        self.init(
-            titleView: OnboardingTitleView(title: title, subtitle: subtitle),
-            content: content,
-            actionText: Text(verbatim: String(actionText)),
-            action: action
-        )
-    }
-    
-    
-    /// Creates a customized `SequentialOnboardingView` allowing a complete customization of the  `SequentialOnboardingView`'s title view.
-    ///
-    /// - Parameters:
-    ///   - titleView: The title view displayed at the top.
-    ///   - content: The areas of the `SequentialOnboardingView` defined using ``SequentialOnboardingView/Content`` instances..
-    ///   - actionText: The text that should appear on the `SequentialOnboardingView`'s primary button without localization.
-    ///   - action: The close that is called then the primary button is pressed.
-    @_disfavoredOverload
-    public init<ActionText: StringProtocol>(
-        titleView: TitleView,
-        content: [Content],
-        actionText: ActionText,
-        action: @escaping () async throws -> Void
-    ) {
-        self.init(
-            titleView: titleView,
-            content: content,
-            actionText: Text(verbatim: String(actionText)),
-            action: action
-        )
-    }
-    
-    /// Creates a customized `SequentialOnboardingView` allowing a complete customization of the  `SequentialOnboardingView`'s title view.
-    ///
-    /// - Parameters:
-    ///   - titleView: The title view displayed at the top.
-    ///   - content: The areas of the ``SequentialOnboardingView`` defined using ``SequentialOnboardingView/Content`` instances..
-    ///   - actionText: The localized text that should appear on the ``SequentialOnboardingView``'s primary button.
-    ///   - action: The close that is called then the primary button is pressed.
-    public init(
-        titleView: TitleView,
-        content: [Content],
-        actionText: LocalizedStringResource,
-        action: @escaping () async throws -> Void
-    ) {
-        self.init(
-            titleView: titleView,
-            content: content,
-            actionText: Text(actionText),
-            action: action
-        )
-    }
-    
     
     private func stepView(index: Int) -> some View {
-        let content = content[index]
+        let step = steps[index]
         return HStack {
             HStack(alignment: .firstTextBaseline, spacing: 8) {
                 Text(verbatim: "\(index + 1)")
@@ -267,15 +153,15 @@ public struct SequentialOnboardingView<TitleView: View>: View {
                             .fill(Color.accentColor)
                     }
                     .accessibilityLabel(String("\(index + 1)."))
-                    .accessibilityHidden(content.title != nil)
+                    .accessibilityHidden(step.title != nil)
                 VStack(alignment: .leading, spacing: 8) {
-                    if let title = content.title {
+                    if let title = step.title {
                         title
                             .bold()
                             .accessibilityLabel(Text(verbatim: "\(index + 1). ") + title)
                             .accessibilityAddTraits(.isHeader)
                     }
-                    content.description
+                    step.description
                 }
                 Spacer()
             }
@@ -295,12 +181,107 @@ public struct SequentialOnboardingView<TitleView: View>: View {
 }
 
 
+extension SequentialOnboardingView {
+    /// Creates the default style of the `SequentialOnboardingView` that uses a combination of an ``OnboardingTitleView``
+    /// and ``OnboardingActionsView``.
+    ///
+    /// - Parameters:
+    ///   - title: The localized title.
+    ///   - subtitle: The localized subtitle.
+    ///   - steps: The areas of the `SequentialOnboardingView` defined using ``SequentialOnboardingView/Content`` instances..
+    ///   - actionText: The localized text that should appear on the `SequentialOnboardingView`'s primary button.
+    ///   - action: The close that is called then the primary button is pressed.
+    public init(
+        title: LocalizedStringResource,
+        subtitle: LocalizedStringResource? = nil, // swiftlint:disable:this function_default_parameter_at_end
+        steps: [Step],
+        actionText: LocalizedStringResource,
+        action: @escaping @MainActor () async throws -> Void
+    ) where TitleView == OnboardingTitleView {
+        self.init(
+            titleView: OnboardingTitleView(title: title, subtitle: subtitle),
+            steps: steps,
+            actionText: Text(actionText),
+            action: action
+        )
+    }
+    
+    /// Creates the default style of the `SequentialOnboardingView` that uses a combination of an ``OnboardingTitleView``
+    /// and ``OnboardingActionsView``.
+    ///
+    /// - Parameters:
+    ///   - title: The title  without localization.
+    ///   - steps: The areas of the `SequentialOnboardingView` defined using ``SequentialOnboardingView/Content`` instances..
+    ///   - actionText: The text that should appear on the `SequentialOnboardingView`'s primary button.
+    ///   - action: The close that is called then the primary button is pressed.
+    @_disfavoredOverload
+    public init(
+        title: some StringProtocol,
+        subtitle: (some StringProtocol)? = String?.none, // swiftlint:disable:this function_default_parameter_at_end
+        steps: [Step],
+        actionText: some StringProtocol,
+        action: @escaping @MainActor () async throws -> Void
+    ) where TitleView == OnboardingTitleView {
+        self.init(
+            titleView: OnboardingTitleView(title: title, subtitle: subtitle),
+            steps: steps,
+            actionText: Text(actionText),
+            action: action
+        )
+    }
+    
+    
+    /// Creates a customized `SequentialOnboardingView` allowing a complete customization of the  `SequentialOnboardingView`'s title view.
+    ///
+    /// - Parameters:
+    ///   - titleView: The title view displayed at the top.
+    ///   - steps: The areas of the `SequentialOnboardingView` defined using ``SequentialOnboardingView/Content`` instances..
+    ///   - actionText: The text that should appear on the `SequentialOnboardingView`'s primary button without localization.
+    ///   - action: The close that is called then the primary button is pressed.
+    @_disfavoredOverload
+    public init(
+        @ViewBuilder title titleView: () -> TitleView,
+        steps: [Step],
+        actionText: some StringProtocol,
+        action: @escaping @MainActor () async throws -> Void
+    ) {
+        self.init(
+            titleView: titleView(),
+            steps: steps,
+            actionText: Text(verbatim: String(actionText)),
+            action: action
+        )
+    }
+    
+    /// Creates a customized `SequentialOnboardingView` allowing a complete customization of the  `SequentialOnboardingView`'s title view.
+    ///
+    /// - Parameters:
+    ///   - titleView: The title view displayed at the top.
+    ///   - steps: The areas of the ``SequentialOnboardingView`` defined using ``SequentialOnboardingView/Content`` instances..
+    ///   - actionText: The localized text that should appear on the ``SequentialOnboardingView``'s primary button.
+    ///   - action: The close that is called then the primary button is pressed.
+    public init(
+        @ViewBuilder title titleView: () -> TitleView,
+        steps: [Step],
+        actionText: LocalizedStringResource,
+        action: @escaping @MainActor () async throws -> Void
+    ) {
+        self.init(
+            titleView: titleView(),
+            steps: steps,
+            actionText: Text(actionText),
+            action: action
+        )
+    }
+}
+
+
 #if DEBUG
 #Preview {
     SequentialOnboardingView(
         title: String("Title"),
         subtitle: String("Subtitle"),
-        content: [
+        steps: [
             .init(title: String("A thing to know"), description: String("This is a first thing that you should know, read carefully!")),
             .init(title: String("Second thing to know"), description: String("This is a second thing that you should know, read carefully!")),
             .init(title: String("Third thing to know"), description: String("This is a third thing that you should know, read carefully!"))

@@ -23,16 +23,17 @@ The `SpeziOnboarding` module provides views that can be used for performing onbo
         }
     }
     @Column {
-        @Image(source: "SequentialOnboardingView", alt: "Screenshot displaying the sequential onboarding view.") {
+        @Image(source: "SequentialOnboarding", alt: "Screenshot displaying the sequential onboarding view.") {
             A ``SequentialOnboardingView`` allows you to display information step-by-step with each additional area appearing when the user taps the "Continue" button.
         }
     }
     @Column {
-        @Image(source: "ConsentView", alt: "Screenshot displaying the consent view.") {
-            An [`OnboardingConsentView`](https://swiftpackageindex.com/stanfordspezi/spezionboarding/documentation/speziconsent/onboardingconsentview) can be used to allow your users to read and agree to a document as well as exporting it.
+        @Image(source: "Consent", alt: "Screenshot displaying the consent view.") {
+            The [`OnboardingConsentView`](https://swiftpackageindex.com/stanfordspezi/speziconsent/documentation/speziconsent/onboardingconsentview) can be used to allow your users to read and agree to a consent document as well as exporting it.
         }
     }
 }
+
 
 
 ## Setup

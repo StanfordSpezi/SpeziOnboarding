@@ -150,9 +150,9 @@ public struct OnboardingView<Header: View, Content: View, Footer: View>: View {
     public init(
         title: LocalizedStringResource,
         subtitle: LocalizedStringResource? = nil, // swiftlint:disable:this function_default_parameter_at_end
-        areas: [OnboardingInformationView.Content],
+        areas: [OnboardingInformationView.Area],
         actionText: LocalizedStringResource,
-        action: @escaping () async throws -> Void
+        action: @escaping @MainActor () async throws -> Void
     ) where Header == OnboardingTitleView, Content == OnboardingInformationView, Footer == OnboardingActionsView {
         self.init {
             OnboardingTitleView(title: title, subtitle: subtitle)
@@ -175,45 +175,19 @@ public struct OnboardingView<Header: View, Content: View, Footer: View>: View {
     ///   - actionText: The text that should appear on the `OnboardingView`'s primary button without localization.
     ///   - action: The close that is called then the primary button is pressed.
     @_disfavoredOverload
-    public init<Title: StringProtocol, Subtitle: StringProtocol, ActionText: StringProtocol>(
-        title: Title,
-        subtitle: Subtitle,
-        areas: [OnboardingInformationView.Content],
-        actionText: ActionText,
-        action: @escaping () async throws -> Void
+    public init(
+        title: some StringProtocol,
+        subtitle: (some StringProtocol)? = String?.none, // swiftlint:disable:this function_default_parameter_at_end
+        areas: [OnboardingInformationView.Area],
+        actionText: some StringProtocol,
+        action: @escaping @MainActor () async throws -> Void
     ) where Header == OnboardingTitleView, Content == OnboardingInformationView, Footer == OnboardingActionsView {
         self.init {
             OnboardingTitleView(title: title, subtitle: subtitle)
         } content: {
             OnboardingInformationView(areas: areas)
         } footer: {
-            OnboardingActionsView(verbatim: actionText) {
-                try await action()
-            }
-        }
-    }
-    
-    /// Creates the default style of the `OnboardingView` uses a combination of an ``OnboardingTitleView``, ``OnboardingInformationView``,
-    /// and ``OnboardingActionsView``.
-    ///
-    /// - Parameters:
-    ///   - title: The title without localization.
-    ///   - areas: The areas of the `OnboardingView` defined using ``OnboardingInformationView/Content`` instances..
-    ///   - actionText: The text that should appear on the `OnboardingView`'s primary button without localization.
-    ///   - action: The close that is called then the primary button is pressed.
-    @_disfavoredOverload
-    public init<Title: StringProtocol, ActionText: StringProtocol>(
-        title: Title,
-        areas: [OnboardingInformationView.Content],
-        actionText: ActionText,
-        action: @escaping () async throws -> Void
-    ) where Header == OnboardingTitleView, Content == OnboardingInformationView, Footer == OnboardingActionsView {
-        self.init {
-            OnboardingTitleView(title: title)
-        } content: {
-            OnboardingInformationView(areas: areas)
-        } footer: {
-            OnboardingActionsView(verbatim: actionText) {
+            OnboardingActionsView(actionText) {
                 try await action()
             }
         }
@@ -266,25 +240,23 @@ extension OnboardingView {
 
 #if DEBUG
 #Preview {
-    let mock: [OnboardingInformationView.Content] =
-        [
-            OnboardingInformationView.Content(
-                icon: Image(systemName: "pc"),
-                title: String("PC"),
-                description: String("This is a PC. And we can write a lot about PCs in a section like this. A very long text!")
-            ),
-            OnboardingInformationView.Content(
-                icon: Image(systemName: "desktopcomputer"),
-                title: String("Mac"),
-                description: String("This is an iMac")
-            ),
-            OnboardingInformationView.Content(
-                icon: Image(systemName: "laptopcomputer"),
-                title: String("MacBook"),
-                description: String("This is a MacBook")
-            )
-        ]
-
+    let mock: [OnboardingInformationView.Area] = [
+        OnboardingInformationView.Area(
+            systemSymbol: "pc",
+            title: String("PC"),
+            description: String("This is a PC. And we can write a lot about PCs in a section like this. A very long text!")
+        ),
+        OnboardingInformationView.Area(
+            systemSymbol: "desktopcomputer",
+            title: String("Mac"),
+            description: String("This is an iMac")
+        ),
+        OnboardingInformationView.Area(
+            systemSymbol: "laptopcomputer",
+            title: String("MacBook"),
+            description: String("This is a MacBook")
+        )
+    ]
 
     OnboardingView(
         title: String("Title"),
