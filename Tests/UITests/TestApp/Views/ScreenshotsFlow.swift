@@ -6,7 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
-// swiftlint:disable file_types_order
+// swiftlint:disable file_types_order line_length
 
 import SpeziOnboarding
 import SpeziViews
@@ -115,6 +115,5 @@ private struct HealthKitPermissions: View {
                 }
             )
         }
-
     }
 }
