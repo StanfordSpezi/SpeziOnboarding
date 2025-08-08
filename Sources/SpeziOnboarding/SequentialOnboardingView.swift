@@ -46,7 +46,6 @@ public struct SequentialOnboardingView<TitleView: View>: View {
         public let title: Text?
         /// The description of the area in the ``SequentialOnboardingView``.
         public let description: Text
-
         
         /// Creates a new content for an area in the ``SequentialOnboardingView``.
         /// - Parameters:
@@ -65,23 +64,12 @@ public struct SequentialOnboardingView<TitleView: View>: View {
         ///   - title: The title of the area in the ``SequentialOnboardingView`` without localization.
         ///   - description: The description of the area in the ``SequentialOnboardingView`` without localization.
         @_disfavoredOverload
-        public init<Title: StringProtocol, Description: StringProtocol>(
-            title: Title,
-            description: Description
+        public init(
+            title: (some StringProtocol)? = String?.none, // swiftlint:disable:this function_default_parameter_at_end
+            description: some StringProtocol
         ) {
-            self.title = Text(verbatim: String(title))
-            self.description = Text(verbatim: String(description))
-        }
-
-        /// Creates a new content for an area in the ``SequentialOnboardingView``.
-        /// - Parameters:
-        ///   - description: The description of the area in the ``SequentialOnboardingView`` without localization.
-        @_disfavoredOverload
-        public init<Description: StringProtocol>(
-            description: Description
-        ) {
-            self.title = nil
-            self.description = Text(verbatim: String(description))
+            self.title = title.map { Text($0) }
+            self.description = Text(description)
         }
     }
     
@@ -89,10 +77,9 @@ public struct SequentialOnboardingView<TitleView: View>: View {
     private let titleView: TitleView
     private let steps: [Step]
     private let actionText: Text
-    private let action: () async throws -> Void
+    private let action: @MainActor () async throws -> Void
 
     @State private var currentStepIndex: Int = 0
-    
     
     public var body: some View {
         ScrollViewReader { proxy in
