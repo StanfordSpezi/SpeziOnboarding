@@ -42,7 +42,7 @@ public struct OnboardingActionsView: View {
     @State private var secondaryActionState: ViewState = .idle
     
     
-    @_documentation(visibility: internal)
+    @_documentation(visibility: internal) // swiftlint:disable:next attributes
     public var body: some View {
         VStack {
             AsyncButton(state: $primaryActionState, action: primaryAction) {

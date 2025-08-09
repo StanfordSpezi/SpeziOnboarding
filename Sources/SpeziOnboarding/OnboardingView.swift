@@ -76,7 +76,7 @@ public struct OnboardingView<Header: View, Content: View, Footer: View>: View {
     private let content: Content
     private let footer: Footer
     
-    @_documentation(visibility: internal)
+    @_documentation(visibility: internal) // swiftlint:disable:next attributes
     public var body: some View {
         GeometryReader { geometry in
             if wrapInScrollView {
