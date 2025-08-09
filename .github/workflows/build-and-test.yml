@@ -21,7 +21,7 @@ concurrency:
 
 jobs:
   package_tests:
-    name: Build and Test Swift Package ${{ matrix.platform.name }} ${{ matrix.config }}
+    name: Build and Test Swift Package ${{ matrix.platform.name }} (${{ matrix.config }})
     uses: StanfordBDHG/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
     strategy:
       matrix:
@@ -40,28 +40,29 @@ jobs:
       buildConfig: ${{ matrix.config }}
       resultBundle: ${{ format('SpeziOnboarding-{0}-{1}.xcresult', matrix.platform.name, matrix.config) }}
       artifactname: ${{ format('SpeziOnboarding-{0}-{1}.xcresult', matrix.platform.name, matrix.config) }}
-  # ui_tests:
-  #   name: Build and Test UI Tests ${{ matrix.platform }}
-  #   uses: StanfordBDHG/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
-  #   strategy:
-  #     matrix:
-  #       include:
-  #         - platform: iOS
-  #           destination: 'platform=iOS Simulator,name=iPhone 16 Pro'
-  #         - platform: iPadOS
-  #           destination: 'platform=iOS Simulator,name=iPad Air 13-inch (M3)'
-  #         - platform: visionOS
-  #           destination: 'platform=visionOS Simulator,name=Apple Vision Pro'
-  #   with:
-  #     runsonlabels: '["macOS", "self-hosted"]'
-  #     path: 'Tests/UITests'
-  #     scheme: TestApp
-  #     destination: ${{ matrix.destination }}
-  #     resultBundle: ${{ format('TestApp-{0}.xcresult', matrix.platform) }}
-  #     artifactname: ${{ format('TestApp-{0}.xcresult', matrix.platform) }}
+  ui_tests:
+    name: Build and Test UI Tests ${{ matrix.platform.name }} (${{ matrix.config }})
+    uses: StanfordBDHG/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
+    strategy:
+      matrix:
+        config: [debug, release]
+        platform:
+          - name: iOS
+            destination: 'platform=iOS Simulator,name=iPhone 16 Pro'
+          - name: iPadOS
+            destination: 'platform=iOS Simulator,name=iPad Air 13-inch (M3)'
+          - name: visionOS
+            destination: 'platform=visionOS Simulator,name=Apple Vision Pro'
+    with:
+      runsonlabels: '["macOS", "self-hosted"]'
+      path: 'Tests/UITests'
+      scheme: TestApp
+      destination: ${{ matrix.platform.destination }}
+      resultBundle: ${{ format('TestApp-{0}-{1}.xcresult', matrix.platform.name, matrix.config) }}
+      artifactname: ${{ format('TestApp-{0}-{1}.xcresult', matrix.platform.name, matrix.config) }}
   uploadcoveragereport:
     name: Upload Coverage Report
-    needs: [package_tests]
+    needs: [package_tests, ui_tests]
     uses: StanfordBDHG/.github/.github/workflows/create-and-upload-coverage-report.yml@v2
     with:
       coveragereports: SpeziOnboarding-*.xcresult TestApp-*.xcresult
