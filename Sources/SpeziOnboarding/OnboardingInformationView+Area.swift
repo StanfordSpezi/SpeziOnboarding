@@ -12,20 +12,25 @@ import SwiftUI
 
 
 extension OnboardingInformationView {
-    /// An ``Area`` defines the way that information is displayed in an ``OnboardingInformationView``.
+    /// A block of content within an `OnboardingInformationView`
     ///
     /// ## Topics
-    ///
     /// ### Initializers
+    /// - ``init(iconSymbol:title:description:)-(_,LocalizedStringResource,_)``
+    /// - ``init(iconSymbol:title:description:)-(_,StringProtocol,_)``
+    /// - ``init(icon:title:description:)-(_,LocalizedStringResource,_)``
+    /// - ``init(icon:title:description:)-(_,StringProtocol,_)``
+    /// - ``init(icon:title:description:)-(_,()->Text,_)``
     public struct Area {
-        /// The icon of the area in the ``OnboardingInformationView``.
         let icon: AnyView
-        /// The title of the area in the ``OnboardingInformationView``.
         let title: Text
-        /// The description of the area in the ``OnboardingInformationView``.
         let description: Text
         
-        /// Creates a new ``Area``
+        /// Creates a new area, using custom icon, title, and description views.
+        ///
+        /// - parameter icon: The area's icon, displayed at its left edge.
+        /// - parameter title: The area's title, displayed to the right of the `icon`.
+        /// - parameter description: The area's description, displayed below its `title`.
         public init(
             @ViewBuilder icon: () -> some View,
             @ViewBuilder title: () -> Text,
@@ -40,11 +45,26 @@ extension OnboardingInformationView {
 
 
 extension OnboardingInformationView.Area {
-    /// Creates a new content for an area in the ``OnboardingInformationView``.
-    /// - Parameters:
-    ///   - icon: The icon of the area in the ``OnboardingInformationView``.
-    ///   - title: The title of the area in the ``OnboardingInformationView`` without localization.
-    ///   - description: The description of the area in the ``OnboardingInformationView`` without localization.
+    /// Creates a new area, using a custom icon view and localized string contents.
+    ///
+    /// - parameter icon: The area's icon, displayed at its left edge.
+    /// - parameter title: The area's localized title, displayed to the right of the `icon`.
+    /// - parameter description: The area's localized description, displayed below its `title`.
+    public init(@ViewBuilder icon: () -> some View, title: LocalizedStringResource, description: LocalizedStringResource) {
+        self.init {
+            icon()
+        } title: {
+            Text(title)
+        } description: {
+            Text(description)
+        }
+    }
+    
+    /// Creates a new area, using a custom icon view and non-localized string contents.
+    ///
+    /// - parameter icon: The area's icon, displayed at its left edge.
+    /// - parameter title: The area's localized title, displayed to the right of the `icon`.
+    /// - parameter description: The area's localized description, displayed below its `title`.
     @_disfavoredOverload
     public init(@ViewBuilder icon: () -> some View, title: some StringProtocol, description: some StringProtocol) {
         self.init {
@@ -56,37 +76,22 @@ extension OnboardingInformationView.Area {
         }
     }
     
-    /// Creates a new content for an area in the ``OnboardingInformationView``.
-    /// - Parameters:
-    ///   - icon: The icon of the area in the ``OnboardingInformationView``.
-    ///   - title: The localized title of the area in the ``OnboardingInformationView``.
-    ///   - description: The localized description of the area in the ``OnboardingInformationView``.
-    public init(@ViewBuilder icon: () -> some View, title: LocalizedStringResource, description: LocalizedStringResource) {
-        self.init {
-            icon()
-        } title: {
-            Text(title)
-        } description: {
-            Text(description)
-        }
+    /// Creates a new area, using a system symbol icon and localized string contents.
+    ///
+    /// - parameter iconSymbol: SF Symbol name to be used as the area's icon.
+    /// - parameter title: The area's localized title, displayed to the right of the `icon`.
+    /// - parameter description: The area's localized description, displayed below its `title`.
+    public init(iconSymbol: String, title: LocalizedStringResource, description: LocalizedStringResource) {
+        self.init(icon: { Image(systemName: iconSymbol) }, title: title, description: description)
     }
     
-    /// Creates a new content for an area in the ``OnboardingInformationView``.
-    /// - Parameters:
-    ///   - systemSymbol: SF Symbol name to be used as the area's icon.
-    ///   - title: The title of the area in the ``OnboardingInformationView`` without localization.
-    ///   - description: The description of the area in the ``OnboardingInformationView`` without localization.
+    /// Creates a new area, using a system symbol icon and non-localized string contents.
+    ///
+    /// - parameter iconSymbol: SF Symbol name to be used as the area's icon.
+    /// - parameter title: The area's title, displayed to the right of the `icon`.
+    /// - parameter description: The area's description, displayed below its `title`.
     @_disfavoredOverload
-    public init(systemSymbol: String, title: some StringProtocol, description: some StringProtocol) {
-        self.init(icon: { Image(systemName: systemSymbol) }, title: title, description: description)
-    }
-    
-    /// Creates a new content for an area in the ``OnboardingInformationView``.
-    /// - Parameters:
-    ///   - systemSymbol: SF Symbol name to be used as the area's icon.
-    ///   - title: The localized title of the area in the ``OnboardingInformationView``.
-    ///   - description: The localized description of the area in the ``OnboardingInformationView``.
-    public init(systemSymbol: String, title: LocalizedStringResource, description: LocalizedStringResource) {
-        self.init(icon: { Image(systemName: systemSymbol) }, title: title, description: description)
+    public init(iconSymbol: String, title: some StringProtocol, description: some StringProtocol) {
+        self.init(icon: { Image(systemName: iconSymbol) }, title: title, description: description)
     }
 }

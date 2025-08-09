@@ -26,17 +26,17 @@ OnboardingView(
     subtitle: "Spezi UI Tests",
     areas: [
         .init(
-            icon: Image(systemName: "tortoise.fill"), 
+            iconSymbol: "tortoise.fill", 
             title: "Tortoise", 
             description: "A Tortoise!"
         ),
         .init(
-            icon: Image(systemName: "lizard.fill"), 
+            iconSymbol: "lizard.fill", 
             title: "Lizard", 
             description: "A Lizard!"
         ),
         .init(
-            icon: Image(systemName: "tree.fill"), 
+            iconSymbol: "tree.fill", 
             title: "Tree", 
             description: "A Tree!"
         )
@@ -60,7 +60,7 @@ The following example demonstrates how the above view is constructed:
 SequentialOnboardingView(
     title: "Things to know",
     subtitle: "And you should pay close attention ...",
-    content: [
+    steps: [
         .init(
             title: "A thing to know", 
             description: "This is a first thing that you should know; read carefully!"

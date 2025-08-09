@@ -29,47 +29,41 @@ import SwiftUI
 ///     title: "Title",
 ///     subtitle: "Subtitle",
 ///     areas: [
-///         OnboardingInformationView.Content(
-///             icon: Image(systemName: "pc"),
+///         OnboardingInformationView.Area(
+///             iconSymbol: "pc",
 ///             title: "PC",
 ///             description: "This is a PC."
 ///         ),
-///         OnboardingInformationView.Content(
-///             icon: Image(systemName: "desktopcomputer"),
+///         OnboardingInformationView.Area(
+///             iconSymbol: "desktopcomputer",
 ///             title: "Mac",
 ///             description: "This is an iMac."
 ///         )
 ///     ],
 ///     actionText: "Continue"
 /// ) {
-///     // Action that should be performed on pressing the "Continue" button ...
+///     // Action that should be performed upon tapping the "Continue" button ...
 /// }
 /// ```
 ///
-/// In implementation, you can treat the titleView, contentView, and actionView as regular SwiftUI Views. However, to simplify things, you can also use the built-in ``OnboardingTitleView`` and built-in ``OnboardingActionsView``, as demonstrated below.
+/// In implementation, you can treat the header, content, and footer as regular SwiftUI Views.
+/// However, to simplify things, you can also use the built-in ``OnboardingTitleView`` and built-in ``OnboardingActionsView``, as demonstrated below.
 /// ``` swift
-/// OnboardingView(
-///     titleView: {
-///         OnboardingTitleView(
-///             title: "Title",
-///             subtitle: "Subtitle"
-///         )
-///     },
-///     contentView: {
-///         VStack {
-///             Text("This is the onboarding content.")
-///                 .font(.headline)
-///         }
-///     },
-///     actionView: {
-///         OnboardingActionsView (
-///             Text: "Action Text",
-///             Action: {
-///                 // Desired Action
-///             }
-///         )
+/// OnboardingView {
+///     OnboardingTitleView(
+///         title: "Title",
+///         subtitle: "Subtitle"
+///     )
+/// } content: {
+///     VStack {
+///         Text("This is the onboarding content.")
+///             .font(.headline)
 ///     }
-/// )
+/// } footer: {
+///     OnboardingActionsView("Continue") {
+///         // navigate to next onboarding page
+///     }
+/// }
 /// ```
 public struct OnboardingView<Header: View, Content: View, Footer: View>: View {
     @Environment(\.verticalScrollIndicatorVisibility) private var scrollIndicatorVisibility
@@ -82,6 +76,7 @@ public struct OnboardingView<Header: View, Content: View, Footer: View>: View {
     private let content: Content
     private let footer: Footer
     
+    @_documentation(visibility: internal)
     public var body: some View {
         GeometryReader { geometry in
             if wrapInScrollView {
@@ -242,17 +237,17 @@ extension OnboardingView {
 #Preview {
     let mock: [OnboardingInformationView.Area] = [
         OnboardingInformationView.Area(
-            systemSymbol: "pc",
+            iconSymbol: "pc",
             title: String("PC"),
             description: String("This is a PC. And we can write a lot about PCs in a section like this. A very long text!")
         ),
         OnboardingInformationView.Area(
-            systemSymbol: "desktopcomputer",
+            iconSymbol: "desktopcomputer",
             title: String("Mac"),
             description: String("This is an iMac")
         ),
         OnboardingInformationView.Area(
-            systemSymbol: "laptopcomputer",
+            iconSymbol: "laptopcomputer",
             title: String("MacBook"),
             description: String("This is a MacBook")
         )

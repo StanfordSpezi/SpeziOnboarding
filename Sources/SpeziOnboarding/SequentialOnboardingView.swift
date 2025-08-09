@@ -20,7 +20,7 @@ import SwiftUI
 /// SequentialOnboardingView(
 ///     title: "Title",
 ///     subtitle: "Subtitle",
-///     content: [
+///     steps: [
 ///         .init(
 ///             title: "A thing to know",
 ///             description: "This is a first thing that you should know, read carefully!")
@@ -39,7 +39,7 @@ import SwiftUI
 ///     // Action that should be performed on pressing the "Continue" button ...
 /// }
 /// ```
-public struct SequentialOnboardingView<TitleView: View>: View {
+public struct SequentialOnboardingView<Header: View>: View {
     /// A `Step` defines the way that information is displayed in an ``SequentialOnboardingView``.
     public struct Step {
         /// The title of the area in the ``SequentialOnboardingView``.
@@ -74,17 +74,18 @@ public struct SequentialOnboardingView<TitleView: View>: View {
     }
     
     
-    private let titleView: TitleView
+    private let header: Header
     private let steps: [Step]
     private let actionText: Text
     private let action: @MainActor () async throws -> Void
 
     @State private var currentStepIndex: Int = 0
     
+    @_documentation(visibility: internal)
     public var body: some View {
         ScrollViewReader { proxy in
             OnboardingView {
-                titleView
+                header
             } content: {
                 ForEach(0..<steps.count, id: \.self) { index in
                     if index <= currentStepIndex {
@@ -116,12 +117,12 @@ public struct SequentialOnboardingView<TitleView: View>: View {
     }
 
     private init(
-        titleView: TitleView,
+        header: Header,
         steps: [Step],
         actionText: Text,
         action: @escaping @MainActor () async throws -> Void
     ) {
-        self.titleView = titleView
+        self.header = header
         self.steps = steps
         self.actionText = actionText
         self.action = action
@@ -184,9 +185,9 @@ extension SequentialOnboardingView {
         steps: [Step],
         actionText: LocalizedStringResource,
         action: @escaping @MainActor () async throws -> Void
-    ) where TitleView == OnboardingTitleView {
+    ) where Header == OnboardingTitleView {
         self.init(
-            titleView: OnboardingTitleView(title: title, subtitle: subtitle),
+            header: OnboardingTitleView(title: title, subtitle: subtitle),
             steps: steps,
             actionText: Text(actionText),
             action: action
@@ -209,9 +210,9 @@ extension SequentialOnboardingView {
         steps: [Step],
         actionText: some StringProtocol,
         action: @escaping @MainActor () async throws -> Void
-    ) where TitleView == OnboardingTitleView {
+    ) where Header == OnboardingTitleView {
         self.init(
-            titleView: OnboardingTitleView(title: title, subtitle: subtitle),
+            header: OnboardingTitleView(title: title, subtitle: subtitle),
             steps: steps,
             actionText: Text(actionText),
             action: action
@@ -222,19 +223,19 @@ extension SequentialOnboardingView {
     /// Creates a customized `SequentialOnboardingView` allowing a complete customization of the  `SequentialOnboardingView`'s title view.
     ///
     /// - Parameters:
-    ///   - titleView: The title view displayed at the top.
+    ///   - header: The header displayed at the top.
     ///   - steps: The sequential onboarding view's steps, defining the main content being built up step-by-step by the view.
     ///   - actionText: The text that should appear on the `SequentialOnboardingView`'s primary button without localization.
     ///   - action: The close that is called then the primary button is pressed.
     @_disfavoredOverload
     public init(
-        @ViewBuilder title titleView: () -> TitleView,
+        @ViewBuilder header: () -> Header,
         steps: [Step],
         actionText: some StringProtocol,
         action: @escaping @MainActor () async throws -> Void
     ) {
         self.init(
-            titleView: titleView(),
+            header: header(),
             steps: steps,
             actionText: Text(verbatim: String(actionText)),
             action: action
@@ -244,18 +245,18 @@ extension SequentialOnboardingView {
     /// Creates a customized `SequentialOnboardingView` allowing a complete customization of the  `SequentialOnboardingView`'s title view.
     ///
     /// - Parameters:
-    ///   - titleView: The title view displayed at the top.
+    ///   - header: The header displayed at the top.
     ///   - steps: The sequential onboarding view's steps, defining the main content being built up step-by-step by the view.
     ///   - actionText: The localized text that should appear on the ``SequentialOnboardingView``'s primary button.
     ///   - action: The close that is called then the primary button is pressed.
     public init(
-        @ViewBuilder title titleView: () -> TitleView,
+        @ViewBuilder header: () -> Header,
         steps: [Step],
         actionText: LocalizedStringResource,
         action: @escaping @MainActor () async throws -> Void
     ) {
         self.init(
-            titleView: titleView(),
+            header: header(),
             steps: steps,
             actionText: Text(actionText),
             action: action

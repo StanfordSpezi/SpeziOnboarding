@@ -33,22 +33,22 @@ private struct Welcome: View {
             subtitle: "This application demonstrates several Spezi features & modules",
             areas: [
                 .init(
-                    systemSymbol: "apps.iphone",
+                    iconSymbol: "apps.iphone",
                     title: "The Spezi Framework",
                     description: "The Spezi Framework builds the foundation of this template application."
                 ),
                 .init(
-                    systemSymbol: "shippingbox",
+                    iconSymbol: "shippingbox",
                     title: "Swift Package Manager",
                     description: "Spezi is imported into applications using the Swift Package Manager."
                 ),
                 .init(
-                    systemSymbol: "square.3.layers.3d",
+                    iconSymbol: "square.3.layers.3d",
                     title: "Spezi Modules",
                     description: "Spezi offers several modules including HealthKit integration, questionnaires, account management, and more."
                 ),
                 .init(
-                    systemSymbol: "shuffle",
+                    iconSymbol: "shuffle",
                     title: "HL7 FHIR Integration",
                     description: "Many of Spezi's modules offer native support for FHIR-based data sharing with existing systems and workflows."
                 )

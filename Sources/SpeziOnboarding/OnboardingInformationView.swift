@@ -18,24 +18,23 @@ import SwiftUI
 ///
 /// The following example displays an ``OnboardingInformationView`` with two information areas:
 /// ```swift
-/// OnboardingInformationView(
-///     areas: [
-///         OnboardingInformationView.Content(
-///             icon: Image(systemName: "pc"),
-///             title: "PC",
-///             description: "This is a PC."
-///         ),
-///         OnboardingInformationView.Content(
-///             icon: Image(systemName: "desktopcomputer"),
-///             title: "Mac",
-///             description: "This is an iMac."
-///         )
-///     ]
-/// )
+/// OnboardingInformationView {
+///     OnboardingInformationView.Area(
+///         iconSymbol: "pc",
+///         title: "PC",
+///         description: "This is a PC."
+///     )
+///     OnboardingInformationView.Content(
+///         iconSymbol: "desktopcomputer",
+///         title: "Mac",
+///         description: "This is an iMac."
+///     )
+/// }
 /// ```
 public struct OnboardingInformationView: View {
     private let areas: [Area]
     
+    @_documentation(visibility: internal)
     public var body: some View {
         VStack(alignment: .leading, spacing: 30) {
             ForEach(0..<areas.count, id: \.self) { index in
@@ -83,12 +82,12 @@ public struct OnboardingInformationView: View {
 #Preview {
     OnboardingInformationView {
         OnboardingInformationView.Area(
-            systemSymbol: "pc",
+            iconSymbol: "pc",
             title: String("PC"),
             description: String("This is a PC.")
         )
         OnboardingInformationView.Area(
-            systemSymbol: "desktopcomputer",
+            iconSymbol: "desktopcomputer",
             title: String("Mac"),
             description: String("This is an iMac.")
         )

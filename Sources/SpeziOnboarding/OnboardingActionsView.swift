@@ -15,6 +15,12 @@ import SwiftUI
 /// The `OnboardingActionsView` can contain one primary button and a optional secondary button below the primary button.
 ///
 /// ```swift
+/// // simple, single-button configuration
+/// OnboardingActionsView("Continue") {
+///     // navigate to next onboarding step
+/// }
+///
+/// // two-button configuration
 /// OnboardingActionsView(
 ///     primaryText: "Primary Text",
 ///     primaryAction: {
@@ -36,6 +42,7 @@ public struct OnboardingActionsView: View {
     @State private var secondaryActionState: ViewState = .idle
     
     
+    @_documentation(visibility: internal)
     public var body: some View {
         VStack {
             AsyncButton(state: $primaryActionState, action: primaryAction) {

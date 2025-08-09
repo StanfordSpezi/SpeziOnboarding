@@ -99,7 +99,7 @@ struct SequentialOnboardingViewExample: View {
         SequentialOnboardingView(
             title: "Things to know",
             subtitle: "And you should pay close attention ...",
-            content: [
+            steps: [
                 .init(
                     title: "A thing to know", 
                     description: "This is a first thing that you should know; read carefully!"

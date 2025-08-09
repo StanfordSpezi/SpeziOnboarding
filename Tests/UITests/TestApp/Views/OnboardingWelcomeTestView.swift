@@ -22,7 +22,7 @@ struct OnboardingWelcomeTestView: View {
             subtitle: "Spezi UI Tests",
             areas: [
                 .init(icon: { Image(systemName: "tortoise.fill").foregroundColor(.green) }, title: "Tortoise", description: "A Tortoise!"),
-                .init(systemSymbol: "tree.fill", title: "Tree", description: "A Tree!"),
+                .init(iconSymbol: "tree.fill", title: "Tree", description: "A Tree!"),
                 .init(icon: { Text("A").fontWeight(.light) }, title: "Letter", description: "A letter!"),
                 .init(icon: { Circle().fill(.orange) }, title: "Circle", description: "A circle!")
             ],
