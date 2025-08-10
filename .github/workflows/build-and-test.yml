@@ -6,7 +6,7 @@
 # SPDX-License-Identifier: MIT
 #
 
-name: Test
+name: Build and Test
 
 on:
   push:
@@ -21,7 +21,7 @@ concurrency:
 
 jobs:
   package_tests:
-    name: Package ${{ matrix.platform.name }} (${{ matrix.config }})
+    name: Build and Test Swift Package ${{ matrix.platform.name }} (${{ matrix.config }})
     uses: StanfordBDHG/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
     strategy:
       matrix:
@@ -41,7 +41,7 @@ jobs:
       resultBundle: ${{ format('SpeziOnboarding-{0}-{1}.xcresult', matrix.platform.name, matrix.config) }}
       artifactname: ${{ format('SpeziOnboarding-{0}-{1}.xcresult', matrix.platform.name, matrix.config) }}
   ui_tests:
-    name: UI Tests ${{ matrix.platform.name }} (${{ matrix.config }})
+    name: Build and Test UI Tests ${{ matrix.platform.name }} (${{ matrix.config }})
     uses: StanfordBDHG/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
     strategy:
       matrix:
