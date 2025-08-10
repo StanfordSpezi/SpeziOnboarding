@@ -14,7 +14,6 @@ import SwiftUI
 struct OnboardingConditionalTestView: View {
     @Environment(ManagedNavigationStack.Path.self) private var path
     
-    
     var body: some View {
         VStack(spacing: 12) {
             Text("Conditional Test View")

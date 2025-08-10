@@ -15,7 +15,6 @@ import SwiftUI
 struct OnboardingWelcomeTestView: View {
     @Environment(ManagedNavigationStack.Path.self) private var path
     
-    
     var body: some View {
         OnboardingView(
             title: "Welcome",
@@ -24,15 +23,21 @@ struct OnboardingWelcomeTestView: View {
                 .init(icon: { Image(systemName: "tortoise.fill").foregroundColor(.green) }, title: "Tortoise", description: "A Tortoise!"),
                 .init(iconSymbol: "tree.fill", title: "Tree", description: "A Tree!"),
                 .init(icon: { Text("A").fontWeight(.light) }, title: "Letter", description: "A letter!"),
-                .init(icon: { Circle().fill(.orange) }, title: "Circle", description: "A circle!")
+                .init {
+                    Circle().fill(.orange)
+                } title: {
+                    Text("Circle")
+                } description: {
+                    Text("A circle!")
+                }
             ],
             actionText: "Learn More",
             action: {
                 path.nextStep()
             }
         )
-            #if !os(macOS)
-            .navigationBarTitleDisplayMode(.inline)
-            #endif
+        #if !os(macOS)
+        .navigationBarTitleDisplayMode(.inline)
+        #endif
     }
 }

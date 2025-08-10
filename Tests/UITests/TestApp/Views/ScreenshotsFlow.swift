@@ -28,34 +28,41 @@ private struct Welcome: View {
     @Environment(ManagedNavigationStack.Path.self) private var path
     
     var body: some View {
-        OnboardingView(
-            title: "Spezi Template Application",
-            subtitle: "This application demonstrates several Spezi features & modules",
-            areas: [
-                .init(
+        OnboardingView {
+            OnboardingTitleView(
+                title: "Spezi Template Application",
+                subtitle: "This application demonstrates several Spezi features & modules"
+            )
+        } content: {
+            OnboardingInformationView {
+                OnboardingInformationView.Area(
                     iconSymbol: "apps.iphone",
                     title: "The Spezi Framework",
                     description: "The Spezi Framework builds the foundation of this template application."
-                ),
-                .init(
+                )
+                OnboardingInformationView.Area(
                     iconSymbol: "shippingbox",
                     title: "Swift Package Manager",
                     description: "Spezi is imported into applications using the Swift Package Manager."
-                ),
-                .init(
+                )
+                OnboardingInformationView.Area(
                     iconSymbol: "square.3.layers.3d",
                     title: "Spezi Modules",
                     description: "Spezi offers several modules including HealthKit integration, questionnaires, account management, and more."
-                ),
-                .init(
+                )
+                OnboardingInformationView.Area(
                     iconSymbol: "shuffle",
                     title: "HL7 FHIR Integration",
                     description: "Many of Spezi's modules offer native support for FHIR-based data sharing with existing systems and workflows."
                 )
-            ],
-            actionText: "Learn More"
-        ) {
-            path.nextStep()
+            }
+        } footer: {
+            OnboardingActionsView(
+                primaryText: "Learn More",
+                primaryAction: { path.nextStep() },
+                secondaryText: "Also Learn More",
+                secondaryAction: { path.nextStep() }
+            )
         }
     }
 }

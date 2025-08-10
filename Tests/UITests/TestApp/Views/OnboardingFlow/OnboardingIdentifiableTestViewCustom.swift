@@ -11,11 +11,10 @@ import SwiftUI
 
 
 struct OnboardingIdentifiableTestViewCustom: View, Identifiable {
-    var id: String
-
     @Environment(ManagedNavigationStack.Path.self) private var path
-
-
+    
+    let id: String
+    
     var body: some View {
         VStack(spacing: 12) {
             Text(self.id)

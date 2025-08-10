@@ -62,7 +62,8 @@ final class OnboardingTests: XCTestCase {
         // Check if on final page
         XCTAssert(app.staticTexts["Onboarding complete"].waitForExistence(timeout: 2))
     }
-
+    
+    
     @MainActor
     func testOnboardingWelcomeView() throws {
         let app = XCUIApplication()
@@ -136,6 +137,7 @@ final class OnboardingTests: XCTestCase {
         XCTAssert(app.staticTexts["Leland"].waitForExistence(timeout: 2))
     }
     
+    
     @MainActor
     func testIdentifiableViews() throws {
         let app = XCUIApplication()
@@ -154,5 +156,38 @@ final class OnboardingTests: XCTestCase {
         app.buttons["Next"].tap()
 
         XCTAssert(app.staticTexts["Welcome"].waitForExistence(timeout: 2))
+    }
+    
+    
+    @MainActor
+    func testScreenshotsFlow() throws {
+        let app = XCUIApplication()
+        app.launch()
+
+        XCTAssertTrue(app.wait(for: .runningForeground, timeout: 2.0))
+        app.buttons["Screenshots"].tap()
+        
+        XCTAssert(app.staticTexts["Spezi Template Application"].waitForExistence(timeout: 2))
+        app.buttons["Learn More"].tap()
+        
+        XCTAssert(app.staticTexts["Interesting Modules"].waitForExistence(timeout: 2))
+        for (idx, step) in [
+            "The Onboarding module allows you to",
+            "SpeziAccount enabled user log in and sign up",
+            "Work with Health data collected by",
+            "Via Spezi's Scheduler module, users can be prompted"
+        ].enumerated() {
+            let predicate = NSPredicate(format: "label BEGINSWITH %@", step)
+            if idx > 0 {
+                XCTAssert(app.staticTexts.matching(predicate).element.waitForNonExistence(timeout: 1))
+                app.buttons["Next"].tap()
+            }
+            XCTAssert(app.staticTexts.matching(predicate).element.waitForExistence(timeout: 1))
+        }
+        XCTAssert(app.buttons["Next"].waitForNonExistence(timeout: 1))
+        XCTAssert(app.buttons["Continue"].waitForExistence(timeout: 1))
+        app.buttons["Continue"].tap()
+        
+        XCTAssert(app.staticTexts["Health Access"].waitForExistence(timeout: 1))
     }
 }
