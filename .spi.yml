@@ -11,5 +11,4 @@ builder:
   configs:
     - platform: ios
       documentation_targets:
-      - SpeziConsent
       - SpeziOnboarding

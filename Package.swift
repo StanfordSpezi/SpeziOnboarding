@@ -16,20 +16,16 @@ let package = Package(
     name: "SpeziOnboarding",
     defaultLocalization: "en",
     platforms: [
-        .iOS(.v18),
-        .visionOS(.v2),
-        .macOS(.v15)
+        .iOS(.v17),
+        .visionOS(.v1),
+        .macOS(.v14)
     ],
     products: [
-        .library(name: "SpeziOnboarding", targets: ["SpeziOnboarding"]),
-        .library(name: "SpeziConsent", targets: ["SpeziConsent"])
+        .library(name: "SpeziOnboarding", targets: ["SpeziOnboarding"])
     ],
     dependencies: [
         .package(url: "https://github.com/StanfordSpezi/Spezi.git", from: "1.8.0"),
-        .package(url: "https://github.com/StanfordSpezi/SpeziFoundation.git", from: "2.2.0"),
-        .package(url: "https://github.com/StanfordSpezi/SpeziViews.git", from: "1.12.0"),
-        .package(url: "https://github.com/techprimate/TPPDF.git", from: "2.6.1"),
-        .package(url: "https://github.com/gonzalezreal/swift-markdown-ui.git", from: "2.4.1")
+        .package(url: "https://github.com/StanfordSpezi/SpeziViews.git", from: "1.12.1")
     ] + swiftLintPackage(),
     targets: [
         .target(
@@ -42,36 +38,11 @@ let package = Package(
             swiftSettings: [.enableUpcomingFeature("ExistentialAny")],
             plugins: [] + swiftLintPlugin()
         ),
-        .target(
-            name: "SpeziConsent",
-            dependencies: [
-                .target(name: "SpeziOnboarding"),
-                .product(name: "Spezi", package: "Spezi"),
-                .product(name: "SpeziFoundation", package: "SpeziFoundation"),
-                .product(name: "SpeziViews", package: "SpeziViews"),
-                .product(name: "SpeziPersonalInfo", package: "SpeziViews"),
-                .product(name: "TPPDF", package: "TPPDF"),
-                .product(name: "MarkdownUI", package: "swift-markdown-ui")
-            ],
-            resources: [.process("Resources")],
-            swiftSettings: [.enableUpcomingFeature("ExistentialAny")],
-            plugins: [] + swiftLintPlugin()
-        ),
         .testTarget(
             name: "SpeziOnboardingTests",
             dependencies: [
                 .target(name: "SpeziOnboarding")
             ],
-            swiftSettings: [.enableUpcomingFeature("ExistentialAny")],
-            plugins: [] + swiftLintPlugin()
-        ),
-        .testTarget(
-            name: "SpeziConsentTests",
-            dependencies: [
-                .target(name: "SpeziConsent"),
-                .product(name: "SpeziFoundation", package: "SpeziFoundation")
-            ],
-            resources: [.process("Resources")],
             swiftSettings: [.enableUpcomingFeature("ExistentialAny")],
             plugins: [] + swiftLintPlugin()
         )

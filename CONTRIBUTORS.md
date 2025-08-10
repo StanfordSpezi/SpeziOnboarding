@@ -15,4 +15,5 @@ SpeziOnboarding contributors
 * [Vishnu Ravi](https://github.com/vishnuravi)
 * [Andreas Bauer](https://github.com/bauer-andreas)
 * [Philipp Zagar](https://github.com/philippzagar)
+* [Patrick Langer](https://github.com/RealLast)
 * [Lukas Kollmer](https://github.com/lukaskollmer)

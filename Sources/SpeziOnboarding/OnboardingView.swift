@@ -29,47 +29,41 @@ import SwiftUI
 ///     title: "Title",
 ///     subtitle: "Subtitle",
 ///     areas: [
-///         OnboardingInformationView.Content(
-///             icon: Image(systemName: "pc"),
+///         OnboardingInformationView.Area(
+///             iconSymbol: "pc",
 ///             title: "PC",
 ///             description: "This is a PC."
 ///         ),
-///         OnboardingInformationView.Content(
-///             icon: Image(systemName: "desktopcomputer"),
+///         OnboardingInformationView.Area(
+///             iconSymbol: "desktopcomputer",
 ///             title: "Mac",
 ///             description: "This is an iMac."
 ///         )
 ///     ],
 ///     actionText: "Continue"
 /// ) {
-///     // Action that should be performed on pressing the "Continue" button ...
+///     // Action that should be performed upon tapping the "Continue" button ...
 /// }
 /// ```
 ///
-/// In implementation, you can treat the titleView, contentView, and actionView as regular SwiftUI Views. However, to simplify things, you can also use the built-in ``OnboardingTitleView`` and built-in ``OnboardingActionsView``, as demonstrated below.
+/// In implementation, you can treat the header, content, and footer as regular SwiftUI Views.
+/// However, to simplify things, you can also use the built-in ``OnboardingTitleView`` and built-in ``OnboardingActionsView``, as demonstrated below.
 /// ``` swift
-/// OnboardingView(
-///     titleView: {
-///         OnboardingTitleView(
-///             title: "Title",
-///             subtitle: "Subtitle"
-///         )
-///     },
-///     contentView: {
-///         VStack {
-///             Text("This is the onboarding content.")
-///                 .font(.headline)
-///         }
-///     },
-///     actionView: {
-///         OnboardingActionsView (
-///             Text: "Action Text",
-///             Action: {
-///                 // Desired Action
-///             }
-///         )
+/// OnboardingView {
+///     OnboardingTitleView(
+///         title: "Title",
+///         subtitle: "Subtitle"
+///     )
+/// } content: {
+///     VStack {
+///         Text("This is the onboarding content.")
+///             .font(.headline)
 ///     }
-/// )
+/// } footer: {
+///     OnboardingActionsView("Continue") {
+///         // navigate to next onboarding page
+///     }
+/// }
 /// ```
 public struct OnboardingView<Header: View, Content: View, Footer: View>: View {
     @Environment(\.verticalScrollIndicatorVisibility) private var scrollIndicatorVisibility
@@ -82,6 +76,7 @@ public struct OnboardingView<Header: View, Content: View, Footer: View>: View {
     private let content: Content
     private let footer: Footer
     
+    @_documentation(visibility: internal) // swiftlint:disable:next attributes
     public var body: some View {
         GeometryReader { geometry in
             if wrapInScrollView {
@@ -137,46 +132,22 @@ public struct OnboardingView<Header: View, Content: View, Footer: View>: View {
         self.footer = footer()
     }
     
-    /// Creates a customized `OnboardingView` allowing a complete customization of the  `OnboardingView`.
-    ///
-    /// - Parameters:
-    ///   - wrapInScrollView: Whether the `OnboardingView` should wrap its body (i.e., the `header`, the `content`, and the `footer`) in a `ScrollView`.
-    ///       Defaults to `true`, but can be set to `false` to work around some edge cased, like e.g. when the `content` is/contains
-    ///       a `Form` (which already wraps its content in a `ScrollView`), in which case this parameter allows you to avoid getting double, nested `ScrollView`s.
-    ///   - titleView: The title view displayed at the top.
-    ///   - contentView: The content view.
-    ///   - actionView: The action view displayed at the bottom.
-    @available(*, deprecated, renamed: "init(wrapInScrollView:header:content:footer:)")
-    public init(
-        wrapInScrollView: Bool = true,
-        @ViewBuilder titleView: () -> Header = { EmptyView() },
-        @ViewBuilder contentView: () -> Content,
-        @ViewBuilder actionView: () -> Footer
-    ) {
-        self.init(
-            wrapInScrollView: wrapInScrollView,
-            header: titleView,
-            content: contentView,
-            footer: actionView
-        )
-    }
-    
     
     /// Creates the default style of the `OnboardingView` uses a combination of an ``OnboardingTitleView``, ``OnboardingInformationView``,
     /// and ``OnboardingActionsView``.
     ///
     /// - Parameters:
-    ///   - title: The localized title of the ``OnboardingView``.
-    ///   - subtitle: The localized subtitle of the ``OnboardingView``.
-    ///   - areas: The areas of the ``OnboardingView`` defined using ``OnboardingInformationView/Content`` instances..
+    ///   - title: The onboarding view's localized title.
+    ///   - subtitle: The onboarding view's optional localized subtitle.
+    ///   - areas: The onboarding view's, defining the view's main content.
     ///   - actionText: The localized text that should appear on the ``OnboardingView``'s primary button.
     ///   - action: The close that is called then the primary button is pressed.
     public init(
         title: LocalizedStringResource,
         subtitle: LocalizedStringResource? = nil, // swiftlint:disable:this function_default_parameter_at_end
-        areas: [OnboardingInformationView.Content],
+        areas: [OnboardingInformationView.Area],
         actionText: LocalizedStringResource,
-        action: @escaping () async throws -> Void
+        action: @escaping @MainActor () async throws -> Void
     ) where Header == OnboardingTitleView, Content == OnboardingInformationView, Footer == OnboardingActionsView {
         self.init {
             OnboardingTitleView(title: title, subtitle: subtitle)
@@ -195,49 +166,23 @@ public struct OnboardingView<Header: View, Content: View, Footer: View>: View {
     /// - Parameters:
     ///   - title: The title without localization.
     ///   - subtitle: The subtitle without localization.
-    ///   - areas: The areas of the `OnboardingView` defined using ``OnboardingInformationView/Content`` instances..
+    ///   - areas: The onboarding view's, defining the view's main content.
     ///   - actionText: The text that should appear on the `OnboardingView`'s primary button without localization.
     ///   - action: The close that is called then the primary button is pressed.
     @_disfavoredOverload
-    public init<Title: StringProtocol, Subtitle: StringProtocol, ActionText: StringProtocol>(
-        title: Title,
-        subtitle: Subtitle,
-        areas: [OnboardingInformationView.Content],
-        actionText: ActionText,
-        action: @escaping () async throws -> Void
+    public init(
+        title: some StringProtocol,
+        subtitle: (some StringProtocol)? = String?.none, // swiftlint:disable:this function_default_parameter_at_end
+        areas: [OnboardingInformationView.Area],
+        actionText: some StringProtocol,
+        action: @escaping @MainActor () async throws -> Void
     ) where Header == OnboardingTitleView, Content == OnboardingInformationView, Footer == OnboardingActionsView {
         self.init {
             OnboardingTitleView(title: title, subtitle: subtitle)
         } content: {
             OnboardingInformationView(areas: areas)
         } footer: {
-            OnboardingActionsView(verbatim: actionText) {
-                try await action()
-            }
-        }
-    }
-    
-    /// Creates the default style of the `OnboardingView` uses a combination of an ``OnboardingTitleView``, ``OnboardingInformationView``,
-    /// and ``OnboardingActionsView``.
-    ///
-    /// - Parameters:
-    ///   - title: The title without localization.
-    ///   - areas: The areas of the `OnboardingView` defined using ``OnboardingInformationView/Content`` instances..
-    ///   - actionText: The text that should appear on the `OnboardingView`'s primary button without localization.
-    ///   - action: The close that is called then the primary button is pressed.
-    @_disfavoredOverload
-    public init<Title: StringProtocol, ActionText: StringProtocol>(
-        title: Title,
-        areas: [OnboardingInformationView.Content],
-        actionText: ActionText,
-        action: @escaping () async throws -> Void
-    ) where Header == OnboardingTitleView, Content == OnboardingInformationView, Footer == OnboardingActionsView {
-        self.init {
-            OnboardingTitleView(title: title)
-        } content: {
-            OnboardingInformationView(areas: areas)
-        } footer: {
-            OnboardingActionsView(verbatim: actionText) {
+            OnboardingActionsView(actionText) {
                 try await action()
             }
         }
@@ -290,25 +235,23 @@ extension OnboardingView {
 
 #if DEBUG
 #Preview {
-    let mock: [OnboardingInformationView.Content] =
-        [
-            OnboardingInformationView.Content(
-                icon: Image(systemName: "pc"),
-                title: String("PC"),
-                description: String("This is a PC. And we can write a lot about PCs in a section like this. A very long text!")
-            ),
-            OnboardingInformationView.Content(
-                icon: Image(systemName: "desktopcomputer"),
-                title: String("Mac"),
-                description: String("This is an iMac")
-            ),
-            OnboardingInformationView.Content(
-                icon: Image(systemName: "laptopcomputer"),
-                title: String("MacBook"),
-                description: String("This is a MacBook")
-            )
-        ]
-
+    let mock: [OnboardingInformationView.Area] = [
+        OnboardingInformationView.Area(
+            iconSymbol: "pc",
+            title: String("PC"),
+            description: String("This is a PC. And we can write a lot about PCs in a section like this. A very long text!")
+        ),
+        OnboardingInformationView.Area(
+            iconSymbol: "desktopcomputer",
+            title: String("Mac"),
+            description: String("This is an iMac")
+        ),
+        OnboardingInformationView.Area(
+            iconSymbol: "laptopcomputer",
+            title: String("MacBook"),
+            description: String("This is a MacBook")
+        )
+    ]
 
     OnboardingView(
         title: String("Title"),

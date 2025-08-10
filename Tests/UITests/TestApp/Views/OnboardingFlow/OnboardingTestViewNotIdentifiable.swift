@@ -10,11 +10,10 @@ import SpeziViews
 import SwiftUI
 
 struct OnboardingTestViewNotIdentifiable: View {
-    var text: String
-
     @Environment(ManagedNavigationStack.Path.self) private var path
-
-
+    
+    let text: String
+    
     var body: some View {
         VStack(spacing: 12) {
             Text(self.text)

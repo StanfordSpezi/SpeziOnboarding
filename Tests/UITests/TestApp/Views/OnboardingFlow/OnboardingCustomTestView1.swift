@@ -14,7 +14,6 @@ struct OnboardingCustomTestView1: View {
     @Environment(ManagedNavigationStack.Path.self) private var path
     var exampleArgument: String
     
-    
     var body: some View {
         VStack(spacing: 12) {
             Text("Custom Test View 1: \(exampleArgument)")

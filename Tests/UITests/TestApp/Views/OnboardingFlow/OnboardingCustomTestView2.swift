@@ -14,7 +14,6 @@ import SwiftUI
 struct OnboardingCustomTestView2: View {
     @Environment(ManagedNavigationStack.Path.self) private var path
     
-    
     var body: some View {
         VStack(spacing: 12) {
             Text("Custom Test View 2")

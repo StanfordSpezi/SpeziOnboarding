@@ -14,7 +14,7 @@ Provides SwiftUI views for onboarding users onto a digital health application.
 
 ## Overview
 
-The `SpeziOnboarding` module provides views that can be used for performing onboarding tasks, such as providing an overview of your app and asking a user to read and sign a consent document.
+The `SpeziOnboarding` module provides views that can be used for performing onboarding tasks, such as providing an overview of your app and, in combination with [SpeziConsent](https://swiftpackageindex.com/stanfordspezi/speziconsent/documentation/speziconsent) asking a user to read and sign consent documents.
 
 @Row {
     @Column {
@@ -23,16 +23,17 @@ The `SpeziOnboarding` module provides views that can be used for performing onbo
         }
     }
     @Column {
-        @Image(source: "SequentialOnboardingView", alt: "Screenshot displaying the sequential onboarding view.") {
+        @Image(source: "SequentialOnboarding", alt: "Screenshot displaying the sequential onboarding view.") {
             A ``SequentialOnboardingView`` allows you to display information step-by-step with each additional area appearing when the user taps the "Continue" button.
         }
     }
     @Column {
-        @Image(source: "ConsentView", alt: "Screenshot displaying the consent view.") {
-            An [`OnboardingConsentView`](https://swiftpackageindex.com/stanfordspezi/spezionboarding/documentation/speziconsent/onboardingconsentview) can be used to allow your users to read and agree to a document as well as exporting it.
+        @Image(source: "Consent", alt: "Screenshot displaying the consent view.") {
+            In combination with the Spezi Consent Module [`OnboardingConsentView`](https://swiftpackageindex.com/stanfordspezi/speziconsent/documentation/speziconsent/onboardingconsentview), to allow users to read, sign, and export consent documents.
         }
     }
 }
+
 
 
 ## Setup
@@ -106,7 +107,7 @@ struct SequentialOnboardingViewExample: View {
         SequentialOnboardingView(
             title: "Things to know",
             subtitle: "And you should pay close attention ...",
-            content: [
+            steps: [
                 .init(
                     title: "A thing to know", 
                     description: "This is a first thing that you should know; read carefully!"
@@ -133,16 +134,9 @@ struct SequentialOnboardingViewExample: View {
 ## Topics
 
 ### Articles
-
 - <doc:DisplayingInformation>
 
-### Structuring an Onboarding Flow
-
-- ``OnboardingNavigationPath``
-- ``OnboardingViewBuilder``
-
 ### Onboarding Views
-
 - ``OnboardingView``
 - ``SequentialOnboardingView``
 - ``OnboardingActionsView``

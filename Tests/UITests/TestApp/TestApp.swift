@@ -12,7 +12,7 @@ import SwiftUI
 
 @main
 struct UITestsApp: App {
-    @ApplicationDelegateAdaptor(TestAppDelegate.self) var appDelegate
+    @ApplicationDelegateAdaptor(SpeziAppDelegate.self) var appDelegate
     @State var onboardingFlowComplete = false
     
     

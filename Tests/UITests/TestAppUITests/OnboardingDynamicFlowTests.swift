@@ -18,53 +18,46 @@ final class OnboardingDynamicFlowTests: XCTestCase {
     func testDynamicOnboardingFlow1() throws {
         let app = XCUIApplication()
         app.launch()
-
         XCTAssertTrue(app.wait(for: .runningForeground, timeout: 2.0))
-
         try app.dynamicOnboardingFlow(showConditionalView: false)
     }
-
+    
+    
     @MainActor
     func testDynamicOnboardingFlow2() throws {
         let app = XCUIApplication()
         app.launch()
-
         XCTAssertTrue(app.wait(for: .runningForeground, timeout: 2.0))
-
         try app.dynamicOnboardingFlow(showConditionalView: true)
     }
-
+    
+    
     @MainActor
     func testDynamicOnboardingFlow3() throws {
         let app = XCUIApplication()
         app.launch()
-
         XCTAssertTrue(app.wait(for: .runningForeground, timeout: 2.0))
 
-        XCTAssert(app.buttons["Consent View (Markdown)"].waitForExistence(timeout: 2))
-        app.buttons["Consent View (Markdown)"].tap()
-
-        try app.consentViewOnboardingFlow(consentTitle: "First Consent", markdownText: "This is the first markdown example")
-        try app.consentViewOnboardingFlow(consentTitle: "Second Consent", markdownText: "This is the second markdown example")
-
-        XCTAssert(app.buttons["Next"].waitForExistence(timeout: 2))
+        app.buttons["Welcome View"].tap()
+        app.buttons["Learn More"].tap()
         app.buttons["Next"].tap()
-
-        XCTAssert(app.buttons["Next"].waitForExistence(timeout: 2))
         app.buttons["Next"].tap()
-
-        XCTAssert(app.buttons["Show Conditional View"].waitForExistence(timeout: 2))
+        app.buttons["Next"].tap()
+        app.buttons["Continue"].tap()
+        
+        XCTAssert(app.staticTexts["Leland"].waitForExistence(timeout: 1))
+        app.buttons["Next"].tap()
+        XCTAssert(app.staticTexts["Stanford"].waitForExistence(timeout: 1))
+        app.buttons["Next"].tap()
+        
+//        app.buttons["Next"].tap()
         app.buttons["Show Conditional View"].tap()
-
-        XCTAssert(app.buttons["Next"].waitForExistence(timeout: 2))
         app.buttons["Next"].tap()
-
-        // Check if on conditional test view
-        XCTAssert(app.staticTexts["Conditional Test View"].waitForExistence(timeout: 2))
-        XCTAssert(app.buttons["Next"].waitForExistence(timeout: 2))
+        XCTAssert(app.staticTexts["Conditional Test View"].waitForExistence(timeout: 1))
+        app.buttons["Back"].tap()
+        app.buttons["Show Conditional View"].tap()
         app.buttons["Next"].tap()
-
-        // Check if on final page
+        
         XCTAssert(app.staticTexts["Onboarding complete"].waitForExistence(timeout: 2))
     }
 }

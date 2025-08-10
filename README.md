@@ -16,17 +16,16 @@ SPDX-License-Identifier: MIT
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2FStanfordSpezi%2FSpeziOnboarding%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/StanfordSpezi/SpeziOnboarding)
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2FStanfordSpezi%2FSpeziOnboarding%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/StanfordSpezi/SpeziOnboarding)
 
-Provides UI components for Onboarding and Consent.
+Provides UI components for Onboarding.
 
 
 ## Overview
 
-- The [`SpeziOnboarding`](https://swiftpackageindex.com/stanfordspezi/spezionboarding/documentation/spezionboarding) module provides user interface components to onboard a user to an application;
-- The [`SpeziConsent`](https://swiftpackageindex.com/stanfordspezi/spezionboarding/documentation/speziconsent) module provides utilities for retrieving consent for e.g. a study participation.
+The [`SpeziOnboarding`](https://swiftpackageindex.com/stanfordspezi/spezionboarding/documentation/spezionboarding) module provides user interface components to onboard a user to an iOS application.
 
-|![Screenshot displaying the onboarding view.](Sources/SpeziOnboarding/SpeziOnboarding.docc/Resources/OnboardingView.png#gh-light-mode-only) ![Screenshot displaying the onboarding view.](Sources/SpeziOnboarding/SpeziOnboarding.docc/Resources/OnboardingView~dark.png#gh-dark-mode-only)|![Screenshot displaying the sequential onboarding view.](Sources/SpeziOnboarding/SpeziOnboarding.docc/Resources/SequentialOnboardingView.png#gh-light-mode-only) ![Screenshot displaying the sequential onboarding view.](Sources/SpeziOnboarding/SpeziOnboarding.docc/Resources/SequentialOnboardingView~dark.png#gh-dark-mode-only)|![Screenshot displaying the consent view.](Sources/SpeziOnboarding/SpeziOnboarding.docc/Resources/ConsentView.png#gh-light-mode-only) ![Screenshot displaying the consent view.](Sources/SpeziOnboarding/SpeziOnboarding.docc/Resources/ConsentView~dark.png#gh-dark-mode-only)
+|![Screenshot displaying the onboarding view.](Sources/SpeziOnboarding/SpeziOnboarding.docc/Resources/OnboardingView.png#gh-light-mode-only) ![Screenshot displaying the onboarding view.](Sources/SpeziOnboarding/SpeziOnboarding.docc/Resources/OnboardingView~dark.png#gh-dark-mode-only)|![Screenshot displaying the sequential onboarding view.](Sources/SpeziOnboarding/SpeziOnboarding.docc/Resources/SequentialOnboarding.png#gh-light-mode-only) ![Screenshot displaying the sequential onboarding view.](Sources/SpeziOnboarding/SpeziOnboarding.docc/Resources/SequentialOnboarding~dark.png#gh-dark-mode-only)|![Screenshot displaying the consent view.](Sources/SpeziOnboarding/SpeziOnboarding.docc/Resources/Consent.png#gh-light-mode-only) ![Screenshot displaying the consent view.](Sources/SpeziOnboarding/SpeziOnboarding.docc/Resources/Consent~dark.png#gh-dark-mode-only)
 |:--:|:--:|:--:|
-|[`OnboardingView`](https://swiftpackageindex.com/stanfordspezi/spezionboarding/documentation/spezionboarding/onboardingview)|[`SequentialOnboardingView`](https://swiftpackageindex.com/stanfordspezi/spezionboarding/documentation/spezionboarding/sequentialonboardingview)|[`OnboardingConsentView`](https://swiftpackageindex.com/stanfordspezi/spezionboarding/documentation/speziconsent/onboardingconsentview)|
+|[`OnboardingView`](https://swiftpackageindex.com/stanfordspezi/spezionboarding/documentation/spezionboarding/onboardingview)|[`SequentialOnboardingView`](https://swiftpackageindex.com/stanfordspezi/spezionboarding/documentation/spezionboarding/sequentialonboardingview)|[`OnboardingConsentView`](https://swiftpackageindex.com/stanfordspezi/speziconsent/documentation/speziconsent/onboardingconsentview)|
 
 
 ## Setup
@@ -100,7 +99,7 @@ struct SequentialOnboardingViewExample: View {
         SequentialOnboardingView(
             title: "Things to know",
             subtitle: "And you should pay close attention ...",
-            content: [
+            steps: [
                 .init(
                     title: "A thing to know", 
                     description: "This is a first thing that you should know; read carefully!"
@@ -121,56 +120,6 @@ struct SequentialOnboardingViewExample: View {
     }
 }
 ```
-
-
-### Onboarding Consent View
-
-The [`OnboardingConsentView`](https://swiftpackageindex.com/stanfordspezi/spezionboarding/documentation/speziconsent/onboardingconsentview) can be used to allow your users to read and agree to a document, e.g., a consent document for a research study or a terms and conditions document for an app. The document can be signed using a family and given name and a hand-drawn signature. The signed consent form can then be exported and shared as a PDF file.
-
-The following example demonstrates how the [`OnboardingConsentView`](https://swiftpackageindex.com/stanfordspezi/spezionboarding/documentation/speziconsent/onboardingconsentview) shown above is constructed by reading a consent form from a markdown file, creating a [`ConsentDocument`](https://swiftpackageindex.com/stanfordspezi/spezionboarding/documentation/speziconsent/consentdocument) and passing it to the `OnboardingConsentView`, and  an action that should be performed once the consent has been given (which receives the exported consent form as a PDF), as well as a configuration defining the properties of the exported consent form.
-
-The following example demonstrates using the  [`OnboardingConsentView`](https://swiftpackageindex.com/stanfordspezi/spezionboarding/documentation/speziconsent/onboardingconsentview) to present a consent form to the user as part of an onboarding flow.
-Once the consent if completed (i.e., the user signed it and filled out all required form elements), the user can continue to the next onboarding step.
-The view also uses the [`ConsentShareButton`](https://swiftpackageindex.com/stanfordspezi/spezionboarding/documentation/speziconsent/consentsharebutton) to allow the user to obtain a PDF-exported copy of their signed consent document. 
-
-```swift
-import SpeziConsent
-import SwiftUI
-
-struct ConsentStep: View {
-    let url: URL
-    
-    @State private var consentDocument: ConsentDocument?
-    @State private var viewState: ViewState = .idle
-    
-    var body: some View {
-        OnboardingConsentView(consentDocument: consentDocument) {
-            // advance your Onboarding flow in response to the user having confirmed a completed consent document
-        }
-        .viewStateAlert(state: $viewState)
-        .toolbar {
-            ToolbarItem(placement: .primaryAction) {
-                // give your user the ability to obtain a PDF version of the consent document they just signed
-                ConsentShareButton(
-                    consentDocument: consentDocument,
-                    viewState: $viewState
-                )
-            }
-        }
-        .task {
-            // load the consent document when the view is first displayed.
-            // this will automatically cause the `OnboardingConsentView` above to update its contents.
-            do {
-                consentDocument = try ConsentDocument(contentsOf: url)
-            } catch {
-                viewState = .error(AnyLocalizedError(error: error))
-            }
-        }
-    }
-}
-```
-
-For more information, please refer to the [API documentation](https://swiftpackageindex.com/StanfordSpezi/SpeziOnboarding/documentation).
 
 
 ## The Spezi Template Application
