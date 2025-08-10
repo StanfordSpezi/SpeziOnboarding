@@ -6,7 +6,7 @@
 # SPDX-License-Identifier: MIT
 #
 
-name: Build and Test
+name: Test
 
 on:
   push:
