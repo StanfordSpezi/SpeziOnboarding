@@ -44,7 +44,7 @@ public struct OnboardingActionsView: View {
     
     @_documentation(visibility: internal) // swiftlint:disable:next attributes
     public var body: some View {
-        VStack {
+        VStack(spacing: 0) {
             AsyncButton(state: $primaryActionState, action: primaryAction) {
                 primaryText
                     .bold()
@@ -56,7 +56,7 @@ public struct OnboardingActionsView: View {
                 AsyncButton(state: $secondaryActionState, action: secondaryAction) {
                     secondaryText
                 }
-                .padding(.top, 10)
+                .padding(.vertical, 10)
             }
         }
         .disabled(primaryActionState != .idle || secondaryActionState != .idle)

@@ -42,15 +42,15 @@ import SwiftUI
 public struct SequentialOnboardingView<Header: View>: View {
     /// A `Step` defines the way that information is displayed in an ``SequentialOnboardingView``.
     public struct Step {
-        /// The title of the area in the ``SequentialOnboardingView``.
-        public let title: Text?
-        /// The description of the area in the ``SequentialOnboardingView``.
-        public let description: Text
+        /// The step's title.
+        fileprivate let title: Text?
+        /// The step's description.
+        fileprivate let description: Text
         
-        /// Creates a new content for an area in the ``SequentialOnboardingView``.
+        /// Creates a sequential onboarding step.
         /// - Parameters:
-        ///   - title: The localized title of the area in the ``SequentialOnboardingView``.
-        ///   - description: The localized description of the area in the ``SequentialOnboardingView``.
+        ///   - title: The step's localized title.
+        ///   - description: The step's localized description.
         public init(
             title: LocalizedStringResource? = nil, // swiftlint:disable:this function_default_parameter_at_end
             description: LocalizedStringResource
@@ -59,10 +59,10 @@ public struct SequentialOnboardingView<Header: View>: View {
             self.description = Text(description)
         }
         
-        /// Creates a new content for an area in the ``SequentialOnboardingView``.
+        /// Creates a sequential onboarding step.
         /// - Parameters:
-        ///   - title: The title of the area in the ``SequentialOnboardingView`` without localization.
-        ///   - description: The description of the area in the ``SequentialOnboardingView`` without localization.
+        ///   - title: The step's title.
+        ///   - description: The step's description.
         @_disfavoredOverload
         public init(
             title: (some StringProtocol)? = String?.none, // swiftlint:disable:this function_default_parameter_at_end

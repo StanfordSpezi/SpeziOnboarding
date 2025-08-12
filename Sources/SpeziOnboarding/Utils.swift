@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import Foundation
 
 
 enum _CompatGlassEffect { // swiftlint:disable:this type_name
@@ -29,4 +30,9 @@ extension View {
         self
         #endif
     }
+}
+
+
+extension ProcessInfo {
+    static let isIOS26 = ProcessInfo.processInfo.operatingSystemVersion.majorVersion >= 26
 }
