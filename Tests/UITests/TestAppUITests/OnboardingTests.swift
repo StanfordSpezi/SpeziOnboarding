@@ -173,7 +173,7 @@ final class OnboardingTests: XCTestCase {
         XCTAssert(app.staticTexts["Interesting Modules"].waitForExistence(timeout: 2))
         for (idx, step) in [
             "The Onboarding module allows you to",
-            "SpeziAccount enabled user log in and sign up",
+            "SpeziAccount enables user log in and sign up",
             "Work with Health data collected by",
             "Via Spezi's Scheduler module, users can be prompted"
         ].enumerated() {
