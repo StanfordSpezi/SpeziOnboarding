@@ -77,7 +77,7 @@ private struct InterestingModules: View {
             subtitle: "Here are a few key Spezi modules and features",
             steps: [
                 .init(title: "Onboarding", description: "The Onboarding module allows you to build an onboarding flow like this one."),
-                .init(title: "Account", description: "SpeziAccount enabled user log in and sign up, using Firebase and other services."),
+                .init(title: "Account", description: "SpeziAccount enables user log in and sign up, using Firebase and other services."),
                 .init(title: "HealthKit", description: "Work with Health data collected by the user's iPhone and Watch."),
                 .init(title: "Scheduler", description: "Via Spezi's Scheduler module, users can be prompted to complete tasks based on schedules.")
             ],

@@ -199,13 +199,13 @@ public struct OnboardingView<Header: View, Content: View, Footer: View>: View {
                     .padding(.bottom, footer is EmptyView ? bottomPadding : 0)
             }
             if !(footer is EmptyView) {
-                Spacer()
+                Spacer(minLength: 40)
                 footer
                     // if we do have a footer, we apply it here
                     .padding(.bottom, bottomPadding)
             }
         }
-        .padding(edgesWithImplicitPadding, 24)
+        .padding(edgesWithImplicitPadding)
         // if this is the first view in a Stack, we need to add an implicit extra top padding,
         // in order to compensate for the fact that the other steps in the stack will get some de-facto
         // top padding via the navigation bar (which won't be present in the first step).

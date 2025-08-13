@@ -6,6 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
+import Foundation
 import SwiftUI
 
 
@@ -29,4 +30,9 @@ extension View {
         self
         #endif
     }
+}
+
+
+extension ProcessInfo {
+    static let isIOS26 = ProcessInfo.processInfo.operatingSystemVersion.majorVersion >= 26
 }
