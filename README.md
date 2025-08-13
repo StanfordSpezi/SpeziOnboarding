@@ -23,9 +23,39 @@ Provides UI components for Onboarding.
 
 The [`SpeziOnboarding`](https://swiftpackageindex.com/stanfordspezi/spezionboarding/documentation/spezionboarding) module provides user interface components to onboard a user to an iOS application.
 
-|![Screenshot displaying the onboarding view.](Sources/SpeziOnboarding/SpeziOnboarding.docc/Resources/OnboardingView.png#gh-light-mode-only) ![Screenshot displaying the onboarding view.](Sources/SpeziOnboarding/SpeziOnboarding.docc/Resources/OnboardingView~dark.png#gh-dark-mode-only)|![Screenshot displaying the sequential onboarding view.](Sources/SpeziOnboarding/SpeziOnboarding.docc/Resources/SequentialOnboarding.png#gh-light-mode-only) ![Screenshot displaying the sequential onboarding view.](Sources/SpeziOnboarding/SpeziOnboarding.docc/Resources/SequentialOnboarding~dark.png#gh-dark-mode-only)|![Screenshot displaying the consent view.](Sources/SpeziOnboarding/SpeziOnboarding.docc/Resources/Consent.png#gh-light-mode-only) ![Screenshot displaying the consent view.](Sources/SpeziOnboarding/SpeziOnboarding.docc/Resources/Consent~dark.png#gh-dark-mode-only)
-|:--:|:--:|:--:|
-|[`OnboardingView`](https://swiftpackageindex.com/stanfordspezi/spezionboarding/documentation/spezionboarding/onboardingview)|[`SequentialOnboardingView`](https://swiftpackageindex.com/stanfordspezi/spezionboarding/documentation/spezionboarding/sequentialonboardingview)|[`OnboardingConsentView`](https://swiftpackageindex.com/stanfordspezi/speziconsent/documentation/speziconsent/onboardingconsentview)|
+<table style="width: 80%">
+  <tr>
+    <td align="center" width="33.33333%">
+      <img src="Sources/SpeziOnboarding/SpeziOnboarding.docc/Resources/OnboardingView.png#gh-light-mode-only" alt="Screenshot displaying the onboarding view" width="80%"/>
+      <img src="Sources/SpeziOnboarding/SpeziOnboarding.docc/Resources/OnboardingView~dark.png#gh-dark-mode-only" alt="Screenshot displaying the onboarding view" width="80%"/>
+    </td>
+    <td align="center" width="33.33333%">
+      <img src="Sources/SpeziOnboarding/SpeziOnboarding.docc/Resources/SequentialOnboarding.png#gh-light-mode-only" alt="Screenshot displaying the sequential onboarding view" width="80%"/>
+      <img src="Sources/SpeziOnboarding/SpeziOnboarding.docc/Resources/SequentialOnboarding~dark.png#gh-dark-mode-only" alt="Screenshot displaying the sequential onboarding view" width="80%"/>
+    </td>
+    <td align="center" width="33.33333%">
+      <img src="Sources/SpeziOnboarding/SpeziOnboarding.docc/Resources/Consent.png#gh-light-mode-only" alt="Screenshot displaying the onboarding view" width="80%"/>
+      <img src="Sources/SpeziOnboarding/SpeziOnboarding.docc/Resources/Consent~dark.png#gh-dark-mode-only" alt="Screenshot displaying the onboarding view" width="80%"/>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <a href="https://swiftpackageindex.com/stanfordspezi/spezionboarding/documentation/spezionboarding/onboardingview">
+        <code>OnboardingView</code>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://swiftpackageindex.com/stanfordspezi/spezionboarding/documentation/spezionboarding/sequentialonboardingview">
+        <code>SequentialOnboardingView</code>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://swiftpackageindex.com/stanfordspezi/speziconsent/documentation/speziconsent/onboardingconsentview">
+        <code>OnboardingConsentView</code>
+      </a>
+    </td>
+  </tr>
+</table>
 
 
 ## Setup
