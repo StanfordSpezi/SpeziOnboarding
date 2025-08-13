@@ -94,7 +94,9 @@ public struct SequentialOnboardingView<Header: View>: View {
                     }
                 }
             } footer: {
-                OnboardingActionsView(primaryText: actionButtonTitle) {
+                OnboardingActionsView {
+                    actionButtonTitle
+                } action: {
                     if currentStepIndex < steps.count - 1 {
                         currentStepIndex += 1
                         withAnimation {

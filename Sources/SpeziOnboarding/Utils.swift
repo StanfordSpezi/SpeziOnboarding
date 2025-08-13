@@ -6,8 +6,8 @@
 // SPDX-License-Identifier: MIT
 //
 
-import SwiftUI
 import Foundation
+import SwiftUI
 
 
 enum _CompatGlassEffect { // swiftlint:disable:this type_name
