@@ -58,9 +58,9 @@ private struct Welcome: View {
             }
         } footer: {
             OnboardingActionsView(
-                primaryText: "Learn More",
+                primaryTitle: "Learn More",
                 primaryAction: { path.nextStep() },
-                secondaryText: "Also Learn More",
+                secondaryTitle: "Also Learn More",
                 secondaryAction: { path.nextStep() }
             )
         }
@@ -112,11 +112,11 @@ private struct HealthKitPermissions: View {
             }
         } footer: {
             OnboardingActionsView(
-                primaryText: "Grant Access",
+                primaryTitle: "Grant Access",
                 primaryAction: {
                     path.nextStep()
                 },
-                secondaryText: "Later",
+                secondaryTitle: "Later",
                 secondaryAction: {
                     path.nextStep()
                 }
