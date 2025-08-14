@@ -84,7 +84,7 @@ extension OnboardingActionsView {
     /// Creates an `OnboardingActionsView` instance that only contains a primary button.
     /// - Parameters:
     ///   - viewState: An optional `ViewState` binding.
-    ///   - text: The title of the primary button without localization.
+    ///   - title: The title of the primary button without localization.
     ///   - action: The action that should be performed when pressing the primary button
     public init(
         viewState: Binding<ViewState>? = nil,
@@ -100,10 +100,10 @@ extension OnboardingActionsView {
     /// Creates an `OnboardingActionsView` instance that contains a primary button and a secondary button.
     /// - Parameters:
     ///   - primaryViewState: An optional `ViewState` binding for controlling the primary action's state.
-    ///   - primaryText: The localized title of the primary button.
+    ///   - primaryTitle: The localized title of the primary button.
     ///   - primaryAction: The action that should be performed when pressing the primary button
     ///   - secondaryViewState: An optional `ViewState` binding for controlling the secondary action's state.
-    ///   - secondaryText: The localized title of the secondary button.
+    ///   - secondaryTitle: The localized title of the secondary button.
     ///   - secondaryAction: The action that should be performed when pressing the secondary button
     public init(
         primaryViewState: Binding<ViewState>? = nil,
@@ -122,77 +122,77 @@ extension OnboardingActionsView {
     
     /// Creates an `OnboardingActionsView` instance that only contains a primary button.
     /// - Parameters:
-    ///   - text: The title of the primary button without localization.
+    ///   - title: The title of the primary button without localization.
     ///   - viewState: An optional `ViewState` binding.
     ///   - action: The action that should be performed when pressing the primary button
     @_disfavoredOverload
     public init(
-        _ text: some StringProtocol,
+        _ title: some StringProtocol,
         viewState: Binding<ViewState>? = nil,
         action: @escaping @MainActor () async throws -> Void
     ) {
         self.init(
-            primaryButton: .init(title: Text(text), viewState: viewState, action: action)
+            primaryButton: .init(title: Text(title), viewState: viewState, action: action)
         )
     }
     
     /// Creates an `OnboardingActionsView` instance that only contains a primary button.
     /// - Parameters:
-    ///   - text: The localized title of the primary button.
+    ///   - title: The localized title of the primary button.
     ///   - viewState: An optional `ViewState` binding.
     ///   - action: The action that should be performed when pressing the primary button
     public init(
-        _ text: LocalizedStringResource,
+        _ title: LocalizedStringResource,
         viewState: Binding<ViewState>? = nil,
         action: @escaping @MainActor () async throws -> Void
     ) {
         self.init(
-            primaryButton: .init(title: Text(text), viewState: viewState, action: action)
+            primaryButton: .init(title: Text(title), viewState: viewState, action: action)
         )
     }
     
     /// Creates an `OnboardingActionsView` instance that contains a primary button and a secondary button.
     /// - Parameters:
-    ///   - primaryText: The localized title of the primary button.
+    ///   - primaryTitle: The localized title of the primary button.
     ///   - primaryViewState: An optional `ViewState` binding for controlling the primary action's state.
     ///   - primaryAction: The action that should be performed when pressing the primary button
-    ///   - secondaryText: The localized title of the secondary button.
+    ///   - secondaryTitle: The localized title of the secondary button.
     ///   - secondaryViewState: An optional `ViewState` binding for controlling the secondary action's state.
     ///   - secondaryAction: The action that should be performed when pressing the secondary button
     public init(
-        primaryText: LocalizedStringResource,
+        primaryTitle: LocalizedStringResource,
         primaryViewState: Binding<ViewState>? = nil, // swiftlint:disable:this function_default_parameter_at_end
         primaryAction: @escaping @MainActor () async throws -> Void,
-        secondaryText: LocalizedStringResource,
+        secondaryTitle: LocalizedStringResource,
         secondaryViewState: Binding<ViewState>? = nil,
         secondaryAction: @escaping @MainActor () async throws -> Void
     ) {
         self.init(
-            primaryButton: .init(title: Text(primaryText), viewState: primaryViewState, action: primaryAction),
-            secondaryButton: .init(title: Text(secondaryText), viewState: secondaryViewState, action: secondaryAction)
+            primaryButton: .init(title: Text(primaryTitle), viewState: primaryViewState, action: primaryAction),
+            secondaryButton: .init(title: Text(secondaryTitle), viewState: secondaryViewState, action: secondaryAction)
         )
     }
     
     /// Creates an `OnboardingActionsView` instance that contains a primary button and a secondary button.
     /// - Parameters:
-    ///   - primaryText: The title of the primary button without localization.
+    ///   - primaryTitle: The title of the primary button without localization.
     ///   - primaryViewState: An optional `ViewState` binding for controlling the primary action's state.
     ///   - primaryAction: The action that should be performed when pressing the primary button
-    ///   - secondaryText: The title of the secondary button without localization.
+    ///   - secondaryTitle: The title of the secondary button without localization.
     ///   - secondaryViewState: An optional `ViewState` binding for controlling the secondary action's state.
     ///   - secondaryAction: The action that should be performed when pressing the secondary button
     @_disfavoredOverload
     public init(
-        primaryText: some StringProtocol,
+        primaryTitle: some StringProtocol,
         primaryViewState: Binding<ViewState>? = nil, // swiftlint:disable:this function_default_parameter_at_end
         primaryAction: @escaping @MainActor () async throws -> Void,
-        secondaryText: some StringProtocol,
+        secondaryTitle: some StringProtocol,
         secondaryViewState: Binding<ViewState>? = nil,
         secondaryAction: @escaping @MainActor () async throws -> Void
     ) {
         self.init(
-            primaryButton: .init(title: Text(primaryText), viewState: primaryViewState, action: primaryAction),
-            secondaryButton: .init(title: Text(secondaryText), viewState: secondaryViewState, action: secondaryAction)
+            primaryButton: .init(title: Text(primaryTitle), viewState: primaryViewState, action: primaryAction),
+            secondaryButton: .init(title: Text(secondaryTitle), viewState: secondaryViewState, action: secondaryAction)
         )
     }
 }
@@ -212,11 +212,11 @@ extension View {
             print("Primary!")
         }
         OnboardingActionsView(
-            primaryText: String("PRIMARY"),
+            primaryTitle: String("PRIMARY"),
             primaryAction: {
                 print("Primary")
             },
-            secondaryText: String("SECONDARY"),
+            secondaryTitle: String("SECONDARY"),
             secondaryAction: {
                 print("Secondary")
             }
