@@ -20,20 +20,25 @@ public struct OnboardingTitleView: View {
     
     @_documentation(visibility: internal) // swiftlint:disable:next attributes
     public var body: some View {
-        VStack(alignment: ProcessInfo.isIOS26 ? .leading : .center) {
-            title
-                .bold()
-                .font(.largeTitle)
-                .multilineTextAlignment(ProcessInfo.isIOS26 ? .leading : .center)
-                .padding(.bottom)
-                .accessibilityAddTraits(.isHeader)
-            
-            if let subtitle {
-                subtitle
+        HStack {
+            VStack(alignment: ProcessInfo.isIOS26 ? .leading : .center) {
+                title
+                    .bold()
+                    .font(.largeTitle)
                     .multilineTextAlignment(ProcessInfo.isIOS26 ? .leading : .center)
+                    .padding(.bottom)
+                    .accessibilityAddTraits(.isHeader)
+                
+                if let subtitle {
+                    subtitle
+                        .multilineTextAlignment(ProcessInfo.isIOS26 ? .leading : .center)
+                }
+            }
+            .padding(.vertical)
+            if ProcessInfo.isIOS26 {
+                Spacer()
             }
         }
-        .padding(.vertical)
     }
     
     /// Creates an `OnboardingTitleView` instance that contains a title and an optional subtitle.
