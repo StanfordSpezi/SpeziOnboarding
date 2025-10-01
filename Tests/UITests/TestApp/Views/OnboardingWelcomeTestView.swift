@@ -6,12 +6,13 @@
 // SPDX-License-Identifier: MIT
 //
 
+// swiftlint:disable accessibility_label_for_image
+
 import SpeziOnboarding
 import SpeziViews
 import SwiftUI
 
 
-// swiftlint:disable accessibility_label_for_image
 struct OnboardingWelcomeTestView: View {
     @Environment(ManagedNavigationStack.Path.self) private var path
     

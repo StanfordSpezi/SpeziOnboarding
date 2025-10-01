@@ -24,16 +24,16 @@ public struct OnboardingTitleView: View {
             title
                 .bold()
                 .font(.largeTitle)
-                .multilineTextAlignment(ProcessInfo.isIOS26 ? .leading : .center)
                 .padding(.bottom)
                 .accessibilityAddTraits(.isHeader)
             
             if let subtitle {
                 subtitle
-                    .multilineTextAlignment(ProcessInfo.isIOS26 ? .leading : .center)
             }
         }
         .padding(.vertical)
+        .frame(maxWidth: .infinity, alignment: ProcessInfo.isIOS26 ? .leading : .center)
+        .multilineTextAlignment(ProcessInfo.isIOS26 ? .leading : .center)
     }
     
     /// Creates an `OnboardingTitleView` instance that contains a title and an optional subtitle.

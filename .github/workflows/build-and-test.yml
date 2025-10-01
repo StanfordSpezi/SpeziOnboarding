@@ -28,7 +28,7 @@ jobs:
         config: [Debug, Release]
         platform:
           - name: iOS
-            destination: 'platform=iOS Simulator,name=iPhone 16 Pro'
+            destination: 'platform=iOS Simulator,name=iPhone 17 Pro'
           - name: macOS
             destination: 'platform=macOS,name=My Mac'
           - name: visionOS
@@ -48,7 +48,7 @@ jobs:
         config: [Debug, Release]
         platform:
           - name: iOS
-            destination: 'platform=iOS Simulator,name=iPhone 16 Pro'
+            destination: 'platform=iOS Simulator,name=iPhone 17 Pro'
           - name: iPadOS
             destination: 'platform=iOS Simulator,name=iPad Air 13-inch (M3)'
           - name: visionOS
