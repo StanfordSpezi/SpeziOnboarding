@@ -20,6 +20,17 @@ public struct OnboardingTitleView: View {
     
     @_documentation(visibility: internal) // swiftlint:disable:next attributes
     public var body: some View {
+        if ProcessInfo.isIOS26 {
+            HStack {
+                mainContent
+                Spacer()
+            }
+        } else {
+            mainContent
+        }
+    }
+    
+    private var mainContent: some View {
         VStack(alignment: ProcessInfo.isIOS26 ? .leading : .center) {
             title
                 .bold()
