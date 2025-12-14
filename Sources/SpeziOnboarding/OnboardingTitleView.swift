@@ -26,7 +26,6 @@ public struct OnboardingTitleView: View {
                 .font(.largeTitle)
                 .padding(.bottom)
                 .accessibilityAddTraits(.isHeader)
-            
             if let subtitle {
                 subtitle
             }
@@ -34,6 +33,9 @@ public struct OnboardingTitleView: View {
         .padding(.vertical)
         .frame(maxWidth: .infinity, alignment: ProcessInfo.isIOS26 ? .leading : .center)
         .multilineTextAlignment(ProcessInfo.isIOS26 ? .leading : .center)
+        // needed to prevent the last line from being cut off in some edge cases
+        // (not sure what's triggering this but it typically occurs when adding a step that just fits in the remaining space...)
+        .fixedSize(horizontal: false, vertical: true)
     }
     
     /// Creates an `OnboardingTitleView` instance that contains a title and an optional subtitle.
